@@ -5,16 +5,17 @@ TagManager:
   serializedVersion: 2
   tags:
   - Planet
+  - Item
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - EpicLayer
+  - IgnorePlayer
   - Water
   - UI
   - World
   - Interactor
-  - 
+  - DamagePlayer
   - 
   - 
   - 
@@ -41,4 +42,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Idk funi
+    uniqueID: 1264380977
     locked: 0

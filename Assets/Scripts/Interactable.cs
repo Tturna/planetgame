@@ -1,3 +1,4 @@
+using Entities;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour
@@ -6,7 +7,7 @@ public class Interactable : MonoBehaviour
     [SerializeField] private GameObject promptPrefab;
     [SerializeField] private Vector2 promptOffset;
 
-    public bool HasToggleInteraction;
+    public bool hasToggleInteraction;
 
     private GameObject _promptObject;
 

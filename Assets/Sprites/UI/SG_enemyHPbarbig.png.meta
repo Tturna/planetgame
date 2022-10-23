@@ -126,7 +126,7 @@ TextureImporter:
         width: 25
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -142,15 +142,23 @@ TextureImporter:
       name: SG_enemyHPbarbig_1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 8
-        width: 25
-        height: 8
+        x: 3
+        y: 11
+        width: 19
+        height: 2
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: -9.5, y: 1}
+        - {x: -9.5, y: -1}
+        - {x: 9.5, y: -1}
+        - {x: 9.5, y: 1}
+      physicsShape:
+      - - {x: -9.5, y: 1}
+        - {x: -9.5, y: -1}
+        - {x: 9.5, y: -1}
+        - {x: 9.5, y: 1}
       tessellationDetail: 0
       bones: []
       spriteID: 115e223dbb83cd7459bb0a6d2999225d
@@ -163,12 +171,12 @@ TextureImporter:
       name: SG_enemyHPbarbig_2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 25
-        height: 8
+        x: 3
+        y: 3
+        width: 19
+        height: 2
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

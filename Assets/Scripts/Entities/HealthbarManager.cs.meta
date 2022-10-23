@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 9708ce1d503340e0af60fd54149c685f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - whiteBarNormal: {fileID: -900080851, guid: 95b6dab05c0a3034ca2f7036a077a85a, type: 3}
+  - actualBarNormal: {fileID: -979995666, guid: 95b6dab05c0a3034ca2f7036a077a85a, type: 3}
+  - bgNormal: {fileID: -1722768351, guid: 95b6dab05c0a3034ca2f7036a077a85a, type: 3}
+  - whiteBarBoss: {fileID: -954587497, guid: e6856391e53beb14c8eafc35f4df874b, type: 3}
+  - actualBarBoss: {fileID: 231396077, guid: e6856391e53beb14c8eafc35f4df874b, type: 3}
+  - bgBoss: {fileID: -1466085329, guid: e6856391e53beb14c8eafc35f4df874b, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

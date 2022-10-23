@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84b1f98ea4654b84af66154f68a0f981, type: 3}
+  m_Name: Swamp Titan
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  health: 100
+  contactDamage: 10
+  knockback: 12
+  aggroRange: 7
+  moveSpeed: 11
+  evasionTime: 7
+  attackInterval: 3.5
+  attackRecoveryTime: 0.66
+  attackRangeThreshold: 3
+  isBoss: 1
+  bossPortrait: {fileID: 1194789012, guid: 04faffce839db794784cd09dcedeef57, type: 3}
+  hitboxOffset: {x: 0, y: -0.09}
+  hitboxSize: {x: 1.32, y: 1.6}
+  overrideAnimator: {fileID: 22100000, guid: b47eda05c83a6ed41b6bfdfc88047489, type: 2}
+  shortAttacks:
+  - attackFunction: 0
+    animationIndex: 1
+    damage: 20
+    knockback: 10
+    attackDistance: 2
+    attackDelay: 0.85
+  longAttacks:
+  - attackFunction: 1
+    animationIndex: 4
+    damage: 15
+    knockback: 10
+    attackDistance: 12
+    attackDelay: 0.5

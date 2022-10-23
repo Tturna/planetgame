@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Swamp Titan Override
+  m_Controller: {fileID: 9100000, guid: 7fd4e2809fee0e444b7b69197a8edeb5, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: cfb6f2f2c7450b745a83dbfdee995c81, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 8868d1c6a6ae7f647806f3a9978c1d91, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e5b0a412ae282c4428d81d6b3fa96e8f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: c58d0d2455ec29542ac004bd021cacca, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 445cf808a514c3d49aac86331c70b96f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: b95dbfe584931ca46abb49982cd13804, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 232ffb3f5924c3d46a37bbc140378660, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 670d3c1c6eb4db940873293d9c5484d0, type: 2}
