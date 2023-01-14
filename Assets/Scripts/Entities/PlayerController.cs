@@ -125,7 +125,7 @@ namespace Entities
         private void LateUpdate()
         {
             // Used to fix landing issue in HandleGroundCheck function
-            _oldVelocity = Rigidbody.velocity;
+            // _oldVelocity = Rigidbody.velocity;
         }
 
         private void HandleControls()

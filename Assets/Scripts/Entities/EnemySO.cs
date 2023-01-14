@@ -26,6 +26,7 @@ namespace Entities
         public Sprite bossPortrait;
         public Vector2 hitboxOffset;
         public Vector2 hitboxSize;
+        public float healthbarDistance;
 
         public RuntimeAnimatorController overrideAnimator;
         public AttackPattern[] shortAttacks;

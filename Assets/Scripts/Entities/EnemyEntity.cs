@@ -40,7 +40,7 @@ namespace Entities
             _health = enemySo.health;
             _maxHealth = enemySo.maxHealth;
             
-            _healthbarManager.Initialize(_health, _maxHealth, enemySo.isBoss);
+            _healthbarManager.Initialize(_health, _maxHealth, enemySo.isBoss, enemySo.healthbarDistance);
 
             var hitboxChild = new GameObject("Hitbox");
             hitboxChild.transform.SetParent(transform);
@@ -116,7 +116,11 @@ namespace Entities
         {
             _aggravated = true;
             
-            if (enemySo.isBoss) _healthbarManager.EnableBossUIHealth();
+            if (enemySo.isBoss)
+            {
+                _healthbarManager.EnableBossUIHealth();
+                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
+            }
         }
 
         protected virtual void Deaggro()

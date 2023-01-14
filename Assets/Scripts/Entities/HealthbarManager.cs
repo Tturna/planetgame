@@ -34,14 +34,14 @@ namespace Entities
             _fWhiteBar.fillAmount = Mathf.Lerp(_fWhiteBar.fillAmount, _fActualBar.fillAmount, WhiteBarSmoothing);
         }
 
-        public void Initialize(float startingHealth, float maxHealth, bool isBoss)
+        public void Initialize(float startingHealth, float maxHealth, bool isBoss, float healthbarDistance)
         {
             _isBoss = isBoss;
             
             // Create background image as child of entity
             _child = new GameObject("Health Bar");
             _child.transform.SetParent(transform);
-            _child.transform.localPosition = Vector3.down * 1.5f;
+            _child.transform.localPosition = Vector3.down * healthbarDistance;
             
             var childSr = _child.AddComponent<SpriteRenderer>();
             childSr.sprite = _isBoss ? bgBoss : bgNormal;
