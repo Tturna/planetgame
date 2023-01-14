@@ -70,6 +70,8 @@ namespace Entities
         protected override void Start()
         {
             base.Start();
+
+            Physics2D.queriesHitTriggers = false;
         
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
@@ -118,6 +120,12 @@ namespace Entities
                 _animator.SetBool("running", _inputVector.x != 0);
                 handsAnimator.SetBool("running", _inputVector.x != 0);
             }
+        }
+
+        private void LateUpdate()
+        {
+            // Used to fix landing issue in HandleGroundCheck function
+            _oldVelocity = Rigidbody.velocity;
         }
 
         private void HandleControls()
@@ -293,9 +301,8 @@ namespace Entities
 
         private void Attack()
         {
-            if (_equippedItem == null) return;
-            
-            var weaponSo = (WeaponSo)_equippedItem.itemSo;
+            if (_equippedItem?.itemSo is not WeaponSo weaponSo) return;
+
             if (energy > weaponSo.energyCost)
             {
                 // Attack
@@ -305,6 +312,8 @@ namespace Entities
                 energy = Mathf.Clamp(energy - weaponSo.energyCost, 0, maxEnergy);
                 _energyRegenTimer = energyRegenDelay;
                 StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
+                
+                //TODO: Recoil
             }
             else
             {

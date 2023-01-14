@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Unity.Mathematics;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +14,7 @@ namespace Entities
         private GameObject _whiteBarObject, _actualBarObject;
         private GameObject _focusedBossHealth;
         private Image _fWhiteBar, _fActualBar, _fPortrait;
+        private TextMeshProUGUI _fName, _fHpPercent;
         private GameObject _child;
 
         private bool _isBoss;
@@ -71,6 +71,8 @@ namespace Entities
             _fWhiteBar = _focusedBossHealth.transform.GetChild(1).GetComponent<Image>();
             _fActualBar = _focusedBossHealth.transform.GetChild(2).GetComponent<Image>();
             _fPortrait = _focusedBossHealth.transform.GetChild(3).GetComponent<Image>();
+            _fHpPercent = _focusedBossHealth.transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+            _fName = _focusedBossHealth.transform.GetChild(5).GetComponent<TextMeshProUGUI>();
             UpdateBossUIHealth(startingHealth, maxHealth, null);
         }
         
@@ -81,7 +83,7 @@ namespace Entities
             _actualBarObject.transform.localScale = scalev;
 
             var posv = _actualBarObject.transform.localPosition;
-            posv.x = Mathf.Lerp(-0.594f, 0, scalev.x);
+            posv.x = Mathf.Lerp(_isBoss ? -0.594f : -0.28f, 0, scalev.x);
             _actualBarObject.transform.localPosition = posv;
         }
 
@@ -94,6 +96,8 @@ namespace Entities
             _fWhiteBar.fillAmount = _fActualBar.fillAmount;
             
             _fActualBar.fillAmount = health / maxHealth;
+            _fHpPercent.text = $"{Mathf.CeilToInt(health / maxHealth * 100)}%";
+            _fName.text = gameObject.name;
 
             if (portrait) _fPortrait.sprite = portrait;
 

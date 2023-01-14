@@ -34,5 +34,5 @@ MonoBehaviour:
     damage: 10
     knockback: 5
     attackDistance: 1.5
-    attackDelay: 0.3
+    attackDelay: 0.4
   longAttacks: []

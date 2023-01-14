@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84b1f98ea4654b84af66154f68a0f981, type: 3}
   m_Name: Swamp Titan
   m_EditorClassIdentifier: 
+  name: 
   maxHealth: 100
   health: 100
   contactDamage: 10
@@ -23,7 +24,8 @@ MonoBehaviour:
   attackRecoveryTime: 0.66
   attackRangeThreshold: 3
   isBoss: 1
-  bossPortrait: {fileID: 1194789012, guid: 04faffce839db794784cd09dcedeef57, type: 3}
+  flipSprite: 0
+  bossPortrait: {fileID: 1548244688, guid: 654bb0eb8778ce44c9500659f65df6b8, type: 3}
   hitboxOffset: {x: 0, y: -0.09}
   hitboxSize: {x: 1.32, y: 1.6}
   overrideAnimator: {fileID: 22100000, guid: b47eda05c83a6ed41b6bfdfc88047489, type: 2}

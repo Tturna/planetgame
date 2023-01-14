@@ -28,7 +28,7 @@ namespace Entities
                 TogglePhysics(false);
             }
             
-            //Rigidbody.AddForce(transform.right * _data.projectileSpeed, ForceMode2D.Impulse);
+            Rigidbody.AddForce(transform.right * _data.projectileSpeed, ForceMode2D.Impulse);
         }
 
         protected override void OnTriggerEnter2D(Collider2D col)

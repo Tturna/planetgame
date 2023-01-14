@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2a4a314f8270e134fb71a7dfcc2cb190
+guid: d3646f68433ca8342a558217d012b1dc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -118,13 +118,76 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SG_swampthingattack_0
+      name: hotbar2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 45
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b4ac392f6b385547827fd17a09b1db6
+      internalID: -1901392606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hotbar2_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 30
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a31650ae197766f4aa49264998abe9ce
+      internalID: -821205696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hotbar2_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 15
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a738374963f72b418d82a1024addb31
+      internalID: -2079131859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hotbar2_3
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 29
-        height: 17
+        width: 18
+        height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,113 +195,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 12179b4bdcda31d489fcb6ceae799d32
-      internalID: 1200916594
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SG_swampthingattack_1
-      rect:
-        serializedVersion: 2
-        x: 29
-        y: 0
-        width: 29
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 37af000eb7a9dad49a27447a42fa34f7
-      internalID: -521408459
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SG_swampthingattack_2
-      rect:
-        serializedVersion: 2
-        x: 58
-        y: 0
-        width: 29
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 238af5fa184aa2f40bd9fcb086c5a2f8
-      internalID: 1128858459
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SG_swampthingattack_3
-      rect:
-        serializedVersion: 2
-        x: 87
-        y: 0
-        width: 29
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 72ff0b236fb4d3c4ca8d2890a45e4329
-      internalID: -2016370549
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SG_swampthingattack_4
-      rect:
-        serializedVersion: 2
-        x: 116
-        y: 0
-        width: 29
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ec9cfea2d724fde45b15fb338386f647
-      internalID: -226242998
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SG_swampthingattack_5
-      rect:
-        serializedVersion: 2
-        x: 145
-        y: 0
-        width: 29
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4160f13ff25028349a13dac5364903aa
-      internalID: -342582227
+      spriteID: c0d2c74cfd87c8f4ba6a96cc23a21286
+      internalID: 2135390190
       vertices: []
       indices: 
       edges: []
@@ -254,12 +212,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      SG_swampthingattack_4: -226242998
-      SG_swampthingattack_5: -342582227
-      SG_swampthingattack_3: -2016370549
-      SG_swampthingattack_2: 1128858459
-      SG_swampthingattack_1: -521408459
-      SG_swampthingattack_0: 1200916594
+      hotbar2_1: -821205696
+      hotbar2_0: -1901392606
+      hotbar2_2: -2079131859
+      hotbar2_3: 2135390190
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 

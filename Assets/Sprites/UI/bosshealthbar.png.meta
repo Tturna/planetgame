@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 04faffce839db794784cd09dcedeef57
+guid: d15bb58d81fbf464f8b239526adba5a5
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -102,17 +102,29 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SG_bossportraits_0
+      name: bosshealthbar_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 16
-        height: 16
+        width: 99
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -120,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e011d36397031c0479af606e01a55d31
-      internalID: 1194789012
+      spriteID: f27902bb4f4c9254caacfad39ffa1210
+      internalID: -1568575198
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SG_bossportraits_1
+      name: bosshealthbar_1
       rect:
         serializedVersion: 2
-        x: 16
+        x: 99
         y: 0
-        width: 16
-        height: 16
+        width: 99
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +153,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4bafc6d322bae2c4993bf360b4be4140
-      internalID: -2143562208
+      spriteID: 861d490833c111f44b7293491f9900e7
+      internalID: -1807843842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bosshealthbar_2
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 0
+        width: 99
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a84ca6ab2b28e34eb9cd020f2e86806
+      internalID: -2128364137
       vertices: []
       indices: 
       edges: []
@@ -158,8 +191,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      SG_bossportraits_1: -2143562208
-      SG_bossportraits_0: 1194789012
+      bosshealthbar_2: -2128364137
+      bosshealthbar_0: -1568575198
+      bosshealthbar_1: -1807843842
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
