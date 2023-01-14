@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Inventory;
 using Inventory.Entities;
+using Unity.VisualScripting;
 
 namespace Entities
 {
@@ -21,6 +21,7 @@ namespace Entities
             [SerializeField] private float accelerationSpeed;
             [SerializeField] private float maxMoveSpeed;
             [SerializeField] private float jumpForce;
+            [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
 
             [Header("Stats Settings")]
             [SerializeField] private float maxHealth;
@@ -55,12 +56,14 @@ namespace Entities
         #region Jumping Variables
         
             private bool _jumping;
-            private const float JumpSafetyCooldown = 0.2f;
-            private float _jumpCooldownTimer;
+            private const float JumpSafetyCooldown = 0.2f; // Used to prevent another jump as the player is jumping up
+            private float _jumpCooldownTimer; // Same ^
+            private float _jumpForceTimer; // Used to calculate how long the jump key can be held down to jump higher
             
         #endregion
     
         private Vector2 _inputVector;
+        private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Item _equippedItem;
         private float _energyRegenTimer, _healthRegenTimer;
 
@@ -75,6 +78,7 @@ namespace Entities
             _transform = transform;
 
             InventoryManager.SlotSelected += EquipItem;
+            Physics2D.queriesHitTriggers = false;
         }
 
         private void Update()
@@ -100,9 +104,15 @@ namespace Entities
             if (CanControl)
             {
                 //transform.Translate(Vector3.right * (_inputVector.x * moveSpeed));
-                if (Rigidbody.velocity.magnitude < maxMoveSpeed)
+                
+                // Checking for velocity.x or y doesn't work because the player can face any direction and still be moving "right" in relation to themselves
+                // That's why we use a local velocity
+                var localVelocity = Rigidbody.GetVector(Rigidbody.velocity);
+                if ((_inputVector.x > 0 && localVelocity.x < maxMoveSpeed) ||
+                    (_inputVector.x < 0 && localVelocity.x > -maxMoveSpeed))
                 {
                     Rigidbody.AddForce(_transform.right * (_inputVector.x * accelerationSpeed));
+                    _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
                 _animator.SetBool("running", _inputVector.x != 0);
@@ -115,13 +125,33 @@ namespace Entities
             _inputVector.x = Input.GetAxis("Horizontal");
 
             // Jumping
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space))
             {
-                if (_jumping) return;
+                // OLD -----------
                 
-                Rigidbody.AddForce(_transform.up * jumpForce, ForceMode2D.Impulse);
-                _jumping = true;
-                _jumpCooldownTimer = JumpSafetyCooldown;
+                // if (_jumping) return;
+                //
+                // Rigidbody.AddForce(_transform.up * jumpForce, ForceMode2D.Impulse);
+                // _jumping = true;
+                // _jumpCooldownTimer = JumpSafetyCooldown;
+                
+                // ---------------
+
+                // Check if the jump key can be held to increase jump force
+                if (_jumpForceTimer < maxJumpForceTime)
+                {
+                    _jumpForceTimer += Time.deltaTime;
+
+                    if (!_jumping) _jumpCooldownTimer = JumpSafetyCooldown;
+                    _jumping = true;
+                    
+                    Rigidbody.AddForce(_transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.Space))
+            {
+                // Prevent adding jump force in the air if the jump key is released while jumping
+                _jumpForceTimer = maxJumpForceTime;
             }
             
             // Attacking
@@ -153,11 +183,23 @@ namespace Entities
                 return;
             }
         
-            var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
+            // var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
 
+            var hit = Physics2D.CircleCast(_transform.position, 0.2f, -_transform.up, 0.4f, 1 << LayerMask.NameToLayer("World"));
+            
             if (!hit) return;
-        
-            _jumping = false;
+            
+            _jumpForceTimer = 0;
+            
+            if (_jumping)
+            {
+                _jumping = false;
+                
+                // Set velocity when landing to keep horizontal momentum
+                var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
+                tempVel.x = _oldLocalVelocity.x;
+                Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
+            }
         }
 
         private void HandleInteraction()

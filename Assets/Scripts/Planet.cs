@@ -13,7 +13,8 @@ public class Planet : MonoBehaviour
     private void Start()
     {
         var atmosphereCollider = gameObject.AddComponent<CircleCollider2D>();
-        atmosphereCollider.radius = 1.28f * atmosphereRadius / radius;
+        // atmosphereCollider.radius = 1.28f * atmosphereRadius / radius;
+        atmosphereCollider.radius = atmosphereRadius;
         atmosphereCollider.isTrigger = true;
     }
 

@@ -6,6 +6,8 @@ public class CameraController : MonoBehaviour
     
     private void LateUpdate()
     {
+        if (!_planet) return;
+        
         var dirToPlanet = (_planet.transform.position - transform.position).normalized;
         transform.LookAt(transform.position + Vector3.forward, -dirToPlanet);
     }

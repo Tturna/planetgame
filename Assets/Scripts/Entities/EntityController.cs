@@ -37,7 +37,6 @@ namespace Entities
             {
                 if (CurrentPlanet)
                 {
-
                     var dirToPlanet = (CurrentPlanet.transform.position - transform.position).normalized;
 
                     // Gravity
