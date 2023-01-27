@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Inventory;
 using Inventory.Entities;
-using Unity.VisualScripting;
 
 namespace Entities
 {
@@ -61,16 +61,23 @@ namespace Entities
             private float _jumpForceTimer; // Used to calculate how long the jump key can be held down to jump higher
             
         #endregion
-    
+
+        public static PlayerController instance;
+        
         private Vector2 _inputVector;
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Item _equippedItem;
         private float _energyRegenTimer, _healthRegenTimer;
 
+        private void Awake()
+        {
+            instance = this;
+        }
+
         protected override void Start()
         {
             base.Start();
-
+            
             Physics2D.queriesHitTriggers = false;
         
             _animator = GetComponent<Animator>();

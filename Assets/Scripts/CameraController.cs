@@ -1,9 +1,18 @@
+using System;
+using Entities;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
     private GameObject _planet;
-    
+    private PlayerController _player;
+
+    private void Start()
+    {
+        _player = PlayerController.instance;
+        _player.OnEnteredPlanet += SetTargetPlanet;
+    }
+
     private void LateUpdate()
     {
         if (!_planet) return;
@@ -13,7 +22,7 @@ public class CameraController : MonoBehaviour
         transform.LookAt(trPos + Vector3.forward, -dirToPlanet);
     }
 
-    public void SetTargetPlanet(Planet planet)
+    private void SetTargetPlanet(Planet planet)
     {
         _planet = planet.gameObject;
     }

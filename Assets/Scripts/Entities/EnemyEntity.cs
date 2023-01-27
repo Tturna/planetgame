@@ -202,7 +202,7 @@ namespace Entities
             
             // Flash white
             _sr.material.SetFloat("_FlashAmount", .75f);
-            Utilities.Instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
+            Utilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
             
             // Update boss health UI
             if (enemySo.isBoss)

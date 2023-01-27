@@ -7,12 +7,10 @@ namespace ProcGen
     [RequireComponent(typeof(Planet))]
     public class PlanetGenerator : MonoBehaviour
     {
-        [SerializeField] GameObject debugCircle;
         [SerializeField] Material cellMaterial;
         [SerializeField] float diameter;
         [SerializeField] int xResolution;
         [SerializeField] int yResolution;
-        [SerializeField] bool makeDebugPoints;
         
         [Header("Outer Noise Settings")]
         [SerializeField] float xOrg;
@@ -33,9 +31,14 @@ namespace ProcGen
         [SerializeField] float surfaceNoiseScale;
         [SerializeField] float surfaceNoiseStrength;
         
+        [Header("Other")]
+        [SerializeField] GameObject debugCircle;
+        [SerializeField] bool makeDebugPoints;
+        
         private Point[] _pointField;
         private GameObject[] _debugCircles;
         private GameObject[] _cellField;
+        private Utilities _utilities;
 
         /*
      *      3 - (6) - 2
@@ -86,6 +89,7 @@ namespace ProcGen
                 }
             }
 
+            _utilities = Utilities.instance;
             CalculateMesh();
 
             // Local functions to clear up the for loop above
@@ -204,11 +208,6 @@ namespace ProcGen
             
             // Local functions to clear up the for loop above
             #region LocalFunctions
-
-            float InverseLerp(float a, float b, float v)
-            {
-                return (v - a) / (b - a);
-            }
             
             GameObject MakeCellParent()
             {
@@ -306,10 +305,10 @@ namespace ProcGen
                 // These points are later used to place edge points between corners SMOOTHLY.
                 var ts = new[]
                 {
-                    InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
-                    InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
-                    InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
-                    InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
+                    Utilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
+                    Utilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
+                    Utilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
+                    Utilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
                 };
                 
                 // var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel???)).ToArray();

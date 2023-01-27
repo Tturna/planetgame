@@ -7,12 +7,30 @@ namespace Entities
     {
         [SerializeField] private float gravityMultiplier;
         protected Planet CurrentPlanet { get; set; }
-
         public Rigidbody2D Rigidbody { get; set; }
-
         protected bool CalculatePhysics { get; private set; } = true;
         protected bool CanControl { get; private set; } = true;
         protected bool FollowPlanetRotation { get; private set; } = true;
+
+        #region Events
+        
+        public delegate void EnteredPlanetHandler(Planet enteredPlanet);
+        public delegate void ExitedPlanetHandler(Planet exitedPlanet);
+        
+        public event EnteredPlanetHandler OnEnteredPlanet;
+        public event ExitedPlanetHandler OnExitPlanet;
+
+        private void TriggerOnPlanetEntered(Planet enteredPlanet)
+        {
+            OnEnteredPlanet?.Invoke(enteredPlanet);
+        }
+        
+        private void TriggerOnPlanetExited(Planet exitedPlanet)
+        {
+            OnExitPlanet?.Invoke(exitedPlanet);
+        }
+        
+        #endregion
 
         protected virtual void Start()
         {
@@ -37,16 +55,17 @@ namespace Entities
             {
                 if (CurrentPlanet)
                 {
-                    var dirToPlanet = (CurrentPlanet.transform.position - transform.position).normalized;
+                    var trPos = transform.position;
+                    var dirToPlanet = (CurrentPlanet.transform.position - trPos).normalized;
 
                     // Gravity
-                    var planetGravity = CurrentPlanet.GetGravity(transform.position);
+                    var planetGravity = CurrentPlanet.GetGravity(trPos);
                     var totalGravity = planetGravity * gravityMultiplier;
-
+                    
                     Rigidbody.AddForce(dirToPlanet * totalGravity);
 
                     // Drag
-                    Rigidbody.drag = CurrentPlanet.GetDrag(transform.position);
+                    Rigidbody.drag = CurrentPlanet.GetDrag(trPos);
 
                     // Keep entity oriented in relation to the planet
                     if (FollowPlanetRotation)
@@ -68,18 +87,17 @@ namespace Entities
             {
                 CurrentPlanet = planet;
 
-                if (this is PlayerController)
-                {
-                    Camera.main!.GetComponent<CameraController>().SetTargetPlanet(CurrentPlanet);
-                }
+                TriggerOnPlanetEntered(CurrentPlanet);
             }
         }
 
         protected virtual void OnTriggerExit2D(Collider2D other)
         {
-            if (other.gameObject.TryGetComponent<Planet>(out _))
+            if (other.gameObject.TryGetComponent<Planet>(out var planet))
             {
                 CurrentPlanet = null;
+                
+                TriggerOnPlanetExited(planet);
             }
         }
     }

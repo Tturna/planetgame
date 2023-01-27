@@ -49,7 +49,7 @@ namespace Entities
 
             if (attackDelay > 0)
             {
-                Utilities.Instance.DelayExecute(Action, attackDelay);
+                Utilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {
@@ -66,7 +66,7 @@ namespace Entities
 
             if (attackDelay > 0)
             {
-                Utilities.Instance.DelayExecute(Action, attackDelay);
+                Utilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {

@@ -10,7 +10,7 @@ namespace Inventory.Item_Logic
         
         public override void Attack(GameObject equippedItemObject, Item attackItem, bool flipY)
         {
-            _utilities ??= Utilities.Instance;
+            _utilities ??= Utilities.instance;
             _projectilePrefab ??= _utilities.GetProjectilePrefab();
             
             // Spawn projectile
@@ -18,7 +18,7 @@ namespace Inventory.Item_Logic
             var pos = (Vector2)equippedItemObject.transform.position;
             var rot = equippedItemObject.transform.eulerAngles;
             
-            var projectile = _utilities.Spawn(_projectilePrefab, pos, rot, equippedItemObject.transform);
+            var projectile = Utilities.Spawn(_projectilePrefab, pos, rot, equippedItemObject.transform);
 
             // Set projectile position to muzzle position
             var localPos = weaponSo.muzzlePosition;

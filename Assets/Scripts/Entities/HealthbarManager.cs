@@ -105,7 +105,7 @@ namespace Entities
             {
                 //TODO: Check if other bosses are alive
                 _fWhiteBar.fillAmount = 0;
-                Utilities.Instance.DelayExecute(() => _focusedBossHealth.SetActive(false), 7);
+                Utilities.instance.DelayExecute(() => _focusedBossHealth.SetActive(false), 7);
             }
         }
 
