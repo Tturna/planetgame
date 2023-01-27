@@ -3,9 +3,9 @@
 namespace Entities
 {
     [CreateAssetMenu(fileName = "Enemy", menuName = "SO/Enemy")]
-    public class EnemySO : ScriptableObject
+    public class EnemySo : ScriptableObject
     {
-        public string name;
+        public string enemyName;
         public float maxHealth;
         public float health;
         public float contactDamage;

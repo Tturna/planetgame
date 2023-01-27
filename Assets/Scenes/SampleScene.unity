@@ -2526,7 +2526,7 @@ MonoBehaviour:
   diameter: 128
   xResolution: 200
   yResolution: 200
-  makePoints: 1
+  makeDebugPoints: 0
   xOrg: 50
   yOrg: 50
   noiseScale: 30

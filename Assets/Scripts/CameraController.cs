@@ -7,9 +7,10 @@ public class CameraController : MonoBehaviour
     private void LateUpdate()
     {
         if (!_planet) return;
-        
-        var dirToPlanet = (_planet.transform.position - transform.position).normalized;
-        transform.LookAt(transform.position + Vector3.forward, -dirToPlanet);
+
+        var trPos = transform.position;
+        var dirToPlanet = (_planet.transform.position - trPos).normalized;
+        transform.LookAt(trPos + Vector3.forward, -dirToPlanet);
     }
 
     public void SetTargetPlanet(Planet planet)

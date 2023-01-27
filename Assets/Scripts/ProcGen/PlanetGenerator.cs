@@ -302,7 +302,17 @@ namespace ProcGen
                 };
             
                 // Inverse Lerping
-                var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel)).ToArray();
+                // This is to find the relative point of the average isolevel between the corners.
+                // These points are later used to place edge points between corners SMOOTHLY.
+                var ts = new[]
+                {
+                    InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
+                    InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
+                    InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
+                    InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
+                };
+                
+                // var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel???)).ToArray();
                 
                 // Fix lerp t direction when going from bright areas to dark areas
                 // Without this, some surfaces are fucked
@@ -313,8 +323,8 @@ namespace ProcGen
             
                 #endregion
 
-                // Make a vertex list from the corner vertices above
-                // Add edges and use ts for linear interpolation
+                // Make a vertex list from the corner vertices above.
+                // Add edge points and use ts for linear interpolation to make terrain smooth.
                 var vertices = new[] {
                     bl.position,
                     br.position,
@@ -325,7 +335,7 @@ namespace ProcGen
                     Vector3.Lerp(tl.position, tr.position, ts[2]),
                     Vector3.Lerp(bl.position, tl.position, ts[3])
                 };
-
+                
                 GenerateCell(idx, vertices, _triTable[byteIndex]);
             }
 

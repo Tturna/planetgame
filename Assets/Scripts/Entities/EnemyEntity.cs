@@ -10,7 +10,7 @@ namespace Entities
     [RequireComponent(typeof(Rigidbody2D))]
     public class EnemyEntity : EntityController, IDamageable
     {
-        [SerializeField] private EnemySO enemySo;
+        [SerializeField] private EnemySo enemySo;
         
         public Vector3 relativeMoveDirection, globalMoveDirection;
         
