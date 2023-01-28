@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Planet
   - Item
+  - Fog
   layers:
   - Default
   - TransparentFX
@@ -45,4 +46,7 @@ TagManager:
     locked: 0
   - name: Idk funi
     uniqueID: 1264380977
+    locked: 0
+  - name: Healthbars
+    uniqueID: 3466986709
     locked: 0

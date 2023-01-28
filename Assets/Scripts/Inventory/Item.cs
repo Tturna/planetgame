@@ -7,7 +7,7 @@ namespace Inventory
     public class Item
     {
         public ItemSo itemSo;
-        public ItemLogicBase LogicScript;
+        public ItemLogicBase logicScript;
         
         //public Item() {}
 
@@ -15,11 +15,11 @@ namespace Inventory
         public Item(Item source)
         {
             itemSo = source.itemSo;
-            LogicScript = null;
+            logicScript = null;
             
             if (itemSo is WeaponSo so)
             {
-                LogicScript = ItemLogic.GetScript(so.logicCode);
+                logicScript = ItemLogic.GetScript(so.logicCode);
             }
         }
     }

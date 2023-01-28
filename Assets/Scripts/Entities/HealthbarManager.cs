@@ -45,7 +45,8 @@ namespace Entities
             
             var childSr = _child.AddComponent<SpriteRenderer>();
             childSr.sprite = _isBoss ? bgBoss : bgNormal;
-            childSr.sortingOrder = 5;
+            childSr.sortingLayerID = SortingLayer.NameToID("Healthbars");
+            childSr.sortingOrder = 0;
             
             // Create white bar as child of bg
             _whiteBarObject = new GameObject("White Bar");
@@ -54,7 +55,8 @@ namespace Entities
 
             childSr = _whiteBarObject.AddComponent<SpriteRenderer>();
             childSr.sprite = _isBoss ? whiteBarBoss : whiteBarNormal;
-            childSr.sortingOrder = 6;
+            childSr.sortingLayerID = SortingLayer.NameToID("Healthbars");
+            childSr.sortingOrder = 1;
             
             // Create actual bar as child of bg
             _actualBarObject = new GameObject("Actual Bar");
@@ -63,7 +65,8 @@ namespace Entities
 
             childSr = _actualBarObject.AddComponent<SpriteRenderer>();
             childSr.sprite = _isBoss ? actualBarBoss : actualBarNormal;
-            childSr.sortingOrder = 7;
+            childSr.sortingLayerID = SortingLayer.NameToID("Healthbars");
+            childSr.sortingOrder = 2;
             
             // If this is a boss, set up the big boss UI health
             if (!isBoss) return;

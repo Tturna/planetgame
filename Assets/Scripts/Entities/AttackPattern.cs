@@ -38,6 +38,8 @@ namespace Entities
         {
             void Action()
             {
+                if (!enemy) return; // Check if enemy is dead
+                
                 var dir = enemy.GetVectorToPlayer().normalized;
 
                 var hit = Physics2D.Raycast(enemy.transform.position, dir, attackDistance, 1);

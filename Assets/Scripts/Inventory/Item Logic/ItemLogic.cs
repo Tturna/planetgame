@@ -11,10 +11,12 @@ namespace Inventory.Item_Logic
     {
         public enum LogicCode
         {
-            Gun = 0
+            None = 0,
+            Gun = 1
         }
 
         private static readonly ItemLogicBase[] Scripts = {
+            null,
             new GunLogic()
         };
 

@@ -13,7 +13,6 @@ namespace Entities
         #region Serialized Fields
         
             [Header("Components")]
-            [SerializeField] private SpriteRenderer handsSr;
             [SerializeField] private Animator handsAnimator;
             [SerializeField] private GameObject equippedItemObject;
         
@@ -38,10 +37,9 @@ namespace Entities
         #region Unserialized Components
         
             private SpriteRenderer _sr;
-            private Animator _animator;
-            private Animator _recoilAnimator;
-            private Transform _itemAnchor;
-            private Transform _recoilAnchor;
+            private Animator _animator, _recoilAnimator;
+            private Transform _itemAnchor, _recoilAnchor;
+            private Transform _handsParent, _handLeft, _handRight;
             private SpriteRenderer _equippedSr;
             private CameraController _camControl;
             
@@ -91,6 +89,10 @@ namespace Entities
             _recoilAnimator = _recoilAnchor.GetComponent<Animator>();
 
             _camControl = GetComponentInChildren<CameraController>();
+            
+            _handsParent = handsAnimator.transform;
+            _handLeft = _handsParent.GetChild(0).GetChild(0);
+            _handRight = _handsParent.GetChild(1).GetChild(0);
 
             InventoryManager.SlotSelected += EquipItem;
             Physics2D.queriesHitTriggers = false;
@@ -104,12 +106,13 @@ namespace Entities
             if (!CanControl) return;
             
             HandleControls();
-            HandleItemAiming();
             HandleStatsRegeneration();
 
-            if (_inputVector.x == 0) return;
-            _sr.flipX = _inputVector.x > 0;
-            handsSr.flipX = _inputVector.x > 0;
+            var mouseDirection = GetDirectionToMouse();
+            var cursorAngle = GetCursorAngle(mouseDirection);
+            
+            HandleItemAiming(mouseDirection, cursorAngle);
+            HandlePlayerFlipping(cursorAngle);
         }
 
         protected override void FixedUpdate()
@@ -176,18 +179,16 @@ namespace Entities
             }
             
             // Attacking
-            else if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 Attack();
             }
         }
 
-        private void HandleItemAiming()
+        private void HandleItemAiming(Vector3 directionToMouse, float cursorAngle)
         {
             var trForward = transform.forward;
-            
-            var mousePosition = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
-            var directionToMouse = (mousePosition - transform.position).normalized;
+
             var cross = Vector3.Cross(-trForward, directionToMouse);
             _itemAnchor.LookAt( transform.position - trForward, cross);
 
@@ -197,10 +198,31 @@ namespace Entities
             
             // Flip the object when aiming right
             // We do this because otherwise the recoil animation is flipped
-            var angle = Vector3.Angle(transform.right, directionToMouse);
             var scale = _recoilAnchor.localScale;
-            scale.y = angle < 90 ? -1f : 1f;
+            scale.y = cursorAngle < 90 ? -1f : 1f;
             _itemAnchor.localScale = scale;
+            
+            // Manually set left hand position when holding an item
+            if (_equippedItem != null)
+            {
+                handsAnimator.SetLayerWeight(1, 0f);
+
+                var relativeOffset = _equippedItem.itemSo.handPositionOffset;
+                var itemRight = equippedItemObject.transform.right;
+                var itemUp = equippedItemObject.transform.up;
+                
+                var x = itemRight * relativeOffset.x;
+                var y = itemUp * (relativeOffset.y * (cursorAngle < 90 ? -1f : 1f));
+                
+                var offset = x + y;
+
+                _handLeft.position = equippedItemObject.transform.position + offset;
+            }
+            else
+            {
+                handsAnimator.SetLayerWeight(1, 1f);
+                _handLeft.localPosition = Vector3.zero;
+            }
         }
 
         private void HandleGroundCheck()
@@ -283,6 +305,19 @@ namespace Entities
             }
         }
 
+        private void HandlePlayerFlipping(float cursorAngle)
+        {
+            // if (_inputVector.x == 0) return;
+            // _sr.flipX = _inputVector.x > 0;
+
+            _sr.flipX = cursorAngle < 90;
+            
+            var scale = _handsParent.localScale;
+            // scale.x = _inputVector.x > 0 ? -1f : 1f;
+            scale.x = cursorAngle < 90 ? -1f : 1f;
+            _handsParent.localScale = scale;
+        }
+
         private Interactable GetClosestInteractable()
         {
             var closest = _interactablesInRange[0];
@@ -304,7 +339,7 @@ namespace Entities
         public override void ToggleSpriteRenderer(bool state)
         {
             _sr.enabled = state;
-            handsSr.enabled = state;
+            _handsParent.gameObject.SetActive(state);
         }
 
         private void EquipItem(Item item)
@@ -332,7 +367,7 @@ namespace Entities
             }
 
             // Attack
-            _equippedItem.LogicScript.Attack(equippedItemObject, _equippedItem, _equippedSr.flipY);
+            _equippedItem.logicScript.Attack(equippedItemObject, _equippedItem, _equippedSr.flipY);
 
             // Update energy
             energy = Mathf.Clamp(energy - weaponSo.energyCost, 0, maxEnergy);
@@ -357,6 +392,17 @@ namespace Entities
         private void NoEnergy()
         {
             throw new NotImplementedException();
+        }
+
+        private Vector3 GetDirectionToMouse()
+        {
+            var mousePosition = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            return (mousePosition - transform.position).normalized;
+        }
+
+        private float GetCursorAngle(Vector3 directionToMouse)
+        {
+            return Vector3.Angle(transform.right, directionToMouse);
         }
         
         public void TakeDamage(float amount)

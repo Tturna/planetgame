@@ -61,7 +61,7 @@ AnimatorState:
   m_PrefabAsset: {fileID: 0}
   m_Name: player_run
   m_Speed: 1
-  m_CycleOffset: 0
+  m_CycleOffset: 0.5
   m_Transitions:
   - {fileID: 4202364411659844485}
   m_StateMachineBehaviours: []

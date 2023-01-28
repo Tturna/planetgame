@@ -200,10 +200,6 @@ namespace Entities
             _health = Mathf.Clamp(_health - amount, 0, _maxHealth);
             _healthbarManager.UpdateHealthbar(_health, _maxHealth);
             
-            // Flash white
-            _sr.material.SetFloat("_FlashAmount", .75f);
-            Utilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
-            
             // Update boss health UI
             if (enemySo.isBoss)
             {
@@ -212,7 +208,15 @@ namespace Entities
             
             //TODO: damage numbers
             
-            if (_health <= 0) Death();
+            if (_health <= 0)
+            {
+                Death();
+                return;
+            }
+
+            // Flash white
+            _sr.material.SetFloat("_FlashAmount", .75f);
+            Utilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
