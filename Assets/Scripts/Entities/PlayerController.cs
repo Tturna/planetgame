@@ -39,9 +39,11 @@ namespace Entities
         
             private SpriteRenderer _sr;
             private Animator _animator;
+            private Animator _recoilAnimator;
             private Transform _itemAnchor;
-            private Transform _transform;
+            private Transform _recoilAnchor;
             private SpriteRenderer _equippedSr;
+            private CameraController _camControl;
             
         #endregion
 
@@ -82,9 +84,13 @@ namespace Entities
         
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
-            _itemAnchor = equippedItemObject.transform.parent;
             _equippedSr = equippedItemObject.GetComponent<SpriteRenderer>();
-            _transform = transform;
+
+            _recoilAnchor = equippedItemObject.transform.parent;
+            _itemAnchor = _recoilAnchor.parent;
+            _recoilAnimator = _recoilAnchor.GetComponent<Animator>();
+
+            _camControl = GetComponentInChildren<CameraController>();
 
             InventoryManager.SlotSelected += EquipItem;
             Physics2D.queriesHitTriggers = false;
@@ -120,7 +126,7 @@ namespace Entities
                 if ((_inputVector.x > 0 && localVelocity.x < maxMoveSpeed) ||
                     (_inputVector.x < 0 && localVelocity.x > -maxMoveSpeed))
                 {
-                    Rigidbody.AddForce(_transform.right * (_inputVector.x * accelerationSpeed));
+                    Rigidbody.AddForce(transform.right * (_inputVector.x * accelerationSpeed));
                     _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
@@ -160,7 +166,7 @@ namespace Entities
                     if (!_jumping) _jumpCooldownTimer = JumpSafetyCooldown;
                     _jumping = true;
                     
-                    Rigidbody.AddForce(_transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
+                    Rigidbody.AddForce(transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
                 }
             }
             else if (Input.GetKeyUp(KeyCode.Space))
@@ -177,15 +183,24 @@ namespace Entities
         }
 
         private void HandleItemAiming()
-        {        
+        {
+            var trForward = transform.forward;
+            
             var mousePosition = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
-            var directionToMouse = (mousePosition - _transform.position).normalized;
-            var cross = Vector3.Cross(-_transform.forward, directionToMouse);
-            _itemAnchor.LookAt( transform.position - _transform.forward, cross);
+            var directionToMouse = (mousePosition - transform.position).normalized;
+            var cross = Vector3.Cross(-trForward, directionToMouse);
+            _itemAnchor.LookAt( transform.position - trForward, cross);
 
             // Flip sprite when aiming right
+            // var angle = Vector3.Angle(transform.right, directionToMouse);
+            // _equippedSr.flipY = angle < 90;
+            
+            // Flip the object when aiming right
+            // We do this because otherwise the recoil animation is flipped
             var angle = Vector3.Angle(transform.right, directionToMouse);
-            _equippedSr.flipY = angle < 90;
+            var scale = _recoilAnchor.localScale;
+            scale.y = angle < 90 ? -1f : 1f;
+            _itemAnchor.localScale = scale;
         }
 
         private void HandleGroundCheck()
@@ -200,7 +215,7 @@ namespace Entities
         
             // var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
 
-            var hit = Physics2D.CircleCast(_transform.position, 0.2f, -_transform.up, 0.4f, 1 << LayerMask.NameToLayer("World"));
+            var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, 1 << LayerMask.NameToLayer("World"));
             
             if (!hit) return;
             
@@ -274,8 +289,8 @@ namespace Entities
 
             foreach (var interactable in _interactablesInRange)
             {
-                var distToCurrent = (closest.transform.position - _transform.position).magnitude;
-                var distToNew = (interactable.transform.position - _transform.position).magnitude;
+                var distToCurrent = (closest.transform.position - transform.position).magnitude;
+                var distToNew = (interactable.transform.position - transform.position).magnitude;
 
                 if (distToNew < distToCurrent)
                 {
@@ -310,24 +325,40 @@ namespace Entities
         {
             if (_equippedItem?.itemSo is not WeaponSo weaponSo) return;
 
-            if (energy > weaponSo.energyCost)
+            if (!(energy > weaponSo.energyCost))
             {
-                // Attack
-                _equippedItem.LogicScript.Attack(equippedItemObject, _equippedItem, _equippedSr.flipY);
+                NoEnergy();
+                return;
+            }
 
-                // Update energy
-                energy = Mathf.Clamp(energy - weaponSo.energyCost, 0, maxEnergy);
-                _energyRegenTimer = energyRegenDelay;
-                StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
+            // Attack
+            _equippedItem.LogicScript.Attack(equippedItemObject, _equippedItem, _equippedSr.flipY);
+
+            // Update energy
+            energy = Mathf.Clamp(energy - weaponSo.energyCost, 0, maxEnergy);
+            _energyRegenTimer = energyRegenDelay;
+            StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
                 
-                //TODO: Recoil
-            }
-            else
-            {
-                Debug.Log("No energy!");
-            }
+            // Recoil
+            _recoilAnimator.SetLayerWeight(1, weaponSo.recoilHorizontal);
+            _recoilAnimator.SetLayerWeight(2, weaponSo.recoilAngular);
+            _recoilAnimator.SetFloat("recoil_shpeed_horizontal", weaponSo.recoilSpeedHorizontal);
+            _recoilAnimator.SetFloat("recoil_shpeed_angular", weaponSo.recoilSpeedAngular);
+            _recoilAnimator.SetTrigger("recoil");
+            
+            // Player recoil
+            var recoilDirection = -_itemAnchor.right;
+            Rigidbody.AddForce(recoilDirection * weaponSo.playerRecoilStrength, ForceMode2D.Impulse);
+            
+            // Camera shake
+            _camControl.CameraShake(weaponSo.cameraShakeTime, weaponSo.cameraShakeStrength);
         }
 
+        private void NoEnergy()
+        {
+            throw new NotImplementedException();
+        }
+        
         public void TakeDamage(float amount)
         {
             health = Mathf.Clamp(health - amount, 0, maxHealth);

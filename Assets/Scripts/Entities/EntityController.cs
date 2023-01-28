@@ -62,6 +62,8 @@ namespace Entities
                     var planetGravity = CurrentPlanet.GetGravity(trPos);
                     var totalGravity = planetGravity * gravityMultiplier;
                     
+                    // if (this is PlayerController) Debug.Log(totalGravity);
+                    
                     Rigidbody.AddForce(dirToPlanet * totalGravity);
 
                     // Drag

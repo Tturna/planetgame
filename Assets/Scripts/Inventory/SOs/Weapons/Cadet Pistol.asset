@@ -27,3 +27,10 @@ MonoBehaviour:
     canHurtPlayer: 0
   muzzlePosition: {x: 0.55, y: 0.15}
   energyCost: 5
+  recoilHorizontal: 0.589
+  recoilAngular: 0.711
+  recoilSpeedHorizontal: 1.25
+  recoilSpeedAngular: 1
+  cameraShakeTime: 0.1
+  cameraShakeStrength: 0.025
+  playerRecoilStrength: 0
