@@ -29,5 +29,6 @@ namespace Inventory
         public new string name;
         public int maxStack;
         public Sprite sprite;
+        public Vector2 handPositionOffset;
     }
 }

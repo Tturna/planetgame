@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Inventory
@@ -12,6 +11,16 @@ namespace Inventory
     {
         internal Item item;
         internal int stack;
+        internal bool isInStash;
+        internal int index;
+
+        internal Slot(int index)
+        {
+            item = default;
+            stack = default;
+            isInStash = default;
+            this.index = index;
+        }
     }
 
     public class InventoryManager : MonoBehaviour
@@ -53,7 +62,19 @@ namespace Inventory
             _mouseSlotObject = inventoryObject.transform.GetChild(2).gameObject;
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
-            _mouseSlot = new Slot();
+            _mouseSlot = new Slot(-1);
+
+            // Initialize values for slots
+            for (var i = 0; i < _stashSlots.Length; i++)
+            {
+                if (i < _hotSlots.Length)
+                {
+                    _hotSlots[i].index = i;
+                }
+
+                _stashSlots[i].index = i;
+                _stashSlots[i].isInStash = true;
+            }
             
             SelectSlot(_selectedIndex);
             _stashObject.SetActive(false);
@@ -63,7 +84,6 @@ namespace Inventory
         private void Update()
         {
             // Check controls
-
             scrollDelta = Input.mouseScrollDelta.y;
 
             if (scrollDelta != 0)
@@ -78,11 +98,9 @@ namespace Inventory
             // Check for number keys
             for (var i = 1; i <= 8; i++)
             {
-                if (Input.GetKeyDown(i.ToString()))
-                {
-                    DeselectSlot(_selectedIndex);
-                    SelectSlot(i - 1);
-                }
+                if (!Input.GetKeyDown(i.ToString())) continue;
+                DeselectSlot(_selectedIndex);
+                SelectSlot(i - 1);
             }
             
             // Check for inventory switch
@@ -94,155 +112,156 @@ namespace Inventory
             // Make mouse slot follow the cursor
             _mouseSlotObject.transform.position = Input.mousePosition;
             
-            // Check if clicking on slots
             if (Input.GetMouseButtonDown(0))
             {
-                // TODO: Better thing for checking pointer event data. currently kinda WET
+                // Check if grabbing item, swapping item, putting down item or dropping a stack.
+                var clickedSlotObject = GetHoveringSlotObject();
+                var success = GetSlotFromObject(clickedSlotObject, out var slot);
+                if (!success) return;
+
+                HandleMouseOne(ref slot, clickedSlotObject);
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                // Check if splitting stacks or dropping single items.
+                var clickedSlotObject = GetHoveringSlotObject();
+                var success = GetSlotFromObject(clickedSlotObject, out var slot);
+                if (!success) return;
                 
-                var pointerData = new PointerEventData(EventSystem.current)
-                {
-                    position = Input.mousePosition
-                };
+                HandleMouseTwo(ref slot, clickedSlotObject);
+            }
+        }
+
+        private static void HandleMouseOne(ref Slot slot, GameObject clickedSlotObject)
+        {
+            if (!clickedSlotObject) return;
             
-                var results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
-
-                var clickedObject = results.Find(x => x.gameObject.name.ToLower().Contains("slot")).gameObject;
-
-                if (clickedObject)
+            // Check if both mouse slot and clicked slot have an item
+            if (_mouseSlot.stack > 0 && slot.stack > 0)
+            {
+                // if so, check if they're the same
+                if (slot.item.itemSo.id == _mouseSlot.item.itemSo.id)
                 {
-                    var isStash = clickedObject.transform.parent.gameObject == _stashObject;
-
-                    var index = isStash
-                        ? Array.FindIndex(_stashSlotObjects, x => x == clickedObject.transform)
-                        : Array.FindIndex(_hotSlotObjects, x => x == clickedObject.transform);
-                
-                    if (index > -1)
+                    // if so, put the whole stack from mouse slot to clicked slot, if it fits
+                    if (slot.stack < slot.item.itemSo.maxStack)
                     {
-                        SwapMouseSlot(index, isStash);
+                        var amount = _mouseSlot.stack;
+
+                        if (slot.stack + amount > slot.item.itemSo.maxStack)
+                        {
+                            amount = slot.item.itemSo.maxStack - slot.stack;
+                        }
+
+                        slot.stack += amount;
+                        _mouseSlot.stack -= amount;
+
+                        if (_mouseSlot.stack == 0)
+                        {
+                            _mouseSlot = new Slot();
+                        }
+                        
+                        UpdateLogicalSlot(slot);
+                        UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
+                        UpdateMouseSlotGraphics();
+
+                        return;
                     }
                 }
             }
-            
-            // Check if splitting stacks or dropping single items
-            if (Input.GetMouseButtonDown(1))
+
+            SwapMouseSlot(ref slot, clickedSlotObject);
+        }
+        
+        private static void HandleMouseTwo(ref Slot slot, GameObject clickedSlotObject)
+        {
+            // If mouse slot has an item...
+            if (_mouseSlot.stack > 0)
             {
-                var pointerData = new PointerEventData(EventSystem.current)
+                if (!clickedSlotObject)
                 {
-                    position = Input.mousePosition
-                };
-                
-                var results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
-                var clickedObject = results.Find(x => x.gameObject.name.ToLower().Contains("slot")).gameObject;
-                
-                // If mouse slot has an item...
-                if (_mouseSlot.stack > 0)
-                {
-                    if (clickedObject)
-                    {
-                        var isStash = clickedObject.transform.parent.gameObject == _stashObject;
-
-                        var index = isStash
-                            ? Array.FindIndex(_stashSlotObjects, x => x == clickedObject.transform)
-                            : Array.FindIndex(_hotSlotObjects, x => x == clickedObject.transform);
-
-                        if (index <= -1) return;
+                    // If mouse slot has items and right click hit nothing, drop 1 item
+                    // TODO: Drop 1 item
+                    return;
+                }
                         
-                        var segment = isStash ? _stashSlots : _hotSlots;
+                // check if clicked slot has items
+                if (slot.stack > 0)
+                {
+                    // if so, check if it's the same as what is in the mouse slot
+                    if (slot.item.itemSo.id == _mouseSlot.item.itemSo.id)
+                    {
+                        // if so, add 1 to the clicked slot
+                        if (slot.stack >= slot.item.itemSo.maxStack) return;
+                        
+                        slot.stack++;
+                        _mouseSlot.stack--;
+
+                        if (_mouseSlot.stack == 0)
+                        {
+                            _mouseSlot = new Slot();
+                        }
                             
-                        // check if clicked slot has items
-                        if (segment[index].stack > 0)
-                        {
-                            // if so, check if it's the same as what is in the mouse slot
-                            if (segment[index].item.itemSo.id == _mouseSlot.item.itemSo.id)
-                            {
-                                // if so, add 1 to the clicked slot
-                                if (segment[index].stack < segment[index].item.itemSo.maxStack)
-                                {
-                                    segment[index].stack++;
-                                            
-                                    // Reduce 1 from the mouse slot
-                                    _mouseSlot.stack--;
-
-                                    if (_mouseSlot.stack == 0)
-                                    {
-                                        _mouseSlot = new Slot();
-                                                
-                                        // Update graphics
-                                    }
-                                }
-                            }
-                            // if the item is not the same, do nothing
-                        }
-                        else
-                        {
-                            // if there is no item, add 1 to the empty slot
-                            segment[index] = _mouseSlot;
-                            segment[index].stack = 1;
-                                    
-                            // Reduce 1 from the mouse slot
-                            _mouseSlot.stack--;
-
-                            if (_mouseSlot.stack == 0)
-                            {
-                                _mouseSlot = new Slot();
-                                                
-                                // Update graphics
-                            }
-                        }
-
-                        if (isStash) _stashSlots = segment;
-                        else _hotSlots = segment;
+                        UpdateLogicalSlot(slot);
+                        UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
+                        UpdateMouseSlotGraphics();
                     }
                     else
                     {
-                        // TODO: Drop 1 item
+                        // if the item is not the same, swap stacks
+                        SwapMouseSlot(ref slot, clickedSlotObject);
                     }
                 }
                 else
                 {
-                    // if clicked slot has items
-                    if (clickedObject)
+                    // if clicked slot has no item, add 1 to the empty slot
+                    var index = slot.index;
+                    slot = _mouseSlot;
+                    slot.index = index;
+                    slot.stack = 1;
+                                
+                    // Reduce 1 from the mouse slot
+                    _mouseSlot.stack--;
+
+                    if (_mouseSlot.stack == 0)
                     {
-                        var isStash = clickedObject.transform.parent.gameObject == _stashObject;
-
-                        var index = isStash
-                            ? Array.FindIndex(_stashSlotObjects, x => x == clickedObject.transform)
-                            : Array.FindIndex(_hotSlotObjects, x => x == clickedObject.transform);
-
-                        if (index <= -1) return;
-                        
-                        var segment = isStash ? _stashSlots : _hotSlots;
-                        
-                        // grab half
-                        var half = Mathf.CeilToInt(segment[index].stack / 2f);
-
-                        if (_mouseSlot.stack + half > _mouseSlot.item.itemSo.maxStack)
-                        {
-                            half = _mouseSlot.item.itemSo.maxStack - _mouseSlot.stack;
-                        }
-
-                        segment[index].stack -= half;
-                        _mouseSlot = segment[index];
-                        _mouseSlot.stack = half;
-
-                        if (segment[index].stack == 0)
-                        {
-                            segment[index] = new Slot();
-                        }
-                        
-                        // Update graphics
-
-                        if (isStash) _stashSlots = segment;
-                        else _hotSlots = segment;
+                        _mouseSlot = new Slot(-1);
                     }
                     
-                    // if not, do nothing
+                    UpdateLogicalSlot(slot);
+                    UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
+                    UpdateMouseSlotGraphics();
                 }
             }
-        }
+            else
+            {
+                // if mouse slot has no items, check if clicking on a slot
+                if (!clickedSlotObject) return;
+                if (slot.stack <= 0) return;
+                
+                // If clicked slot has items, grab half
+                var half = Mathf.CeilToInt(slot.stack / 2f);
 
+                slot.stack -= half;
+                _mouseSlot = slot;
+                _mouseSlot.stack = half;
+                _mouseSlot.index = -1;
+
+                if (slot.stack == 0)
+                {
+                    slot = new Slot(slot.index);
+
+                    if (_selectedIndex == slot.index)
+                    {
+                        // TODO: Unequip an item if you take it from the equipped slot
+                    }
+                }
+                
+                UpdateLogicalSlot(slot);
+                UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
+                UpdateMouseSlotGraphics();
+            }
+        }
+        
         public static bool AddItem(Item item)
         {
             // Copy item
@@ -264,17 +283,8 @@ namespace Inventory
             // Add item to slot with space
             segmentSlots = AddToStack(segmentSlots, index, copy);
 
-            var slotItem = segmentObjects[index].GetChild(0).gameObject;
-            var img = slotItem.GetComponent<Image>();
-            img.color = Color.white;
-            img.sprite = copy.itemSo.sprite;
-            img.SetNativeSize();
-
-            var stackObject = segmentObjects[index].GetChild(1).gameObject;
-            var text = stackObject.GetComponent<TextMeshProUGUI>();
-            var stack = segmentSlots[index].stack;
-            text.text = stack > 1 ? stack.ToString() : "";
-
+            UpdateSlotGraphics(ref segmentSlots[index], segmentObjects[index]);
+            
             // Update the inventory variables using the temporary variables. Required because structs are value types.
             if (isStash)
             {
@@ -291,74 +301,19 @@ namespace Inventory
             return true;
         }
 
-        private static void SwapMouseSlot(int clickedIndex, bool isStash)
+        private static void SwapMouseSlot(ref Slot slot, GameObject clickedSlotObject)
         {
-            var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
-            var segmentSlots = isStash ? _stashSlots : _hotSlots;
-            
-            if (isStash)
-            {
-                (_mouseSlot, _stashSlots[clickedIndex]) = (_stashSlots[clickedIndex], _mouseSlot);
-            }
-            else
-            {
-                (_mouseSlot, _hotSlots[clickedIndex]) = (_hotSlots[clickedIndex], _mouseSlot);
-            }
-            
-            // Update item graphics
+            (_mouseSlot, slot) = (slot, _mouseSlot);
+            (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
 
-            // Mouse slot item
-            var itemImg = _mouseSlotObject.transform.GetChild(0).GetComponent<Image>();
-            itemImg.sprite = _mouseSlot.item?.itemSo.sprite;
-            itemImg.color = itemImg.sprite ? Color.white : Color.clear;
-            itemImg.SetNativeSize();
-
-            var itemStack = _mouseSlotObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-            var stack = _mouseSlot.stack;
-            itemStack.text = stack > 1 ? stack.ToString() : "";
-            
-            // Clicked slot item
-            itemImg = segmentObjects[clickedIndex].GetChild(0).GetComponent<Image>();
-            itemImg.sprite = segmentSlots[clickedIndex].item?.itemSo.sprite;
-            itemImg.color = itemImg.sprite ? Color.white : Color.clear;
-            itemImg.SetNativeSize();
-
-            itemStack = segmentObjects[clickedIndex].GetChild(1).GetComponent<TextMeshProUGUI>();
-            stack = segmentSlots[clickedIndex].stack;
-            itemStack.text = stack > 1 ? stack.ToString() : "";
-            
-            // Update slot graphics
-            var slotImg = segmentObjects[clickedIndex].GetComponent<Image>();
-            if (stack > 0)
+            if (_selectedIndex == slot.index && slot.item == null)
             {
-                if (_selectedIndex == clickedIndex && !isStash)
-                {
-                    slotImg.sprite = instance.filledSlotSelectedSprite;
-                }
-                else if (isStash)
-                {
-                    slotImg.sprite = instance.filledStashSprite;
-                }
-                else
-                {
-                    slotImg.sprite = instance.filledSlotSprite;
-                }
+                // TODO: Unequip an item if you take it from the equipped slot
             }
-            else
-            {
-                if (_selectedIndex == clickedIndex && !isStash)
-                {
-                    slotImg.sprite = instance.emptySlotSelectedSprite;
-                }
-                else if (isStash)
-                {
-                    slotImg.sprite = instance.emptyStashSprite;
-                }
-                else
-                {
-                    slotImg.sprite = instance.emptySlotSprite;
-                }
-            }
+
+            UpdateLogicalSlot(slot);
+            UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
+            UpdateMouseSlotGraphics();
         }
 
         public static bool HasSpaceForItem(Item item, out int availableIndex, out bool isStash)
@@ -426,6 +381,110 @@ namespace Inventory
         {
             var img = _hotSlotObjects[slotIndex].GetComponent<Image>();
             img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSprite : instance.emptySlotSprite;
+        }
+
+        private static void UpdateSlotGraphics(ref Slot slot, Transform slotObject)
+        {
+            // var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
+            // var segmentSlots = isStash ? _stashSlots : _hotSlots;
+            
+            // Slot item
+            var itemImg = slotObject.GetChild(0).GetComponent<Image>();
+            itemImg.sprite = slot.item?.itemSo.sprite;
+            itemImg.color = itemImg.sprite ? Color.white : Color.clear;
+            itemImg.SetNativeSize();
+
+            var itemStack = slotObject.GetChild(1).GetComponent<TextMeshProUGUI>();
+            var stack = slot.stack;
+            itemStack.text = stack > 1 ? stack.ToString() : "";
+            
+            // Update slot graphics
+            var slotImg = slotObject.GetComponent<Image>();
+            if (stack > 0)
+            {
+                if (_selectedIndex == slot.index && !slot.isInStash)
+                {
+                    slotImg.sprite = instance.filledSlotSelectedSprite;
+                }
+                else if (slot.isInStash)
+                {
+                    slotImg.sprite = instance.filledStashSprite;
+                }
+                else
+                {
+                    slotImg.sprite = instance.filledSlotSprite;
+                }
+            }
+            else
+            {
+                if (_selectedIndex == slot.index && !slot.isInStash)
+                {
+                    slotImg.sprite = instance.emptySlotSelectedSprite;
+                }
+                else if (slot.isInStash)
+                {
+                    slotImg.sprite = instance.emptyStashSprite;
+                }
+                else
+                {
+                    slotImg.sprite = instance.emptySlotSprite;
+                }
+            }
+        }
+
+        private static void UpdateMouseSlotGraphics()
+        {
+            var itemImg = _mouseSlotObject.transform.GetChild(0).GetComponent<Image>();
+            itemImg.sprite = _mouseSlot.item?.itemSo.sprite;
+            itemImg.color = itemImg.sprite ? Color.white : Color.clear;
+            itemImg.SetNativeSize();
+
+            var itemStack = _mouseSlotObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+            var stack = _mouseSlot.stack;
+            itemStack.text = stack > 1 ? stack.ToString() : "";
+        }
+
+        private static void UpdateLogicalSlot(Slot slot)
+        {
+            // Update inventory
+            if (slot.isInStash)
+            {
+                _stashSlots[slot.index] = slot;
+            }
+            else
+            {
+                _hotSlots[slot.index] = slot;
+            }
+        }
+        
+        /// <summary>
+        /// Get the GameObject of the UI element under the cursor where the GameObject name in lower case contains "slot". Returns null if not found.
+        /// </summary>
+        /// <returns>GameObject of UI slot or null</returns>
+        private static GameObject GetHoveringSlotObject()
+        {
+            var results = UIUtilities.MouseRaycast();
+            return results.Find(x => x.gameObject.name.ToLower().Contains("slot")).gameObject;
+        }
+
+        private static bool GetSlotFromObject(GameObject slotObject, out Slot slot)
+        {
+            if (!slotObject)
+            {
+                slot = new Slot();
+                return false;
+            }
+
+            var isStash = slotObject.transform.parent.gameObject == _stashObject;
+            var segment = isStash ? _stashSlots : _hotSlots;
+                
+            var slotIndex = isStash
+                ? Array.FindIndex(_stashSlotObjects, x => x == slotObject.transform)
+                : Array.FindIndex(_hotSlotObjects, x => x == slotObject.transform);
+
+            slot = segment[slotIndex];
+
+            return true;
         }
         
         private static void OnSlotSelected(Item slotItem)

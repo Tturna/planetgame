@@ -359,6 +359,7 @@ namespace Entities
         private void Attack()
         {
             if (_equippedItem?.itemSo is not WeaponSo weaponSo) return;
+            if (_equippedItem.logicScript == null) return;
 
             if (!(energy > weaponSo.energyCost))
             {
