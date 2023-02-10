@@ -1375,7 +1375,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 25
-  handsSr: {fileID: 1798997164}
   handsAnimator: {fileID: 1798997162}
   equippedItemObject: {fileID: 1167736327}
   accelerationSpeed: 25
@@ -1590,6 +1589,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 32
+  surfaceCameraBackground: {fileID: 0}
+  surfaceBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
   atmosphereRadius: 64
   maxDrag: 0.8
   maxGravityMultiplier: 1
@@ -1936,10 +1937,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryObject: {fileID: 1382503478}
+  itemPrefab: {fileID: 0}
+  itemTooltipObject: {fileID: 0}
   emptySlotSprite: {fileID: 754175486, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
   filledSlotSprite: {fileID: -1436522534, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
   emptySlotSelectedSprite: {fileID: 1268810055, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
   filledSlotSelectedSprite: {fileID: 1353101545, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
+  emptyStashSprite: {fileID: 0}
+  filledStashSprite: {fileID: 0}
 --- !u!4 &887436280
 Transform:
   m_ObjectHideFlags: 0
@@ -3301,6 +3306,7 @@ GameObject:
   - component: {fileID: 1502452797}
   - component: {fileID: 1502452796}
   - component: {fileID: 1502452795}
+  - component: {fileID: 1502452798}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3335,6 +3341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e4d92be38de3040a28421ec8657845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultCamPosition: {x: 0, y: 0, z: 0}
 --- !u!81 &1502452796
 AudioListener:
   m_ObjectHideFlags: 0
@@ -3386,6 +3393,20 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1502452798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502452793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 216e57689196048478771f1d625b2f4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pixelArtFilter: {fileID: 4800000, guid: 9db6e555143affb47b0af7aa36e6f89e, type: 3}
+  downSamples: 2
 --- !u!1 &1525421211
 GameObject:
   m_ObjectHideFlags: 0
@@ -3764,12 +3785,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 504971a180ae1ea42b08fa84b8ce2e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugCircle: {fileID: 1986575938}
   cellMaterial: {fileID: 2100000, guid: cb57d485792a0c845a13972bdf9fcb0b, type: 2}
   diameter: 128
   xResolution: 200
   yResolution: 200
-  makePoints: 0
   xOrg: 50
   yOrg: 50
   noiseScale: 30
@@ -3815,6 +3834,8 @@ MonoBehaviour:
   ySurfaceOrg: 0
   surfaceNoiseScale: 16
   surfaceNoiseStrength: 4
+  debugCircle: {fileID: 1986575938}
+  makeDebugPoints: 0
 --- !u!4 &1742544769
 Transform:
   m_ObjectHideFlags: 0
@@ -3843,6 +3864,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 64
+  surfaceCameraBackground: {fileID: 0}
+  surfaceBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
   atmosphereRadius: 128
   maxDrag: 0.8
   maxGravityMultiplier: 1

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,8 +28,11 @@ namespace Inventory
         [ScriptableObjectId]
         public string id;
         public new string name;
+        public string description;
         public int maxStack;
         public Sprite sprite;
         public Vector2 handPositionOffset;
+
+        // TODO: here something to choose which data to show in tooltips
     }
 }

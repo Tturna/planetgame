@@ -9,15 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 980b03ebfe586894d8a7af6006462d03, type: 3}
-  m_Name: Pickaxe
+  m_Script: {fileID: 11500000, guid: 141634844be79d049b52e6b888249506, type: 3}
+  m_Name: Cadet Pickaxe
   m_EditorClassIdentifier: 
-  id: be87e31b-a13d-49d9-b8ed-7af5555fe819
-  name: Pickaxe
+  id: 9736981b-3395-4f85-8e4a-b4a4ca945871
+  name: Cadet Pickaxe
+  description: 
   maxStack: 1
   sprite: {fileID: 21300000, guid: 43cd5acb6378e7243bb7c91dead40533, type: 3}
   handPositionOffset: {x: 0, y: 0}
   logicCode: 0
+  attackSpeed: 1
   projectile:
     sprite: {fileID: 0}
     projectileSpeed: 0
@@ -35,3 +37,4 @@ MonoBehaviour:
   cameraShakeTime: 0
   cameraShakeStrength: 0
   playerRecoilStrength: 0
+  toolPower: 1

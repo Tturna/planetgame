@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 8c65e9b0-1125-4597-8658-360427968f74
   name: Cadet Pistol
+  description: 
   maxStack: 1
   sprite: {fileID: 21300000, guid: 96515105b3fc83140809f6fb705128fc, type: 3}
   handPositionOffset: {x: -0.2, y: -0.1}
   logicCode: 1
+  attackSpeed: 1
   projectile:
     sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
     projectileSpeed: 15

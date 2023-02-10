@@ -7,6 +7,7 @@ namespace Inventory
     public class WeaponSo : ItemSo
     {
         public ItemLogic.LogicCode logicCode;
+        public float attackSpeed;
         public ProjectileData projectile;
         public Vector2 muzzlePosition;
         public float energyCost;
