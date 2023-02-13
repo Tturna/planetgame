@@ -1,0 +1,91 @@
+#pragma kernel cs_main
+
+struct Point
+{
+    float x;
+    float y;
+    float value;
+    bool is_set;
+    float iso_level;
+};
+
+RWStructuredBuffer<Point> point_field;
+float resolution;
+float planet_diameter;
+float planet_radius;
+float surface_noise_strength;
+float surface_noise_scale;
+float2 core_position;
+float2 surface_noise_origin;
+
+// Unity's noise functions ------------------------------------------------------------------------
+float2 unity_gradient_noise_dir(float2 p)
+{
+    p = p % 289;
+    float x = (34 * p.x + 1) * p.x % 289 + p.y;
+    x = (34 * x + 1) * x % 289;
+    x = frac(x / 41) * 2 - 1;
+    return normalize(float2(x - floor(x + 0.5), abs(x) - 0.5));
+}
+
+float unity_gradient_noise(float2 p)
+{
+    const float2 ip = floor(p);
+    float2 fp = frac(p);
+    const float d00 = dot(unity_gradient_noise_dir(ip), fp);
+    const float d01 = dot(unity_gradient_noise_dir(ip + float2(0, 1)), fp - float2(0, 1));
+    const float d10 = dot(unity_gradient_noise_dir(ip + float2(1, 0)), fp - float2(1, 0));
+    const float d11 = dot(unity_gradient_noise_dir(ip + float2(1, 1)), fp - float2(1, 1));
+    fp = fp * fp * fp * (fp * (fp * 6 - 15) + 10);
+    return lerp(lerp(d00, d01, fp.y), lerp(d10, d11, fp.y), fp.x);
+}
+
+void unity_gradient_noise_float(const float2 uv, const float scale, out float Out)
+{
+    Out = unity_gradient_noise(uv * scale) + 0.5;
+}
+// Unity's noise functions ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+float2 get_point_relative_position(float2 coords)
+{
+    float x = coords.x * (planet_diameter / resolution) - planet_radius;
+    float y = coords.y * (planet_diameter / resolution) - planet_radius;
+    return float2(x, y);
+}
+
+float get_surface_point_addition(float2 coords)
+{
+    float xc = surface_noise_origin.x + coords.x / resolution;
+    float yc = surface_noise_origin.y + coords.y / resolution;
+    float surface_normalized;
+    
+    unity_gradient_noise_float(float2(xc, yc), surface_noise_scale, surface_normalized);
+    
+    return  surface_normalized * surface_noise_strength;
+}
+
+// Main ----------------------------------------------
+
+[numthreads(8,8,1)]
+void cs_main (uint3 id : SV_DispatchThreadID)
+{                    
+    float2 point_relative_position = get_point_relative_position(float2(id.x, id.y));
+    float2 point_pos = core_position + point_relative_position;
+                
+    // Restrict points to a circle (+- some surface noise)
+    const float surface_addition = get_surface_point_addition(float2(id.x, id.y));
+    float surface_height = planet_radius - surface_noise_strength + surface_addition;
+    float point_radial_distance = Vector3.Distance(point_pos, core_position);
+
+    if (point_radial_distance > surface_height) return;
+
+    const int idx = resolution * id.y + id.x - 1;
+                    
+    point_field[idx] = MakePoint(id.x, id.y, point_pos, point_relative_position);
+
+    // Make outer most points into air to prevent a tiled surface
+    if (point_radial_distance > surface_height - 2)
+    {
+        point_field[idx].value = 1;
+    }
+}
