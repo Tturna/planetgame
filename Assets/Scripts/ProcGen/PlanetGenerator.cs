@@ -30,15 +30,6 @@ namespace ProcGen
         [SerializeField] float ySurfaceOrg;
         [SerializeField] float surfaceNoiseScale;
         [SerializeField] float surfaceNoiseStrength;
-        
-        [Header("Other")]
-        [SerializeField] GameObject debugCircle;
-        [SerializeField] bool makeDebugPoints;
-        
-        private Point[] _pointField;
-        private GameObject[] _debugCircles;
-        private GameObject[] _cellField;
-        private Utilities _utilities;
 
         /*
      *      3 - (6) - 2
@@ -76,133 +67,83 @@ namespace ProcGen
 
         private void Start()
         {
-            _pointField = new Point[xResolution * yResolution];
-            GameObject debugCircleParent = null;
+            var startTime = Time.realtimeSinceStartupAsDouble;
 
-            var radius = diameter / 2;
+            GeneratePlanet();
 
-            for (var y = 0f; y < yResolution; y++)
-            {
-                for (var x = 1f; x <= xResolution; x++)
-                {
-                    CalculatePoint(x, y);
-                }
-            }
-
-            _utilities = Utilities.instance;
-            CalculateMesh();
-
-            // Local functions to clear up the for loop above
-            #region LocalFunctions
-            
-            Vector3 GetPointRelativePosition(float iterX, float iterY)
-            {
-                return new Vector3(iterX * (diameter / xResolution) - radius, iterY * (diameter / yResolution) - radius);
-            }
-
-            float GetSurfacePointAddition(float iterX, float iterY)
-            {
-                var xc = xSurfaceOrg + iterX / xResolution * surfaceNoiseScale;
-                var yc = ySurfaceOrg + iterY / yResolution * surfaceNoiseScale;
-                var surfaceNormalized = Mathf.PerlinNoise(xc, yc);
-                var surfaceAddition = surfaceNormalized * surfaceNoiseStrength;
-                return surfaceAddition;
-            }
-
-            Point MakePoint(float iterX, float iterY, Vector3 pointPos, Vector3 pointRelativePosition)
-            {
-                // Calculate point distance from the core
-                var distancePercentage = pointRelativePosition.magnitude / radius;
-                
-                // Blend between outer and inner noise
-                var v = blendBias.Evaluate(distancePercentage);
-                var noiseX = Mathf.Lerp(xInnerOrg, xOrg, v);
-                var noiseY = Mathf.Lerp(yInnerOrg, yOrg, v);
-                var scale = Mathf.Lerp(innerNoiseScale, noiseScale, v);
-                
-                return new Point
-                {
-                    position = pointPos,
-                    value = Mathf.PerlinNoise(noiseX + iterX / xResolution * scale, noiseY + iterY / yResolution * scale),
-                    isSet = true,
-                    isoLevel = Mathf.Lerp(innerIsoLevel, isolevel, v)
-                };
-            }
-
-            void AddDebugCircle(int idx)
-            {
-                // Initialize circleParent if it's null
-                if (!debugCircleParent)
-                {
-                    _debugCircles = new GameObject[xResolution * yResolution];
-                    debugCircleParent = new GameObject("Circles");
-                }
-                
-                // Add debug circle
-                var circleClone = Instantiate(debugCircle, debugCircleParent!.transform, true);
-                circleClone.transform.position = _pointField[idx].position;
-                circleClone.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.black, Color.white, _pointField[idx].value);
-                _debugCircles[idx] = circleClone;
-            }
-
-            void CalculatePoint(float x, float y)
-            {
-                var trPos = transform.position;
-                    
-                var pointRelativePosition = GetPointRelativePosition(x, y);
-                var pointPos = trPos + pointRelativePosition;
-                
-                // Restrict points to a circle (+- some surface noise)
-                var surfaceAddition = GetSurfacePointAddition(x, y);
-                var surfaceHeight = radius - surfaceNoiseStrength + surfaceAddition;
-                var pointRadialDistance = Vector3.Distance(pointPos, trPos);
-
-                if (pointRadialDistance > surfaceHeight) return;
-
-                var idx = xResolution * (int)y + (int)x - 1;
-                    
-                _pointField[idx] = MakePoint(x, y, pointPos, pointRelativePosition);
-
-                // Make outer most points into air to prevent a tiled surface
-                if (pointRadialDistance > surfaceHeight - 2)
-                {
-                    _pointField[idx].value = 1;
-                }
-
-                if (makeDebugPoints && debugCircle)
-                {
-                    AddDebugCircle(idx);
-                }
-            }
-            
-            #endregion
+            print(Time.realtimeSinceStartupAsDouble - startTime);
+            print("Total");
         }
 
-        // private void Update()
-        // {
-        //     if (update)
-        //     {
-        //         CalculateNoise();
-        //         CalculateMesh();
-        //     
-        //         if (scroll)
-        //         {
-        //             xOrg += Time.deltaTime;
-        //         }
-        //     }
-        // }
-
-        private void CalculateMesh()
+        private Vector3 GetPointRelativePosition(float iterX, float iterY)
         {
-            _cellField = new GameObject[(yResolution - 1) * (xResolution - 1)];
+            return new Vector3(iterX * (diameter / xResolution) - diameter / 2, iterY * (diameter / yResolution) - diameter / 2);
+        }
+
+        private float GetSurfacePointAddition(float iterX, float iterY)
+        {
+            var xc = xSurfaceOrg + iterX / xResolution * surfaceNoiseScale;
+            var yc = ySurfaceOrg + iterY / yResolution * surfaceNoiseScale;
+            var surfaceNormalized = Mathf.PerlinNoise(xc, yc);
+            var surfaceAddition = surfaceNormalized * surfaceNoiseStrength;
+            return surfaceAddition;
+        }
+
+        private Point MakePoint(float iterX, float iterY, Vector3 pointPos, Vector3 pointRelativePosition)
+        {
+            // Calculate point distance from the core
+            var distancePercentage = pointRelativePosition.magnitude / (diameter / 2);
+                
+            // Blend between outer and inner noise
+            var v = blendBias.Evaluate(distancePercentage);
+            var noiseX = Mathf.Lerp(xInnerOrg, xOrg, v);
+            var noiseY = Mathf.Lerp(yInnerOrg, yOrg, v);
+            var scale = Mathf.Lerp(innerNoiseScale, noiseScale, v);
+                
+            return new Point
+            {
+                position = pointPos,
+                value = Mathf.PerlinNoise(noiseX + iterX / xResolution * scale, noiseY + iterY / yResolution * scale),
+                isSet = true,
+                isoLevel = Mathf.Lerp(innerIsoLevel, isolevel, v)
+            };
+        }
+
+        private Point CalculatePoint(float x, float y)
+        {
+            var trPos = transform.position;
+                    
+            var pointRelativePosition = GetPointRelativePosition(x, y);
+            var pointPos = trPos + pointRelativePosition;
+                
+            // Restrict points to a circle (+- some surface noise)
+            var surfaceAddition = GetSurfacePointAddition(x, y);
+            var surfaceHeight = diameter / 2 - surfaceNoiseStrength + surfaceAddition;
+            var pointRadialDistance = Vector3.Distance(pointPos, trPos);
+
+            if (pointRadialDistance > surfaceHeight) return new Point();
+                    
+            var point = MakePoint(x, y, pointPos, pointRelativePosition);
+
+            // Make outer most points into air to prevent a tiled surface
+            if (pointRadialDistance > surfaceHeight - 2)
+            {
+                point.value = 1;
+            }
+
+            return point;
+        }
+
+        private void GeneratePlanet()
+        {
             var cellParent = MakeCellParent();
             
             // Iterate through cells
-            for (var i = 0; i < yResolution - 1; i++)
+            for (var y = 0; y < yResolution - 1; y++)
             {
-                for (var j = 0; j < xResolution - 1; j++)
+                for (var x = 0; x < xResolution - 1; x++)
                 {
-                    CalculateCell(i, j);
+                    CalculateCell(y, x);
                 }
             }
             
@@ -221,6 +162,9 @@ namespace ProcGen
                 var rb = cp.AddComponent<Rigidbody2D>();
                 rb.bodyType = RigidbodyType2D.Kinematic;
                 rb.constraints = RigidbodyConstraints2D.FreezeAll;
+
+                // var cc = cp.AddComponent<CompositeCollider2D>();
+                // cc.offsetDistance = 0.2f;
 
                 return cp;
             }
@@ -247,10 +191,8 @@ namespace ProcGen
 
                 var cell = MakeCellObject(idx, mesh);
                 var polyCollider = cell.AddComponent<PolygonCollider2D>();
-                    
-                _cellField[idx] = cell;
 
-                // Convert vertices to vector2[]
+                // Convert vertices to vector2[] for the collider
                 var vertices2 = Array.ConvertAll(vertices, v3 => new Vector2(v3.x, v3.y));
 
                 // Use vertices that were calculated above
@@ -258,19 +200,18 @@ namespace ProcGen
                 mesh.vertices = vertices;
                 mesh.triangles = triangles;
 
-                polyCollider.points = mesh.triangles.Select(trindex => vertices2[trindex]).ToArray();
+                polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
             }
 
-            void CalculateCell(int i, int j)
+            void CalculateCell(int y, int x)
             {
-                var idx = (xResolution - 1) * i + j;
+                var idx = (xResolution - 1) * y + x;
 
-                // Figure out the points in the current cell
-                var bl = _pointField[xResolution * i + j];
-                var tl = _pointField[xResolution * (i + 1) + j];
-                var br = _pointField[xResolution * i + j + 1];
-                var tr = _pointField[xResolution * (i + 1) + j + 1];
-                
+                var bl = CalculatePoint(x, y);
+                var tl = CalculatePoint(x, y + 1);
+                var br = CalculatePoint(x + 1, y);
+                var tr = CalculatePoint(x + 1, y + 1);
+
                 if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return;
             
                 // Figure out cell pattern
@@ -340,20 +281,6 @@ namespace ProcGen
 
             #endregion
         }
-
-        // private void CalculateNoise()
-        // {
-        //     for (var y = 0f; y < yResolution; y++)
-        //     {
-        //         for (var x = 1f; x <= xResolution; x++)
-        //         {
-        //             var idx = xResolution * (int)y + (int)x - 1;
-        //             _pointField[idx].Value = Mathf.PerlinNoise(xOrg + x / xResolution * noiseScale, yOrg + y / yResolution * noiseScale);
-        //         
-        //             //_circles[idx].GetComponent<SpriteRenderer>().color = Color.Lerp(new Color(0.7f, 0.7f, 0.7f), Color.black, _field[idx].Value);
-        //         }
-        //     }
-        // }
 
         private void OnDrawGizmos()
         {

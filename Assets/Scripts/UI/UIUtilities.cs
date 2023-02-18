@@ -13,10 +13,10 @@ namespace UI
 
         private static void TriggerOnMouseRaycast()
         {
-            OnMouseRaycast?.Invoke(_results);
+            OnMouseRaycast?.Invoke(Results);
         }
         
-        private static List<RaycastResult> _results = new();
+        private static readonly List<RaycastResult> Results = new();
         
         private void Update()
         {
@@ -34,13 +34,13 @@ namespace UI
                 position = Input.mousePosition
             };
             
-            EventSystem.current.RaycastAll(pointerData, _results);
+            EventSystem.current.RaycastAll(pointerData, Results);
             TriggerOnMouseRaycast();
         }
 
         public static List<RaycastResult> GetMouseRaycast()
         {
-            return _results;
+            return Results;
         }
     }
 }

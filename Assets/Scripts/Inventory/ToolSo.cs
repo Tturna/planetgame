@@ -6,5 +6,6 @@ namespace Inventory
     public class ToolSo : WeaponSo
     {
         public float toolPower;
+        public float toolUseArea;
     }
 }

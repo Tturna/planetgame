@@ -5,7 +5,7 @@ struct Point
     float x;
     float y;
     float value;
-    bool is_set;
+    int is_set;
     float iso_level;
 };
 
@@ -15,8 +15,18 @@ float planet_diameter;
 float planet_radius;
 float surface_noise_strength;
 float surface_noise_scale;
-float2 core_position;
-float2 surface_noise_origin;
+float outer_noise_scale;
+float inner_noise_scale;
+float outer_iso_level;
+float inner_iso_level;
+float core_position_x;
+float core_position_y;
+float surface_noise_origin_x;
+float surface_noise_origin_y;
+float outer_noise_origin_x;
+float outer_noise_origin_y;
+float inner_noise_origin_x;
+float inner_noise_origin_y;
 
 // Unity's noise functions ------------------------------------------------------------------------
 float2 unity_gradient_noise_dir(float2 p)
@@ -55,8 +65,8 @@ float2 get_point_relative_position(float2 coords)
 
 float get_surface_point_addition(float2 coords)
 {
-    float xc = surface_noise_origin.x + coords.x / resolution;
-    float yc = surface_noise_origin.y + coords.y / resolution;
+    float xc = surface_noise_origin_x + coords.x / resolution;
+    float yc = surface_noise_origin_y + coords.y / resolution;
     float surface_normalized;
     
     unity_gradient_noise_float(float2(xc, yc), surface_noise_scale, surface_normalized);
@@ -64,24 +74,63 @@ float get_surface_point_addition(float2 coords)
     return  surface_normalized * surface_noise_strength;
 }
 
+float get_float2_magnitude(float2 v)
+{
+    const float x = v.x * v.x;
+    const float y = v.y * v.y;
+    return sqrt(x + y);
+}
+
+float get_float2_distance(const float2 a, const float2 b)
+{
+    return get_float2_magnitude(a - b);
+}
+
+Point compute_point(const float iter_x, const float iter_y, float2 point_pos, float2 point_relative_position)
+{
+    // Calculate point distance from the core
+    //float distance_percentage = get_float2_magnitude(point_relative_position) / planet_radius;
+                
+    // Blend between outer and inner noise
+    //float v = blendBias.Evaluate(distance_percentage);
+    const float v = 0.5;
+    const float noise_x = lerp(inner_noise_origin_x, outer_noise_origin_x, v);
+    const float noise_y = lerp(inner_noise_origin_y, outer_noise_origin_y, v);
+    const float scale = lerp(inner_noise_scale, outer_noise_scale, v);
+
+    const float2 noise_coords = float2(noise_x + iter_x / resolution * scale, noise_y + iter_y / resolution * scale);
+    float noise_value;
+    unity_gradient_noise_float(noise_coords, 1, noise_value);
+
+    Point point_data;
+    point_data.x = point_pos.x;
+    point_data.y = point_pos.y;
+    point_data.value = noise_value;
+    point_data.is_set = 1;
+    point_data.iso_level = lerp(inner_iso_level, outer_iso_level, v);
+
+    return point_data;
+}
+
 // Main ----------------------------------------------
 
 [numthreads(8,8,1)]
 void cs_main (uint3 id : SV_DispatchThreadID)
-{                    
-    float2 point_relative_position = get_point_relative_position(float2(id.x, id.y));
-    float2 point_pos = core_position + point_relative_position;
+{
+    const float2 point_relative_position = get_point_relative_position(float2(id.x, id.y));
+    const float2 core_position = float2(core_position_x, core_position_y);
+    const float2 point_pos = core_position + point_relative_position;
                 
     // Restrict points to a circle (+- some surface noise)
     const float surface_addition = get_surface_point_addition(float2(id.x, id.y));
-    float surface_height = planet_radius - surface_noise_strength + surface_addition;
-    float point_radial_distance = Vector3.Distance(point_pos, core_position);
+    const float surface_height = planet_radius - surface_noise_strength + surface_addition;
+    const float point_radial_distance = get_float2_distance(point_pos, core_position);
 
     if (point_radial_distance > surface_height) return;
 
     const int idx = resolution * id.y + id.x - 1;
-                    
-    point_field[idx] = MakePoint(id.x, id.y, point_pos, point_relative_position);
+
+    point_field[idx] = compute_point(id.x, id.y, point_pos, point_relative_position);
 
     // Make outer most points into air to prevent a tiled surface
     if (point_radial_distance > surface_height - 2)

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ProcGen
 {
@@ -11,8 +12,7 @@ namespace ProcGen
         
         [SerializeField] Material cellMaterial;
         [SerializeField] float diameter;
-        [SerializeField] int xResolution;
-        [SerializeField] int yResolution;
+        [FormerlySerializedAs("xResolution")] [SerializeField] int resolution;
         
         [Header("Outer Noise Settings")]
         [SerializeField] float xOrg;
@@ -73,40 +73,80 @@ namespace ProcGen
             public float x;
             public float y;
             public float value;
-            public bool isSet;
+            public int isSet;
             public float isoLevel;
         }
 
         private void Start()
         {
-            _pointField = new Point[xResolution * yResolution];
+            var startTime = Time.realtimeSinceStartupAsDouble;
+            
+            _pointField = new Point[resolution * resolution];
             GameObject debugCircleParent = null;
+            var trPos = transform.position;
 
             var radius = diameter / 2;
 
-            for (var y = 0f; y < yResolution; y++)
-            {
-                for (var x = 1f; x <= xResolution; x++)
-                {
-                    CalculatePoint(x, y);
-                }
-            }
+            // for (var y = 0f; y < resolution; y++)
+            // {
+            //     for (var x = 1f; x <= xResolution; x++)
+            //     {
+            //         CalculatePoint(x, y);
+            //     }
+            // }
+
+            #region Run Compute Shader
+
+            // Create and set buffer to shader
+            const int pointDataSize = sizeof(float) * 4 + sizeof(int);
+            var pointsBuffer = new ComputeBuffer(_pointField.Length, pointDataSize);
+            pointsBuffer.SetData(_pointField);
+            planetGenShader.SetBuffer(0, "point_field", pointsBuffer);
+            
+            // Init values
+            planetGenShader.SetFloat("resolution", resolution);
+            planetGenShader.SetFloat("planet_diameter", diameter);
+            planetGenShader.SetFloat("planet_radius", radius);
+            planetGenShader.SetFloat("surface_noise_strength", surfaceNoiseStrength);
+            planetGenShader.SetFloat("surface_noise_scale", surfaceNoiseScale);
+            planetGenShader.SetFloat("outer_noise_scale", noiseScale);
+            planetGenShader.SetFloat("inner_noise_scale", innerNoiseScale);
+            planetGenShader.SetFloat("outer_iso_level", isolevel);
+            planetGenShader.SetFloat("inner_iso_level", innerIsoLevel);
+            planetGenShader.SetFloat("core_position_x", trPos.x);
+            planetGenShader.SetFloat("core_position_y", trPos.y);
+            planetGenShader.SetFloat("surface_noise_origin_x", xSurfaceOrg);
+            planetGenShader.SetFloat("surface_noise_origin_y", ySurfaceOrg);
+            planetGenShader.SetFloat("outer_noise_origin_x", xOrg);
+            planetGenShader.SetFloat("outer_noise_origin_y", yOrg);
+            planetGenShader.SetFloat("inner_noise_origin_x", xInnerOrg);
+            planetGenShader.SetFloat("inner_noise_origin_y", yInnerOrg);
+            
+            planetGenShader.Dispatch(0, resolution / 8, resolution / 8, 1);
+
+            pointsBuffer.GetData(_pointField);
+            pointsBuffer.Dispose();
+            
+            #endregion
 
             _utilities = Utilities.instance;
             CalculateMesh();
 
+            print(Time.realtimeSinceStartupAsDouble - startTime);
+            print("GPU");
+            
             // Local functions to clear up the for loop above
             #region LocalFunctions
             
             Vector3 GetPointRelativePosition(float iterX, float iterY)
             {
-                return new Vector3(iterX * (diameter / xResolution) - radius, iterY * (diameter / yResolution) - radius);
+                return new Vector3(iterX * (diameter / resolution) - radius, iterY * (diameter / resolution) - radius);
             }
 
             float GetSurfacePointAddition(float iterX, float iterY)
             {
-                var xc = xSurfaceOrg + iterX / xResolution * surfaceNoiseScale;
-                var yc = ySurfaceOrg + iterY / yResolution * surfaceNoiseScale;
+                var xc = xSurfaceOrg + iterX / resolution * surfaceNoiseScale;
+                var yc = ySurfaceOrg + iterY / resolution * surfaceNoiseScale;
                 var surfaceNormalized = Mathf.PerlinNoise(xc, yc);
                 var surfaceAddition = surfaceNormalized * surfaceNoiseStrength;
                 return surfaceAddition;
@@ -127,8 +167,8 @@ namespace ProcGen
                 {
                     x = pointPos.x,
                     y = pointPos.y,
-                    value = Mathf.PerlinNoise(noiseX + iterX / xResolution * scale, noiseY + iterY / yResolution * scale),
-                    isSet = true,
+                    value = Mathf.PerlinNoise(noiseX + iterX / resolution * scale, noiseY + iterY / resolution * scale),
+                    isSet = 1,
                     isoLevel = Mathf.Lerp(innerIsoLevel, isolevel, v)
                 };
             }
@@ -138,7 +178,7 @@ namespace ProcGen
                 // Initialize circleParent if it's null
                 if (!debugCircleParent)
                 {
-                    _debugCircles = new GameObject[xResolution * yResolution];
+                    _debugCircles = new GameObject[resolution * resolution];
                     debugCircleParent = new GameObject("Circles");
                 }
                 
@@ -151,8 +191,6 @@ namespace ProcGen
 
             void CalculatePoint(float x, float y)
             {
-                var trPos = transform.position;
-                    
                 var pointRelativePosition = GetPointRelativePosition(x, y);
                 var pointPos = trPos + pointRelativePosition;
                 
@@ -163,7 +201,7 @@ namespace ProcGen
 
                 if (pointRadialDistance > surfaceHeight) return;
 
-                var idx = xResolution * (int)y + (int)x - 1;
+                var idx = resolution * (int)y + (int)x - 1;
                     
                 _pointField[idx] = MakePoint(x, y, pointPos, pointRelativePosition);
 
@@ -198,13 +236,13 @@ namespace ProcGen
 
         private void CalculateMesh()
         {
-            _cellField = new GameObject[(yResolution - 1) * (xResolution - 1)];
+            _cellField = new GameObject[(resolution - 1) * (resolution - 1)];
             var cellParent = MakeCellParent();
             
             // Iterate through cells
-            for (var i = 0; i < yResolution - 1; i++)
+            for (var i = 0; i < resolution - 1; i++)
             {
-                for (var j = 0; j < xResolution - 1; j++)
+                for (var j = 0; j < resolution - 1; j++)
                 {
                     CalculateCell(i, j);
                 }
@@ -267,15 +305,15 @@ namespace ProcGen
 
             void CalculateCell(int i, int j)
             {
-                var idx = (xResolution - 1) * i + j;
+                var idx = (resolution - 1) * i + j;
 
                 // Figure out the points in the current cell
-                var bl = _pointField[xResolution * i + j];
-                var tl = _pointField[xResolution * (i + 1) + j];
-                var br = _pointField[xResolution * i + j + 1];
-                var tr = _pointField[xResolution * (i + 1) + j + 1];
+                var bl = _pointField[resolution * i + j];
+                var tl = _pointField[resolution * (i + 1) + j];
+                var br = _pointField[resolution * i + j + 1];
+                var tr = _pointField[resolution * (i + 1) + j + 1];
                 
-                if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return;
+                if (bl.isSet == 0 || br.isSet == 0 || tl.isSet == 0 || tr.isSet == 0) return;
             
                 // Figure out cell pattern
                 // The pattern will be used to look up triangle generation patterns
@@ -352,12 +390,12 @@ namespace ProcGen
 
         // private void CalculateNoise()
         // {
-        //     for (var y = 0f; y < yResolution; y++)
+        //     for (var y = 0f; y < resolution; y++)
         //     {
         //         for (var x = 1f; x <= xResolution; x++)
         //         {
         //             var idx = xResolution * (int)y + (int)x - 1;
-        //             _pointField[idx].Value = Mathf.PerlinNoise(xOrg + x / xResolution * noiseScale, yOrg + y / yResolution * noiseScale);
+        //             _pointField[idx].Value = Mathf.PerlinNoise(xOrg + x / xResolution * noiseScale, yOrg + y / resolution * noiseScale);
         //         
         //             //_circles[idx].GetComponent<SpriteRenderer>().color = Color.Lerp(new Color(0.7f, 0.7f, 0.7f), Color.black, _field[idx].Value);
         //         }

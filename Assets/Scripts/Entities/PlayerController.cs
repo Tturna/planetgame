@@ -181,7 +181,8 @@ namespace Entities
             // Attacking
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                Attack();
+                if (Attack()) return;
+                
             }
         }
 
@@ -356,15 +357,15 @@ namespace Entities
             //equippedItem.transform.localEulerAngles = item.itemSo.defaultHandRotation;
         }
 
-        private void Attack()
+        private bool Attack()
         {
-            if (_equippedItem?.itemSo is not WeaponSo weaponSo) return;
-            if (_equippedItem.logicScript == null) return;
+            if (_equippedItem?.itemSo is not WeaponSo weaponSo) return false;
+            if (_equippedItem.logicScript == null) return false;
 
             if (!(energy > weaponSo.energyCost))
             {
                 NoEnergy();
-                return;
+                return false;
             }
 
             // Attack
@@ -388,6 +389,8 @@ namespace Entities
             
             // Camera shake
             _camControl.CameraShake(weaponSo.cameraShakeTime, weaponSo.cameraShakeStrength);
+
+            return true;
         }
 
         private void NoEnergy()
