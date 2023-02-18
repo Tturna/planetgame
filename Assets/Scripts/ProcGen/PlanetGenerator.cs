@@ -156,7 +156,7 @@ namespace ProcGen
                 cp.transform.SetParent(transform);
                 cp.transform.localPosition = Vector3.zero;
                 cp.tag = "Planet";
-                cp.layer = LayerMask.NameToLayer("World");
+                cp.layer = LayerMask.NameToLayer("Terrain");
 
                 // Give it a kinematic rigidbody so the planet can be collided with
                 var rb = cp.AddComponent<Rigidbody2D>();
@@ -174,7 +174,7 @@ namespace ProcGen
                 var cell = new GameObject($"Cell {idx}");
                 cell.transform.SetParent(cellParent.transform);
                 cell.tag = "Planet";
-                cell.layer = LayerMask.NameToLayer("World");
+                cell.layer = LayerMask.NameToLayer("Terrain");
                 
                 var meshFilter = cell.AddComponent<MeshFilter>();
                 var meshRenderer = cell.AddComponent<MeshRenderer>();

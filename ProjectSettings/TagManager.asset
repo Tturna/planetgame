@@ -14,10 +14,10 @@ TagManager:
   - IgnorePlayer
   - Water
   - UI
-  - World
+  - Terrain
   - Interactor
   - DamagePlayer
-  - 
+  - Planet
   - 
   - 
   - 

@@ -2877,7 +2877,7 @@ GameObject:
   - component: {fileID: 273182491}
   - component: {fileID: 273182490}
   - component: {fileID: 273182492}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Planet2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14890,7 +14890,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1448975306}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Planet1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18778,7 +18778,7 @@ MonoBehaviour:
   planetGenShader: {fileID: 7200000, guid: 8efb3e9ab94df654e810f51dd0bd46d7, type: 3}
   cellMaterial: {fileID: 0}
   diameter: 128
-  resolution: 512
+  resolution: 0
   xOrg: 100
   yOrg: 100
   noiseScale: 30
