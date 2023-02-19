@@ -8,13 +8,14 @@ namespace Inventory.Item_Logic
         private Utilities _utilities;
         private GameObject _projectilePrefab;
         
-        public override void Attack(GameObject equippedItemObject, Item attackItem, bool flipY)
+        public override bool AttackOnce(GameObject equippedItemObject, Item attackItem, bool flipY)
         {
+            var weaponSo = (WeaponSo)attackItem.itemSo;
+            
             _utilities ??= Utilities.instance;
             _projectilePrefab ??= _utilities.GetProjectilePrefab();
             
             // Spawn projectile
-            var weaponSo = (WeaponSo)attackItem.itemSo;
             var pos = (Vector2)equippedItemObject.transform.position;
             var rot = equippedItemObject.transform.eulerAngles;
             
@@ -33,6 +34,10 @@ namespace Inventory.Item_Logic
             //TODO: Object pooling
             
             //Debug.Log($"Shoot {weaponSo.name} with {weaponSo.projectile?.sprite?.name ?? "null"} @ {Time.time}");
+
+            return true;
         }
+
+        public override bool AttackContinuous(GameObject equippedItemObject, Item attackItem, bool flipY) => false;
     }
 }

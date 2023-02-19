@@ -1,5 +1,6 @@
 using Inventory.Item_Logic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Inventory
 {
@@ -7,7 +8,7 @@ namespace Inventory
     public class WeaponSo : ItemSo
     {
         public ItemLogic.LogicCode logicCode;
-        public float attackSpeed;
+        [FormerlySerializedAs("attackSpeed")] public float attackCooldown;
         public ProjectileData projectile;
         public Vector2 muzzlePosition;
         public float energyCost;
@@ -18,5 +19,7 @@ namespace Inventory
         public float cameraShakeTime;
         public float cameraShakeStrength;
         public float playerRecoilStrength;
+
+        [System.NonSerialized] public bool isOnCooldown;
     }
 }

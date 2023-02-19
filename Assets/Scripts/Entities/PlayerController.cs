@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inventory;
@@ -138,12 +139,6 @@ namespace Entities
             }
         }
 
-        private void LateUpdate()
-        {
-            // Used to fix landing issue in HandleGroundCheck function
-            // _oldVelocity = Rigidbody.velocity;
-        }
-
         private void HandleControls()
         {
             _inputVector.x = Input.GetAxis("Horizontal");
@@ -179,10 +174,16 @@ namespace Entities
             }
             
             // Attacking
+            // Attack functions return a bool based on if the attack was called with "once" on or off.
+            // This way logic scripts can choose which case to act on, GetKey or GetKeyDown.
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (Attack()) return;
-                
+                if (Attack(true)) return;
+            }
+            
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                if (Attack(false)) return;
             }
         }
 
@@ -357,11 +358,12 @@ namespace Entities
             //equippedItem.transform.localEulerAngles = item.itemSo.defaultHandRotation;
         }
 
-        private bool Attack()
+        private bool Attack(bool once)
         {
             if (_equippedItem?.itemSo is not WeaponSo weaponSo) return false;
             if (_equippedItem.logicScript == null) return false;
-
+            if (weaponSo.isOnCooldown) return false;
+            
             if (!(energy > weaponSo.energyCost))
             {
                 NoEnergy();
@@ -369,7 +371,14 @@ namespace Entities
             }
 
             // Attack
-            _equippedItem.logicScript.Attack(equippedItemObject, _equippedItem, _equippedSr.flipY);
+            Func<GameObject, Item, bool, bool> attackFunction = once ? _equippedItem.logicScript.AttackOnce : _equippedItem.logicScript.AttackContinuous;
+            var res = attackFunction(equippedItemObject, _equippedItem, _equippedSr.flipY);
+            if (!res) return false;
+
+            if (weaponSo.energyCost > 0)
+            {
+                StartCoroutine(HandleWeaponCooldown(weaponSo));
+            }
 
             // Update energy
             energy = Mathf.Clamp(energy - weaponSo.energyCost, 0, maxEnergy);
@@ -396,6 +405,13 @@ namespace Entities
         private void NoEnergy()
         {
             throw new NotImplementedException();
+        }
+
+        private IEnumerator HandleWeaponCooldown(WeaponSo weapon)
+        {
+            weapon.isOnCooldown = true;
+            yield return new WaitForSeconds(weapon.attackCooldown);
+            weapon.isOnCooldown = false;
         }
 
         private Vector3 GetDirectionToMouse()

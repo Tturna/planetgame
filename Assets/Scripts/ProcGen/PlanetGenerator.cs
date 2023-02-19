@@ -9,8 +9,7 @@ namespace ProcGen
     {
         [SerializeField] Material cellMaterial;
         [SerializeField] float diameter;
-        [SerializeField] int xResolution;
-        [SerializeField] int yResolution;
+        [SerializeField] int resolution;
         
         [Header("Outer Noise Settings")]
         [SerializeField] float xOrg;
@@ -31,6 +30,8 @@ namespace ProcGen
         [SerializeField] float surfaceNoiseScale;
         [SerializeField] float surfaceNoiseStrength;
 
+        private Point[] _pointField;
+        
         /*
      *      3 - (6) - 2
      *      |         |
@@ -57,7 +58,7 @@ namespace ProcGen
             new[]{ 7, 4, 0 }
         };
 
-        private struct Point
+        public struct Point
         {
             public Vector3 position;
             public float value;
@@ -69,6 +70,7 @@ namespace ProcGen
         {
             var startTime = Time.realtimeSinceStartupAsDouble;
 
+            _pointField = new Point[resolution * resolution];
             GeneratePlanet();
 
             print(Time.realtimeSinceStartupAsDouble - startTime);
@@ -77,13 +79,13 @@ namespace ProcGen
 
         private Vector3 GetPointRelativePosition(float iterX, float iterY)
         {
-            return new Vector3(iterX * (diameter / xResolution) - diameter / 2, iterY * (diameter / yResolution) - diameter / 2);
+            return new Vector3(iterX * (diameter / resolution) - diameter / 2, iterY * (diameter / resolution) - diameter / 2);
         }
 
         private float GetSurfacePointAddition(float iterX, float iterY)
         {
-            var xc = xSurfaceOrg + iterX / xResolution * surfaceNoiseScale;
-            var yc = ySurfaceOrg + iterY / yResolution * surfaceNoiseScale;
+            var xc = xSurfaceOrg + iterX / resolution * surfaceNoiseScale;
+            var yc = ySurfaceOrg + iterY / resolution * surfaceNoiseScale;
             var surfaceNormalized = Mathf.PerlinNoise(xc, yc);
             var surfaceAddition = surfaceNormalized * surfaceNoiseStrength;
             return surfaceAddition;
@@ -103,7 +105,7 @@ namespace ProcGen
             return new Point
             {
                 position = pointPos,
-                value = Mathf.PerlinNoise(noiseX + iterX / xResolution * scale, noiseY + iterY / yResolution * scale),
+                value = Mathf.PerlinNoise(noiseX + iterX / resolution * scale, noiseY + iterY / resolution * scale),
                 isSet = true,
                 isoLevel = Mathf.Lerp(innerIsoLevel, isolevel, v)
             };
@@ -115,6 +117,7 @@ namespace ProcGen
                     
             var pointRelativePosition = GetPointRelativePosition(x, y);
             var pointPos = trPos + pointRelativePosition;
+            pointPos.z = 0f;
                 
             // Restrict points to a circle (+- some surface noise)
             var surfaceAddition = GetSurfacePointAddition(x, y);
@@ -139,11 +142,14 @@ namespace ProcGen
             var cellParent = MakeCellParent();
             
             // Iterate through cells
-            for (var y = 0; y < yResolution - 1; y++)
+            for (var y = 0; y < resolution - 1; y++)
             {
-                for (var x = 0; x < xResolution - 1; x++)
+                for (var x = 0; x < resolution - 1; x++)
                 {
-                    CalculateCell(y, x);
+                    var data = CalculateCell(y, x);
+                    if (data.idx == -1) continue;
+                    
+                    GenerateCell(data.idx, data.vertices, data.triangles);
                 }
             }
             
@@ -203,83 +209,114 @@ namespace ProcGen
                 polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
             }
 
-            void CalculateCell(int y, int x)
+            #endregion
+        }
+
+        public (int idx, Vector3[] vertices, int[] triangles) CalculateCell(int y, int x, int idx = -1, Point[] cornerPoints = null)
+        {
+            if (idx == -1) idx = (resolution - 1) * y + x;
+
+            Point bl, br, tl, tr;
+            if (cornerPoints == null)
             {
-                var idx = (xResolution - 1) * y + x;
-
-                var bl = CalculatePoint(x, y);
-                var tl = CalculatePoint(x, y + 1);
-                var br = CalculatePoint(x + 1, y);
-                var tr = CalculatePoint(x + 1, y + 1);
-
-                if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return;
-            
-                // Figure out cell pattern
-                // The pattern will be used to look up triangle generation patterns
-                var byteIndex = 0;
-                if (bl.value > bl.isoLevel) byteIndex |= 1;
-                if (br.value > br.isoLevel) byteIndex |= 2;
-                if (tr.value > tr.isoLevel) byteIndex |= 4;
-                if (tl.value > tl.isoLevel) byteIndex |= 8;
-
-                // If all corner points are considered "air", skip
-                if (byteIndex is 15) return;
-
-                #region Calculate Lerp Values
-            
-                var mins = new[] {
-                    Mathf.Min(bl.value, br.value),
-                    Mathf.Min(br.value, tr.value),
-                    Mathf.Min(tr.value, tl.value),
-                    Mathf.Min(tl.value, bl.value)
-                };
-
-                var maxes = new[] {
-                    Mathf.Max(bl.value, br.value),
-                    Mathf.Max(br.value, tr.value),
-                    Mathf.Max(tr.value, tl.value),
-                    Mathf.Max(tl.value, bl.value)
-                };
-            
-                // Inverse Lerping
-                // This is to find the relative point of the average isolevel between the corners.
-                // These points are later used to place edge points between corners SMOOTHLY.
-                var ts = new[]
-                {
-                    Utilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
-                    Utilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
-                    Utilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
-                    Utilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
-                };
-                
-                // var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel???)).ToArray();
-                
-                // Fix lerp t direction when going from bright areas to dark areas
-                // Without this, some surfaces are fucked
-                if (bl.value > br.value) ts[0] = 1 - ts[0];
-                if (br.value > tr.value) ts[1] = 1 - ts[1];
-                if (tl.value > tr.value) ts[2] = 1 - ts[2];
-                if (bl.value > tl.value) ts[3] = 1 - ts[3];
-            
-                #endregion
-
-                // Make a vertex list from the corner vertices above.
-                // Add edge points and use ts for linear interpolation to make terrain smooth.
-                var vertices = new[] {
-                    bl.position,
-                    br.position,
-                    tr.position,
-                    tl.position,
-                    Vector3.Lerp(bl.position, br.position, ts[0]),
-                    Vector3.Lerp(br.position, tr.position, ts[1]),
-                    Vector3.Lerp(tl.position, tr.position, ts[2]),
-                    Vector3.Lerp(bl.position, tl.position, ts[3])
-                };
-                
-                GenerateCell(idx, vertices, _triTable[byteIndex]);
+                bl = _pointField[idx] = CalculatePoint(x, y);
+                tl = _pointField[(resolution - 1) * (y + 1) + x] = CalculatePoint(x, y + 1);
+                br = _pointField[(resolution - 1) * y + x + 1] = CalculatePoint(x + 1, y);
+                tr = _pointField[(resolution - 1) * (y + 1) + x + 1] = CalculatePoint(x + 1, y + 1);
+            }
+            else
+            {
+                bl = _pointField[idx] = cornerPoints[0];
+                tl = _pointField[(resolution - 1) * (y + 1) + x] = cornerPoints[1];
+                br = _pointField[(resolution - 1) * y + x + 1] = cornerPoints[2];
+                tr = _pointField[(resolution - 1) * (y + 1) + x + 1] = cornerPoints[3];
             }
 
+            if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return (-1, null, null);
+        
+            // Figure out cell pattern
+            // The pattern will be used to look up triangle generation patterns
+            var byteIndex = 0;
+            if (bl.value > bl.isoLevel) byteIndex |= 1;
+            if (br.value > br.isoLevel) byteIndex |= 2;
+            if (tr.value > tr.isoLevel) byteIndex |= 4;
+            if (tl.value > tl.isoLevel) byteIndex |= 8;
+
+            // If all corner points are considered "air", skip
+            if (byteIndex is 15) return (-1, null, null);
+
+            #region Calculate Lerp Values
+        
+            var mins = new[] {
+                Mathf.Min(bl.value, br.value),
+                Mathf.Min(br.value, tr.value),
+                Mathf.Min(tr.value, tl.value),
+                Mathf.Min(tl.value, bl.value)
+            };
+
+            var maxes = new[] {
+                Mathf.Max(bl.value, br.value),
+                Mathf.Max(br.value, tr.value),
+                Mathf.Max(tr.value, tl.value),
+                Mathf.Max(tl.value, bl.value)
+            };
+        
+            // Inverse Lerping
+            // This is to find the relative point of the average isolevel between the corners.
+            // These points are later used to place edge points between corners SMOOTHLY.
+            var ts = new[]
+            {
+                Utilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
+                Utilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
+                Utilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
+                Utilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
+            };
+            
+            // var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel???)).ToArray();
+            
+            // Fix lerp t direction when going from bright areas to dark areas
+            // Without this, some surfaces are fucked
+            if (bl.value > br.value) ts[0] = 1 - ts[0];
+            if (br.value > tr.value) ts[1] = 1 - ts[1];
+            if (tl.value > tr.value) ts[2] = 1 - ts[2];
+            if (bl.value > tl.value) ts[3] = 1 - ts[3];
+        
             #endregion
+
+            // Make a vertex list from the corner vertices above.
+            // Add edge points and use ts for linear interpolation to make terrain smooth.
+            var vertices = new[] {
+                bl.position,
+                br.position,
+                tr.position,
+                tl.position,
+                Vector3.Lerp(bl.position, br.position, ts[0]),
+                Vector3.Lerp(br.position, tr.position, ts[1]),
+                Vector3.Lerp(tl.position, tr.position, ts[2]),
+                Vector3.Lerp(bl.position, tl.position, ts[3])
+            };
+
+            return (idx, vertices, _triTable[byteIndex]);
+        }
+        
+        public Point[] GetCellCornerPoints(int idx)
+        {
+            var (x, y) = GetXYFromIndex(idx);
+            
+            return new[]
+            {
+                _pointField[idx],
+                _pointField[(resolution - 1) * (y + 1) + x],
+                _pointField[(resolution - 1) * y + x + 1],
+                _pointField[(resolution - 1) * (y + 1) + x + 1]
+            };
+        }
+
+        public (int x, int y) GetXYFromIndex(int idx)
+        {
+            var x = idx % (resolution - 1);
+            var y = Mathf.FloorToInt((float)idx / resolution) + 1;
+            return (x, y);
         }
 
         private void OnDrawGizmos()

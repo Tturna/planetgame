@@ -1,11 +1,17 @@
-using Inventory;
-using Inventory.Item_Logic;
 using UnityEngine;
 
-public class LongMeleeLogic : ItemLogicBase
+namespace Inventory.Item_Logic
 {
-    public override void Attack(GameObject equippedItemObject, Item attackItem, bool flipY)
+    public class LongMeleeLogic : ItemLogicBase
     {
-        throw new System.NotImplementedException();
+        public override bool AttackOnce(GameObject equippedItemObject, Item attackItem, bool flipY)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override bool AttackContinuous(GameObject equippedItemObject, Item attackItem, bool flipY)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -1,22 +1,70 @@
 using System;
-using Inventory;
-using Inventory.Item_Logic;
+using System.Linq;
+using ProcGen;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class PickaxeLogic : ItemLogicBase
+namespace Inventory.Item_Logic
 {
-    public override void Attack(GameObject equippedItemObject, Item attackItem, bool flipY)
+    public class PickaxeLogic : ItemLogicBase
     {
-        var hits = Physics2D.CircleCastAll(Camera.main!.ScreenToWorldPoint(Input.mousePosition), ((ToolSo)attackItem.itemSo).toolUseArea, Vector2.zero);
+        public override bool AttackOnce(GameObject equippedItemObject, Item attackItem, bool flipY) => false;
 
-        for (var i = 0; i < hits.Length; i++)
+        public override bool AttackContinuous(GameObject equippedItemObject, Item attackItem, bool flipY)
         {
-            var hitObject = hits[i].collider.gameObject;
+            var tool = (ToolSo)attackItem.itemSo;
+            var useArea = tool.toolUseArea;
+            var power = tool.toolPower;
+            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            mousePoint.z = 0f;
+            
+            var hits = Physics2D.CircleCastAll(mousePoint, useArea, Vector2.zero);
 
-            if (!hitObject.CompareTag("Planet")) continue;
-            Debug.Log(hitObject.name);
-            Object.Destroy(hitObject);
+            PlanetGenerator planetGen = null;
+            for (var i = 0; i < hits.Length; i++)
+            {
+                var hitObject = hits[i].collider.gameObject;
+
+                if (!hitObject.CompareTag("Planet")) continue;
+
+                planetGen ??= hitObject.transform.root.GetComponent<PlanetGenerator>();
+
+                // Get cell data
+                var idx = int.Parse(hitObject.name[5..]);
+                var cellCornerPoints = planetGen.GetCellCornerPoints(idx);
+                
+                // Do terraforming
+                for (var index = 0; index < cellCornerPoints.Length; index++)
+                {
+                    var point = cellCornerPoints[index];
+
+                    if (Vector3.Distance(point.position, mousePoint) > useArea) continue;
+                    
+                    point.value += 0.01f * power;
+                    cellCornerPoints[index] = point;
+                }
+
+                // Update cell
+                var (x, y) = planetGen.GetXYFromIndex(idx);
+                var cellData = planetGen.CalculateCell(y, x, idx, cellCornerPoints);
+
+                if (cellData.vertices == null || cellData.triangles == null)
+                {
+                    Object.Destroy(hitObject);
+                    return true;
+                }
+                
+                var mesh = hitObject.GetComponent<MeshFilter>().mesh;
+                mesh.vertices = cellData.vertices;
+                mesh.triangles = cellData.triangles;
+                mesh.RecalculateBounds();
+
+                // Convert vertices to vector2[] for the collider
+                var vertices2 = Array.ConvertAll(cellData.vertices, v3 => new Vector2(v3.x, v3.y));
+                hitObject.GetComponent<PolygonCollider2D>().points = cellData.triangles.Select(trindex => vertices2[trindex]).ToArray();
+            }
+
+            return true;
         }
     }
 }

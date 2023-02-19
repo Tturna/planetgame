@@ -551,7 +551,7 @@ namespace Inventory
                     statName3.text = "Tool Power";
 
                     statValue1.text = tool.projectile.damage.ToString();
-                    statValue2.text = tool.attackSpeed.ToString();
+                    statValue2.text = tool.attackCooldown.ToString();
                     statValue3.text = tool.toolPower.ToString();
                     break;
                 
@@ -562,7 +562,7 @@ namespace Inventory
                     statName3.text = "idk";
 
                     statValue1.text = weapon.projectile.damage.ToString();
-                    statValue2.text = weapon.attackSpeed.ToString();
+                    statValue2.text = weapon.attackCooldown.ToString();
                     statValue3.text = "Something";
                     break;
                 
