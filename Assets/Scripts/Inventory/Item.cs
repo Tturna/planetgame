@@ -18,7 +18,7 @@ namespace Inventory
             itemSo = source.itemSo;
             logicScript = null;
             
-            if (itemSo is WeaponSo so)
+            if (itemSo is UsableItemSo so)
             {
                 logicScript = ItemLogic.GetScript(so.logicCode);
             }

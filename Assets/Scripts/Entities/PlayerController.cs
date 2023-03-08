@@ -180,12 +180,12 @@ namespace Entities
             // This way logic scripts can choose which case to act on, GetKey or GetKeyDown.
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (Attack(true)) return;
+                if (UseItem(true)) return;
             }
             
             if (Input.GetKey(KeyCode.Mouse0))
             {
-                if (Attack(false)) return;
+                if (UseItem(false)) return;
             }
         }
 
@@ -360,20 +360,23 @@ namespace Entities
             //equippedItem.transform.localEulerAngles = item.itemSo.defaultHandRotation;
         }
 
-        private bool Attack(bool once)
+        private bool UseItem(bool once)
         {
             if (_equippedItem?.itemSo is not UsableItemSo usableItemSo) return false;
             if (_equippedItem.logicScript == null) return false;
             if (usableItemSo.isOnCooldown) return false;
 
-            if (!(energy > usableItemSo.energyCost))
+            if (energy < usableItemSo.energyCost)
             {
                 NoEnergy();
                 return false;
             }
 
             // Use Item
-            Func<GameObject, Item, bool, ProcGen.PlanetGenerator, bool> useitemFunction = once ? _equippedItem.logicScript.UseOnce : _equippedItem.logicScript.UseContinuous;
+            Func<GameObject, Item, bool, PlanetGenerator, bool> useitemFunction = once
+                ? _equippedItem.logicScript.UseOnce
+                : _equippedItem.logicScript.UseContinuous;
+            
             var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, CurrentPlanetGen);
             
             if (!res) return false;

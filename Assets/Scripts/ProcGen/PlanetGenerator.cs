@@ -234,6 +234,12 @@ namespace ProcGen
 
             if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return (-1, null, null);
         
+            // temp
+            if (idx == 63120)
+            {
+                Debug.Log($"63120 bl pos: {bl.position}, xy: {x},{y}");
+            }
+            
             // Figure out cell pattern
             // The pattern will be used to look up triangle generation patterns
             var byteIndex = 0;

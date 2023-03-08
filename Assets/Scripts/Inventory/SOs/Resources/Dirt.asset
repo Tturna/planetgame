@@ -9,10 +9,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40fe3dc444f14c11bd56f2ff9736089d, type: 3}
+  m_Script: {fileID: 11500000, guid: 793789a0387e01d40828e9c7de882175, type: 3}
   m_Name: Dirt
   m_EditorClassIdentifier: 
-  id: 254d0373-ca39-49ff-ae8a-a63d492a4a60
+  id: e54dc9b7-5116-467f-83f2-495a75e7448f
   name: Dirt
+  description: 
   maxStack: 100
   sprite: {fileID: 21300000, guid: 22956a2d2dac84b4fb620e0db1373130, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  logicCode: 4
+  attackCooldown: 0
+  energyCost: 0
+  recoilHorizontal: 0
+  recoilAngular: 0
+  recoilSpeedHorizontal: 0
+  recoilSpeedAngular: 0
+  cameraShakeTime: 0
+  cameraShakeStrength: 0
+  playerRecoilStrength: 0
