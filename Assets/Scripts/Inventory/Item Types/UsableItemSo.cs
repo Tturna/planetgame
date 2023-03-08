@@ -2,15 +2,13 @@ using Inventory.Item_Logic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Inventory
+namespace Inventory.Item_Types
 {
-    [CreateAssetMenu(fileName = "Weapon", menuName = "SO/Weapon")]
-    public class WeaponSo : ItemSo
+    // This intentionally doesn't have an asset menu entry as this is supposed to be used by other scriptable objects.
+    public abstract class UsableItemSo : ItemSo
     {
         public ItemLogic.LogicCode logicCode;
         [FormerlySerializedAs("attackSpeed")] public float attackCooldown;
-        public ProjectileData projectile;
-        public Vector2 muzzlePosition;
         public float energyCost;
         [Range(0f, 1f)] public float recoilHorizontal;
         [Range(0f, 1f)] public float recoilAngular;
