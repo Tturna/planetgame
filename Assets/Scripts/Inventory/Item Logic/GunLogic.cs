@@ -1,4 +1,6 @@
 ﻿using Entities;
+using Inventory.Item_Types;
+using ProcGen;
 using UnityEngine;
 
 namespace Inventory.Item_Logic
@@ -8,7 +10,7 @@ namespace Inventory.Item_Logic
         private Utilities _utilities;
         private GameObject _projectilePrefab;
         
-        public override bool AttackOnce(GameObject equippedItemObject, Item attackItem, bool flipY)
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null)
         {
             var weaponSo = (WeaponSo)attackItem.itemSo;
             
@@ -38,6 +40,6 @@ namespace Inventory.Item_Logic
             return true;
         }
 
-        public override bool AttackContinuous(GameObject equippedItemObject, Item attackItem, bool flipY) => false;
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null) => false;
     }
 }

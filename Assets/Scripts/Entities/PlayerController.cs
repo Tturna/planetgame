@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inventory;
 using Inventory.Entities;
+using Inventory.Item_Types;
+using ProcGen;
 
 namespace Entities
 {
@@ -360,44 +362,45 @@ namespace Entities
 
         private bool Attack(bool once)
         {
-            if (_equippedItem?.itemSo is not WeaponSo weaponSo) return false;
+            if (_equippedItem?.itemSo is not UsableItemSo usableItemSo) return false;
             if (_equippedItem.logicScript == null) return false;
-            if (weaponSo.isOnCooldown) return false;
-            
-            if (!(energy > weaponSo.energyCost))
+            if (usableItemSo.isOnCooldown) return false;
+
+            if (!(energy > usableItemSo.energyCost))
             {
                 NoEnergy();
                 return false;
             }
 
-            // Attack
-            Func<GameObject, Item, bool, bool> attackFunction = once ? _equippedItem.logicScript.AttackOnce : _equippedItem.logicScript.AttackContinuous;
-            var res = attackFunction(equippedItemObject, _equippedItem, _equippedSr.flipY);
+            // Use Item
+            Func<GameObject, Item, bool, ProcGen.PlanetGenerator, bool> useitemFunction = once ? _equippedItem.logicScript.UseOnce : _equippedItem.logicScript.UseContinuous;
+            var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, CurrentPlanetGen);
+            
             if (!res) return false;
 
-            if (weaponSo.energyCost > 0)
+            if (usableItemSo.energyCost > 0)
             {
-                StartCoroutine(HandleWeaponCooldown(weaponSo));
+                StartCoroutine(HandleWeaponCooldown(usableItemSo));
             }
 
             // Update energy
-            energy = Mathf.Clamp(energy - weaponSo.energyCost, 0, maxEnergy);
+            energy = Mathf.Clamp(energy - usableItemSo.energyCost, 0, maxEnergy);
             _energyRegenTimer = energyRegenDelay;
             StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
                 
             // Recoil
-            _recoilAnimator.SetLayerWeight(1, weaponSo.recoilHorizontal);
-            _recoilAnimator.SetLayerWeight(2, weaponSo.recoilAngular);
-            _recoilAnimator.SetFloat("recoil_shpeed_horizontal", weaponSo.recoilSpeedHorizontal);
-            _recoilAnimator.SetFloat("recoil_shpeed_angular", weaponSo.recoilSpeedAngular);
+            _recoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
+            _recoilAnimator.SetLayerWeight(2, usableItemSo.recoilAngular);
+            _recoilAnimator.SetFloat("recoil_shpeed_horizontal", usableItemSo.recoilSpeedHorizontal);
+            _recoilAnimator.SetFloat("recoil_shpeed_angular", usableItemSo.recoilSpeedAngular);
             _recoilAnimator.SetTrigger("recoil");
             
             // Player recoil
             var recoilDirection = -_itemAnchor.right;
-            Rigidbody.AddForce(recoilDirection * weaponSo.playerRecoilStrength, ForceMode2D.Impulse);
+            Rigidbody.AddForce(recoilDirection * usableItemSo.playerRecoilStrength, ForceMode2D.Impulse);
             
             // Camera shake
-            _camControl.CameraShake(weaponSo.cameraShakeTime, weaponSo.cameraShakeStrength);
+            _camControl.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
 
             return true;
         }
@@ -407,11 +410,11 @@ namespace Entities
             throw new NotImplementedException();
         }
 
-        private IEnumerator HandleWeaponCooldown(WeaponSo weapon)
+        private IEnumerator HandleWeaponCooldown(UsableItemSo usableItem)
         {
-            weapon.isOnCooldown = true;
-            yield return new WaitForSeconds(weapon.attackCooldown);
-            weapon.isOnCooldown = false;
+            usableItem.isOnCooldown = true;
+            yield return new WaitForSeconds(usableItem.attackCooldown);
+            usableItem.isOnCooldown = false;
         }
 
         private Vector3 GetDirectionToMouse()

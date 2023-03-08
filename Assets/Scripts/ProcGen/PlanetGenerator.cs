@@ -8,8 +8,8 @@ namespace ProcGen
     public class PlanetGenerator : MonoBehaviour
     {
         [SerializeField] Material cellMaterial;
-        [SerializeField] float diameter;
-        [SerializeField] int resolution;
+        public float diameter;
+        public int resolution;
         
         [Header("Outer Noise Settings")]
         [SerializeField] float xOrg;
@@ -312,6 +312,11 @@ namespace ProcGen
             };
         }
 
+        /// <summary>
+        /// Get cell coordinates from its index.
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <returns></returns>
         public (int x, int y) GetXYFromIndex(int idx)
         {
             var x = idx % (resolution - 1);

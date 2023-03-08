@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Inventory
+namespace Inventory.Item_Types
 {
     public class ScriptableObjectIdAttribute : PropertyAttribute {}
     

@@ -7,21 +7,34 @@ using Object = UnityEngine.Object;
 
 namespace Inventory.Item_Logic
 {
-    public class PickaxeLogic : ItemLogicBase
+    public class MaterialLogic : ItemLogicBase
     {
-        private static float _soil;
-        
         public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null) => false;
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null)
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet)
         {
-            var tool = (ToolSo)attackItem.itemSo;
-            var useArea = tool.toolUseArea;
-            var power = tool.toolPower;
+            if (!usePlanet) return false;
+            
+            // TODO: Figure out how to do terrain addition
+            
+            /*
+             * First of all, you should probably try taking the mouse position relative to the planet you're editing.
+             * Then take the coordinates of that position and use them to get the cell index.
+             * Check if that cell exists, and if not, create it.
+             * Add terrain to all the points in that cell that are within x distance from the mouse point.
+             * ???
+             * profit
+             */
+            
             var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
+
+            var relativeMousePoint = (mousePoint - usePlanet.transform.position) / usePlanet.diameter * usePlanet.resolution;
+            var hoveringCellPos = new Vector2(Mathf.Round(relativeMousePoint.x), Mathf.Round(relativeMousePoint.y));
             
-            var hits = Physics2D.CircleCastAll(mousePoint, useArea, Vector2.zero);
+            
+            
+            // var hits = Physics2D.CircleCastAll(mousePoint, useArea, Vector2.zero);
 
             PlanetGenerator planetGen = null;
             for (var i = 0; i < hits.Length; i++)
@@ -35,7 +48,7 @@ namespace Inventory.Item_Logic
                 // Get cell data
                 var idx = int.Parse(hitObject.name[5..]);
                 var cellCornerPoints = planetGen.GetCellCornerPoints(idx);
-                
+
                 // Do terraforming
                 for (var index = 0; index < cellCornerPoints.Length; index++)
                 {
@@ -45,13 +58,10 @@ namespace Inventory.Item_Logic
 
                     var digAmount = power * Time.deltaTime;
                     if (point.value + digAmount > 1f) digAmount = 1f - point.value;
-                    
+
                     point.value += digAmount;
                     cellCornerPoints[index] = point;
-
-                    _soil += digAmount;
                 }
-                Debug.Log(_soil);
 
                 // Update cell
                 var (x, y) = planetGen.GetXYFromIndex(idx);
@@ -62,7 +72,7 @@ namespace Inventory.Item_Logic
                     Object.Destroy(hitObject);
                     return true;
                 }
-                
+
                 var mesh = hitObject.GetComponent<MeshFilter>().mesh;
                 mesh.vertices = cellData.vertices;
                 mesh.triangles = cellData.triangles;
@@ -70,7 +80,8 @@ namespace Inventory.Item_Logic
 
                 // Convert vertices to vector2[] for the collider
                 var vertices2 = Array.ConvertAll(cellData.vertices, v3 => new Vector2(v3.x, v3.y));
-                hitObject.GetComponent<PolygonCollider2D>().points = cellData.triangles.Select(trindex => vertices2[trindex]).ToArray();
+                hitObject.GetComponent<PolygonCollider2D>().points =
+                    cellData.triangles.Select(trindex => vertices2[trindex]).ToArray();
             }
 
             return true;

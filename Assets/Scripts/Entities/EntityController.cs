@@ -1,4 +1,5 @@
 using System;
+using ProcGen;
 using UnityEngine;
 
 namespace Entities
@@ -7,6 +8,7 @@ namespace Entities
     {
         [SerializeField] private float gravityMultiplier;
         protected Planet CurrentPlanet { get; set; }
+        protected PlanetGenerator CurrentPlanetGen { get; set; }
         public Rigidbody2D Rigidbody { get; set; }
         protected bool CalculatePhysics { get; private set; } = true;
         protected bool CanControl { get; private set; } = true;
@@ -88,6 +90,7 @@ namespace Entities
             if (col.gameObject.TryGetComponent<Planet>(out var planet))
             {
                 CurrentPlanet = planet;
+                CurrentPlanetGen = CurrentPlanet.GetComponent<PlanetGenerator>();
 
                 TriggerOnPlanetEntered(CurrentPlanet);
             }
@@ -98,6 +101,7 @@ namespace Entities
             if (other.gameObject.TryGetComponent<Planet>(out var planet))
             {
                 CurrentPlanet = null;
+                CurrentPlanetGen = null;
                 
                 TriggerOnPlanetExited(planet);
             }
