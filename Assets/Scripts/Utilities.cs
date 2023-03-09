@@ -35,7 +35,7 @@ public class Utilities : MonoBehaviour
     
     public static float InverseLerp(float a, float b, float v)
     {
-        return Mathf.Clamp01((v - a) / (b - a));
+        return b - a == 0 ? 0f : Mathf.Clamp01((v - a) / (b - a));
     }
 
     public static float Remap(float oa, float ob, float na, float nb, float v)

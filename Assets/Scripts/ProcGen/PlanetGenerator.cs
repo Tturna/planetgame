@@ -31,6 +31,7 @@ namespace ProcGen
         [SerializeField] float surfaceNoiseStrength;
 
         private Point[] _pointField;
+        private GameObject _cellParent;
         
         /*
      *      3 - (6) - 2
@@ -124,7 +125,9 @@ namespace ProcGen
             var surfaceHeight = diameter / 2 - surfaceNoiseStrength + surfaceAddition;
             var pointRadialDistance = Vector3.Distance(pointPos, trPos);
 
-            if (pointRadialDistance > surfaceHeight) return new Point();
+            // If the point is not within the initial planet shape, just give it a position and nothing else.
+            // This position is required so that the player can add terrain to it later.
+            if (pointRadialDistance > surfaceHeight) return new Point { position = pointPos };
                     
             var point = MakePoint(x, y, pointPos, pointRelativePosition);
 
@@ -139,8 +142,6 @@ namespace ProcGen
 
         private void GeneratePlanet()
         {
-            var cellParent = MakeCellParent();
-            
             // Iterate through cells
             for (var y = 0; y < resolution - 1; y++)
             {
@@ -152,66 +153,65 @@ namespace ProcGen
                     GenerateCell(data.idx, data.vertices, data.triangles);
                 }
             }
-            
-            // Local functions to clear up the for loop above
-            #region LocalFunctions
-            
-            GameObject MakeCellParent()
-            {
-                var cp = new GameObject("Cells");
-                cp.transform.SetParent(transform);
-                cp.transform.localPosition = Vector3.zero;
-                cp.tag = "Planet";
-                cp.layer = LayerMask.NameToLayer("Terrain");
-
-                // Give it a kinematic rigidbody so the planet can be collided with
-                var rb = cp.AddComponent<Rigidbody2D>();
-                rb.bodyType = RigidbodyType2D.Kinematic;
-                rb.constraints = RigidbodyConstraints2D.FreezeAll;
-
-                // var cc = cp.AddComponent<CompositeCollider2D>();
-                // cc.offsetDistance = 0.2f;
-
-                return cp;
-            }
-
-            GameObject MakeCellObject(int idx, Mesh mesh)
-            {
-                var cell = new GameObject($"Cell {idx}");
-                cell.transform.SetParent(cellParent.transform);
-                cell.tag = "Planet";
-                cell.layer = LayerMask.NameToLayer("Terrain");
-                
-                var meshFilter = cell.AddComponent<MeshFilter>();
-                var meshRenderer = cell.AddComponent<MeshRenderer>();
-                meshRenderer.material = cellMaterial;
-                meshFilter.mesh = mesh;
-
-                return cell;
-            }
-
-            void GenerateCell(int idx, Vector3[] vertices, int[] triangles)
-            {
-                var mesh = new Mesh();
-                mesh.name = idx.ToString();
-
-                var cell = MakeCellObject(idx, mesh);
-                var polyCollider = cell.AddComponent<PolygonCollider2D>();
-
-                // Convert vertices to vector2[] for the collider
-                var vertices2 = Array.ConvertAll(vertices, v3 => new Vector2(v3.x, v3.y));
-
-                // Use vertices that were calculated above
-                // Use preset triangles using the cell pattern
-                mesh.vertices = vertices;
-                mesh.triangles = triangles;
-
-                polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
-            }
-
-            #endregion
         }
 
+        private GameObject MakeCellParent()
+        {
+            var cp = new GameObject("Cells");
+            cp.transform.SetParent(transform);
+            cp.transform.localPosition = Vector3.zero;
+            cp.tag = "Planet";
+            cp.layer = LayerMask.NameToLayer("Terrain");
+
+            // Give it a kinematic rigidbody so the planet can be collided with
+            var rb = cp.AddComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
+
+            // var cc = cp.AddComponent<CompositeCollider2D>();
+            // cc.offsetDistance = 0.2f;
+
+            return cp;
+        }
+        
+        private GameObject MakeCellObject(int idx, Mesh mesh)
+        {
+            if (!_cellParent) _cellParent = MakeCellParent();
+            
+            var cell = new GameObject($"Cell {idx}");
+            cell.transform.SetParent(_cellParent.transform);
+            cell.tag = "Planet";
+            cell.layer = LayerMask.NameToLayer("Terrain");
+                
+            var meshFilter = cell.AddComponent<MeshFilter>();
+            var meshRenderer = cell.AddComponent<MeshRenderer>();
+            meshRenderer.material = cellMaterial;
+            meshFilter.mesh = mesh;
+
+            return cell;
+        }
+        
+        public GameObject GenerateCell(int idx, Vector3[] vertices, int[] triangles)
+        {
+            var mesh = new Mesh();
+            mesh.name = idx.ToString();
+
+            var cell = MakeCellObject(idx, mesh);
+            var polyCollider = cell.AddComponent<PolygonCollider2D>();
+
+            // Convert vertices to vector2[] for the collider
+            var vertices2 = Array.ConvertAll(vertices, v3 => new Vector2(v3.x, v3.y));
+
+            // Use vertices that were calculated above
+            // Use preset triangles using the cell pattern
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+
+            polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
+
+            return cell;
+        }
+        
         public (int idx, Vector3[] vertices, int[] triangles) CalculateCell(int y, int x, int idx = -1, Point[] cornerPoints = null)
         {
             if (idx == -1) idx = (resolution - 1) * y + x;
