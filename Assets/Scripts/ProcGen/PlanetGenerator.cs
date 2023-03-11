@@ -7,7 +7,7 @@ namespace ProcGen
     [RequireComponent(typeof(Planet))]
     public class PlanetGenerator : MonoBehaviour
     {
-        [SerializeField] Material cellMaterial;
+        [SerializeField] Material cellMaterial, tempMaterial;
         public float diameter;
         public int resolution;
         
@@ -185,7 +185,7 @@ namespace ProcGen
                 
             var meshFilter = cell.AddComponent<MeshFilter>();
             var meshRenderer = cell.AddComponent<MeshRenderer>();
-            meshRenderer.material = cellMaterial;
+            meshRenderer.material = idx == 42044 ? tempMaterial : cellMaterial;
             meshFilter.mesh = mesh;
 
             return cell;
@@ -226,20 +226,14 @@ namespace ProcGen
             }
             else
             {
-                bl = _pointField[idx] = cornerPoints[0];
+                 bl = _pointField[idx] = cornerPoints[0];
                 tl = _pointField[(resolution - 1) * (y + 1) + x] = cornerPoints[1];
                 br = _pointField[(resolution - 1) * y + x + 1] = cornerPoints[2];
                 tr = _pointField[(resolution - 1) * (y + 1) + x + 1] = cornerPoints[3];
             }
 
             if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return (-1, null, null);
-        
-            // temp
-            if (idx == 63120)
-            {
-                Debug.Log($"63120 bl pos: {bl.position}, xy: {x},{y}");
-            }
-            
+
             // Figure out cell pattern
             // The pattern will be used to look up triangle generation patterns
             var byteIndex = 0;
@@ -309,13 +303,14 @@ namespace ProcGen
         {
             var (x, y) = GetXYFromIndex(idx);
             
-            return new[]
-            {
+            var temp = new[] {
                 _pointField[idx],
                 _pointField[(resolution - 1) * (y + 1) + x],
                 _pointField[(resolution - 1) * y + x + 1],
                 _pointField[(resolution - 1) * (y + 1) + x + 1]
             };
+
+            return temp;
         }
 
         /// <summary>
@@ -326,7 +321,8 @@ namespace ProcGen
         public (int x, int y) GetXYFromIndex(int idx)
         {
             var x = idx % (resolution - 1);
-            var y = Mathf.FloorToInt((float)idx / resolution) + 1;
+            // var y = (int)Mathf.Round((float)idx / resolution);
+            var y = (idx - x) / (resolution - 1);
             return (x, y);
         }
 

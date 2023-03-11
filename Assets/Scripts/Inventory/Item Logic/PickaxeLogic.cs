@@ -35,26 +35,27 @@ namespace Inventory.Item_Logic
                 // Get cell data
                 var idx = int.Parse(hitObject.name[5..]);
                 var cellCornerPoints = planetGen.GetCellCornerPoints(idx);
-                
+
                 // Do terraforming
                 for (var index = 0; index < cellCornerPoints.Length; index++)
                 {
                     var point = cellCornerPoints[index];
-
+                    
                     if (Vector3.Distance(point.position, mousePoint) > useArea) continue;
-
+                    
                     var digAmount = power * Time.deltaTime;
                     if (point.value + digAmount > 1f) digAmount = 1f - point.value;
                     
                     point.value += digAmount;
                     cellCornerPoints[index] = point;
-
+                    
                     _soil += digAmount;
                 }
-                Debug.Log(_soil);
+                Debug.Log($"Soil amount: {_soil}");
 
                 // Update cell
                 var (x, y) = planetGen.GetXYFromIndex(idx);
+
                 var cellData = planetGen.CalculateCell(y, x, idx, cellCornerPoints);
 
                 if (cellData.vertices == null || cellData.triangles == null)
