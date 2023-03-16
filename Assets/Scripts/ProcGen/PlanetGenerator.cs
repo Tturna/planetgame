@@ -176,6 +176,8 @@ namespace ProcGen
         
         private GameObject MakeCellObject(int idx, Mesh mesh)
         {
+            // TODO: See if instantiating a cell prefab is faster than calling AddComponent a morbillion times
+            
             if (!_cellParent) _cellParent = MakeCellParent();
             
             var cell = new GameObject($"Cell {idx}");
@@ -185,7 +187,7 @@ namespace ProcGen
                 
             var meshFilter = cell.AddComponent<MeshFilter>();
             var meshRenderer = cell.AddComponent<MeshRenderer>();
-            meshRenderer.material = idx == 42044 ? tempMaterial : cellMaterial;
+            meshRenderer.material = cellMaterial;
             meshFilter.mesh = mesh;
 
             return cell;
@@ -206,6 +208,7 @@ namespace ProcGen
             // Use preset triangles using the cell pattern
             mesh.vertices = vertices;
             mesh.triangles = triangles;
+            mesh.RecalculateBounds();
 
             polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
 
