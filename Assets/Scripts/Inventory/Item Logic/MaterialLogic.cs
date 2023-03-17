@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Inventory.Item_Types;
 using ProcGen;
 using UnityEngine;
 
@@ -63,7 +62,8 @@ namespace Inventory.Item_Logic
 
                     var index = (usePlanet.resolution - 1) * yIter + xIter;
                     
-                    if (index >= 65535) continue;
+                    // Check if cell is out of bounds (255*255 cell grid when resolution is 256)
+                    if (index >= 65025) continue;
 
                     var cornerPoints = usePlanet.GetCellCornerPoints(index);
 
@@ -71,8 +71,28 @@ namespace Inventory.Item_Logic
                     {
                         var point = cornerPoints[i];
 
-                        if (Vector3.Distance(point.position, mousePoint) < useArea) point.value = Mathf.Clamp01(point.value -= Time.deltaTime);
-                        
+                        /* TODO: Fix addition snappiness
+                         * Addition is snappy probably because the build area has to be over a point before it starts
+                         * editing its value. The editing has to happen instantly because otherwise when the player
+                         * edits in the air, it takes soil before anything appears because the value of the points
+                         * is usually 1 and way lower than their isolevel. Keep in mind that with the current system
+                         * (as of 17.3.2023), the outer most points in a planet are generated but set to air. This
+                         * means that when adding terrain next to existing terrain, the new terrain "snaps" and
+                         * instantly connects to the adjacent terrain, which looks rough.
+                         *
+                         * Theoretical fix:
+                         * Instead of only editing the value of a corner point when the build area is over it,
+                         * edit it when a neighboring point is being edited. Like if you have corners bl, br, tr and tl,
+                         * adding terrain to bl would "bulge" the terrain towards the other points until the edge
+                         * reaches the build area edge. This would make addition smooth. This might be a bit hard though,
+                         * as you'd need to check adjacent cells maybe? idk try it out.
+                        */
+
+                        if (Vector3.Distance(point.position, mousePoint) < useArea)
+                        {
+                            point.value = Mathf.Clamp(point.value -= Time.deltaTime, 0f, point.isoLevel);
+                        }
+
                         point.isSet = true;
                         cornerPoints[i] = point;
                     }
@@ -84,6 +104,9 @@ namespace Inventory.Item_Logic
                     if (!cellObject)
                     {
                         usePlanet.GenerateCell(index, cellData.vertices, cellData.triangles);
+                        
+                        // TEMP
+                        return true;
                     }
                     else
                     {
@@ -96,7 +119,6 @@ namespace Inventory.Item_Logic
                         var vertices2 = Array.ConvertAll(cellData.vertices, v3 => new Vector2(v3.x, v3.y));
                         cellObject.GetComponent<PolygonCollider2D>().points = cellData.triangles.Select(trindex => vertices2[trindex]).ToArray();
                     }
-
                 }
             }
 

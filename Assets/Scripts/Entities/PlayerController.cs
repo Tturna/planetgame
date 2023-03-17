@@ -487,5 +487,10 @@ namespace Entities
                 _interactablesInRange.Remove(interactable);
             }
         }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(Camera.main!.ScreenToWorldPoint(Input.mousePosition), 0.5f);
+        }
     }
 }

@@ -127,7 +127,7 @@ namespace ProcGen
 
             // If the point is not within the initial planet shape, just give it a position and nothing else.
             // This position is required so that the player can add terrain to it later.
-            if (pointRadialDistance > surfaceHeight) return new Point { position = pointPos };
+            if (pointRadialDistance > surfaceHeight) return new Point { value = 1f, position = pointPos };
                     
             var point = MakePoint(x, y, pointPos, pointRelativePosition);
 
@@ -229,12 +229,15 @@ namespace ProcGen
             }
             else
             {
-                 bl = _pointField[idx] = cornerPoints[0];
+                bl = _pointField[idx] = cornerPoints[0];
                 tl = _pointField[(resolution - 1) * (y + 1) + x] = cornerPoints[1];
                 br = _pointField[(resolution - 1) * y + x + 1] = cornerPoints[2];
                 tr = _pointField[(resolution - 1) * (y + 1) + x + 1] = cornerPoints[3];
             }
 
+            // This skips point calculation for cells outside the planet terrain
+            // Maybe it skips something else as well I can't remember lmao.
+            // I guess this system is a bit fucked then
             if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return (-1, null, null);
 
             // Figure out cell pattern
