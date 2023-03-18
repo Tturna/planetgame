@@ -71,10 +71,12 @@ namespace Entities
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Item _equippedItem;
         private float _energyRegenTimer, _healthRegenTimer;
+        private int _terrainLayerMask;
 
         private void Awake()
         {
             instance = this;
+            _terrainLayerMask = 1 << LayerMask.NameToLayer("Terrain");
         }
 
         protected override void Start()
@@ -124,7 +126,38 @@ namespace Entities
 
             if (CanControl)
             {
-                //transform.Translate(Vector3.right * (_inputVector.x * moveSpeed));
+                var force = transform.right * (_inputVector.x * accelerationSpeed);
+                
+                // Figure out the slope angle of the terrain that the player is walking on
+                var rayStartPoint = transform.position - transform.up * 0.4f;
+
+                // Raycast "below". It's actually a bit to the side as well
+                var rayBelowDirection = new Vector2(.1f * _inputVector.x, -.4f).normalized;
+                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, .25f, _terrainLayerMask);
+                
+                // Raycast a bit to the side, depending on movement direction
+                var raySideDirection = new Vector2(.1f * _inputVector.x, -.2f).normalized;
+                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _terrainLayerMask);
+
+                // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * 1.05f, Color.green);
+                // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * 1.1f, Color.red);
+                
+                if (hitBelow && hitSide)
+                {
+                    // Move direction is the vector from the bottom raycast to the side raycast
+                    var direction = (hitSide.point - hitBelow.point).normalized;
+                    
+                    // Check if the direction is upwards relative to the player
+                    var dot = Vector3.Dot(transform.up, direction);
+                    // Debug.Log(dot);
+                    // Debug.DrawLine(transform.position, transform.position + (Vector3)direction, Color.magenta);
+
+                    if (dot > 0)
+                    {
+                        force = direction * (accelerationSpeed * Mathf.Clamp(1f + dot * 3f, 1f, 1.3f));
+                    }
+                    
+                }
                 
                 // Checking for velocity.x or y doesn't work because the player can face any direction and still be moving "right" in relation to themselves
                 // That's why we use a local velocity
@@ -132,12 +165,20 @@ namespace Entities
                 if ((_inputVector.x > 0 && localVelocity.x < maxMoveSpeed) ||
                     (_inputVector.x < 0 && localVelocity.x > -maxMoveSpeed))
                 {
-                    Rigidbody.AddForce(transform.right * (_inputVector.x * accelerationSpeed));
+                    Rigidbody.AddForce(force);
                     _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
                 _animator.SetBool("running", _inputVector.x != 0);
                 handsAnimator.SetBool("running", _inputVector.x != 0);
+                
+                // Jumping
+                if (_jumping && _jumpForceTimer < maxJumpForceTime)
+                {
+                    // The jump force timer is here so it syncs with physics
+                    _jumpForceTimer += Time.deltaTime;
+                    Rigidbody.AddForce(transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
+                }
             }
         }
 
@@ -148,25 +189,13 @@ namespace Entities
             // Jumping
             if (Input.GetKey(KeyCode.Space))
             {
-                // OLD -----------
-                
-                // if (_jumping) return;
-                //
-                // Rigidbody.AddForce(_transform.up * jumpForce, ForceMode2D.Impulse);
-                // _jumping = true;
-                // _jumpCooldownTimer = JumpSafetyCooldown;
-                
-                // ---------------
-
                 // Check if the jump key can be held to increase jump force
                 if (_jumpForceTimer < maxJumpForceTime)
                 {
-                    _jumpForceTimer += Time.deltaTime;
-
                     if (!_jumping) _jumpCooldownTimer = JumpSafetyCooldown;
                     _jumping = true;
                     
-                    Rigidbody.AddForce(transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
+                    // Actual jumping physics and the timer are in FixedUpdate()
                 }
             }
             else if (Input.GetKeyUp(KeyCode.Space))
