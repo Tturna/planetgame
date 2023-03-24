@@ -106,7 +106,8 @@ namespace Inventory.Item_Logic
                     }
 
                     // Update cell
-                    var cellObject = GameObject.Find($"{usePlanet.name}/Cells/Cell {index}");
+                    // var cellObject = GameObject.Find($"{usePlanet.name}/Cells/Cell {index}");
+                    var cellObject = usePlanet.GetCellFromIndex(index);
                     var cellData = usePlanet.CalculateCell(yIter, xIter, index, cornerPoints);
                     
                     if (!cellObject)

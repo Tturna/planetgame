@@ -19,25 +19,26 @@ namespace ProcGen
         [SerializeField] private AnimationCurve noiseResultCurve;
         
         [Header("Outer Noise Settings")]
-        [SerializeField] float xOrg;
-        [SerializeField] float yOrg;
-        [SerializeField] float noiseScale;
-        [SerializeField] float isolevel;
+        [SerializeField] private float xOrg;
+        [SerializeField] private float yOrg;
+        [SerializeField] private float noiseScale;
+        [SerializeField] private float isolevel;
 
         [Header("Inner Noise Settings")]
         [SerializeField] AnimationCurve blendBias;
-        [SerializeField] float xInnerOrg;
-        [SerializeField] float yInnerOrg;
-        [SerializeField] float innerNoiseScale;
-        [SerializeField] float innerIsoLevel;
+        [SerializeField] private float xInnerOrg;
+        [SerializeField] private float yInnerOrg;
+        [SerializeField] private float innerNoiseScale;
+        [SerializeField] private float innerIsoLevel;
         
         [Header("Surface Noise Settings")]
-        [SerializeField] float xSurfaceOrg;
-        [SerializeField] float ySurfaceOrg;
-        [SerializeField] float surfaceNoiseScale;
-        [SerializeField] float surfaceNoiseStrength;
+        [SerializeField] private float xSurfaceOrg;
+        [SerializeField] private float ySurfaceOrg;
+        [SerializeField] private float surfaceNoiseScale;
+        [SerializeField] private float surfaceNoiseStrength;
 
         private Point[] _pointField;
+        private GameObject[] _cellField;
         private GameObject _cellParent;
         
         /*
@@ -79,6 +80,7 @@ namespace ProcGen
             var startTime = Time.realtimeSinceStartupAsDouble;
 
             _pointField = new Point[resolution * resolution];
+            _cellField = new GameObject[(resolution - 1) * (resolution - 1)];
             GeneratePlanet();
 
             print(Time.realtimeSinceStartupAsDouble - startTime);
@@ -150,7 +152,7 @@ namespace ProcGen
             var surfaceHeight = diameter / 2 - surfaceNoiseStrength + surfaceAddition;
             var pointRadialDistance = Vector3.Distance(pointPos, trPos);
 
-            // If the point is not within the initial planet shape, just give it a position and nothing else.
+            // If the point is not within the initial planet shape, just give it a position and set it to air.
             // This position is required so that the player can add terrain to it later.
             if (pointRadialDistance > surfaceHeight) return new Point { value = 1f, position = pointPos };
                     
@@ -159,7 +161,7 @@ namespace ProcGen
             // Make outer most points into air to prevent a tiled surface
             if (pointRadialDistance > surfaceHeight - 2)
             {
-                point.value = 1;
+                point.value = 1f;
             }
 
             return point;
@@ -175,7 +177,7 @@ namespace ProcGen
                     var data = CalculateCell(y, x);
                     if (data.idx == -1) continue;
                     
-                    GenerateCell(data.idx, data.vertices, data.triangles);
+                    _cellField[data.idx] = GenerateCell(data.idx, data.vertices, data.triangles);
                 }
             }
         }
@@ -222,7 +224,7 @@ namespace ProcGen
             return cell;
         }
         
-        public void GenerateCell(int idx, Vector3[] vertices, int[] triangles)
+        public GameObject GenerateCell(int idx, Vector3[] vertices, int[] triangles)
         {
             var mesh = new Mesh();
             mesh.name = idx.ToString();
@@ -241,6 +243,8 @@ namespace ProcGen
             mesh.RecalculateBounds();
 
             polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
+
+            return cell;
         }
         
         public (int idx, Vector3[] vertices, int[] triangles) CalculateCell(int y, int x, int idx = -1, Point[] cornerPoints = null)
@@ -358,6 +362,11 @@ namespace ProcGen
             // var y = (int)Mathf.Round((float)idx / resolution);
             var y = (idx - x) / (resolution - 1);
             return (x, y);
+        }
+
+        public GameObject GetCellFromIndex(int index)
+        {
+            return _cellField[index];
         }
 
         private void OnDrawGizmos()
