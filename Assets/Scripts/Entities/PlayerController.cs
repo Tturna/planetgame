@@ -138,7 +138,6 @@ namespace Entities
                 // Raycast a bit to the side, depending on movement direction
                 var raySideDirection = new Vector2(.1f * _inputVector.x, -.2f).normalized;
                 var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _terrainLayerMask);
-
                 // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * 1.05f, Color.green);
                 // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * 1.1f, Color.red);
                 

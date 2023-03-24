@@ -7,9 +7,16 @@ namespace ProcGen
     [RequireComponent(typeof(Planet))]
     public class PlanetGenerator : MonoBehaviour
     {
-        [SerializeField] Material cellMaterial, tempMaterial;
+        [SerializeField] private Material cellMaterial;
+        [SerializeField] private GameObject cellPrefab;
         public float diameter;
         public int resolution;
+
+        [Header("Generic Noise Settings")]
+        [SerializeField] private int octaves;
+        [SerializeField] private float persistence;
+        [SerializeField] private float lacunarity;
+        [SerializeField] private AnimationCurve noiseResultCurve;
         
         [Header("Outer Noise Settings")]
         [SerializeField] float xOrg;
@@ -92,6 +99,24 @@ namespace ProcGen
             return surfaceAddition;
         }
 
+        private float Noise(float x, float y)
+        {
+            var result = 0f;
+            var amplitude = 1f;
+            var frequency = 1f;
+
+            for (var i = 0; i < octaves; i++) {
+                result += amplitude * Mathf.PerlinNoise(x * frequency, y * frequency);
+                amplitude *= persistence;
+                frequency *= lacunarity;
+                
+                if (i == 0) continue;
+                result *= 0.5f;
+            }
+            
+            return noiseResultCurve.Evaluate(result);
+        }
+
         private Point MakePoint(float iterX, float iterY, Vector3 pointPos, Vector3 pointRelativePosition)
         {
             // Calculate point distance from the core
@@ -106,7 +131,7 @@ namespace ProcGen
             return new Point
             {
                 position = pointPos,
-                value = Mathf.PerlinNoise(noiseX + iterX / resolution * scale, noiseY + iterY / resolution * scale),
+                value = Noise(noiseX + iterX / resolution * scale, noiseY + iterY / resolution * scale),
                 isSet = true,
                 isoLevel = Mathf.Lerp(innerIsoLevel, isolevel, v)
             };
@@ -176,30 +201,35 @@ namespace ProcGen
         
         private GameObject MakeCellObject(int idx, Mesh mesh)
         {
-            // TODO: See if instantiating a cell prefab is faster than calling AddComponent a morbillion times
-            
             if (!_cellParent) _cellParent = MakeCellParent();
             
-            var cell = new GameObject($"Cell {idx}");
-            cell.transform.SetParent(_cellParent.transform);
-            cell.tag = "Planet";
-            cell.layer = LayerMask.NameToLayer("Terrain");
-                
-            var meshFilter = cell.AddComponent<MeshFilter>();
-            var meshRenderer = cell.AddComponent<MeshRenderer>();
-            meshRenderer.material = cellMaterial;
+            // var cell = new GameObject($"Cell {idx}");
+            // cell.transform.SetParent(_cellParent.transform);
+            // cell.tag = "Planet";
+            // cell.layer = LayerMask.NameToLayer("Terrain");
+            //     
+            // var meshFilter = cell.AddComponent<MeshFilter>();
+            // var meshRenderer = cell.AddComponent<MeshRenderer>();
+            // meshRenderer.material = cellMaterial;
+            
+            var cell = Instantiate(cellPrefab, _cellParent.transform);
+            cell.transform.position = Vector3.zero;
+            cell.name = $"Cell {idx}";
+
+            var meshFilter = cell.GetComponent<MeshFilter>();
             meshFilter.mesh = mesh;
 
             return cell;
         }
         
-        public GameObject GenerateCell(int idx, Vector3[] vertices, int[] triangles)
+        public void GenerateCell(int idx, Vector3[] vertices, int[] triangles)
         {
             var mesh = new Mesh();
             mesh.name = idx.ToString();
 
             var cell = MakeCellObject(idx, mesh);
-            var polyCollider = cell.AddComponent<PolygonCollider2D>();
+            // var polyCollider = cell.AddComponent<PolygonCollider2D>();
+            var polyCollider = cell.GetComponent<PolygonCollider2D>();
 
             // Convert vertices to vector2[] for the collider
             var vertices2 = Array.ConvertAll(vertices, v3 => new Vector2(v3.x, v3.y));
@@ -211,8 +241,6 @@ namespace ProcGen
             mesh.RecalculateBounds();
 
             polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
-
-            return cell;
         }
         
         public (int idx, Vector3[] vertices, int[] triangles) CalculateCell(int y, int x, int idx = -1, Point[] cornerPoints = null)

@@ -67,10 +67,18 @@ namespace Inventory.Item_Logic
 
                     var cornerPoints = usePlanet.GetCellCornerPoints(index);
 
+                    if (index == 64388)
+                    {
+                        Debug.Log("go'em");
+                    }
+                    
+                    // TODO: Figure out a system so cells aren't updated for no reason...
+                    // e.g. if the player is holding down the button without moving the mouse
+                    
                     for (var i = 0; i < cornerPoints.Length; i++)
                     {
                         var point = cornerPoints[i];
-
+                        
                         /* TODO: Fix addition snappiness
                          * Addition is snappy probably because the build area has to be over a point before it starts
                          * editing its value. The editing has to happen instantly because otherwise when the player
@@ -96,7 +104,7 @@ namespace Inventory.Item_Logic
                         point.isSet = true;
                         cornerPoints[i] = point;
                     }
-                    
+
                     // Update cell
                     var cellObject = GameObject.Find($"{usePlanet.name}/Cells/Cell {index}");
                     var cellData = usePlanet.CalculateCell(yIter, xIter, index, cornerPoints);
@@ -104,9 +112,6 @@ namespace Inventory.Item_Logic
                     if (!cellObject)
                     {
                         usePlanet.GenerateCell(index, cellData.vertices, cellData.triangles);
-                        
-                        // TEMP
-                        return true;
                     }
                     else
                     {

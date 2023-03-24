@@ -2897,13 +2897,76 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellMaterial: {fileID: 2100000, guid: cb57d485792a0c845a13972bdf9fcb0b, type: 2}
-  tempMaterial: {fileID: 0}
+  cellPrefab: {fileID: 4579863927441605163, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
   diameter: 128
   resolution: 256
+  octaves: 3
+  persistence: 0.7
+  lacunarity: 1.7
+  noiseResultCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.7764034
+      outSlope: 0.7764034
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.19073778
+      value: 0.14808947
+      inSlope: 3.607435
+      outSlope: 3.607435
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.19857976
+      value: 0.19857976
+      inSlope: 3.7192333
+      outSlope: 3.7192333
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.30279872
+      value: 0.30279872
+      inSlope: 0.9999999
+      outSlope: 0.9999999
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.40319008
+      value: 0.40319005
+      inSlope: 0.9999999
+      outSlope: 0.9999999
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.0000001
+      outSlope: 1.0000001
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   xOrg: 100
   yOrg: 100
-  noiseScale: 30
-  isolevel: 0.65
+  noiseScale: 20
+  isolevel: 0.42
   blendBias:
     serializedVersion: 2
     m_Curve:
@@ -2939,7 +3002,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   xInnerOrg: 100
   yInnerOrg: 100
-  innerNoiseScale: 30
+  innerNoiseScale: 20
   innerIsoLevel: 0.3
   xSurfaceOrg: 0
   ySurfaceOrg: 0
@@ -2975,7 +3038,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 64
   surfaceCameraBackground: {fileID: 0}
-  surfaceBackgroundColor: {r: 0.43529412, g: 0.56078434, b: 0.35686275, a: 0}
+  surfaceBackgroundColor: {r: 0.3529412, g: 0.7529412, b: 0.8392157, a: 0}
   atmosphereRadius: 128
   maxDrag: 0.8
   maxGravityMultiplier: 1.25
@@ -18802,9 +18865,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellMaterial: {fileID: 2100000, guid: cb57d485792a0c845a13972bdf9fcb0b, type: 2}
-  tempMaterial: {fileID: 0}
+  cellPrefab: {fileID: 0}
   diameter: 128
   resolution: 0
+  octaves: 0
+  persistence: 0
+  lacunarity: 2
+  noiseResultCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   xOrg: 100
   yOrg: 100
   noiseScale: 30
@@ -22290,3 +22362,62 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+--- !u!1001 &4579863928269087134
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_RootOrder
+      value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605158, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4579863927441605163, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
+      propertyPath: m_Name
+      value: Cell
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4ff6bb62b1f23d64eacdd4ead541eb11, type: 3}
