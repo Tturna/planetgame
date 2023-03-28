@@ -203,17 +203,27 @@ namespace Entities
                 _jumpForceTimer = maxJumpForceTime;
             }
             
-            // Attacking
-            // Attack functions return a bool based on if the attack was called with "once" on or off.
+            // Use Item
+            // UseItem functions return a bool based on if the attack was called with "once" on or off.
             // This way logic scripts can choose which case to act on, GetKey or GetKeyDown.
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (UseItem(true)) return;
+                if (UseItem(true, false)) return;
             }
             
             if (Input.GetKey(KeyCode.Mouse0))
             {
-                if (UseItem(false)) return;
+                if (UseItem(false, false)) return;
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                if (UseItem(true, true)) return;
+            }
+            
+            if (Input.GetKey(KeyCode.Mouse1))
+            {
+                if (UseItem(false, true)) return;
             }
         }
 
@@ -388,7 +398,7 @@ namespace Entities
             //equippedItem.transform.localEulerAngles = item.itemSo.defaultHandRotation;
         }
 
-        private bool UseItem(bool once)
+        private bool UseItem(bool once, bool secondary)
         {
             if (_equippedItem?.itemSo is not UsableItemSo usableItemSo) return false;
             if (_equippedItem.logicScript == null) return false;
@@ -401,11 +411,22 @@ namespace Entities
             }
 
             // Use Item
-            Func<GameObject, Item, bool, PlanetGenerator, bool> useitemFunction = once
-                ? _equippedItem.logicScript.UseOnce
-                : _equippedItem.logicScript.UseContinuous;
+            Func<GameObject, Item, bool, PlanetGenerator, PlayerController, bool> useitemFunction;
+
+            if (once)
+            {
+                useitemFunction = secondary
+                    ? _equippedItem.logicScript.UseOnceSecondary
+                    : _equippedItem.logicScript.UseOnce;
+            }
+            else
+            {
+                useitemFunction = secondary
+                    ? _equippedItem.logicScript.UseContinuousSecondary
+                    : _equippedItem.logicScript.UseContinuous;
+            }
             
-            var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, CurrentPlanetGen);
+            var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, CurrentPlanetGen, this);
             
             if (!res) return false;
 

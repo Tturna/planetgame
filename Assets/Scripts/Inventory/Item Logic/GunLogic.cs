@@ -10,7 +10,7 @@ namespace Inventory.Item_Logic
         private Utilities _utilities;
         private GameObject _projectilePrefab;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null)
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null)
         {
             var weaponSo = (WeaponSo)attackItem.itemSo;
             
@@ -40,6 +40,8 @@ namespace Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null) => false;
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null) => false;
+        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null) => false;
+        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null) => false;
     }
 }
