@@ -40,11 +40,12 @@ namespace Entities
         #region Unserialized Components
         
             private SpriteRenderer _sr;
-            private Animator _animator, _recoilAnimator;
+            private Animator _animator;
             private Transform _itemAnchor, _recoilAnchor;
             private Transform _handsParent, _handLeft, _handRight;
             private SpriteRenderer _equippedSr;
             private CameraController _camControl;
+            public Animator RecoilAnimator { get; private set; }
             
         #endregion
 
@@ -91,7 +92,7 @@ namespace Entities
 
             _recoilAnchor = equippedItemObject.transform.parent;
             _itemAnchor = _recoilAnchor.parent;
-            _recoilAnimator = _recoilAnchor.GetComponent<Animator>();
+            RecoilAnimator = _recoilAnchor.GetComponent<Animator>();
 
             _camControl = GetComponentInChildren<CameraController>();
             
@@ -411,7 +412,7 @@ namespace Entities
             }
 
             // Use Item
-            Func<GameObject, Item, bool, PlanetGenerator, PlayerController, bool> useitemFunction;
+            Func<GameObject, Item, bool, PlayerController, PlanetGenerator, bool> useitemFunction;
 
             if (once)
             {
@@ -426,7 +427,7 @@ namespace Entities
                     : _equippedItem.logicScript.UseContinuous;
             }
             
-            var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, CurrentPlanetGen, this);
+            var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, this, CurrentPlanetGen);
             
             if (!res) return false;
 
@@ -441,11 +442,11 @@ namespace Entities
             StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
                 
             // Recoil
-            _recoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
-            _recoilAnimator.SetLayerWeight(2, usableItemSo.recoilAngular);
-            _recoilAnimator.SetFloat("recoil_shpeed_horizontal", usableItemSo.recoilSpeedHorizontal);
-            _recoilAnimator.SetFloat("recoil_shpeed_angular", usableItemSo.recoilSpeedAngular);
-            _recoilAnimator.SetTrigger("recoil");
+            RecoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
+            RecoilAnimator.SetLayerWeight(2, usableItemSo.recoilAngular);
+            RecoilAnimator.SetFloat("recoil_shpeed_horizontal", usableItemSo.recoilSpeedHorizontal);
+            RecoilAnimator.SetFloat("recoil_shpeed_angular", usableItemSo.recoilSpeedAngular);
+            RecoilAnimator.SetTrigger("recoil");
             
             // Player recoil
             var recoilDirection = -_itemAnchor.right;
@@ -506,7 +507,7 @@ namespace Entities
         {
             Debug.Log("Death.");
         }
-    
+
         protected override void OnTriggerEnter2D(Collider2D col)
         {
             base.OnTriggerEnter2D(col);

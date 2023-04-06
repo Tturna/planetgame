@@ -12,9 +12,9 @@ namespace Inventory.Item_Logic
     {
         private static float _soil;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null) => false;
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null)
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null)
         {
             var tool = (ToolSo)attackItem.itemSo;
             var useArea = tool.toolUseArea;
@@ -78,8 +78,8 @@ namespace Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null) => false;
+        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null) => false;
+        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
     }
 }

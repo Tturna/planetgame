@@ -11,11 +11,11 @@ namespace Inventory.Item_Logic
         
         // If an item is not supposed to be used continuously, make UseContinuous return false. Same with UseOnce.
         // Otherwise return true.
-        public abstract bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null);
-        public abstract bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null);
+        public abstract bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null);
+        public abstract bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null);
         
         // Same thing for secondary uses
-        public abstract bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null);
-        public abstract bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlanetGenerator usePlanet = null, PlayerController player = null);
+        public abstract bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null);
+        public abstract bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null);
     }
 }
