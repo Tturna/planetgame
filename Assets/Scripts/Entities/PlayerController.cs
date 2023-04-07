@@ -46,6 +46,7 @@ namespace Entities
             private SpriteRenderer _equippedSr;
             private CameraController _camControl;
             public Animator RecoilAnimator { get; private set; }
+            public ItemAnimationManager ItemAnimationManager { get; private set; }
             
         #endregion
 
@@ -93,6 +94,7 @@ namespace Entities
             _recoilAnchor = equippedItemObject.transform.parent;
             _itemAnchor = _recoilAnchor.parent;
             RecoilAnimator = _recoilAnchor.GetComponent<Animator>();
+            ItemAnimationManager = _recoilAnchor.GetComponent<ItemAnimationManager>();
 
             _camControl = GetComponentInChildren<CameraController>();
             

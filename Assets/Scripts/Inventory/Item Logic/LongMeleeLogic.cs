@@ -6,11 +6,16 @@ namespace Inventory.Item_Logic
 {
     public class LongMeleeLogic : ItemLogicBase
     {
+        private Animator _recoilAnimator;
+        private ItemAnimationManager _itemAnimationManager;
+        
         public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null)
         {
-            // TODO: Figure out a sensible system for melee combos
-            player.RecoilAnimator.SetBool("swinging", true);
-            player.RecoilAnimator.SetTrigger("attackLongMelee");
+            _recoilAnimator ??= player.RecoilAnimator;
+            _itemAnimationManager ??= player.ItemAnimationManager;
+            
+            _itemAnimationManager.AttackMelee(_recoilAnimator, "attackLongMelee");
+            
             return true;
         }
 
