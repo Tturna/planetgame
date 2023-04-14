@@ -16,6 +16,7 @@ namespace Inventory.Item_Logic
             
             _itemAnimationManager.AttackMelee(_recoilAnimator, "attackLongMelee");
             
+            
             return true;
         }
 

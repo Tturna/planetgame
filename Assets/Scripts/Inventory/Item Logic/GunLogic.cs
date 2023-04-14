@@ -35,6 +35,19 @@ namespace Inventory.Item_Logic
             
             //TODO: Object pooling
             
+            // Choose random muzzle flash
+            if (weaponSo.muzzleFlashes.Length > 0)
+            {
+                var muzzleFlashObject = equippedItemObject.transform.GetChild(0).gameObject;
+                muzzleFlashObject.transform.localPosition = weaponSo.muzzlePosition;
+                
+                var flashSr = muzzleFlashObject.GetComponent<SpriteRenderer>();
+                flashSr.sprite = weaponSo.muzzleFlashes[Random.Range(0, weaponSo.muzzleFlashes.Length)];
+                flashSr.color = weaponSo.muzzleFlashColor;
+                
+                _utilities.DelayExecute(() => { flashSr.sprite = null; }, 0.1f);
+            }
+            
             //Debug.Log($"Shoot {weaponSo.name} with {weaponSo.projectile?.sprite?.name ?? "null"} @ {Time.time}");
 
             return true;

@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 980b03ebfe586894d8a7af6006462d03, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c50903dedd1ee943a0899e910f26610, type: 3}
   m_Name: Cadet Blade
   m_EditorClassIdentifier: 
-  id: 496121fb-bb9f-459c-98bb-6334c8b0d065
+  id: 93ad90cc-a0a3-4cf5-b0f9-334499de3f4e
   name: Cadet Blade
   description: stab
-  maxStack: 1
+  maxStack: 0
   sprite: {fileID: 21300000, guid: 7bfec993a80118b4390c4289616cb812, type: 3}
   handPositionOffset: {x: -0.22, y: -0.22}
   logicCode: 2
@@ -37,3 +37,13 @@ MonoBehaviour:
     collideWithWorld: 0
     canHurtPlayer: 0
   muzzlePosition: {x: 0, y: 0}
+  muzzleFlashes: []
+  muzzleFlashColor: {r: 0, g: 0, b: 0, a: 0}
+  damage: 10
+  knockback: 100
+  colliderPoints:
+  - {x: -0.1, y: -0.3}
+  - {x: 0.35, y: 0.15}
+  - {x: 0.35, y: 0.375}
+  - {x: 0.14, y: 0.375}
+  - {x: -0.28, y: -0.09}

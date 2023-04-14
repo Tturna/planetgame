@@ -256,7 +256,7 @@ namespace Entities
             base.OnTriggerEnter2D(col);
 
             // Damage player on contact
-            if (col.transform.root.TryGetComponent<PlayerController>(out var player))
+            if (col.TryGetComponent<PlayerController>(out var player))
             {
                 player.TakeDamage(enemySo.contactDamage);
                 player.Knockback(transform.position, enemySo.knockback);

@@ -48,6 +48,7 @@ namespace Entities
             private CameraController _camControl;
             public Animator RecoilAnimator { get; private set; }
             public ItemAnimationManager ItemAnimationManager { get; private set; }
+            private MeleeHitManager _meleeHitManager;
             
         #endregion
 
@@ -88,13 +89,14 @@ namespace Entities
         protected override void Start()
         {
             base.Start();
-            
+
             Physics2D.queriesHitTriggers = false;
         
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
             _equippedSr = equippedItemObject.GetComponent<SpriteRenderer>();
-
+            _meleeHitManager = equippedItemObject.GetComponentInChildren<MeleeHitManager>();
+            
             _recoilAnchor = equippedItemObject.transform.parent;
             _itemAnchor = _recoilAnchor.parent;
             RecoilAnimator = _recoilAnchor.GetComponent<Animator>();
@@ -108,6 +110,10 @@ namespace Entities
 
             InventoryManager.SlotSelected += EquipItem;
             Physics2D.queriesHitTriggers = false;
+
+            // Subscribe to events to enable melee collision only while swinging
+            ItemAnimationManager.SwingStarted += () => _meleeHitManager.SetCollision(true);
+            ItemAnimationManager.SwingCompleted += () => _meleeHitManager.SetCollision(false);
         }
 
         private void Update()
@@ -436,9 +442,16 @@ namespace Entities
             if (item != null)
             {
                 equippedItemObject.GetComponent<SpriteRenderer>().sprite = item.itemSo.sprite;
+
+                if (item.itemSo is MeleeSo meleeSo)
+                {
+                    _meleeHitManager.SetWeaponStats(meleeSo, equippedItemObject);
+                    _meleeHitManager.SetCollision(false);
+                    return;
+                }
             }
         
-            //equippedItem.transform.localPosition = item.itemSo.defaultHandPosition;
+            _meleeHitManager.SetWeaponStats(null, equippedItemObject);
             //equippedItem.transform.localEulerAngles = item.itemSo.defaultHandRotation;
         }
 

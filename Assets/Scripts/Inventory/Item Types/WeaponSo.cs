@@ -7,5 +7,7 @@ namespace Inventory.Item_Types
     {
         public ProjectileData projectile;
         public Vector2 muzzlePosition;
+        public Sprite[] muzzleFlashes;
+        public Color muzzleFlashColor;
     }
 }

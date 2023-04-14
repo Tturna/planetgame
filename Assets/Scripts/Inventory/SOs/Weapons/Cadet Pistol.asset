@@ -20,15 +20,6 @@ MonoBehaviour:
   handPositionOffset: {x: -0.2, y: -0.1}
   logicCode: 1
   attackCooldown: 0.3
-  projectile:
-    sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
-    projectileSpeed: 15
-    damage: 6
-    piercing: 0
-    useGravity: 0
-    collideWithWorld: 0
-    canHurtPlayer: 0
-  muzzlePosition: {x: 0.55, y: 0.15}
   energyCost: 5
   recoilHorizontal: 0.589
   recoilAngular: 0.711
@@ -37,3 +28,16 @@ MonoBehaviour:
   cameraShakeTime: 0.1
   cameraShakeStrength: 0.025
   playerRecoilStrength: 0
+  projectile:
+    sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
+    projectileSpeed: 15
+    damage: 6
+    piercing: 0
+    useGravity: 0
+    collideWithWorld: 0
+    canHurtPlayer: 0
+  muzzlePosition: {x: 0.55, y: 0.125}
+  muzzleFlashes:
+  - {fileID: 401124699, guid: 5d1f927952885c547a3fcce829665385, type: 3}
+  - {fileID: 1868852655, guid: 5d1f927952885c547a3fcce829665385, type: 3}
+  muzzleFlashColor: {r: 0.93333334, g: 0.7647059, b: 0.6039216, a: 1}
