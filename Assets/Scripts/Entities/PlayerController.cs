@@ -6,6 +6,7 @@ using Inventory;
 using Inventory.Entities;
 using Inventory.Item_Types;
 using ProcGen;
+using UnityEngine.UIElements;
 
 namespace Entities
 {
@@ -71,10 +72,13 @@ namespace Entities
         
         private Vector2 _inputVector;
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
+        private Vector3 _mouseDirection;
         private Item _equippedItem;
         private float _energyRegenTimer, _healthRegenTimer;
         private int _terrainLayerMask;
 
+        // Built-in methods
+        
         private void Awake()
         {
             instance = this;
@@ -116,10 +120,10 @@ namespace Entities
             HandleControls();
             HandleStatsRegeneration();
 
-            var mouseDirection = GetDirectionToMouse();
-            var cursorAngle = GetCursorAngle(mouseDirection);
+            _mouseDirection = GetDirectionToMouse();
+            var cursorAngle = GetCursorAngle(_mouseDirection);
             
-            HandleItemAiming(mouseDirection, cursorAngle);
+            HandleItemAiming(_mouseDirection, cursorAngle);
             HandlePlayerFlipping(cursorAngle);
         }
 
@@ -184,6 +188,43 @@ namespace Entities
             }
         }
 
+        protected override void OnTriggerEnter2D(Collider2D col)
+        {
+            base.OnTriggerEnter2D(col);
+        
+            if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
+            {
+                _interactablesInRange.Add(interactable);
+            }
+            else if (col.transform.root.TryGetComponent<ItemEntity>(out var item))
+            {
+                if (!InventoryManager.AddItem(item.item)) return;
+            
+                Destroy(col.transform.parent.gameObject);
+            }
+        }
+
+        protected override void OnTriggerExit2D(Collider2D other)
+        {
+            base.OnTriggerEnter2D(other);
+        
+            if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
+            {
+                interactable.DisablePrompt();
+
+                if (interactable == _closestInteractable) _closestInteractable = null;
+            
+                _interactablesInRange.Remove(interactable);
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(Camera.main!.ScreenToWorldPoint(Input.mousePosition), 0.5f);
+        }
+
+        // Private methods
+        
         private void HandleControls()
         {
             _inputVector.x = Input.GetAxis("Horizontal");
@@ -483,6 +524,8 @@ namespace Entities
             return Vector3.Angle(transform.right, directionToMouse);
         }
         
+        // Public methods
+        
         public void TakeDamage(float amount)
         {
             health = Mathf.Clamp(health - amount, 0, maxHealth);
@@ -510,39 +553,33 @@ namespace Entities
             Debug.Log("Death.");
         }
 
-        protected override void OnTriggerEnter2D(Collider2D col)
+        /// <summary>
+        /// Reset Rigidbody2D.velocity on given axis. Pass "local" as true to reset velocity relative to player orientation.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="local"></param>
+        public void ResetVelocity(bool x, bool y, bool local)
         {
-            base.OnTriggerEnter2D(col);
-        
-            if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
+            if (local)
             {
-                _interactablesInRange.Add(interactable);
+                var vel = Rigidbody.GetVector(Rigidbody.velocity);
+                if (x) vel.x = 0f;
+                if (y) vel.y = 0f;
+                Rigidbody.velocity = Rigidbody.GetRelativeVector(vel);
             }
-            else if (col.transform.root.TryGetComponent<ItemEntity>(out var item))
+            else
             {
-                if (!InventoryManager.AddItem(item.item)) return;
-            
-                Destroy(col.transform.parent.gameObject);
-            }
-        }
-
-        protected override void OnTriggerExit2D(Collider2D other)
-        {
-            base.OnTriggerEnter2D(other);
-        
-            if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
-            {
-                interactable.DisablePrompt();
-
-                if (interactable == _closestInteractable) _closestInteractable = null;
-            
-                _interactablesInRange.Remove(interactable);
+                var vel = Rigidbody.velocity;
+                if (x) vel.x = 0f;
+                if (y) vel.y = 0f;
+                Rigidbody.velocity = vel;
             }
         }
 
-        private void OnDrawGizmos()
+        public void AddForceTowardsCursor(float magnitude)
         {
-            Gizmos.DrawWireSphere(Camera.main!.ScreenToWorldPoint(Input.mousePosition), 0.5f);
+            Rigidbody.AddForce(_mouseDirection * magnitude);
         }
     }
 }

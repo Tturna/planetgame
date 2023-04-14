@@ -23,7 +23,17 @@ namespace Inventory.Item_Logic
 
         public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null)
         {
-            throw new System.NotImplementedException();
+            _recoilAnimator ??= player.RecoilAnimator;
+            _itemAnimationManager ??= player.ItemAnimationManager;
+           
+            player.ResetVelocity(true, false, true);
+            
+            _itemAnimationManager.AttackMelee(_recoilAnimator, "attackMeleeLunge", () =>
+            {
+                player.AddForceTowardsCursor(1000f);
+            });
+            
+            return true;
         }
 
         public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
