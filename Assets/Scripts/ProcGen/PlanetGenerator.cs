@@ -5,12 +5,15 @@ using UnityEngine;
 namespace ProcGen
 {
     [RequireComponent(typeof(Planet))]
+    [RequireComponent(typeof(PlanetDecorator))]
     public class PlanetGenerator : MonoBehaviour
     {
         [SerializeField] private Material cellMaterial;
         [SerializeField] private GameObject cellPrefab;
         public float diameter;
         public int resolution;
+        private float SizeResRatio => diameter / resolution;
+        private float Radius => diameter / 2;
 
         [Header("Generic Noise Settings")]
         [SerializeField] private int octaves;
@@ -25,7 +28,7 @@ namespace ProcGen
         [SerializeField] private float isolevel;
 
         [Header("Inner Noise Settings")]
-        [SerializeField] AnimationCurve blendBias;
+        [SerializeField] private AnimationCurve blendBias;
         [SerializeField] private float xInnerOrg;
         [SerializeField] private float yInnerOrg;
         [SerializeField] private float innerNoiseScale;
@@ -40,6 +43,7 @@ namespace ProcGen
         private Point[] _pointField;
         private GameObject[] _cellField;
         private GameObject _cellParent;
+        private PlanetDecorator _decorator;
         
         /*
      *      3 - (6) - 2
@@ -83,8 +87,10 @@ namespace ProcGen
             _cellField = new GameObject[(resolution - 1) * (resolution - 1)];
             GeneratePlanet();
 
+            _decorator = GetComponent<PlanetDecorator>();
+            _decorator.SpawnTrees(this);
+            
             print(Time.realtimeSinceStartupAsDouble - startTime);
-            print("Total");
         }
 
         private Vector3 GetPointRelativePosition(float iterX, float iterY)
@@ -92,13 +98,28 @@ namespace ProcGen
             return new Vector3(iterX * (diameter / resolution) - diameter / 2, iterY * (diameter / resolution) - diameter / 2);
         }
 
-        private float GetSurfacePointAddition(float iterX, float iterY)
+        /// <summary>
+        /// Gets the cell's distance from the center + surface noise addition
+        /// </summary>
+        /// <param name="cellX"></param>
+        /// <param name="cellY"></param>
+        /// <returns></returns>
+        private float GetCellSurfaceHeight(float cellX, float cellY)
         {
-            var xc = xSurfaceOrg + iterX / resolution * surfaceNoiseScale;
-            var yc = ySurfaceOrg + iterY / resolution * surfaceNoiseScale;
+            var xc = xSurfaceOrg + cellX / resolution * surfaceNoiseScale;
+            var yc = ySurfaceOrg + cellY / resolution * surfaceNoiseScale;
             var surfaceNormalized = Mathf.PerlinNoise(xc, yc);
             var surfaceAddition = surfaceNormalized * surfaceNoiseStrength;
-            return surfaceAddition;
+            
+            return diameter / 2 - surfaceNoiseStrength + surfaceAddition;
+        }
+
+        public Vector2 GetRelativeSurfacePoint(float angle)
+        {
+            var x = Mathf.Sin(angle);
+            var y = Mathf.Cos(angle);
+            var dir = new Vector2(x, y);
+            return dir * Radius;
         }
 
         private float Noise(float x, float y)
@@ -148,8 +169,7 @@ namespace ProcGen
             pointPos.z = 0f;
                 
             // Restrict points to a circle (+- some surface noise)
-            var surfaceAddition = GetSurfacePointAddition(x, y);
-            var surfaceHeight = diameter / 2 - surfaceNoiseStrength + surfaceAddition;
+            var surfaceHeight = GetCellSurfaceHeight(x, y);
             var pointRadialDistance = Vector3.Distance(pointPos, trPos);
 
             // If the point is not within the initial planet shape, just give it a position and set it to air.
@@ -369,6 +389,13 @@ namespace ProcGen
             return _cellField[index];
         }
 
+        public Vector2Int WorldToCellPoint(Vector2 worldPoint)
+        {
+            var cellX = (int)((worldPoint.x + Radius) / SizeResRatio);
+            var cellY = (int)((worldPoint.y + Radius) / SizeResRatio);
+            return new Vector2Int(cellX, cellY);
+        }
+        
         private void OnDrawGizmos()
         {
             Gizmos.DrawWireSphere(transform.position, diameter * 0.5f);

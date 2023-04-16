@@ -1,11 +1,10 @@
-using System;
 using Entities;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BackgroundImageManager : MonoBehaviour
 {
-    [SerializeField] private Image bg1, bg2;
+    [SerializeField] private SpriteRenderer bg1, bg2;
+    [SerializeField] private Sprite defaultSprite;
     
     private PlayerController _player;
     private Planet _currentPlanet;
@@ -16,7 +15,7 @@ public class BackgroundImageManager : MonoBehaviour
         _player.OnEnteredPlanet += OnEnteredPlanet;
         _player.OnExitPlanet += OnExitedPlanet;
 
-        bg1.sprite = null;
+        bg1.sprite = defaultSprite;
         bg1.color = Color.black;
     }
 
@@ -37,13 +36,13 @@ public class BackgroundImageManager : MonoBehaviour
     {
         _currentPlanet = planet;
 
-        bg2.sprite = _currentPlanet.surfaceCameraBackground;
+        bg2.sprite = _currentPlanet.surfaceCameraBackground ? _currentPlanet.surfaceCameraBackground : defaultSprite;
         bg2.color = _currentPlanet.surfaceBackgroundColor;
     }
 
     private void OnExitedPlanet(Planet planet)
     {
         _currentPlanet = null;
-        bg2.sprite = null;
+        bg2.sprite = defaultSprite;
     }
 }

@@ -1,12 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CameraScripts;
 using UnityEngine;
 using Inventory;
 using Inventory.Entities;
 using Inventory.Item_Types;
 using ProcGen;
-using UnityEngine.UIElements;
 
 namespace Entities
 {

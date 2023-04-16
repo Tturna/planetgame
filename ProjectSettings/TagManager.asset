@@ -42,6 +42,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 1321353181
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
@@ -50,4 +53,7 @@ TagManager:
     locked: 0
   - name: Healthbars
     uniqueID: 3466986709
+    locked: 0
+  - name: Terrain
+    uniqueID: 3105638163
     locked: 0

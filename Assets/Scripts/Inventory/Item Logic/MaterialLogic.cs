@@ -41,9 +41,11 @@ namespace Inventory.Item_Logic
             var nearestPointPos = new Vector2(roundX, roundY);
             
             // Debug.Log($"Mouse global: {mousePoint}, local: {hoveringPointPos}");
+
+            var cellCoords = usePlanet.WorldToCellPoint(nearestPointPos);
             
-            var pointXIter = (int)((nearestPointPos.x + planetRadius) / sizeResRatio);
-            var pointYIter = (int)((nearestPointPos.y + planetRadius) / sizeResRatio);
+            // var pointXIter = (int)((nearestPointPos.x + planetRadius) / sizeResRatio);
+            // var pointYIter = (int)((nearestPointPos.y + planetRadius) / sizeResRatio);
             
             // Debug.Log($"Mouse xy: {pointXIter},{pointYIter}");
             
@@ -58,8 +60,8 @@ namespace Inventory.Item_Logic
             {
                 for (var x = 0; x < loopRange; x ++)
                 {
-                    var xIter = pointXIter + x;
-                    var yIter = pointYIter + y;
+                    var xIter = cellCoords.x + x;
+                    var yIter = cellCoords.y + y;
 
                     var index = (usePlanet.resolution - 1) * yIter + xIter;
                     
@@ -68,11 +70,6 @@ namespace Inventory.Item_Logic
 
                     var cornerPoints = usePlanet.GetCellCornerPoints(index);
 
-                    if (index == 64388)
-                    {
-                        Debug.Log("go'em");
-                    }
-                    
                     // TODO: Figure out a system so cells aren't updated for no reason...
                     // e.g. if the player is holding down the button without moving the mouse
                     

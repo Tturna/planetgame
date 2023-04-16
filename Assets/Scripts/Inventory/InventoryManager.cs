@@ -119,6 +119,7 @@ namespace Inventory
                 if (!Input.GetKeyDown(i.ToString())) continue;
                 DeselectSlot(_selectedIndex);
                 SelectSlot(i - 1);
+                _selectedIndex = i - 1;
             }
             
             // Check for inventory switch
