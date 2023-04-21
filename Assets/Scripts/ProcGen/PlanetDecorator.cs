@@ -23,6 +23,7 @@ namespace ProcGen
                 tree.transform.SetParent(transform);
                 var sr = tree.AddComponent<SpriteRenderer>();
                 sr.sprite = treePool[Random.Range(0, treePool.Length)];
+                //sr.sortingLayerName = "";
                 
                 var dirToPlanet = (transform.position - point).normalized;
                 
