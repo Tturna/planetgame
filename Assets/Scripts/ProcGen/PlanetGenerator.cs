@@ -89,8 +89,9 @@ namespace ProcGen
 
             _decorator = GetComponent<PlanetDecorator>();
             _decorator.SpawnTrees(this);
+            _decorator.CreateBackgroundDecorations(this);
             
-            print(Time.realtimeSinceStartupAsDouble - startTime);
+            print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
         }
 
         private Vector3 GetPointRelativePosition(float iterX, float iterY)
@@ -116,8 +117,8 @@ namespace ProcGen
 
         public Vector2 GetRelativeSurfacePoint(float angle)
         {
-            var x = Mathf.Sin(angle);
-            var y = Mathf.Cos(angle);
+            var x = Mathf.Sin(angle * Mathf.Deg2Rad);
+            var y = Mathf.Cos(angle * Mathf.Deg2Rad);
             var dir = new Vector2(x, y);
             return dir * Radius;
         }
