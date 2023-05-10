@@ -3550,6 +3550,76 @@ MonoBehaviour:
     spriteColor: {r: 0.5372549, g: 0.7019608, b: 0.78431374, a: 1}
     sortingLayer: Background
     sortingOrder: 2
+  flowerOptions:
+    spritePool:
+    - {fileID: 21300000, guid: 567b7c6bad004f74dac9833993d365eb, type: 3}
+    - {fileID: 21300000, guid: c9c744384c8e1d64f9dce194e4bf2f53, type: 3}
+    - {fileID: 21300000, guid: 8c38a0ce457577f4285a64db4621ce42, type: 3}
+    animate: 0
+    move: 0
+    objectName: flower
+    layer: 0
+    count: 70
+    minSpawnHeight: 0
+    minAngleIncrement: 4
+    maxAngleIncrement: 30
+    minHeightOffset: -0.1
+    maxHeightOffset: 0
+    spriteColor: {r: 1, g: 1, b: 1, a: 1}
+    sortingLayer: 
+    sortingOrder: 0
+  grassOptions:
+    spritePool:
+    - {fileID: 21300000, guid: ac7ddcb8cd9356e43bd4c15e59758322, type: 3}
+    - {fileID: 21300000, guid: c9f9a647de9b2ae40a0bec89dc7cbcd1, type: 3}
+    - {fileID: 21300000, guid: 0344458aef6b85a49a9686c9bf032aa7, type: 3}
+    animate: 0
+    move: 0
+    objectName: grass
+    layer: 0
+    count: 100
+    minSpawnHeight: 0
+    minAngleIncrement: 4
+    maxAngleIncrement: 30
+    minHeightOffset: -0.1
+    maxHeightOffset: 0
+    spriteColor: {r: 1, g: 1, b: 1, a: 1}
+    sortingLayer: 
+    sortingOrder: 0
+  rockOptions:
+    spritePool:
+    - {fileID: 21300000, guid: f7c361ec571ed44469ee932d9931f4a9, type: 3}
+    - {fileID: 21300000, guid: 97ede13197f5f5b49be4f8f79c630176, type: 3}
+    animate: 0
+    move: 0
+    objectName: rock
+    layer: 0
+    count: 20
+    minSpawnHeight: 0
+    minAngleIncrement: 7
+    maxAngleIncrement: 40
+    minHeightOffset: -0.1
+    maxHeightOffset: 0
+    spriteColor: {r: 1, g: 1, b: 1, a: 1}
+    sortingLayer: 
+    sortingOrder: 0
+  bushOptions:
+    spritePool:
+    - {fileID: 21300000, guid: 61bfd6a3a28308f4daf0cf286dc2a1f8, type: 3}
+    - {fileID: 21300000, guid: bce01c881ddb3504db1a98d64a38eadb, type: 3}
+    animate: 0
+    move: 0
+    objectName: bush
+    layer: 0
+    count: 30
+    minSpawnHeight: 0
+    minAngleIncrement: 5
+    maxAngleIncrement: 50
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 1, g: 1, b: 1, a: 1}
+    sortingLayer: 
+    sortingOrder: 0
 --- !u!114 &273182494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4108,7 +4178,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 118.405, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &340698058
@@ -19390,7 +19460,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 118.405, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1653223058
@@ -20403,7 +20473,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 118.405, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1707379891
@@ -22428,6 +22498,66 @@ MonoBehaviour:
     sortingLayer: 
     sortingOrder: 0
   bgIslandOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  flowerOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  grassOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  rockOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  bushOptions:
     spritePool: []
     animate: 0
     move: 0

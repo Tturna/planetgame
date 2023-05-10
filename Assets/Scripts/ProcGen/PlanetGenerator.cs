@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -42,6 +43,7 @@ namespace ProcGen
 
         private Point[] _pointField;
         private GameObject[] _cellField;
+        private List<MeshFilter> _meshFilters = new();
         private GameObject _cellParent;
         private PlanetDecorator _decorator;
         
@@ -90,6 +92,7 @@ namespace ProcGen
             _decorator = GetComponent<PlanetDecorator>();
             _decorator.SpawnTrees(this);
             _decorator.CreateBackgroundDecorations(this);
+            _decorator.CreateBackgroundTerrain(_meshFilters.ToArray());
             
             print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
         }
@@ -241,6 +244,7 @@ namespace ProcGen
 
             var meshFilter = cell.GetComponent<MeshFilter>();
             meshFilter.mesh = mesh;
+            _meshFilters.Add(meshFilter);
 
             return cell;
         }

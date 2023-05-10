@@ -25,7 +25,7 @@ namespace Environment
 
         private void Start()
         {
-            TriggerOnFogStarted();
+            // TriggerOnFogStarted();
 
             StartCoroutine(ChangeWind());
         }

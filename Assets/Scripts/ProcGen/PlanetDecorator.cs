@@ -15,7 +15,6 @@ namespace ProcGen
             public bool animate;
             public bool move;
             public string objectName;
-            // public Transform parent;
             public BackgroundLayer layer;
             public int count;
             public float minSpawnHeight;
@@ -30,10 +29,12 @@ namespace ProcGen
         
         public enum BackgroundLayer { This, Foreground, Midground, BackgroundOne, BackgroundTwo }
         
+        // TODO: Make these options into one array
         [SerializeField] private DecorOptions realTreeOptions;
         [SerializeField] private DecorOptions fgTreeOptions;
         [SerializeField] private DecorOptions mgBushOptions, mgBirdOptions;
         [SerializeField] private DecorOptions bgMountainOptions, bgIslandOptions;
+        [SerializeField] private DecorOptions flowerOptions, grassOptions, rockOptions, bushOptions;
 
         private Transform[] _backgroundLayerParents;
         private List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
@@ -60,13 +61,42 @@ namespace ProcGen
             SpawnDecor(planetGen, mgBirdOptions);
             SpawnDecor(planetGen, bgMountainOptions);
             SpawnDecor(planetGen, bgIslandOptions);
+            SpawnDecor(planetGen, flowerOptions);
+            SpawnDecor(planetGen, grassOptions);
+            SpawnDecor(planetGen, rockOptions);
+            SpawnDecor(planetGen, bushOptions);
+        }
+
+        public void CreateBackgroundTerrain(MeshFilter[] meshFilters)
+        {
+            if (_backgroundLayerParents == null)
+            {
+                InitParentObjects();
+            }
+            
+            var combines = new CombineInstance[meshFilters.Length];
+
+            for (var i = 0; i < combines.Length; i++)
+            {
+                combines[i].mesh = meshFilters[i].mesh;
+                combines[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            }
+
+            var mesh = new Mesh();
+            mesh.CombineMeshes(combines, true);
+            
+            mesh.Optimize();
+
+            var bgTerrain = new GameObject("bgTerrain");
+            var meshFilter = bgTerrain.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = mesh;
         }
 
         public (Transform[], List<KeyValuePair<GameObject, DecorOptions>>) GetDecorData()
         {
             return (_backgroundLayerParents, _updatingDecorObjects);
         }
-
+        
         private void SpawnDecor(PlanetGenerator planetGen, DecorOptions options)
         {
             // start at angle 0 and increment by random amounts

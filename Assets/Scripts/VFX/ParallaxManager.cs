@@ -59,14 +59,14 @@ namespace VFX
                     decor.transform.LookAt(decPos + Vector3.forward, -dirToPlanet);
                     
                     // TODO: Random speed? Would be cool for birds but could fuck up other shit
-                    decor.transform.Translate(Vector3.right * Time.deltaTime);
+                    decor.transform.Translate(Vector3.right * (Time.deltaTime * 0.7f));
                 }
 
                 if (options.animate)
                 {
                     // TODO: optimize to not use GetComponent and to not get array item every frame
                     var sr = decor.GetComponent<SpriteRenderer>();
-                    var num = (int)(Time.time * 1.5f % 2);
+                    var num = (int)(Time.time * 2f % 2);
                     sr.sprite = options.spritePool[num];
                     sr.flipX = true;
                 }
