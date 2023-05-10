@@ -4,64 +4,58 @@ using Random = UnityEngine.Random;
 
 namespace ProcGen
 {
-    [Serializable]
-    internal struct DecorOptions
-    {
-        public Sprite[] spritePool;
-        public string objectName;
-        public Transform parent;
-        public int count;
-        public float minSpawnHeight;
-        public float minAngleIncrement;
-        public float maxAngleIncrement;
-        public float minHeightOffset;
-        public float maxHeightOffset;
-        public Color spriteColor;
-        public string sortingLayer;
-        public int sortingOrder;
-    }
     
     public class PlanetDecorator : MonoBehaviour
     {
-        // [SerializeField] private Sprite[] treePool;
-        // [SerializeField] private Sprite[] fgTreePool;
-        // [SerializeField] private Sprite[] mgBushPool, mgBirdPool;
-        // [SerializeField] private Sprite[] bgMountainPool, bgIslandPool;
-        // [SerializeField] private float minimumSpawnHeight;
-        // [SerializeField] private int treeCount;
-        // [SerializeField] private int fgTreeCount;
-        // [SerializeField] private int mgBushCount, mgBirdCount;
-        // [SerializeField] private int bgMountainCount, bgIslandCount;
-        // [SerializeField] private GameObject fgParent, mgParent, bgParent;
-        // [SerializeField] private Color fgColor, mgColor, bgColor;
+        [Serializable]
+        internal struct DecorOptions
+        {
+            public Sprite[] spritePool;
+            public string objectName;
+            // public Transform parent;
+            public BackgroundLayer layer;
+            public int count;
+            public float minSpawnHeight;
+            public float minAngleIncrement;
+            public float maxAngleIncrement;
+            public float minHeightOffset;
+            public float maxHeightOffset;
+            public Color spriteColor;
+            public string sortingLayer;
+            public int sortingOrder;
+        }
+        
+        public enum BackgroundLayer { This, Foreground, Midground, BackgroundOne, BackgroundTwo }
+        
         [SerializeField] private DecorOptions realTreeOptions;
         [SerializeField] private DecorOptions fgTreeOptions;
         [SerializeField] private DecorOptions mgBushOptions, mgBirdOptions;
         [SerializeField] private DecorOptions bgMountainOptions, bgIslandOptions;
-        
+
+        public Transform[] BackgroundLayerParents { get; private set; }
+
         public void SpawnTrees(PlanetGenerator planetGen)
         {
+            if (BackgroundLayerParents == null)
+            {
+                InitParentObjects();
+            }
+            
             SpawnDecor(planetGen, realTreeOptions);
-            // SpawnDecor(planetGen, treePool, "Tree", transform, treeCount, minimumSpawnHeight, 5f, 20f, Color.white);
         }
 
         public void CreateBackgroundDecorations(PlanetGenerator planetGen)
         {
-            // Figure out some density for foreground, midground and background stuff
-            // As of now (2023-5-8), foreground is trees, midground is bushes and birds and background is mountains and floating islands
+            if (BackgroundLayerParents == null)
+            {
+                InitParentObjects();
+            }
             
-            // Do the same thing as with trees, but put stuff into the ground by a random amount.
-            // Also put birds and floating islands into the sky.
             SpawnDecor(planetGen, fgTreeOptions);
             SpawnDecor(planetGen, mgBushOptions);
             SpawnDecor(planetGen, mgBirdOptions);
             SpawnDecor(planetGen, bgMountainOptions);
             SpawnDecor(planetGen, bgIslandOptions);
-            // SpawnDecor(planetGen, fgTreePool, "fgTree", fgParent.transform, fgTreeCount, 0f, 5f, 20f, fgColor, -.5f, 0f, "Background", 4);
-            // SpawnDecor(planetGen, mgBushPool, "mgBush", mgParent.transform, mgBushCount, 0f, 5f, 15f, mgColor, -.5f, 0f, "Background", 3);
-            // SpawnDecor(planetGen, mgBirdPool, "mgBird", mgParent.transform, mgBirdCount, 0f, 15f, 40f, mgColor, 4f, 8f, "Background", 3);
-            // SpawnDecor(planetGen, bgMountainPool, "bgMountain", bgParent.transform, bgMountainCount, 0f, 10f, 25f, bgColor, -.5f, 0f, "Background", 2);
-            // SpawnDecor(planetGen, bgIslandPool, "bgIsland", bgParent.transform, bgIslandCount, 0f, 15f, 30f, bgColor, 3f, 6f, "Background", 2);
         }
 
         private void SpawnDecor(PlanetGenerator planetGen, DecorOptions options)
@@ -70,9 +64,6 @@ namespace ProcGen
             var angle = 0f;
             for (var i = 0; i < options.count; i++)
             {
-                // temp
-                if (options.objectName == "bgIsland") print($"angle: {angle}");
-                
                 // Get surface height
                 var point = (Vector3)planetGen.GetRelativeSurfacePoint(angle);
                 point += transform.position;
@@ -86,7 +77,7 @@ namespace ProcGen
 
                 // spawn decor objects
                 var decor = new GameObject(options.objectName);
-                decor.transform.SetParent(options.parent);
+                decor.transform.SetParent(BackgroundLayerParents[(int)options.layer]);
                 var sr = decor.AddComponent<SpriteRenderer>();
                 sr.sprite = options.spritePool[Random.Range(0, options.spritePool.Length)];
                 sr.color = options.spriteColor;
@@ -105,6 +96,39 @@ namespace ProcGen
 
                 angle += Random.Range(options.minAngleIncrement, options.maxAngleIncrement);
             }
+        }
+        
+        private void InitParentObjects()
+        {
+            var parallaxParent = new GameObject("Parallax Background").transform;
+            parallaxParent.parent = transform;
+            parallaxParent.localPosition = Vector3.zero;
+
+            var arrLength = Enum.GetValues(typeof(BackgroundLayer)).Length;
+            BackgroundLayerParents = new Transform[arrLength];
+            
+            for (var i = 0; i < arrLength; i++)
+            {
+                var parentTr = new GameObject(Enum.GetName(typeof(BackgroundLayer), i)).transform;
+                parentTr.parent = parallaxParent;
+                parentTr.localPosition = Vector3.zero;
+                BackgroundLayerParents[i] = parentTr;
+            }
+            // _fgParent = new GameObject("Foreground Parent").transform;
+            // _mgParent = new GameObject("Midground Parent").transform;
+            // _bgOneParent = new GameObject("Background One Parent").transform;
+            // _bgTwoParent = new GameObject("Background Two Parent").transform;
+            //
+            // var tr = transform;
+            // _fgParent.parent = tr;
+            // _mgParent.parent = tr;
+            // _bgOneParent.parent = tr;
+            // _bgTwoParent.parent = tr;
+            //
+            // _fgParent.transform.localPosition = Vector3.zero;
+            // _mgParent.transform.localPosition = Vector3.zero;
+            // _bgOneParent.transform.localPosition = Vector3.zero;
+            // _bgTwoParent.transform.localPosition = Vector3.zero;
         }
     }
 }

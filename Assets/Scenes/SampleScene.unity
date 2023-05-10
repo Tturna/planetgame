@@ -1053,7 +1053,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &80946741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3101,7 +3101,7 @@ Transform:
   m_Children:
   - {fileID: 1957871536}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &258702334
 GameObject:
@@ -3455,7 +3455,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 363ea9b7a7ef6b24aa732f6a38ab44f5, type: 3}
     - {fileID: 21300000, guid: c7e883ee15cd5684082d1ec44de38ae8, type: 3}
     objectName: Tree
-    parent: {fileID: 273182491}
+    layer: 0
     count: 50
     minSpawnHeight: 0
     minAngleIncrement: 5
@@ -3470,7 +3470,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: ddc7d64c46d4c304db721b0fde02424a, type: 3}
     - {fileID: 21300000, guid: 50540fb71d7bd0a4d912cc0cd2292923, type: 3}
     objectName: fgTree
-    parent: {fileID: 476462163}
+    layer: 1
     count: 90
     minSpawnHeight: 0
     minAngleIncrement: 6
@@ -3485,7 +3485,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 3d53e7fec8383bb43b4f194830a7fef0, type: 3}
     - {fileID: 21300000, guid: bb1710130b5994a4bb54ef87216859c4, type: 3}
     objectName: mgBush
-    parent: {fileID: 13235459}
+    layer: 2
     count: 70
     minSpawnHeight: 0
     minAngleIncrement: 7
@@ -3500,7 +3500,7 @@ MonoBehaviour:
     - {fileID: -1203373473, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
     - {fileID: 1979152692, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
     objectName: mgBirds
-    parent: {fileID: 13235459}
+    layer: 2
     count: 6
     minSpawnHeight: 0
     minAngleIncrement: 10
@@ -3514,7 +3514,7 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: da6ea040ef0c49c4b89bfc3f1c737cda, type: 3}
     objectName: bgMountain
-    parent: {fileID: 1631753390}
+    layer: 3
     count: 20
     minSpawnHeight: 55
     minAngleIncrement: 10
@@ -3528,7 +3528,7 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: 838c88261ea95334bb61bd9f12857ffe, type: 3}
     objectName: bgIsland
-    parent: {fileID: 1631753390}
+    layer: 4
     count: 12
     minSpawnHeight: 0
     minAngleIncrement: 20
@@ -4655,7 +4655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &376001521
 Transform:
   m_ObjectHideFlags: 0
@@ -6611,7 +6611,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: a6db3c4fb443b8b43b6389e0345ec0f9, type: 2}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_RootOrder
-      value: 24
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8305,7 +8305,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 3b264ce3b75a78648beccfe7bf12bce2, type: 2}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_RootOrder
-      value: 22
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11642,7 +11642,7 @@ Transform:
   m_Children:
   - {fileID: 1366642583}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1042492762
 GameObject:
@@ -12410,7 +12410,7 @@ Transform:
   m_Children:
   - {fileID: 232766578}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1070798848
 GameObject:
@@ -14613,7 +14613,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1266235286
 GameObject:
@@ -15528,7 +15528,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 528c13e3d1f6ff34db8e0622890de078, type: 2}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_RootOrder
-      value: 25
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15933,7 +15933,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1339854861
 GameObject:
@@ -17747,7 +17747,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 20
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1482803323
 GameObject:
@@ -18095,7 +18095,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1548859782
 PrefabInstance:
@@ -18115,7 +18115,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: af6c9a9a8a1469349b548c43b4c7f1c8, type: 2}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_RootOrder
-      value: 23
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18765,7 +18765,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1588495674
 Animator:
@@ -19289,7 +19289,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 2f8be4cead71a0841a0369cbc13aa897, type: 2}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_RootOrder
-      value: 21
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_LocalPosition.x
@@ -19513,7 +19513,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1659298554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19680,7 +19680,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1661746104
 GameObject:
@@ -20121,7 +20121,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 26
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1677093231
 GameObject:
@@ -22343,7 +22343,7 @@ MonoBehaviour:
   realTreeOptions:
     spritePool: []
     objectName: 
-    parent: {fileID: 0}
+    layer: 0
     count: 0
     minSpawnHeight: 0
     minAngleIncrement: 0
@@ -22356,7 +22356,7 @@ MonoBehaviour:
   fgTreeOptions:
     spritePool: []
     objectName: 
-    parent: {fileID: 0}
+    layer: 0
     count: 0
     minSpawnHeight: 0
     minAngleIncrement: 0
@@ -22369,7 +22369,7 @@ MonoBehaviour:
   mgBushOptions:
     spritePool: []
     objectName: 
-    parent: {fileID: 0}
+    layer: 0
     count: 0
     minSpawnHeight: 0
     minAngleIncrement: 0
@@ -22382,7 +22382,7 @@ MonoBehaviour:
   mgBirdOptions:
     spritePool: []
     objectName: 
-    parent: {fileID: 0}
+    layer: 0
     count: 0
     minSpawnHeight: 0
     minAngleIncrement: 0
@@ -22395,7 +22395,7 @@ MonoBehaviour:
   bgMountainOptions:
     spritePool: []
     objectName: 
-    parent: {fileID: 0}
+    layer: 0
     count: 0
     minSpawnHeight: 0
     minAngleIncrement: 0
@@ -22408,7 +22408,7 @@ MonoBehaviour:
   bgIslandOptions:
     spritePool: []
     objectName: 
-    parent: {fileID: 0}
+    layer: 0
     count: 0
     minSpawnHeight: 0
     minAngleIncrement: 0
@@ -23467,7 +23467,7 @@ Transform:
   m_Children:
   - {fileID: 59526221}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1915608166
 GameObject:
@@ -24255,9 +24255,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1835ba5e2cdfa86449254d1577ebfc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fgParent: {fileID: 476462162}
-  mgParent: {fileID: 13235458}
-  bgParent: {fileID: 1631753389}
 --- !u!1 &1983188826
 GameObject:
   m_ObjectHideFlags: 0
@@ -25618,7 +25615,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 27
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2105677430
 GameObject:
@@ -26292,7 +26289,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 2f8be4cead71a0841a0369cbc13aa897, type: 2}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816817, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_LocalPosition.x

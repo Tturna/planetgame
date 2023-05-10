@@ -1,36 +1,51 @@
 using Entities;
-using Unity.Mathematics;
+using ProcGen;
 using UnityEngine;
 
 namespace VFX
 {
     public class ParallaxManager : MonoBehaviour
     {
-        [SerializeField] private GameObject fgParent, mgParent, bgParent;
+        private Transform[] _layerParents;
         private PlayerController _player;
         private float _oldZ;
 
         private void Start()
         {
             _player = PlayerController.instance;
+            _player.OnEnteredPlanet += OnPlanetEntered;
         }
 
         // Update is called once per frame
         private void Update()
         {
-            // Rotate all the layers depending on player position relative to the planet
+            // Rotate all the layers depending on player rotation
+
+            var z = _player.transform.eulerAngles.z;
+            var diff = z - _oldZ;
+            _oldZ = z;
             
-            var rotation = _player.transform.rotation;
-            // var eRotation = _player.transform.eulerAngles;
-            // print($"Euler Z: {eRotation.z}");
-            // print($"Quaternion Z: {rotation.z}");
+            switch (diff)
+            {
+                case > 350:
+                    diff -= 360;
+                    break;
+                case < -350:
+                    diff += 360;
+                    break;
+            }
 
-            // var diff = Quaternion.Euler(0f, 0f, rotation.z - _oldZ);
-            // _oldZ = rotation.z;
+            // Ignore first parent since it's the planet itself
+            for (var i = 1; i < _layerParents.Length; i++)
+            {
+                var pTr = _layerParents[i];
+                pTr.Rotate(Vector3.forward, diff * (i * .15f));
+            }
+        }
 
-            fgParent.transform.rotation = Quaternion.Lerp(quaternion.identity, rotation, .1f);
-            mgParent.transform.rotation = Quaternion.Lerp(quaternion.identity, rotation, .25f);
-            bgParent.transform.rotation = Quaternion.Lerp(quaternion.identity, rotation, .4f);
+        private void OnPlanetEntered(Planet planet)
+        {
+            _layerParents = planet.GetComponent<PlanetDecorator>().BackgroundLayerParents;
         }
     }
 }
