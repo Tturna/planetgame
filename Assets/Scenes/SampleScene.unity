@@ -3454,6 +3454,8 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: 363ea9b7a7ef6b24aa732f6a38ab44f5, type: 3}
     - {fileID: 21300000, guid: c7e883ee15cd5684082d1ec44de38ae8, type: 3}
+    animate: 0
+    move: 0
     objectName: Tree
     layer: 0
     count: 50
@@ -3469,6 +3471,8 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: ddc7d64c46d4c304db721b0fde02424a, type: 3}
     - {fileID: 21300000, guid: 50540fb71d7bd0a4d912cc0cd2292923, type: 3}
+    animate: 0
+    move: 0
     objectName: fgTree
     layer: 1
     count: 90
@@ -3484,6 +3488,8 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: 3d53e7fec8383bb43b4f194830a7fef0, type: 3}
     - {fileID: 21300000, guid: bb1710130b5994a4bb54ef87216859c4, type: 3}
+    animate: 0
+    move: 0
     objectName: mgBush
     layer: 2
     count: 70
@@ -3499,6 +3505,8 @@ MonoBehaviour:
     spritePool:
     - {fileID: -1203373473, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
     - {fileID: 1979152692, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
+    animate: 1
+    move: 1
     objectName: mgBirds
     layer: 2
     count: 6
@@ -3513,6 +3521,8 @@ MonoBehaviour:
   bgMountainOptions:
     spritePool:
     - {fileID: 21300000, guid: da6ea040ef0c49c4b89bfc3f1c737cda, type: 3}
+    animate: 0
+    move: 0
     objectName: bgMountain
     layer: 3
     count: 20
@@ -3527,6 +3537,8 @@ MonoBehaviour:
   bgIslandOptions:
     spritePool:
     - {fileID: 21300000, guid: 838c88261ea95334bb61bd9f12857ffe, type: 3}
+    animate: 0
+    move: 0
     objectName: bgIsland
     layer: 4
     count: 12
@@ -4096,7 +4108,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 118.405, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &340698058
@@ -19378,7 +19390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 118.405, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1653223058
@@ -20391,7 +20403,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 118.405, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1707379891
@@ -22342,6 +22354,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   realTreeOptions:
     spritePool: []
+    animate: 0
+    move: 0
     objectName: 
     layer: 0
     count: 0
@@ -22355,6 +22369,8 @@ MonoBehaviour:
     sortingOrder: 0
   fgTreeOptions:
     spritePool: []
+    animate: 0
+    move: 0
     objectName: 
     layer: 0
     count: 0
@@ -22368,6 +22384,8 @@ MonoBehaviour:
     sortingOrder: 0
   mgBushOptions:
     spritePool: []
+    animate: 0
+    move: 0
     objectName: 
     layer: 0
     count: 0
@@ -22381,6 +22399,8 @@ MonoBehaviour:
     sortingOrder: 0
   mgBirdOptions:
     spritePool: []
+    animate: 0
+    move: 0
     objectName: 
     layer: 0
     count: 0
@@ -22394,6 +22414,8 @@ MonoBehaviour:
     sortingOrder: 0
   bgMountainOptions:
     spritePool: []
+    animate: 0
+    move: 0
     objectName: 
     layer: 0
     count: 0
@@ -22407,6 +22429,8 @@ MonoBehaviour:
     sortingOrder: 0
   bgIslandOptions:
     spritePool: []
+    animate: 0
+    move: 0
     objectName: 
     layer: 0
     count: 0

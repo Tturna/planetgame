@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Entities;
 using ProcGen;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace VFX
     public class ParallaxManager : MonoBehaviour
     {
         private Transform[] _layerParents;
+        private List<KeyValuePair<GameObject, PlanetDecorator.DecorOptions>> _updatingDecorObjects;
+        private Planet _currentPlanet;
         private PlayerController _player;
         private float _oldZ;
 
@@ -19,8 +22,7 @@ namespace VFX
         // Update is called once per frame
         private void Update()
         {
-            // Rotate all the layers depending on player rotation
-
+#region Rotate Layers
             var z = _player.transform.eulerAngles.z;
             var diff = z - _oldZ;
             _oldZ = z;
@@ -41,11 +43,43 @@ namespace VFX
                 var pTr = _layerParents[i];
                 pTr.Rotate(Vector3.forward, diff * (i * .15f));
             }
+#endregion
+
+#region Move Updating Decor
+
+            for (var i = 0; i < _updatingDecorObjects.Count; i++)
+            {
+                var options = _updatingDecorObjects[i].Value;
+                var decor = _updatingDecorObjects[i].Key;
+
+                if (options.move)
+                {
+                    var decPos = decor.transform.position;
+                    var dirToPlanet = (_currentPlanet.transform.position - decPos).normalized;
+                    decor.transform.LookAt(decPos + Vector3.forward, -dirToPlanet);
+                    
+                    // TODO: Random speed? Would be cool for birds but could fuck up other shit
+                    decor.transform.Translate(Vector3.right * Time.deltaTime);
+                }
+
+                if (options.animate)
+                {
+                    // TODO: optimize to not use GetComponent and to not get array item every frame
+                    var sr = decor.GetComponent<SpriteRenderer>();
+                    var num = (int)(Time.time * 1.5f % 2);
+                    sr.sprite = options.spritePool[num];
+                    sr.flipX = true;
+                }
+            }
+
+#endregion    
+            
         }
 
         private void OnPlanetEntered(Planet planet)
         {
-            _layerParents = planet.GetComponent<PlanetDecorator>().BackgroundLayerParents;
+            _currentPlanet = planet;
+            (_layerParents, _updatingDecorObjects) = planet.GetComponent<PlanetDecorator>().GetDecorData();
         }
     }
 }

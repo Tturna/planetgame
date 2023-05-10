@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,9 +9,11 @@ namespace ProcGen
     public class PlanetDecorator : MonoBehaviour
     {
         [Serializable]
-        internal struct DecorOptions
+        public struct DecorOptions
         {
             public Sprite[] spritePool;
+            public bool animate;
+            public bool move;
             public string objectName;
             // public Transform parent;
             public BackgroundLayer layer;
@@ -32,11 +35,12 @@ namespace ProcGen
         [SerializeField] private DecorOptions mgBushOptions, mgBirdOptions;
         [SerializeField] private DecorOptions bgMountainOptions, bgIslandOptions;
 
-        public Transform[] BackgroundLayerParents { get; private set; }
+        private Transform[] _backgroundLayerParents;
+        private List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
 
         public void SpawnTrees(PlanetGenerator planetGen)
         {
-            if (BackgroundLayerParents == null)
+            if (_backgroundLayerParents == null)
             {
                 InitParentObjects();
             }
@@ -46,7 +50,7 @@ namespace ProcGen
 
         public void CreateBackgroundDecorations(PlanetGenerator planetGen)
         {
-            if (BackgroundLayerParents == null)
+            if (_backgroundLayerParents == null)
             {
                 InitParentObjects();
             }
@@ -56,6 +60,11 @@ namespace ProcGen
             SpawnDecor(planetGen, mgBirdOptions);
             SpawnDecor(planetGen, bgMountainOptions);
             SpawnDecor(planetGen, bgIslandOptions);
+        }
+
+        public (Transform[], List<KeyValuePair<GameObject, DecorOptions>>) GetDecorData()
+        {
+            return (_backgroundLayerParents, _updatingDecorObjects);
         }
 
         private void SpawnDecor(PlanetGenerator planetGen, DecorOptions options)
@@ -77,7 +86,8 @@ namespace ProcGen
 
                 // spawn decor objects
                 var decor = new GameObject(options.objectName);
-                decor.transform.SetParent(BackgroundLayerParents[(int)options.layer]);
+                decor.transform.SetParent(_backgroundLayerParents[(int)options.layer]);
+                
                 var sr = decor.AddComponent<SpriteRenderer>();
                 sr.sprite = options.spritePool[Random.Range(0, options.spritePool.Length)];
                 sr.color = options.spriteColor;
@@ -91,9 +101,14 @@ namespace ProcGen
                 // This assumes that the sprites have their pivot set to bottom center.
                 // Normally this would set the center of the sprite to the surface level, burying ths sprite.
                 decor.transform.position = (Vector3)hit.point - dirToPlanet * Random.Range(options.minHeightOffset, options.maxHeightOffset);
-                
                 decor.transform.LookAt(decor.transform.position + Vector3.forward, -dirToPlanet);
 
+                if (options.animate || options.move)
+                {
+                    var entry = new KeyValuePair<GameObject, DecorOptions>(decor, options);
+                    _updatingDecorObjects.Add(entry);
+                }
+                
                 angle += Random.Range(options.minAngleIncrement, options.maxAngleIncrement);
             }
         }
@@ -105,30 +120,15 @@ namespace ProcGen
             parallaxParent.localPosition = Vector3.zero;
 
             var arrLength = Enum.GetValues(typeof(BackgroundLayer)).Length;
-            BackgroundLayerParents = new Transform[arrLength];
+            _backgroundLayerParents = new Transform[arrLength];
             
             for (var i = 0; i < arrLength; i++)
             {
                 var parentTr = new GameObject(Enum.GetName(typeof(BackgroundLayer), i)).transform;
                 parentTr.parent = parallaxParent;
                 parentTr.localPosition = Vector3.zero;
-                BackgroundLayerParents[i] = parentTr;
+                _backgroundLayerParents[i] = parentTr;
             }
-            // _fgParent = new GameObject("Foreground Parent").transform;
-            // _mgParent = new GameObject("Midground Parent").transform;
-            // _bgOneParent = new GameObject("Background One Parent").transform;
-            // _bgTwoParent = new GameObject("Background Two Parent").transform;
-            //
-            // var tr = transform;
-            // _fgParent.parent = tr;
-            // _mgParent.parent = tr;
-            // _bgOneParent.parent = tr;
-            // _bgTwoParent.parent = tr;
-            //
-            // _fgParent.transform.localPosition = Vector3.zero;
-            // _mgParent.transform.localPosition = Vector3.zero;
-            // _bgOneParent.transform.localPosition = Vector3.zero;
-            // _bgTwoParent.transform.localPosition = Vector3.zero;
         }
     }
 }
