@@ -21,6 +21,8 @@ namespace ProcGen
         [SerializeField] private float persistence;
         [SerializeField] private float lacunarity;
         [SerializeField] private AnimationCurve noiseResultCurve;
+        [SerializeField, Range(0f, 1f), Tooltip("Distance percentage at after which point values will bee smoothed to air.")]
+        private float edgeSmoothThreshold;
         
         [Header("Outer Noise Settings")]
         [SerializeField] private float xOrg;
@@ -97,6 +99,12 @@ namespace ProcGen
             print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
         }
 
+        /// <summary>
+        /// Turns cell index coordinates to world space coordinates relative to the planet.
+        /// </summary>
+        /// <param name="iterX"></param>
+        /// <param name="iterY"></param>
+        /// <returns></returns>
         private Vector3 GetPointRelativePosition(float iterX, float iterY)
         {
             return new Vector3(iterX * (diameter / resolution) - diameter / 2, iterY * (diameter / resolution) - diameter / 2);
@@ -144,6 +152,14 @@ namespace ProcGen
             return noiseResultCurve.Evaluate(result);
         }
 
+        /// <summary>
+        /// Calculates point value and iso level and returns a new point based on those.
+        /// </summary>
+        /// <param name="iterX"></param>
+        /// <param name="iterY"></param>
+        /// <param name="pointPos"></param>
+        /// <param name="pointRelativePosition"></param>
+        /// <returns>new point calculated with noise</returns>
         private Point MakePoint(float iterX, float iterY, Vector3 pointPos, Vector3 pointRelativePosition)
         {
             // Calculate point distance from the core
@@ -154,11 +170,20 @@ namespace ProcGen
             var noiseX = Mathf.Lerp(xInnerOrg, xOrg, v);
             var noiseY = Mathf.Lerp(yInnerOrg, yOrg, v);
             var scale = Mathf.Lerp(innerNoiseScale, noiseScale, v);
-                
+
+            var noiseResult = Noise(noiseX + iterX / resolution * scale, noiseY + iterY / resolution * scale);
+
+            // Smooth points to air at the surface
+            if (distancePercentage > edgeSmoothThreshold)
+            {
+                var edgeSmoothPercentage = (distancePercentage - edgeSmoothThreshold) * 5;
+                noiseResult = Mathf.Lerp(noiseResult, 1f, edgeSmoothPercentage);
+            }
+            
             return new Point
             {
                 position = pointPos,
-                value = Noise(noiseX + iterX / resolution * scale, noiseY + iterY / resolution * scale),
+                value = noiseResult,
                 isSet = true,
                 isoLevel = Mathf.Lerp(innerIsoLevel, isolevel, v)
             };
@@ -174,19 +199,24 @@ namespace ProcGen
                 
             // Restrict points to a circle (+- some surface noise)
             var surfaceHeight = GetCellSurfaceHeight(x, y);
-            var pointRadialDistance = Vector3.Distance(pointPos, trPos);
+            var pointRadialDistance = pointRelativePosition.magnitude;
 
             // If the point is not within the initial planet shape, just give it a position and set it to air.
             // This position is required so that the player can add terrain to it later.
-            if (pointRadialDistance > surfaceHeight) return new Point { value = 1f, position = pointPos };
+            if (pointRadialDistance > surfaceHeight) return new Point
+            {
+                value = 1f,
+                position = pointPos,
+                isoLevel = isolevel
+            };
                     
             var point = MakePoint(x, y, pointPos, pointRelativePosition);
 
             // Make outer most points into air to prevent a tiled surface
-            if (pointRadialDistance > surfaceHeight - 2)
-            {
-                point.value = 1f;
-            }
+            // if (pointRadialDistance > surfaceHeight - 2)
+            // {
+            //     point.value = 1f;
+            // }
 
             return point;
         }
@@ -250,6 +280,7 @@ namespace ProcGen
             var p = GetPointRelativePosition(x, y);
             var mag = p.magnitude;
             if (mag > Radius * .9f)
+                
             {
                 _surfaceMeshFilters.Add(meshFilter);
             }
@@ -280,6 +311,14 @@ namespace ProcGen
             return cell;
         }
         
+        /// <summary>
+        /// Calculate cell index, all 8 vertex points using noise and their mesh triangle generation patterns.
+        /// </summary>
+        /// <param name="y"></param>
+        /// <param name="x"></param>
+        /// <param name="idx"></param>
+        /// <param name="cornerPoints"></param>
+        /// <returns></returns>
         public (int idx, Vector3[] vertices, int[] triangles) CalculateCell(int y, int x, int idx = -1, Point[] cornerPoints = null)
         {
             if (idx == -1) idx = (resolution - 1) * y + x;
@@ -303,7 +342,7 @@ namespace ProcGen
             // This skips point calculation for cells outside the planet terrain
             // Maybe it skips something else as well I can't remember lmao.
             // I guess this system is a bit fucked then
-            if (!bl.isSet || !br.isSet || !tl.isSet || !tr.isSet) return (-1, null, null);
+            if (!bl.isSet && !br.isSet && !tl.isSet && !tr.isSet) return (-1, null, null);
 
             // Figure out cell pattern
             // The pattern will be used to look up triangle generation patterns
@@ -366,6 +405,11 @@ namespace ProcGen
                 Vector3.Lerp(tl.position, tr.position, ts[2]),
                 Vector3.Lerp(bl.position, tl.position, ts[3])
             };
+
+            if (idx == 64390)
+            {
+                print("64390");
+            }
 
             return (idx, vertices, _triTable[byteIndex]);
         }
