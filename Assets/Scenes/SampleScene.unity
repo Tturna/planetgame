@@ -444,7 +444,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 519420031}
-  m_PlaneDistance: 100
+  m_PlaneDistance: 5
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -3409,7 +3409,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 273182489}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -253, y: 79, z: -2.0595794}
+  m_LocalPosition: {x: -253, y: 79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3471,6 +3471,8 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: ddc7d64c46d4c304db721b0fde02424a, type: 3}
     - {fileID: 21300000, guid: 50540fb71d7bd0a4d912cc0cd2292923, type: 3}
+    - {fileID: 21300000, guid: 924a243695e130d4e8d443c0cf177735, type: 3}
+    - {fileID: 21300000, guid: 3f75811d433c35747a06404454d7be81, type: 3}
     animate: 0
     move: 0
     objectName: fgTree
@@ -3479,8 +3481,8 @@ MonoBehaviour:
     minSpawnHeight: 0
     minAngleIncrement: 6
     maxAngleIncrement: 16
-    minHeightOffset: -0.3
-    maxHeightOffset: 0
+    minHeightOffset: -0.6
+    maxHeightOffset: -0.3
     spriteColor: {r: 0.31764707, g: 0.5372549, b: 0.45490196, a: 1}
     sortingLayer: Background
     sortingOrder: 4
@@ -3496,8 +3498,8 @@ MonoBehaviour:
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 16
-    minHeightOffset: -0.5
-    maxHeightOffset: -0.25
+    minHeightOffset: -0.75
+    maxHeightOffset: -0.45
     spriteColor: {r: 0.41960785, g: 0.6666667, b: 0.654902, a: 1}
     sortingLayer: Background
     sortingOrder: 3
@@ -3521,16 +3523,19 @@ MonoBehaviour:
   bgMountainOptions:
     spritePool:
     - {fileID: 21300000, guid: da6ea040ef0c49c4b89bfc3f1c737cda, type: 3}
+    - {fileID: 21300000, guid: 48b1d4551bbea7c42ba8c7b26fd0e38b, type: 3}
+    - {fileID: 21300000, guid: a4e4d99aafaec0541936f4d90c2b80c6, type: 3}
+    - {fileID: 21300000, guid: 17804d314e359504086cd02a077f35d0, type: 3}
     animate: 0
     move: 0
     objectName: bgMountain
     layer: 3
-    count: 20
+    count: 40
     minSpawnHeight: 55
     minAngleIncrement: 10
     maxAngleIncrement: 30
-    minHeightOffset: -0.3
-    maxHeightOffset: -0.1
+    minHeightOffset: -0.4
+    maxHeightOffset: -0.2
     spriteColor: {r: 0.5372549, g: 0.7019608, b: 0.78431374, a: 1}
     sortingLayer: Background
     sortingOrder: 2
@@ -3620,6 +3625,8 @@ MonoBehaviour:
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
+  bgTerrainMaterialFg: {fileID: 2100000, guid: 97b9fe0f2d6f57749ab98b15b0d013a1, type: 2}
+  bgTerrainMaterialMg: {fileID: 2100000, guid: f5ed4b77062dae64faf8732eb7fafeb7, type: 2}
 --- !u!114 &273182494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4178,7 +4185,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 118.405, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &340698058
@@ -13194,7 +13201,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1094374834}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19460,7 +19467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 118.405, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1653223058
@@ -20473,7 +20480,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 118.405, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1707379891
@@ -22572,6 +22579,8 @@ MonoBehaviour:
     spriteColor: {r: 0, g: 0, b: 0, a: 0}
     sortingLayer: 
     sortingOrder: 0
+  bgTerrainMaterialFg: {fileID: 0}
+  bgTerrainMaterialMg: {fileID: 0}
 --- !u!1 &1859799458
 GameObject:
   m_ObjectHideFlags: 0
@@ -24409,6 +24418,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1835ba5e2cdfa86449254d1577ebfc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layerParallaxSpeeds:
+  - 0.25
+  - 0.35
+  - 0.45
+  - 0.6
 --- !u!1 &1983188826
 GameObject:
   m_ObjectHideFlags: 0
@@ -25465,7 +25479,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 10, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2067133946
@@ -25807,7 +25821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 10, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2105677432

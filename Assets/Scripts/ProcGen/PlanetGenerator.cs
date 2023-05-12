@@ -43,7 +43,7 @@ namespace ProcGen
 
         private Point[] _pointField;
         private GameObject[] _cellField;
-        private List<MeshFilter> _meshFilters = new();
+        private List<MeshFilter> _surfaceMeshFilters = new();
         private GameObject _cellParent;
         private PlanetDecorator _decorator;
         
@@ -92,7 +92,7 @@ namespace ProcGen
             _decorator = GetComponent<PlanetDecorator>();
             _decorator.SpawnTrees(this);
             _decorator.CreateBackgroundDecorations(this);
-            _decorator.CreateBackgroundTerrain(_meshFilters.ToArray());
+            _decorator.CreateBackgroundTerrain(_surfaceMeshFilters.ToArray());
             
             print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
         }
@@ -244,7 +244,15 @@ namespace ProcGen
 
             var meshFilter = cell.GetComponent<MeshFilter>();
             meshFilter.mesh = mesh;
-            _meshFilters.Add(meshFilter);
+            
+            // only add mesh filters near the surface
+            var (x, y) = GetXYFromIndex(idx);
+            var p = GetPointRelativePosition(x, y);
+            var mag = p.magnitude;
+            if (mag > Radius * .9f)
+            {
+                _surfaceMeshFilters.Add(meshFilter);
+            }
 
             return cell;
         }

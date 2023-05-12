@@ -7,6 +7,8 @@ namespace VFX
 {
     public class ParallaxManager : MonoBehaviour
     {
+        [SerializeField] private float[] layerParallaxSpeeds = { 0f, 0f, 0f, 0f };
+        
         private Transform[] _layerParents;
         private List<KeyValuePair<GameObject, PlanetDecorator.DecorOptions>> _updatingDecorObjects;
         private Planet _currentPlanet;
@@ -41,7 +43,7 @@ namespace VFX
             for (var i = 1; i < _layerParents.Length; i++)
             {
                 var pTr = _layerParents[i];
-                pTr.Rotate(Vector3.forward, diff * (i * .15f));
+                pTr.Rotate(Vector3.forward, diff * layerParallaxSpeeds[i - 1]);
             }
 #endregion
 

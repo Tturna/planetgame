@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace ProcGen
@@ -35,6 +36,7 @@ namespace ProcGen
         [SerializeField] private DecorOptions mgBushOptions, mgBirdOptions;
         [SerializeField] private DecorOptions bgMountainOptions, bgIslandOptions;
         [SerializeField] private DecorOptions flowerOptions, grassOptions, rockOptions, bushOptions;
+        [SerializeField] private Material bgTerrainMaterialFg, bgTerrainMaterialMg;
 
         private Transform[] _backgroundLayerParents;
         private List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
@@ -69,27 +71,87 @@ namespace ProcGen
 
         public void CreateBackgroundTerrain(MeshFilter[] meshFilters)
         {
+            // TODO: Make the background terrain generation smarter
+            
+            /* This doesn't work rn. It tries to make a single mesh out of the whole terrain,
+             * which is stupid because we only really need a bit of the surface terrain. The background
+             * will probably change to some cave wall thing very soon anyway.
+             *
+             * I wonder if you could just take the terrain camera view and duplicate it
+             * but with a flat color or something...
+             */
+            
             if (_backgroundLayerParents == null)
             {
                 InitParentObjects();
             }
-            
-            var combines = new CombineInstance[meshFilters.Length];
 
+            const int meshBundleSize = 64; // how many tiles are combined and optimized
+            var combines = new CombineInstance[meshFilters.Length];
+            
+            // Create meshes so we can combine multiple meshes into one, optimize them and go on.
+            // This way we can reduce the amount of vertices as we're combining all the tiles.
+            // If we try to combine all the tiles directly into 1, it'll have like over 300k vertices,
+            // and Unity starts screaming.
+            // var midMeshes = new Mesh[Mathf.CeilToInt(meshFilters.Length / (float)meshBundleSize)];
+            //
+            // for (var i = 0; i < meshFilters.Length;)
+            // {
+            //     for (var j = 0; j < meshBundleSize && i < meshFilters.Length; j++, i++)
+            //     {
+            //         combines[j].mesh = meshFilters[i].mesh;
+            //         combines[j].transform = meshFilters[i].transform.localToWorldMatrix;
+            //     }
+            //     
+            //     var index = Mathf.FloorToInt(i / (float)meshBundleSize - 1);
+            //     var tMesh = new Mesh();
+            //     tMesh.CombineMeshes(combines, true);
+            //     
+            //     // optimize
+            //     var simplifier = new UnityMeshSimplifier.MeshSimplifier();
+            //     simplifier.Initialize(tMesh);
+            //     simplifier.SimplifyMesh(0.25f);
+            //     midMeshes[index] = simplifier.ToMesh();
+            // }
+            //
+            // combines = new CombineInstance[midMeshes.Length];
+            //
             for (var i = 0; i < combines.Length; i++)
             {
                 combines[i].mesh = meshFilters[i].mesh;
                 combines[i].transform = meshFilters[i].transform.localToWorldMatrix;
             }
-
+            
             var mesh = new Mesh();
             mesh.CombineMeshes(combines, true);
             
-            mesh.Optimize();
+            // mesh.Optimize();
+            var meshSimplifier = new UnityMeshSimplifier.MeshSimplifier();
+            meshSimplifier.Initialize(mesh);
+            
+            meshSimplifier.SimplifyMesh(.35f);
 
-            var bgTerrain = new GameObject("bgTerrain");
-            var meshFilter = bgTerrain.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = mesh;
+            var bgTerrainFg = new GameObject("bgTerrain");
+            var bgTerrainMg = new GameObject("bgTerrain2");
+            bgTerrainFg.transform.parent = _backgroundLayerParents![1];
+            bgTerrainMg.transform.parent = _backgroundLayerParents![2];
+            
+            var pos = bgTerrainFg.transform.position;
+            pos.z = 1f;
+            bgTerrainFg.transform.position = pos;
+            pos.z = 1.5f;
+            bgTerrainMg.transform.position = pos;
+
+            var meshRendererFg = bgTerrainFg.AddComponent<MeshRenderer>();
+            var meshRendererMg = bgTerrainMg.AddComponent<MeshRenderer>();
+            meshRendererFg.material = bgTerrainMaterialFg;
+            meshRendererMg.material = bgTerrainMaterialMg;
+            
+            var meshFilterFg = bgTerrainFg.AddComponent<MeshFilter>();
+            var meshFilterMg = bgTerrainMg.AddComponent<MeshFilter>();
+            meshFilterFg.sharedMesh = meshSimplifier.ToMesh();
+            meshFilterMg.sharedMesh = meshFilterFg.sharedMesh;
+            print($"Mesh vertices: { meshFilterFg.mesh.vertices.Length }");
         }
 
         public (Transform[], List<KeyValuePair<GameObject, DecorOptions>>) GetDecorData()
@@ -133,6 +195,10 @@ namespace ProcGen
                 decor.transform.position = (Vector3)hit.point - dirToPlanet * Random.Range(options.minHeightOffset, options.maxHeightOffset);
                 decor.transform.LookAt(decor.transform.position + Vector3.forward, -dirToPlanet);
 
+                var pos = decor.transform.localPosition;
+                pos.z = 0;
+                decor.transform.localPosition = pos;
+
                 if (options.animate || options.move)
                 {
                     var entry = new KeyValuePair<GameObject, DecorOptions>(decor, options);
@@ -156,7 +222,7 @@ namespace ProcGen
             {
                 var parentTr = new GameObject(Enum.GetName(typeof(BackgroundLayer), i)).transform;
                 parentTr.parent = parallaxParent;
-                parentTr.localPosition = Vector3.zero;
+                parentTr.localPosition = i > 1 ? Vector3.forward * 2 : Vector3.zero;
                 _backgroundLayerParents[i] = parentTr;
             }
         }
