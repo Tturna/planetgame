@@ -5,12 +5,14 @@ using UnityEngine;
 public class Utilities : MonoBehaviour
 {
     [SerializeField] private GameObject projectilePrefab;
+    private static Camera _mainCam;
     
     public static Utilities instance;
 
     private void Awake()
     {
         instance = this;
+        _mainCam = Camera.main;
     }
 
     public void DelayExecute(Action action, float delay)
@@ -44,6 +46,24 @@ public class Utilities : MonoBehaviour
         return Mathf.Lerp(na, nb, t);
     }
 
+    /// <summary>
+    /// Gets position difference between the mouse cursor and the given position in world coordinates.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public static Vector3 GetVectorToWorldCursor(Vector3 position)
+    {
+        return _mainCam.ScreenToWorldPoint(Input.mousePosition) - position;
+    }
+    
+    // TODO: Maybe this function could be better?
+    // Like maybe require an origin position and find the mouse direction automatically???
+    public static float GetCursorAngle(Vector3 directionToMouse, Vector3 relativeRightDirection)
+    {
+        return Vector3.Angle(relativeRightDirection.normalized, directionToMouse);
+    }
+
+    // TODO: figure out if this function actually makes any sense to exist
     public GameObject GetProjectilePrefab()
     {
         return projectilePrefab;

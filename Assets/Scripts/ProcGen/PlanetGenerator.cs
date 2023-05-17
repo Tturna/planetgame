@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace ProcGen
 {
-    [RequireComponent(typeof(Planet))]
+    // [RequireComponent(typeof(Planet))]
     [RequireComponent(typeof(PlanetDecorator))]
     public class PlanetGenerator : MonoBehaviour
     {
-        [SerializeField] private Material cellMaterial;
         [SerializeField] private GameObject cellPrefab;
         public float diameter;
         public int resolution;
@@ -42,6 +41,14 @@ namespace ProcGen
         [SerializeField] private float ySurfaceOrg;
         [SerializeField] private float surfaceNoiseScale;
         [SerializeField] private float surfaceNoiseStrength;
+        
+        [Header("Planet Properties")]
+        [SerializeField] private float atmosphereRadius;
+        [SerializeField] private float maxDrag;
+        [SerializeField] private float maxGravityMultiplier;
+        [SerializeField, Range(0, 1),
+         Tooltip("Distance percentage at which max drag and gravity is reached. 0 is at the edge of the atmosphere, 1 is at the center of the core")]
+        private float maxPhysicsThreshold;
 
         private Point[] _pointField;
         private GameObject[] _cellField;
@@ -97,6 +104,10 @@ namespace ProcGen
             _decorator.CreateBackgroundTerrain(_surfaceMeshFilters.ToArray());
             
             print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
+            
+            var atmosphereCollider = gameObject.AddComponent<CircleCollider2D>();
+            atmosphereCollider.radius = atmosphereRadius;
+            atmosphereCollider.isTrigger = true;
         }
 
         /// <summary>
@@ -451,6 +462,35 @@ namespace ProcGen
             var cellX = (int)((worldPoint.x + Radius) / SizeResRatio);
             var cellY = (int)((worldPoint.y + Radius) / SizeResRatio);
             return new Vector2Int(cellX, cellY);
+        }
+        
+        /// <summary>
+        /// Get the distance of the given position from the center of the planet. 1 = core, 0 = edge of atmosphere
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public float GetDistancePercentage(Vector3 position)
+        {
+            var distanceFromCore = (position - transform.position).magnitude;
+            var perc = distanceFromCore / atmosphereRadius;
+            var rev = 1 - perc;
+            // var limited = rev / threshold;
+            
+            return Mathf.Clamp01(rev);
+        }
+        
+        public float GetDrag(Vector3 position)
+        {
+            var perc = GetDistancePercentage(position);
+            var limitedPerc = Utilities.InverseLerp(0f, maxPhysicsThreshold, perc);
+            return maxDrag * limitedPerc;
+        }
+
+        public float GetGravity(Vector3 position)
+        {
+            var perc = GetDistancePercentage(position);
+            var limitedPerc = Utilities.InverseLerp(0f, maxPhysicsThreshold, perc);
+            return maxGravityMultiplier * limitedPerc;
         }
         
         private void OnDrawGizmos()

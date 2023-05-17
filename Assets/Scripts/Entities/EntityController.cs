@@ -7,27 +7,27 @@ namespace Entities
     public class EntityController : MonoBehaviour
     {
         [SerializeField] private float gravityMultiplier;
-        protected Planet CurrentPlanet { get; set; }
+        protected GameObject CurrentPlanetObject { get; set; }
         protected PlanetGenerator CurrentPlanetGen { get; set; }
-        public Rigidbody2D Rigidbody { get; set; }
+        protected Rigidbody2D Rigidbody { get; set; }
         protected bool CalculatePhysics { get; private set; } = true;
         protected bool CanControl { get; private set; } = true;
         protected bool FollowPlanetRotation { get; private set; } = true;
 
         #region Events
         
-        public delegate void EnteredPlanetHandler(Planet enteredPlanet);
-        public delegate void ExitedPlanetHandler(Planet exitedPlanet);
+        public delegate void EnteredPlanetHandler(GameObject enteredPlanetObject);
+        public delegate void ExitedPlanetHandler(GameObject exitedPlanetObject);
         
         public event EnteredPlanetHandler OnEnteredPlanet;
         public event ExitedPlanetHandler OnExitPlanet;
 
-        private void TriggerOnPlanetEntered(Planet enteredPlanet)
+        private void TriggerOnPlanetEntered(GameObject enteredPlanet)
         {
             OnEnteredPlanet?.Invoke(enteredPlanet);
         }
         
-        private void TriggerOnPlanetExited(Planet exitedPlanet)
+        private void TriggerOnPlanetExited(GameObject exitedPlanet)
         {
             OnExitPlanet?.Invoke(exitedPlanet);
         }
@@ -53,30 +53,23 @@ namespace Entities
         {
             if (!Rigidbody) return;
 
-            if (CalculatePhysics)
+            if (!CalculatePhysics) return;
+            if (!CurrentPlanetObject) return;
+                
+            var trPos = transform.position;
+            var dirToPlanet = (CurrentPlanetObject.transform.position - trPos).normalized;
+
+            var planetGravity = CurrentPlanetGen.GetGravity(trPos);
+            var totalGravity = planetGravity * gravityMultiplier;
+                    
+            Rigidbody.AddForce(dirToPlanet * totalGravity);
+
+            Rigidbody.drag = CurrentPlanetGen.GetDrag(trPos);
+
+            // Keep entity oriented in relation to the planet
+            if (FollowPlanetRotation)
             {
-                if (CurrentPlanet)
-                {
-                    var trPos = transform.position;
-                    var dirToPlanet = (CurrentPlanet.transform.position - trPos).normalized;
-
-                    // Gravity
-                    var planetGravity = CurrentPlanet.GetGravity(trPos);
-                    var totalGravity = planetGravity * gravityMultiplier;
-                    
-                    // if (this is PlayerController) Debug.Log(totalGravity);
-                    
-                    Rigidbody.AddForce(dirToPlanet * totalGravity);
-
-                    // Drag
-                    Rigidbody.drag = CurrentPlanet.GetDrag(trPos);
-
-                    // Keep entity oriented in relation to the planet
-                    if (FollowPlanetRotation)
-                    {
-                        transform.LookAt(transform.position + Vector3.forward, -dirToPlanet);
-                    }
-                }
+                transform.LookAt(transform.position + Vector3.forward, -dirToPlanet);
             }
         }
 
@@ -87,23 +80,22 @@ namespace Entities
 
         protected virtual void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.gameObject.TryGetComponent<Planet>(out var planet))
+            if (col.gameObject.CompareTag("Planet"))
             {
-                CurrentPlanet = planet;
-                CurrentPlanetGen = CurrentPlanet.GetComponent<PlanetGenerator>();
+                CurrentPlanetGen = col.GetComponent<PlanetGenerator>();
 
-                TriggerOnPlanetEntered(CurrentPlanet);
+                TriggerOnPlanetEntered(col.gameObject);
             }
         }
 
         protected virtual void OnTriggerExit2D(Collider2D other)
         {
-            if (other.gameObject.TryGetComponent<Planet>(out var planet))
+            if (other.gameObject.CompareTag("Planet"))
             {
-                CurrentPlanet = null;
+                CurrentPlanetObject = null;
                 CurrentPlanetGen = null;
                 
-                TriggerOnPlanetExited(planet);
+                TriggerOnPlanetExited(other.gameObject);
             }
         }
     }

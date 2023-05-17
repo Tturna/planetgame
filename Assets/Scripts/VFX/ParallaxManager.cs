@@ -11,7 +11,7 @@ namespace VFX
         
         private Transform[] _layerParents;
         private List<KeyValuePair<GameObject, PlanetDecorator.DecorOptions>> _updatingDecorObjects;
-        private Planet _currentPlanet;
+        private Transform _currentPlanetTransform;
         private PlayerController _player;
         private float _oldZ;
 
@@ -57,7 +57,7 @@ namespace VFX
                 if (options.move)
                 {
                     var decPos = decor.transform.position;
-                    var dirToPlanet = (_currentPlanet.transform.position - decPos).normalized;
+                    var dirToPlanet = (_currentPlanetTransform.position - decPos).normalized;
                     decor.transform.LookAt(decPos + Vector3.forward, -dirToPlanet);
                     
                     // TODO: Random speed? Would be cool for birds but could fuck up other shit
@@ -78,9 +78,9 @@ namespace VFX
             
         }
 
-        private void OnPlanetEntered(Planet planet)
+        private void OnPlanetEntered(GameObject planet)
         {
-            _currentPlanet = planet;
+            _currentPlanetTransform = planet.transform;
             (_layerParents, _updatingDecorObjects) = planet.GetComponent<PlanetDecorator>().GetDecorData();
         }
     }

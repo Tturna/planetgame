@@ -2,6 +2,7 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
+using System;
 using Entities;
 using Inventory.Item_Types;
 using UnityEngine;
@@ -10,22 +11,40 @@ namespace Inventory
 {
     public class MeleeHitManager : MonoBehaviour
     {
+        [SerializeField] private GameObject equippedItemObject;
+        
         private MeleeSo _meleeSo;
         private EdgeCollider2D _edgeCollider;
 
-        public void SetWeaponStats(MeleeSo so, GameObject equippedItemObject)
+        private void Start()
         {
-            _edgeCollider ??= equippedItemObject.GetComponent<EdgeCollider2D>();
-            
-            _meleeSo = so;
+            var itemAnimationManager = transform.parent.GetComponent<ItemAnimationManager>();
+            itemAnimationManager.SwingStarted += () => SetCollision(true);
+            itemAnimationManager.SwingCompleted += () => SetCollision(false);
 
-            if (so)
+            // TODO: Subscribe to item equip event in InventoryManager
+        }
+
+        private void OnItemEquipped(Item item)
+        {
+            if (item.itemSo is MeleeSo meleeSo)
             {
-                _edgeCollider.points = so.colliderPoints;
+                SetWeaponStats(meleeSo.colliderPoints);
+                SetCollision(false);
+            }
+            else
+            {
+                SetWeaponStats(null);
             }
         }
 
-        public void SetCollision(bool state)
+        private void SetWeaponStats(Vector2[] colliderPoints)
+        {
+            _edgeCollider ??= equippedItemObject.GetComponent<EdgeCollider2D>();
+            _edgeCollider.points = colliderPoints;
+        }
+
+        private void SetCollision(bool state)
         {
             _edgeCollider.enabled = state;
         }

@@ -16,12 +16,17 @@ namespace Inventory
         public Item(Item source)
         {
             itemSo = source.itemSo;
-            logicScript = null;
+
+            // TODO: Check if this works
+            logicScript = source.logicScript;
             
-            if (itemSo is UsableItemSo so)
-            {
-                logicScript = ItemLogic.GetScript(so.logicCode);
-            }
+            // Old stuff. Let's see if the new stuff above works
+            // logicScript = null;
+            //
+            // if (itemSo is UsableItemSo so)
+            // {
+            //     logicScript = ItemLogic.GetScript(so.logicCode);
+            // }
         }
     }
 }

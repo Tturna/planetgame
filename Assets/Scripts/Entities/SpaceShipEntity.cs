@@ -99,7 +99,7 @@ public class SpaceShipEntity : EntityController
     {
         if (col.gameObject.TryGetComponent<Planet>(out var planet))
         {
-            CurrentPlanet = planet;
+            CurrentPlanetObject = planet;
         }
     }
 
@@ -107,7 +107,7 @@ public class SpaceShipEntity : EntityController
     {
         if (other.gameObject.TryGetComponent<Planet>(out _))
         {
-            CurrentPlanet = null;
+            CurrentPlanetObject = null;
         }
     }
 }

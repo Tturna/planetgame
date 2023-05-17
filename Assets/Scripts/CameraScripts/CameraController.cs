@@ -9,27 +9,25 @@ namespace CameraScripts
     {
         [SerializeField] private Vector3 defaultCamPosition;
     
-        private GameObject _planet;
-        private PlayerController _player;
+        private Transform _planetTransform;
 
         private void Start()
         {
-            _player = PlayerController.instance;
-            _player.OnEnteredPlanet += SetTargetPlanet;
+            PlayerController.instance.OnEnteredPlanet += SetTargetPlanet;
         }
 
         private void LateUpdate()
         {
-            if (!_planet) return;
+            if (!_planetTransform) return;
 
             var trPos = transform.position;
-            var dirToPlanet = (_planet.transform.position - trPos).normalized;
+            var dirToPlanet = (_planetTransform.transform.position - trPos).normalized;
             transform.LookAt(trPos + Vector3.forward, -dirToPlanet);
         }
 
-        private void SetTargetPlanet(Planet planet)
+        private void SetTargetPlanet(GameObject planet)
         {
-            _planet = planet.gameObject;
+            _planetTransform = planet.transform;
         }
 
         public void CameraShake(float time, float strength)

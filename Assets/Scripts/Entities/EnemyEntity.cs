@@ -8,7 +8,9 @@ namespace Entities
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(Rigidbody2D))]
-    public class EnemyEntity : EntityController, IDamageable
+    
+    // Sealed - can't be inherited
+    public sealed class EnemyEntity : EntityController, IDamageable
     {
         [SerializeField] private EnemySo enemySo;
         
@@ -28,7 +30,7 @@ namespace Entities
         {
             base.Start();
             
-            _player = FindObjectOfType<PlayerController>();
+            _player = PlayerController.instance;
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
             _healthbarManager = GetComponent<HealthbarManager>();
@@ -76,7 +78,7 @@ namespace Entities
             }
         }
 
-        protected virtual bool CalculatePlayerRelation()
+        private bool CalculatePlayerRelation()
         {
             // Timer
             // _calculationTimer -= Time.deltaTime;
@@ -88,7 +90,7 @@ namespace Entities
             return true;
         }
 
-        protected virtual void CheckAggro()
+        private void CheckAggro()
         {
             if (_aggravated)
             {
@@ -112,7 +114,7 @@ namespace Entities
             }
         }
 
-        protected virtual void Aggro()
+        private void Aggro()
         {
             _aggravated = true;
             
@@ -123,13 +125,13 @@ namespace Entities
             }
         }
 
-        protected virtual void Deaggro()
+        private void Deaggro()
         {
             _aggravated = false;
             _animator.SetBool("moving", false);
         }
 
-        protected virtual void AggroBehavior()
+        private void AggroBehavior()
         {
             if (_attackTimer > 0)
             {

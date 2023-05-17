@@ -1,40 +1,24 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using CameraScripts;
 using UnityEngine;
-using Inventory;
-using Inventory.Entities;
-using Inventory.Item_Types;
-using ProcGen;
 
 namespace Entities
 {
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(StatsManager))]
     public class PlayerController : EntityController, IDamageable
     {
         #region Serialized Fields
         
             [Header("Components")]
-            [SerializeField] private Animator handsAnimator;
-            [SerializeField] private GameObject equippedItemObject;
+            [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
+            [SerializeField] private Transform handsParent;
         
             [Header("Movement Settings")]
             [SerializeField] private float accelerationSpeed;
             [SerializeField] private float maxMoveSpeed;
             [SerializeField] private float jumpForce;
             [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
-
-            [Header("Stats Settings")]
-            [SerializeField] private float maxHealth;
-            [SerializeField] private float health;
-            [SerializeField] private float maxEnergy;
-            [SerializeField] private float energy;
-            [SerializeField] private float energyRegenDelay;
-            [SerializeField] private float energyRegenRate;
-            [SerializeField] private float healthRegenDelay;
-            [SerializeField] private float healthRegenRate;
             
         #endregion
 
@@ -42,13 +26,6 @@ namespace Entities
         
             private SpriteRenderer _sr;
             private Animator _animator;
-            private Transform _itemAnchor, _recoilAnchor;
-            private Transform _handsParent, _handLeft, _handRight;
-            private SpriteRenderer _equippedSr;
-            private CameraController _camControl;
-            public Animator RecoilAnimator { get; private set; }
-            public ItemAnimationManager ItemAnimationManager { get; private set; }
-            private MeleeHitManager _meleeHitManager;
             
         #endregion
 
@@ -69,14 +46,23 @@ namespace Entities
             
         #endregion
 
+        public delegate void ItemPickedUpHandler(GameObject itemObject);
+        public ItemPickedUpHandler ItemPickedUp;
+
+        private void OnItemPickedUp(GameObject itemObject)
+        {
+            ItemPickedUp?.Invoke(itemObject);
+        }
+        
+        // -----------------------------------------------------
+        
         public static PlayerController instance;
         
         private Vector2 _inputVector;
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Vector3 _mouseDirection;
-        private Item _equippedItem;
-        private float _energyRegenTimer, _healthRegenTimer;
         private int _terrainLayerMask;
+        private StatsManager _statsManager;
 
         // Built-in methods
         
@@ -94,26 +80,9 @@ namespace Entities
         
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
-            _equippedSr = equippedItemObject.GetComponent<SpriteRenderer>();
-            _meleeHitManager = equippedItemObject.GetComponentInChildren<MeleeHitManager>();
-            
-            _recoilAnchor = equippedItemObject.transform.parent;
-            _itemAnchor = _recoilAnchor.parent;
-            RecoilAnimator = _recoilAnchor.GetComponent<Animator>();
-            ItemAnimationManager = _recoilAnchor.GetComponent<ItemAnimationManager>();
+            _statsManager = GetComponent<StatsManager>();
 
-            _camControl = GetComponentInChildren<CameraController>();
-            
-            _handsParent = handsAnimator.transform;
-            _handLeft = _handsParent.GetChild(0).GetChild(0);
-            _handRight = _handsParent.GetChild(1).GetChild(0);
-
-            InventoryManager.SlotSelected += EquipItem;
             Physics2D.queriesHitTriggers = false;
-
-            // Subscribe to events to enable melee collision only while swinging
-            ItemAnimationManager.SwingStarted += () => _meleeHitManager.SetCollision(true);
-            ItemAnimationManager.SwingCompleted += () => _meleeHitManager.SetCollision(false);
         }
 
         private void Update()
@@ -124,12 +93,11 @@ namespace Entities
             if (!CanControl) return;
             
             HandleControls();
-            HandleStatsRegeneration();
 
-            _mouseDirection = GetDirectionToMouse();
-            var cursorAngle = GetCursorAngle(_mouseDirection);
+            _mouseDirection = Utilities.GetVectorToWorldCursor(transform.position).normalized;
+            var cursorAngle = Utilities.GetCursorAngle(_mouseDirection, transform.right);
             
-            HandleItemAiming(_mouseDirection, cursorAngle);
+            // HandleItemAiming(_mouseDirection, cursorAngle);
             HandlePlayerFlipping(cursorAngle);
         }
 
@@ -202,10 +170,9 @@ namespace Entities
             {
                 _interactablesInRange.Add(interactable);
             }
-            else if (col.transform.root.TryGetComponent<ItemEntity>(out var item))
+            else if (col.gameObject.CompareTag("Item"))
             {
-                if (!InventoryManager.AddItem(item.item)) return;
-            
+                OnItemPickedUp(col.gameObject);
                 Destroy(col.transform.parent.gameObject);
             }
         }
@@ -251,69 +218,6 @@ namespace Entities
             {
                 // Prevent adding jump force in the air if the jump key is released while jumping
                 _jumpForceTimer = maxJumpForceTime;
-            }
-            
-            // Use Item
-            // UseItem functions return a bool based on if the attack was called with "once" on or off.
-            // This way logic scripts can choose which case to act on, GetKey or GetKeyDown.
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                if (UseItem(true, false)) return;
-            }
-            
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                if (UseItem(false, false)) return;
-            }
-            
-            if (Input.GetKeyDown(KeyCode.Mouse1))
-            {
-                if (UseItem(true, true)) return;
-            }
-            
-            if (Input.GetKey(KeyCode.Mouse1))
-            {
-                if (UseItem(false, true)) return;
-            }
-        }
-
-        private void HandleItemAiming(Vector3 directionToMouse, float cursorAngle)
-        {
-            var trForward = transform.forward;
-
-            var cross = Vector3.Cross(-trForward, directionToMouse);
-            _itemAnchor.LookAt( transform.position - trForward, cross);
-
-            // Flip sprite when aiming right
-            // var angle = Vector3.Angle(transform.right, directionToMouse);
-            // _equippedSr.flipY = angle < 90;
-            
-            // Flip the object when aiming right
-            // We do this because otherwise the recoil animation is flipped
-            var scale = _recoilAnchor.localScale;
-            scale.y = cursorAngle < 90 ? -1f : 1f;
-            _itemAnchor.localScale = scale;
-            
-            // Manually set left hand position when holding an item
-            if (_equippedItem != null)
-            {
-                handsAnimator.SetLayerWeight(1, 0f);
-
-                var relativeOffset = _equippedItem.itemSo.handPositionOffset;
-                var itemRight = equippedItemObject.transform.right;
-                var itemUp = equippedItemObject.transform.up;
-                
-                var x = itemRight * relativeOffset.x;
-                var y = itemUp * (relativeOffset.y * (cursorAngle < 90 ? -1f : 1f));
-                
-                var offset = x + y;
-
-                _handLeft.position = equippedItemObject.transform.position + offset;
-            }
-            else
-            {
-                handsAnimator.SetLayerWeight(1, 1f);
-                _handLeft.localPosition = Vector3.zero;
             }
         }
 
@@ -374,29 +278,6 @@ namespace Entities
             _closestInteractable.DisablePrompt();
         }
 
-        private void HandleStatsRegeneration()
-        {
-            if (_energyRegenTimer > 0)
-            {
-                _energyRegenTimer -= Time.deltaTime;
-            }
-            else
-            {
-                energy = Mathf.Clamp(energy + energyRegenRate * Time.deltaTime, 0, maxEnergy);
-                StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
-            }
-
-            if (_healthRegenTimer > 0)
-            {
-                _healthRegenTimer -= Time.deltaTime;
-            }
-            else
-            {
-                health = Mathf.Clamp(health + healthRegenRate * Time.deltaTime, 0, maxEnergy);
-                StatsUIManager.Instance.UpdateHealthUI(health, maxHealth);
-            }
-        }
-
         private void HandlePlayerFlipping(float cursorAngle)
         {
             // if (_inputVector.x == 0) return;
@@ -404,10 +285,10 @@ namespace Entities
 
             _sr.flipX = cursorAngle < 90;
             
-            var scale = _handsParent.localScale;
+            var scale = handsParent.localScale;
             // scale.x = _inputVector.x > 0 ? -1f : 1f;
             scale.x = cursorAngle < 90 ? -1f : 1f;
-            _handsParent.localScale = scale;
+            handsParent.localScale = scale;
         }
 
         private Interactable GetClosestInteractable()
@@ -431,122 +312,16 @@ namespace Entities
         public override void ToggleSpriteRenderer(bool state)
         {
             _sr.enabled = state;
-            _handsParent.gameObject.SetActive(state);
+            handsParent.gameObject.SetActive(state);
         }
 
-        private void EquipItem(Item item)
-        {
-            _equippedItem = item;
-            equippedItemObject.SetActive(item != null);
-
-            if (item != null)
-            {
-                equippedItemObject.GetComponent<SpriteRenderer>().sprite = item.itemSo.sprite;
-
-                if (item.itemSo is MeleeSo meleeSo)
-                {
-                    _meleeHitManager.SetWeaponStats(meleeSo, equippedItemObject);
-                    _meleeHitManager.SetCollision(false);
-                    return;
-                }
-            }
-        
-            _meleeHitManager.SetWeaponStats(null, equippedItemObject);
-            //equippedItem.transform.localEulerAngles = item.itemSo.defaultHandRotation;
-        }
-
-        private bool UseItem(bool once, bool secondary)
-        {
-            if (_equippedItem?.itemSo is not UsableItemSo usableItemSo) return false;
-            if (_equippedItem.logicScript == null) return false;
-            if (usableItemSo.isOnCooldown) return false;
-
-            if (energy < usableItemSo.energyCost)
-            {
-                NoEnergy();
-                return false;
-            }
-
-            // Use Item
-            Func<GameObject, Item, bool, PlayerController, PlanetGenerator, bool> useitemFunction;
-
-            if (once)
-            {
-                useitemFunction = secondary
-                    ? _equippedItem.logicScript.UseOnceSecondary
-                    : _equippedItem.logicScript.UseOnce;
-            }
-            else
-            {
-                useitemFunction = secondary
-                    ? _equippedItem.logicScript.UseContinuousSecondary
-                    : _equippedItem.logicScript.UseContinuous;
-            }
-            
-            var res = useitemFunction(equippedItemObject, _equippedItem, _equippedSr.flipY, this, CurrentPlanetGen);
-            
-            if (!res) return false;
-
-            if (usableItemSo.energyCost > 0)
-            {
-                StartCoroutine(HandleWeaponCooldown(usableItemSo));
-            }
-
-            // Update energy
-            energy = Mathf.Clamp(energy - usableItemSo.energyCost, 0, maxEnergy);
-            _energyRegenTimer = energyRegenDelay;
-            StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
-                
-            // Recoil
-            RecoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
-            RecoilAnimator.SetLayerWeight(2, usableItemSo.recoilAngular);
-            RecoilAnimator.SetFloat("recoil_shpeed_horizontal", usableItemSo.recoilSpeedHorizontal);
-            RecoilAnimator.SetFloat("recoil_shpeed_angular", usableItemSo.recoilSpeedAngular);
-            RecoilAnimator.SetTrigger("recoil");
-            
-            // Player recoil
-            var recoilDirection = -_itemAnchor.right;
-            Rigidbody.AddForce(recoilDirection * usableItemSo.playerRecoilStrength, ForceMode2D.Impulse);
-            
-            // Camera shake
-            _camControl.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
-
-            return true;
-        }
-
-        private void NoEnergy()
-        {
-            throw new NotImplementedException();
-        }
-
-        private IEnumerator HandleWeaponCooldown(UsableItemSo usableItem)
-        {
-            usableItem.isOnCooldown = true;
-            yield return new WaitForSeconds(usableItem.attackCooldown);
-            usableItem.isOnCooldown = false;
-        }
-
-        private Vector3 GetDirectionToMouse()
-        {
-            var mousePosition = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
-            return (mousePosition - transform.position).normalized;
-        }
-
-        private float GetCursorAngle(Vector3 directionToMouse)
-        {
-            return Vector3.Angle(transform.right, directionToMouse);
-        }
         
         // Public methods
         
         public void TakeDamage(float amount)
         {
-            health = Mathf.Clamp(health - amount, 0, maxHealth);
-            _healthRegenTimer = healthRegenDelay;
-            StatsUIManager.Instance.UpdateHealthUI(health, maxHealth);
-            
-            if (health <= 0) Death();
-            
+            var died = _statsManager.ChangeHealth(amount);
+            if (died) Death();
             //TODO: damage numbers
             
             Debug.Log($"Took {amount} damage!");

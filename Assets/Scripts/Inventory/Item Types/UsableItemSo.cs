@@ -1,4 +1,5 @@
 using Inventory.Item_Logic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -7,7 +8,7 @@ namespace Inventory.Item_Types
     // This intentionally doesn't have an asset menu entry as this is supposed to be used by other scriptable objects.
     public abstract class UsableItemSo : ItemSo
     {
-        public ItemLogic.LogicCode logicCode;
+        [UsedImplicitly] public ItemLogic.LogicCode logicCode;
         [FormerlySerializedAs("attackSpeed")] public float attackCooldown;
         public float energyCost;
         [Range(0f, 1f)] public float recoilHorizontal;

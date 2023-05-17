@@ -1,7 +1,4 @@
 using System;
-using System.Linq;
-using Entities;
-using ProcGen;
 using UnityEngine;
 
 namespace Inventory.Item_Logic
@@ -10,9 +7,9 @@ namespace Inventory.Item_Logic
     {
         private Camera _camera;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null)
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject)
         {
             if (!usePlanet) return false;
 
@@ -129,8 +126,8 @@ namespace Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
+        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, PlayerController player, PlanetGenerator usePlanet = null) => false;
+        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
     }
 }

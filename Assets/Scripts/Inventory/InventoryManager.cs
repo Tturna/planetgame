@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Entities;
 using Inventory.Entities;
 using Inventory.Item_Types;
 using TMPro;
@@ -32,6 +33,7 @@ namespace Inventory
         [SerializeField] private GameObject inventoryObject;
         [SerializeField] private GameObject itemPrefab;
         [SerializeField] private GameObject itemTooltipObject;
+        [SerializeField] private GameObject equippedItemObject;
         [SerializeField] private Sprite emptySlotSprite;
         [SerializeField] private Sprite filledSlotSprite;
         [SerializeField] private Sprite emptySlotSelectedSprite;
@@ -49,10 +51,11 @@ namespace Inventory
         private static Slot[] _stashSlots;
         private static Slot _mouseSlot;
         private static int _selectedIndex;
+        private Item _equippedItem;
 
-        public delegate void SlotSelectedHandler(Item slotItem);
-        public static event SlotSelectedHandler SlotSelected;
-
+        public delegate void ItemEquippedHandler(Item item);
+        public static event ItemEquippedHandler ItemEquipped;
+        
         private void Start()
         {
             #region Initialize Inventory
@@ -95,6 +98,7 @@ namespace Inventory
             
             #endregion
 
+            PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<Item>());
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
         }
 
@@ -152,7 +156,7 @@ namespace Inventory
             }
         }
 
-        private static void HandleMouseOne(ref Slot clickedSlot, GameObject clickedSlotObject)
+        private void HandleMouseOne(ref Slot clickedSlot, GameObject clickedSlotObject)
         {
             if (!clickedSlotObject)
             {
@@ -194,7 +198,7 @@ namespace Inventory
             SwapMouseSlot(ref clickedSlot, clickedSlotObject);
         }
         
-        private static void HandleMouseTwo(ref Slot clickedSlot, GameObject clickedSlotObject)
+        private void HandleMouseTwo(ref Slot clickedSlot, GameObject clickedSlotObject)
         {
             // If mouse slot has an item...
             if (_mouseSlot.stack > 0)
@@ -274,7 +278,7 @@ namespace Inventory
 
                     if (_selectedIndex == clickedSlot.index)
                     {
-                        OnSlotSelected(null);
+                        EquipItem(null);
                     }
                 }
                 
@@ -284,7 +288,7 @@ namespace Inventory
             }
         }
         
-        public static bool AddItem(Item item)
+        public bool AddItem(Item item)
         {
             // Copy item
             var copy = new Item(item);
@@ -323,14 +327,14 @@ namespace Inventory
             return true;
         }
 
-        private static void SwapMouseSlot(ref Slot slot, GameObject clickedSlotObject)
+        private void SwapMouseSlot(ref Slot slot, GameObject clickedSlotObject)
         {
             (_mouseSlot, slot) = (slot, _mouseSlot);
             (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
 
             if (_selectedIndex == slot.index && slot.item == null)
             {
-                OnSlotSelected(null);
+                EquipItem(null);
             }
 
             UpdateLogicalSlot(slot);
@@ -390,14 +394,14 @@ namespace Inventory
             return segment;
         }
 
-        private static bool SelectSlot(int slotIndex)
+        private bool SelectSlot(int slotIndex)
         {
             if (slotIndex < 0 || slotIndex > _hotSlots.Length - 1) return false;
             
             var img = _hotSlotObjects[slotIndex].gameObject.GetComponent<Image>();
             img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSelectedSprite : instance.emptySlotSelectedSprite;
             
-            OnSlotSelected(_hotSlots[slotIndex].item);
+            EquipItem(_hotSlots[slotIndex].item);
             return true;
         }
 
@@ -544,41 +548,41 @@ namespace Inventory
             
             // TODO: Update tooltip UI elements in script. Unity's layout stuff is buggy as shit it seems.
             // TODO: Would be cool if you could choose which data in the scriptable object is shown in the tooltip.
-            switch (slot.item.itemSo)
-            {
-                case ToolSo tool:
-                    typeText.text = "Tool";
-                    statName1.text = "Damage";
-                    statName2.text = "Use Speed";
-                    statName3.text = "Tool Power";
-
-                    statValue1.text = tool.projectile.damage.ToString();
-                    statValue2.text = tool.attackCooldown.ToString();
-                    statValue3.text = tool.toolPower.ToString();
-                    break;
-                
-                case WeaponSo weapon:
-                    typeText.text = "Weapon";
-                    statName1.text = "Damage";
-                    statName2.text = "Attack Speed";
-                    statName3.text = "idk";
-
-                    statValue1.text = weapon.projectile.damage.ToString();
-                    statValue2.text = weapon.attackCooldown.ToString();
-                    statValue3.text = "Something";
-                    break;
-                
-                default:
-                    typeText.text = "";
-                    statName1.text = "";
-                    statName2.text = "";
-                    statName3.text = "";
-
-                    statValue1.text = "";
-                    statValue2.text = "";
-                    statValue3.text = "";
-                    break;
-            }
+            // switch (slot.item.itemSo)
+            // {
+            //     case ToolSo tool:
+            //         typeText.text = "Tool";
+            //         statName1.text = "Damage";
+            //         statName2.text = "Use Speed";
+            //         statName3.text = "Tool Power";
+            //
+            //         statValue1.text = tool.projectile.damage.ToString();
+            //         statValue2.text = tool.attackCooldown.ToString();
+            //         statValue3.text = tool.toolPower.ToString();
+            //         break;
+            //     
+            //     case WeaponSo weapon:
+            //         typeText.text = "Weapon";
+            //         statName1.text = "Damage";
+            //         statName2.text = "Attack Speed";
+            //         statName3.text = "idk";
+            //
+            //         statValue1.text = weapon.projectile.damage.ToString();
+            //         statValue2.text = weapon.attackCooldown.ToString();
+            //         statValue3.text = "Something";
+            //         break;
+            //     
+            //     default:
+            //         typeText.text = "";
+            //         statName1.text = "";
+            //         statName2.text = "";
+            //         statName3.text = "";
+            //
+            //         statValue1.text = "";
+            //         statValue2.text = "";
+            //         statValue3.text = "";
+            //         break;
+            // }
         }
         
         /// <summary>
@@ -611,9 +615,21 @@ namespace Inventory
             return true;
         }
         
-        private static void OnSlotSelected(Item slotItem)
+        private void EquipItem(Item item)
         {
-            SlotSelected?.Invoke(slotItem);
+            _equippedItem = item;
+            equippedItemObject.SetActive(item != null);
+
+            if (item != null)
+            {
+                equippedItemObject.GetComponent<SpriteRenderer>().sprite = item.itemSo.sprite;
+                OnItemEquipped(item);
+            }
+        }
+        
+        private static void OnItemEquipped(Item item)
+        {
+            ItemEquipped?.Invoke(item);
         }
     }
 }
