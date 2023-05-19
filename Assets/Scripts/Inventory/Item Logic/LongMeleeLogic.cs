@@ -5,37 +5,35 @@ namespace Inventory.Item_Logic
 {
     public class LongMeleeLogic : ItemLogicBase
     {
-        private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
+        private PlayerController _player;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject)
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
-            _recoilAnimator ??= player.RecoilAnimator;
-            _itemAnimationManager ??= player.ItemAnimationManager;
+            _itemAnimationManager ??= itemAnimationManager;
             
-            _itemAnimationManager.AttackMelee(_recoilAnimator, "attackLongMelee");
-            
-            
+            _itemAnimationManager.AttackMelee("attackLongMelee");
+
             return true;
         }
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject)
+        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
-            _recoilAnimator ??= player.RecoilAnimator;
-            _itemAnimationManager ??= player.ItemAnimationManager;
+            _itemAnimationManager ??= itemAnimationManager;
+            _player ??= PlayerController.instance;
            
-            player.ResetVelocity(true, false, true);
+            _player.ResetVelocity(true, false, true);
             
-            _itemAnimationManager.AttackMelee(_recoilAnimator, "attackMeleeLunge", () =>
+            _itemAnimationManager.AttackMelee("attackMeleeLunge", () =>
             {
-                player.AddForceTowardsCursor(1000f);
+                _player.AddForceTowardsCursor(1000f);
             });
             
             return true;
         }
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
+        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
     }
 }

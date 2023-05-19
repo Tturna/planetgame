@@ -274,7 +274,7 @@ namespace Entities
 
             if (!Input.GetKeyDown(KeyCode.F)) return;
             
-            _closestInteractable.Interact(this);
+            _closestInteractable.Interact(gameObject);
             _closestInteractable.DisablePrompt();
         }
 

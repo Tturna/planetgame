@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using CameraScripts;
 using Entities;
+using Inventory.Item_Logic;
 using Inventory.Item_Types;
 using UnityEngine;
 
@@ -119,7 +120,7 @@ namespace Inventory
             }
 
             // Use Item
-            Func<GameObject, Item, bool, GameObject, bool> useitemFunction;
+            Func<GameObject, Item, bool, GameObject, ItemAnimationManager, bool> useitemFunction;
 
             if (once)
             {
@@ -134,7 +135,7 @@ namespace Inventory
                     : _equippedItem.logicScript.UseContinuous;
             }
             
-            var res = useitemFunction(equippedItemTransform.gameObject, _equippedItem, _equippedSr.flipY, gameObject);
+            var res = useitemFunction(equippedItemTransform.gameObject, _equippedItem, _equippedSr.flipY, gameObject, _itemAnimationManager);
             
             if (!res) return false;
 

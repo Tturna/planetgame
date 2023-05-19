@@ -10,10 +10,6 @@ namespace ProcGen
     public class PlanetGenerator : MonoBehaviour
     {
         [SerializeField] private GameObject cellPrefab;
-        public float diameter;
-        public int resolution;
-        private float SizeResRatio => diameter / resolution;
-        private float Radius => diameter / 2;
 
         [Header("Generic Noise Settings")]
         [SerializeField] private int octaves;
@@ -43,18 +39,31 @@ namespace ProcGen
         [SerializeField] private float surfaceNoiseStrength;
         
         [Header("Planet Properties")]
+        public float diameter;
+        public int resolution;
         [SerializeField] private float atmosphereRadius;
+        
+        // TODO: Implement max gravity radius...
+        // and separate it from drag so there's a layer of gravity
+        // without drag around a planet. This is so things can
+        // stay in orbit.
+        
         [SerializeField] private float maxDrag;
         [SerializeField] private float maxGravityMultiplier;
         [SerializeField, Range(0, 1),
          Tooltip("Distance percentage at which max drag and gravity is reached. 0 is at the edge of the atmosphere, 1 is at the center of the core")]
         private float maxPhysicsThreshold;
+        
+        public Sprite surfaceCameraBackground;
+        public Color surfaceBackgroundColor;
 
         private Point[] _pointField;
         private GameObject[] _cellField;
         private List<MeshFilter> _surfaceMeshFilters = new();
         private GameObject _cellParent;
         private PlanetDecorator _decorator;
+        private float SizeResRatio => diameter / resolution;
+        private float Radius => diameter / 2;
         
         /*
      *      3 - (6) - 2

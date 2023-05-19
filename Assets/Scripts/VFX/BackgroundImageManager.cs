@@ -1,4 +1,5 @@
 using Entities;
+using ProcGen;
 using UnityEngine;
 
 namespace VFX
@@ -8,13 +9,14 @@ namespace VFX
         [SerializeField] private SpriteRenderer bg1, bg2;
         [SerializeField] private Sprite defaultSprite;
     
-        private Planet _currentPlanet;
+        private PlanetGenerator _currentPlanetGen;
+        private PlayerController _player;
 
         private void Start()
         {
-            var player = PlayerController.instance;
-            player.OnEnteredPlanet += OnEnteredPlanet;
-            player.OnExitPlanet += OnExitedPlanet;
+            _player = PlayerController.instance;
+            _player.OnEnteredPlanet += OnEnteredPlanet;
+            _player.OnExitPlanet += OnExitedPlanet;
 
             bg1.sprite = defaultSprite;
             bg1.color = Color.black;
@@ -23,7 +25,7 @@ namespace VFX
         private void Update()
         {
             // Smooth transition between backgrounds according to player position.
-            var perc = _currentPlanet.GetDistancePercentage(_player.transform.position);
+            var perc = _currentPlanetGen.GetDistancePercentage(_player.transform.position);
             var limitedPerc = Utilities.InverseLerp(0f, 0.5f, perc);
         
             var c = bg2.color;
@@ -35,15 +37,15 @@ namespace VFX
 
         private void OnEnteredPlanet(GameObject planetObject)
         {
-            _currentPlanet = planetObject;
+            _currentPlanetGen = planetObject.GetComponent<PlanetGenerator>();
 
-            bg2.sprite = _currentPlanet.surfaceCameraBackground ? _currentPlanet.surfaceCameraBackground : defaultSprite;
-            bg2.color = _currentPlanet.surfaceBackgroundColor;
+            bg2.sprite = _currentPlanetGen.surfaceCameraBackground ? _currentPlanetGen.surfaceCameraBackground : defaultSprite;
+            bg2.color = _currentPlanetGen.surfaceBackgroundColor;
         }
 
         private void OnExitedPlanet(GameObject planetObject)
         {
-            _currentPlanet = null;
+            _currentPlanetGen = null;
             bg2.sprite = defaultSprite;
         }
     }

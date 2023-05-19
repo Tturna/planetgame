@@ -63,7 +63,7 @@ namespace Entities
         {
             void Action()
             {
-                enemy.Rigidbody.AddRelativeForce(enemy.relativeMoveDirection * attackDistance, ForceMode2D.Impulse);
+                enemy.AddRelativeForce(enemy.relativeMoveDirection * attackDistance, ForceMode2D.Impulse);
             }
 
             if (attackDelay > 0)

@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Entities
+namespace Inventory.Item_Logic
 {
     public class ItemAnimationManager : MonoBehaviour
     {
@@ -17,11 +17,11 @@ namespace Entities
         public event SwingStartedHandler SwingStarted;
         public event SwingCompletedHandler SwingCompleted;
 
-        public void AttackMelee(Animator recoilAnimator, string triggerName, LogicCallback animationEventCallback = null)
+        public void AttackMelee(string triggerName, LogicCallback animationEventCallback = null)
         {
             if (_swingEnding) return;
             
-            _recoilAnimator ??= recoilAnimator;
+            _recoilAnimator ??= GetComponent<Animator>();
             
             // Check if the player attacked while an attack is being animated.
             // Check if the attack is timed between the attack queue opening and the end of the swing.

@@ -1,5 +1,4 @@
 ﻿using Entities;
-using ProcGen;
 using UnityEngine;
 
 namespace Inventory.Item_Logic
@@ -11,11 +10,11 @@ namespace Inventory.Item_Logic
         
         // If an item is not supposed to be used continuously, make UseContinuous return false. Same with UseOnce.
         // Otherwise return true.
-        public abstract bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject);
-        public abstract bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject);
+        public abstract bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager);
+        public abstract bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager);
         
         // Same thing for secondary uses
-        public abstract bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject);
-        public abstract bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject);
+        public abstract bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager);
+        public abstract bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager);
     }
 }

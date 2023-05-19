@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Entities;
 using Inventory.Entities;
-using Inventory.Item_Types;
 using TMPro;
 using UI;
 using UnityEngine;

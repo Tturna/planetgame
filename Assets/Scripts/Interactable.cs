@@ -1,4 +1,3 @@
-using Entities;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour
@@ -11,7 +10,7 @@ public class Interactable : MonoBehaviour
 
     private GameObject _promptObject;
 
-    public delegate void OnInteractEventHandler(EntityController sourceEntity);
+    public delegate void OnInteractEventHandler(GameObject sourceObject);
     public event OnInteractEventHandler Interacted;
     
     private void Start()
@@ -45,14 +44,14 @@ public class Interactable : MonoBehaviour
         }
     }
 
-    public virtual void Interact(EntityController source)
+    public virtual void Interact(GameObject sourceObject)
     {
-        Debug.Log($"{source.name} interacted with {gameObject.name}.");
-        OnInteracted(source);
+        Debug.Log($"{sourceObject.name} interacted with {gameObject.name}.");
+        OnInteracted(sourceObject);
     }
 
-    protected virtual void OnInteracted(EntityController sourceentity)
+    protected virtual void OnInteracted(GameObject sourceObject)
     {
-        Interacted?.Invoke(sourceentity);
+        Interacted?.Invoke(sourceObject);
     }
 }

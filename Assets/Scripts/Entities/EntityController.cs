@@ -7,7 +7,7 @@ namespace Entities
     public class EntityController : MonoBehaviour
     {
         [SerializeField] private float gravityMultiplier;
-        protected GameObject CurrentPlanetObject { get; set; }
+        public GameObject CurrentPlanetObject { get; protected set; }
         protected PlanetGenerator CurrentPlanetGen { get; set; }
         protected Rigidbody2D Rigidbody { get; set; }
         protected bool CalculatePhysics { get; private set; } = true;
@@ -78,6 +78,11 @@ namespace Entities
         public void ToggleAutoRotation(bool state) => FollowPlanetRotation = state;
         public virtual void ToggleSpriteRenderer(bool state) => throw new NotImplementedException();
 
+        public void AddRelativeForce(Vector3 force, ForceMode2D forceMode)
+        {
+            Rigidbody.AddRelativeForce(force, forceMode);
+        }
+        
         protected virtual void OnTriggerEnter2D(Collider2D col)
         {
             if (col.gameObject.CompareTag("Planet"))

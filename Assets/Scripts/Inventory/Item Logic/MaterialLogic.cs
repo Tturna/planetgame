@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using Entities;
+using ProcGen;
 using UnityEngine;
 
 namespace Inventory.Item_Logic
@@ -6,11 +9,14 @@ namespace Inventory.Item_Logic
     public class MaterialLogic : ItemLogicBase
     {
         private Camera _camera;
+        private PlayerController _player;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject)
+        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
+            _player ??= PlayerController.instance;
+            var usePlanet = _player.CurrentPlanetObject.GetComponent<PlanetGenerator>();
             if (!usePlanet) return false;
 
             if (!_camera) _camera = Camera.main!;
@@ -126,8 +132,8 @@ namespace Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
+        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject) => false;
+        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
     }
 }
