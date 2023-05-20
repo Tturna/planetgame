@@ -24,6 +24,12 @@ namespace VFX
         // Update is called once per frame
         private void Update()
         {
+            if (_layerParents == null && _layerParents.Length == 0)
+            {
+                Debug.LogWarning("Layer parent list empty. Current planet is probably not set.");
+                return;
+            }
+            
 #region Rotate Layers
             var z = _player.transform.eulerAngles.z;
             var diff = z - _oldZ;

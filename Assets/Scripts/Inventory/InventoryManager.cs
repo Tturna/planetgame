@@ -97,7 +97,7 @@ namespace Inventory
             
             #endregion
 
-            PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<Item>());
+            PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
         }
 

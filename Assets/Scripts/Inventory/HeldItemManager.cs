@@ -11,6 +11,7 @@ using UnityEngine;
 namespace Inventory
 {
     [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(StatsManager))]
     public class HeldItemManager : MonoBehaviour
     {
         [SerializeField] private Transform equippedItemTransform;
@@ -33,8 +34,16 @@ namespace Inventory
             _recoilAnimator = recoilAnchor.GetComponent<Animator>();
             _itemAnimationManager = recoilAnchor.GetComponent<ItemAnimationManager>();
             _rigidbody = GetComponent<Rigidbody2D>();
-            
             _camControl = GetComponentInChildren<CameraController>();
+            _statsManager = GetComponent<StatsManager>();
+
+            _handsParent = handsAnimator.transform;
+            _handLeft = _handsParent.GetChild(0).GetChild(0);
+            _handRight = _handsParent.GetChild(1).GetChild(0);
+
+            _equippedSr = equippedItemTransform.GetComponent<SpriteRenderer>();
+
+            InventoryManager.ItemEquipped += item => _equippedItem = item;
         }
 
         private void Update()

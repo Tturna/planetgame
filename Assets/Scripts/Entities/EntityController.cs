@@ -52,7 +52,6 @@ namespace Entities
         protected virtual void FixedUpdate()
         {
             if (!Rigidbody) return;
-
             if (!CalculatePhysics) return;
             if (!CurrentPlanetObject) return;
                 
@@ -85,17 +84,18 @@ namespace Entities
         
         protected virtual void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.gameObject.CompareTag("Planet"))
+            if (col.gameObject.CompareTag("Planet") && col.gameObject.layer == LayerMask.NameToLayer("Planet"))
             {
+                CurrentPlanetObject = col.gameObject;
                 CurrentPlanetGen = col.GetComponent<PlanetGenerator>();
 
-                TriggerOnPlanetEntered(col.gameObject);
+                TriggerOnPlanetEntered(CurrentPlanetObject);
             }
         }
 
         protected virtual void OnTriggerExit2D(Collider2D other)
         {
-            if (other.gameObject.CompareTag("Planet"))
+            if (other.gameObject.CompareTag("Planet") && other.gameObject.layer == LayerMask.NameToLayer("Planet"))
             {
                 CurrentPlanetObject = null;
                 CurrentPlanetGen = null;

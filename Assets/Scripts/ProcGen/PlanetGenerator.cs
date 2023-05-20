@@ -426,11 +426,6 @@ namespace ProcGen
                 Vector3.Lerp(bl.position, tl.position, ts[3])
             };
 
-            if (idx == 64390)
-            {
-                print("64390");
-            }
-
             return (idx, vertices, _triTable[byteIndex]);
         }
         

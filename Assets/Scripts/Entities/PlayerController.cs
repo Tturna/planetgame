@@ -172,7 +172,7 @@ namespace Entities
             }
             else if (col.gameObject.CompareTag("Item"))
             {
-                OnItemPickedUp(col.gameObject);
+                OnItemPickedUp(col.transform.parent.gameObject);
                 Destroy(col.transform.parent.gameObject);
             }
         }

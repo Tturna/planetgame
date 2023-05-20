@@ -24,6 +24,8 @@ namespace VFX
 
         private void Update()
         {
+            if (!_currentPlanetGen) return;
+            
             // Smooth transition between backgrounds according to player position.
             var perc = _currentPlanetGen.GetDistancePercentage(_player.transform.position);
             var limitedPerc = Utilities.InverseLerp(0f, 0.5f, perc);

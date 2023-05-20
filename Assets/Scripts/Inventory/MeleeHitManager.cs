@@ -11,7 +11,7 @@ namespace Inventory
 {
     public class MeleeHitManager : MonoBehaviour
     {
-        [SerializeField] private GameObject equippedItemObject;
+        private GameObject _equippedItemObject => gameObject;
         
         private MeleeSo _meleeSo;
         private EdgeCollider2D _edgeCollider;
@@ -22,13 +22,14 @@ namespace Inventory
             itemAnimationManager.SwingStarted += () => SetCollision(true);
             itemAnimationManager.SwingCompleted += () => SetCollision(false);
 
-            // TODO: Subscribe to item equip event in InventoryManager
+            InventoryManager.ItemEquipped += OnItemEquipped;
         }
 
         private void OnItemEquipped(Item item)
         {
             if (item.itemSo is MeleeSo meleeSo)
             {
+                _meleeSo = meleeSo;
                 SetWeaponStats(meleeSo.colliderPoints);
                 SetCollision(false);
             }
@@ -40,7 +41,7 @@ namespace Inventory
 
         private void SetWeaponStats(Vector2[] colliderPoints)
         {
-            _edgeCollider ??= equippedItemObject.GetComponent<EdgeCollider2D>();
+            _edgeCollider ??= _equippedItemObject.GetComponent<EdgeCollider2D>();
             _edgeCollider.points = colliderPoints;
         }
 
