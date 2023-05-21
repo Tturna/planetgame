@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UI
+namespace Utilities
 {
     public class UIUtilities : MonoBehaviour
     {

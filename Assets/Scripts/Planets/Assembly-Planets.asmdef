@@ -1,0 +1,19 @@
+{
+    "name": "Assembly-Planets",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e247af6a77b0b0d458ed8400f96d15d4",
+        "GUID:a09b502a3463f794a83cf80a67a246d2",
+        "GUID:bf6dc59e1402c8f47a4cd9c8bb47579a",
+        "GUID:77ccaf49895b0d64e87cd4b4faf83c49"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

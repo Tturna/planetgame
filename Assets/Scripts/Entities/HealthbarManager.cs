@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 
 namespace Entities
 {
@@ -108,7 +109,7 @@ namespace Entities
             {
                 //TODO: Check if other bosses are alive
                 _fWhiteBar.fillAmount = 0;
-                Utilities.instance.DelayExecute(() => _focusedBossHealth.SetActive(false), 7);
+                GameUtilities.instance.DelayExecute(() => _focusedBossHealth.SetActive(false), 7);
             }
         }
 

@@ -1,5 +1,7 @@
 using System.Collections;
+using Entities.Entities;
 using UnityEngine;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Entities
@@ -218,7 +220,7 @@ namespace Entities
 
             // Flash white
             _sr.material.SetFloat("_FlashAmount", .75f);
-            Utilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
+            GameUtilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)

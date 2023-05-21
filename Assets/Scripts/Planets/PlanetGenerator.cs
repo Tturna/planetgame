@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Utilities;
 
 namespace ProcGen
 {
@@ -396,10 +397,10 @@ namespace ProcGen
             // These points are later used to place edge points between corners SMOOTHLY.
             var ts = new[]
             {
-                Utilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
-                Utilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
-                Utilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
-                Utilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
+                GameUtilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
+                GameUtilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
+                GameUtilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
+                GameUtilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
             };
             
             // var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel???)).ToArray();
@@ -486,14 +487,14 @@ namespace ProcGen
         public float GetDrag(Vector3 position)
         {
             var perc = GetDistancePercentage(position);
-            var limitedPerc = Utilities.InverseLerp(0f, maxPhysicsThreshold, perc);
+            var limitedPerc = GameUtilities.InverseLerp(0f, maxPhysicsThreshold, perc);
             return maxDrag * limitedPerc;
         }
 
         public float GetGravity(Vector3 position)
         {
             var perc = GetDistancePercentage(position);
-            var limitedPerc = Utilities.InverseLerp(0f, maxPhysicsThreshold, perc);
+            var limitedPerc = GameUtilities.InverseLerp(0f, maxPhysicsThreshold, perc);
             return maxGravityMultiplier * limitedPerc;
         }
         

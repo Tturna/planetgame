@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utilities;
 
 public class Planet : MonoBehaviour
 {
@@ -40,14 +41,14 @@ public class Planet : MonoBehaviour
     public float GetDrag(Vector3 position)
     {
         var perc = GetDistancePercentage(position);
-        var limitedPerc = Utilities.InverseLerp(0f, threshold, perc);
+        var limitedPerc = GameUtilities.InverseLerp(0f, threshold, perc);
         return maxDrag * limitedPerc;
     }
 
     public float GetGravity(Vector3 position)
     {
         var perc = GetDistancePercentage(position);
-        var limitedPerc = Utilities.InverseLerp(0f, threshold, perc);
+        var limitedPerc = GameUtilities.InverseLerp(0f, threshold, perc);
         return maxGravityMultiplier * limitedPerc;
     }
 

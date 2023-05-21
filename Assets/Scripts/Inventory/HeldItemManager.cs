@@ -4,11 +4,12 @@ using System;
 using System.Collections;
 using CameraScripts;
 using Entities;
-using Inventory.Item_Logic;
-using Inventory.Item_Types;
+using Inventory.Inventory.Item_Logic;
+using Inventory.Inventory.Item_Types;
 using UnityEngine;
+using Utilities;
 
-namespace Inventory
+namespace Inventory.Inventory
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(StatsManager))]
@@ -48,8 +49,8 @@ namespace Inventory
 
         private void Update()
         {
-            var mouseDirection = Utilities.GetVectorToWorldCursor(transform.position).normalized;
-            var cursorAngle = Utilities.GetCursorAngle(mouseDirection, transform.right);
+            var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
+            var cursorAngle = GameUtilities.GetCursorAngle(mouseDirection, transform.right);
             HandleItemAiming(mouseDirection, cursorAngle);
             
             // Use Item

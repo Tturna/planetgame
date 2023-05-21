@@ -1,8 +1,8 @@
-﻿using Entities;
+﻿using Entities.Entities;
 using UnityEditor;
 using UnityEngine;
 
-namespace Inventory
+namespace Inventory.Inventory
 {
     namespace Entities
     {

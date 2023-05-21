@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
-using Inventory.Item_Types;
+using Inventory.Inventory.Item_Types;
 using ProcGen;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Inventory.Item_Logic
+namespace Inventory.Inventory.Item_Logic
 {
     public class PickaxeLogic : ItemLogicBase
     {

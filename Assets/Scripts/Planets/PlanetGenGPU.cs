@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace ProcGen
 {
-    [RequireComponent(typeof(Planet))]
+    // [RequireComponent(typeof(Planet))]
     public class PlanetGenGPU : MonoBehaviour
     {
         [SerializeField] ComputeShader planetGenShader;
@@ -40,7 +40,7 @@ namespace ProcGen
         private Point[] _pointField;
         private GameObject[] _debugCircles;
         private GameObject[] _cellField;
-        private Utilities _utilities;
+        // private Utilities _utilities;
 
         /*
      *      3 - (6) - 2
@@ -129,7 +129,7 @@ namespace ProcGen
             
             #endregion
 
-            _utilities = Utilities.instance;
+            // _utilities = Utilities.instance;
             CalculateMesh();
 
             print(Time.realtimeSinceStartupAsDouble - startTime);
@@ -345,22 +345,22 @@ namespace ProcGen
                 // Inverse Lerping
                 // This is to find the relative point of the average isolevel between the corners.
                 // These points are later used to place edge points between corners SMOOTHLY.
-                var ts = new[]
-                {
-                    Utilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
-                    Utilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
-                    Utilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
-                    Utilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
-                };
+                // var ts = new[]
+                // {
+                //     Utilities.InverseLerp(mins[0], maxes[0], (bl.isoLevel + br.isoLevel) / 2),
+                //     Utilities.InverseLerp(mins[1], maxes[1], (br.isoLevel + tr.isoLevel) / 2),
+                //     Utilities.InverseLerp(mins[2], maxes[2], (tr.isoLevel + tl.isoLevel) / 2),
+                //     Utilities.InverseLerp(mins[3], maxes[3], (tl.isoLevel + bl.isoLevel) / 2)
+                // };
                 
                 // var ts = (from x in Enumerable.Range(0, 4) select InverseLerp(mins[x], maxes[x], isolevel???)).ToArray();
                 
                 // Fix lerp t direction when going from bright areas to dark areas
                 // Without this, some surfaces are fucked
-                if (bl.value > br.value) ts[0] = 1 - ts[0];
-                if (br.value > tr.value) ts[1] = 1 - ts[1];
-                if (tl.value > tr.value) ts[2] = 1 - ts[2];
-                if (bl.value > tl.value) ts[3] = 1 - ts[3];
+                // if (bl.value > br.value) ts[0] = 1 - ts[0];
+                // if (br.value > tr.value) ts[1] = 1 - ts[1];
+                // if (tl.value > tr.value) ts[2] = 1 - ts[2];
+                // if (bl.value > tl.value) ts[3] = 1 - ts[3];
             
                 #endregion
 
@@ -371,18 +371,18 @@ namespace ProcGen
                 var trPos = new Vector2(tr.x, tr.y);
                 var tlPos = new Vector2(tl.x, tl.y);
                 
-                var vertices = new Vector3[] {
-                    blPos,
-                    brPos,
-                    trPos,
-                    tlPos,
-                    Vector2.Lerp(blPos, brPos, ts[0]),
-                    Vector2.Lerp(brPos, trPos, ts[1]),
-                    Vector2.Lerp(tlPos, trPos, ts[2]),
-                    Vector2.Lerp(blPos, tlPos, ts[3])
-                };
-                
-                GenerateCell(idx, vertices, _triTable[byteIndex]);
+                // var vertices = new Vector3[] {
+                //     blPos,
+                //     brPos,
+                //     trPos,
+                //     tlPos,
+                //     Vector2.Lerp(blPos, brPos, ts[0]),
+                //     Vector2.Lerp(brPos, trPos, ts[1]),
+                //     Vector2.Lerp(tlPos, trPos, ts[2]),
+                //     Vector2.Lerp(blPos, tlPos, ts[3])
+                // };
+                //
+                // GenerateCell(idx, vertices, _triTable[byteIndex]);
             }
 
             #endregion

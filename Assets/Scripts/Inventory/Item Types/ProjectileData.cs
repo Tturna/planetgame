@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Inventory
+namespace Inventory.Inventory.Item_Types
 {
     [Serializable]
     public class ProjectileData

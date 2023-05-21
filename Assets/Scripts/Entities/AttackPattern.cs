@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 
 namespace Entities
 {
@@ -50,7 +51,7 @@ namespace Entities
 
             if (attackDelay > 0)
             {
-                Utilities.instance.DelayExecute(Action, attackDelay);
+                GameUtilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {
@@ -67,7 +68,7 @@ namespace Entities
 
             if (attackDelay > 0)
             {
-                Utilities.instance.DelayExecute(Action, attackDelay);
+                GameUtilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {

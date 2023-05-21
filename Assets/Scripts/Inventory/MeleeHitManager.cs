@@ -3,11 +3,11 @@
 // when the player equips one.
 
 using Entities;
-using Inventory.Item_Logic;
-using Inventory.Item_Types;
+using Inventory.Inventory.Item_Logic;
+using Inventory.Inventory.Item_Types;
 using UnityEngine;
 
-namespace Inventory
+namespace Inventory.Inventory
 {
     public class MeleeHitManager : MonoBehaviour
     {

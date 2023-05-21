@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Entities.Entities;
 using UnityEngine;
+using Utilities;
 
 namespace Entities
 {
@@ -94,8 +96,8 @@ namespace Entities
             
             HandleControls();
 
-            _mouseDirection = Utilities.GetVectorToWorldCursor(transform.position).normalized;
-            var cursorAngle = Utilities.GetCursorAngle(_mouseDirection, transform.right);
+            _mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
+            var cursorAngle = GameUtilities.GetCursorAngle(_mouseDirection, transform.right);
             
             // HandleItemAiming(_mouseDirection, cursorAngle);
             HandlePlayerFlipping(cursorAngle);

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inventory.Item_Types
+namespace Inventory.Inventory.Item_Types
 {
     [CreateAssetMenu(fileName = "Melee Weapon", menuName = "SO/Melee")]
     public class MeleeSo : WeaponSo

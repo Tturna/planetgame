@@ -1,7 +1,6 @@
-﻿using Entities;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Inventory.Item_Logic
+namespace Inventory.Inventory.Item_Logic
 {
     public abstract class ItemLogicBase
     {

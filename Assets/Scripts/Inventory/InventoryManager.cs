@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Entities;
-using Inventory.Entities;
+using Inventory.Inventory.Entities;
 using TMPro;
-using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Utilities;
 
-namespace Inventory
+namespace Inventory.Inventory
 {
     internal struct Slot
     {

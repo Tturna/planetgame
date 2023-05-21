@@ -1,26 +1,26 @@
-﻿using Entities;
-using Inventory.Item_Types;
+﻿using Inventory.Inventory.Item_Types;
 using UnityEngine;
+using Utilities;
 
-namespace Inventory.Item_Logic
+namespace Inventory.Inventory.Item_Logic
 {
     public class GunLogic : ItemLogicBase
     {
-        private Utilities _utilities;
+        private GameUtilities _utilities;
         private GameObject _projectilePrefab;
         
         public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
             var weaponSo = (WeaponSo)attackItem.itemSo;
             
-            _utilities ??= Utilities.instance;
+            _utilities ??= GameUtilities.instance;
             _projectilePrefab ??= _utilities.GetProjectilePrefab();
             
             // Spawn projectile
             var pos = (Vector2)equippedItemObject.transform.position;
             var rot = equippedItemObject.transform.eulerAngles;
             
-            var projectile = Utilities.Spawn(_projectilePrefab, pos, rot, equippedItemObject.transform);
+            var projectile = GameUtilities.Spawn(_projectilePrefab, pos, rot, equippedItemObject.transform);
 
             // Set projectile position to muzzle position
             var localPos = weaponSo.muzzlePosition;

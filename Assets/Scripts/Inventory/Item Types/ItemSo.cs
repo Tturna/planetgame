@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Inventory.Item_Types
+namespace Inventory.Inventory.Item_Types
 {
     public class ScriptableObjectIdAttribute : PropertyAttribute {}
     

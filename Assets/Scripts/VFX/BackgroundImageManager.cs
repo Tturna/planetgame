@@ -1,6 +1,7 @@
 using Entities;
 using ProcGen;
 using UnityEngine;
+using Utilities;
 
 namespace VFX
 {
@@ -28,7 +29,7 @@ namespace VFX
             
             // Smooth transition between backgrounds according to player position.
             var perc = _currentPlanetGen.GetDistancePercentage(_player.transform.position);
-            var limitedPerc = Utilities.InverseLerp(0f, 0.5f, perc);
+            var limitedPerc = GameUtilities.InverseLerp(0f, 0.5f, perc);
         
             var c = bg2.color;
 

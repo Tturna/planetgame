@@ -2,7 +2,7 @@ using System;
 using ProcGen;
 using UnityEngine;
 
-namespace Entities
+namespace Entities.Entities
 {
     public class EntityController : MonoBehaviour
     {
