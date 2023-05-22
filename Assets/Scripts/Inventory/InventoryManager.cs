@@ -117,9 +117,10 @@ namespace Inventory.Inventory
             }
 
             // Check for number keys
-            for (var i = 1; i <= 8; i++)
+            for (var i = 1; i <= 10; i++)
             {
-                if (!Input.GetKeyDown(i.ToString())) continue;
+                var numkey = i == 10 ? "0" : i.ToString();
+                if (!Input.GetKeyDown(numkey)) continue;
                 DeselectSlot(_selectedIndex);
                 SelectSlot(i - 1);
                 _selectedIndex = i - 1;
@@ -331,9 +332,9 @@ namespace Inventory.Inventory
             (_mouseSlot.item, slot.item) = (slot.item, _mouseSlot.item);
             (_mouseSlot.stack, slot.stack) = (slot.stack, _mouseSlot.stack);
             
-            if (_selectedIndex == slot.index && slot.item == null)
+            if (_selectedIndex == slot.index)
             {
-                EquipItem(null);
+                EquipItem(slot.item);
             }
 
             UpdateLogicalSlot(slot);
@@ -644,8 +645,8 @@ namespace Inventory.Inventory
             if (item != null)
             {
                 equippedItemObject.GetComponent<SpriteRenderer>().sprite = item.itemSo.sprite;
-                OnItemEquipped(item);
             }
+            OnItemEquipped(item);
         }
         
         private static void OnItemEquipped(Item item)

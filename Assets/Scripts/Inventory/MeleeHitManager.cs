@@ -27,7 +27,7 @@ namespace Inventory.Inventory
 
         private void OnItemEquipped(Item item)
         {
-            if (item.itemSo is MeleeSo meleeSo)
+            if (item?.itemSo is MeleeSo meleeSo)
             {
                 _meleeSo = meleeSo;
                 SetWeaponStats(meleeSo.colliderPoints);
