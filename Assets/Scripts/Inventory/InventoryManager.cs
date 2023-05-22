@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Entities;
 using Inventory.Inventory.Entities;
+using Inventory.Inventory.Item_Types;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -50,7 +51,6 @@ namespace Inventory.Inventory
         private static Slot[] _stashSlots;
         private static Slot _mouseSlot;
         private static int _selectedIndex;
-        private Item _equippedItem;
 
         public delegate void ItemEquippedHandler(Item item);
         public static event ItemEquippedHandler ItemEquipped;
@@ -286,14 +286,14 @@ namespace Inventory.Inventory
                 UpdateMouseSlotGraphics();
             }
         }
-        
-        public bool AddItem(Item item)
+
+        private void AddItem(Item item)
         {
             // Copy item
             var copy = new Item(item);
             
             // Check if inventory has space
-            if (!HasSpaceForItem(copy, out var index, out var isStash)) return false;
+            if (!HasSpaceForItem(copy, out var index, out var isStash)) return;
 
             // Create temporary variables to make inventory management easier with the separate hotbar and stash
             var segmentSlots = isStash ? _stashSlots : _hotSlots;
@@ -322,15 +322,15 @@ namespace Inventory.Inventory
             
             // Update selected slot
             if (index == _selectedIndex) SelectSlot(_selectedIndex);
-            
-            return true;
         }
 
         private void SwapMouseSlot(ref Slot slot, GameObject clickedSlotObject)
         {
-            (_mouseSlot, slot) = (slot, _mouseSlot);
-            (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
-
+            // (_mouseSlot, slot) = (slot, _mouseSlot);
+            // (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
+            (_mouseSlot.item, slot.item) = (slot.item, _mouseSlot.item);
+            (_mouseSlot.stack, slot.stack) = (slot.stack, _mouseSlot.stack);
+            
             if (_selectedIndex == slot.index && slot.item == null)
             {
                 EquipItem(null);
@@ -343,7 +343,7 @@ namespace Inventory.Inventory
             // TODO: If swapping an item into a selected slot, equip it
         }
 
-        public static bool HasSpaceForItem(Item item, out int availableIndex, out bool isStash)
+        private static bool HasSpaceForItem(Item item, out int availableIndex, out bool isStash)
         {
             int FindIndex(Slot[] slotSegment)
             {
@@ -509,6 +509,17 @@ namespace Inventory.Inventory
             }
         }
 
+        #region Tooltip Components
+
+        private Transform ttStats, ttStatNames, ttStatValues;
+        private TextMeshProUGUI ttNameText;
+        private Image ttImage;
+        private TextMeshProUGUI ttTypeText;
+        private TextMeshProUGUI ttStatName1, ttStatName2, ttStatName3;
+        private TextMeshProUGUI ttStatValue1, ttStatValue2, ttStatValue3;
+
+        #endregion
+        
         private void UpdateItemTooltip(List<RaycastResult> elementsUnderMouse)
         {
             var slotObjectUnderMouse = GetHoveringSlotObject(elementsUnderMouse);
@@ -525,63 +536,76 @@ namespace Inventory.Inventory
             var tr = itemTooltipObject.transform;
             
             // This is a bit shit but what can you do
-            var nameText = tr.GetChild(0).GetComponent<TextMeshProUGUI>();
-            nameText.text = slot.item.itemSo.name;
+            if (!ttNameText)
+            {
+                ttNameText = tr.GetChild(0).GetComponent<TextMeshProUGUI>();
+                ttImage = tr.GetChild(1).GetComponent<Image>();
+                ttTypeText = tr.GetChild(2).GetComponent<TextMeshProUGUI>();
+                ttStats = tr.GetChild(3);
+                ttStatNames = ttStats.GetChild(0);
+                ttStatValues = ttStats.GetChild(1);
 
-            var image = tr.GetChild(1).GetComponent<Image>();
-            image.sprite = slot.item.itemSo.sprite;
-            image.SetNativeSize();
+                ttStatName1 = ttStatNames.GetChild(0).GetComponent<TextMeshProUGUI>();
+                ttStatName2 = ttStatNames.GetChild(1).GetComponent<TextMeshProUGUI>();
+                ttStatName3 = ttStatNames.GetChild(2).GetComponent<TextMeshProUGUI>();
 
-            var typeText = tr.GetChild(2).GetComponent<TextMeshProUGUI>();
-            var stats = tr.GetChild(3);
-            var statNames = stats.GetChild(0);
-            var statValues = stats.GetChild(1);
-
-            var statName1 = statNames.GetChild(0).GetComponent<TextMeshProUGUI>();
-            var statName2 = statNames.GetChild(1).GetComponent<TextMeshProUGUI>();
-            var statName3 = statNames.GetChild(2).GetComponent<TextMeshProUGUI>();
+                ttStatValue1 = ttStatValues.GetChild(0).GetComponent<TextMeshProUGUI>();
+                ttStatValue2 = ttStatValues.GetChild(1).GetComponent<TextMeshProUGUI>();
+                ttStatValue3 = ttStatValues.GetChild(2).GetComponent<TextMeshProUGUI>();
+            }
             
-            var statValue1 = statValues.GetChild(0).GetComponent<TextMeshProUGUI>();
-            var statValue2 = statValues.GetChild(1).GetComponent<TextMeshProUGUI>();
-            var statValue3 = statValues.GetChild(2).GetComponent<TextMeshProUGUI>();
+            ttNameText.text = slot.item.itemSo.name;
+            ttImage.sprite = slot.item.itemSo.sprite;
+            ttImage.SetNativeSize();
             
-            // TODO: Update tooltip UI elements in script. Unity's layout stuff is buggy as shit it seems.
             // TODO: Would be cool if you could choose which data in the scriptable object is shown in the tooltip.
-            // switch (slot.item.itemSo)
-            // {
-            //     case ToolSo tool:
-            //         typeText.text = "Tool";
-            //         statName1.text = "Damage";
-            //         statName2.text = "Use Speed";
-            //         statName3.text = "Tool Power";
-            //
-            //         statValue1.text = tool.projectile.damage.ToString();
-            //         statValue2.text = tool.attackCooldown.ToString();
-            //         statValue3.text = tool.toolPower.ToString();
-            //         break;
-            //     
-            //     case WeaponSo weapon:
-            //         typeText.text = "Weapon";
-            //         statName1.text = "Damage";
-            //         statName2.text = "Attack Speed";
-            //         statName3.text = "idk";
-            //
-            //         statValue1.text = weapon.projectile.damage.ToString();
-            //         statValue2.text = weapon.attackCooldown.ToString();
-            //         statValue3.text = "Something";
-            //         break;
-            //     
-            //     default:
-            //         typeText.text = "";
-            //         statName1.text = "";
-            //         statName2.text = "";
-            //         statName3.text = "";
-            //
-            //         statValue1.text = "";
-            //         statValue2.text = "";
-            //         statValue3.text = "";
-            //         break;
-            // }
+            switch (slot.item.itemSo)
+            {
+                case ToolSo tool:
+                    ttTypeText.text = "Tool";
+                    ttStatName1.text = "Damage";
+                    ttStatName2.text = "Use Speed";
+                    ttStatName3.text = "Tool Power";
+            
+                    ttStatValue1.text = tool.projectile.damage.ToString();
+                    ttStatValue2.text = tool.attackCooldown.ToString();
+                    ttStatValue3.text = tool.toolPower.ToString();
+                    break;
+                
+                case WeaponSo weapon:
+                    ttTypeText.text = "Weapon";
+                    ttStatName1.text = "Damage";
+                    ttStatName2.text = "Attack Speed";
+                    ttStatName3.text = "idk";
+            
+                    ttStatValue1.text = weapon.projectile.damage.ToString();
+                    ttStatValue2.text = weapon.attackCooldown.ToString();
+                    ttStatValue3.text = "Something";
+                    break;
+                
+                default:
+                    ttTypeText.text = "";
+                    ttStatName1.text = "";
+                    ttStatName2.text = "";
+                    ttStatName3.text = "";
+            
+                    ttStatValue1.text = "";
+                    ttStatValue2.text = "";
+                    ttStatValue3.text = "";
+                    break;
+            }
+            
+            // Position the elements
+            var statw1 = ttStatName1.preferredWidth + ttStatValue1.preferredWidth;
+            var statw2 = ttStatName2.preferredWidth + ttStatValue2.preferredWidth;
+            var statw3 = ttStatName3.preferredWidth + ttStatValue3.preferredWidth;
+            var statsWidth = Mathf.Max(statw1, Mathf.Max(statw2, statw3));
+            
+            var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth, statsWidth), 320f);
+            itemTooltipObject.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth);
+            
+            var statsRect = ttStats.GetComponent<RectTransform>();
+            statsRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 20);
         }
         
         /// <summary>
@@ -594,12 +618,12 @@ namespace Inventory.Inventory
             return results.Find(x => x.gameObject.name.ToLower().Contains("slot")).gameObject;
         }
 
-        private static bool GetSlotFromObject(GameObject slotObject, out Slot slot)
+        private static void GetSlotFromObject(GameObject slotObject, out Slot slot)
         {
             if (!slotObject)
             {
                 slot = new Slot();
-                return false;
+                return;
             }
 
             var isStash = slotObject.transform.parent.gameObject == _stashObject;
@@ -610,13 +634,11 @@ namespace Inventory.Inventory
                 : Array.FindIndex(_hotSlotObjects, x => x == slotObject.transform);
 
             slot = segment[slotIndex];
-
-            return true;
         }
         
         private void EquipItem(Item item)
         {
-            _equippedItem = item;
+            // _equippedItem = item;
             equippedItemObject.SetActive(item != null);
 
             if (item != null)
