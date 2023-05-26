@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace ProcGen
+namespace Planets
 {
-    
     public class PlanetDecorator : MonoBehaviour
     {
         [Serializable]

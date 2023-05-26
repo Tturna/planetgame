@@ -1,5 +1,5 @@
 using System;
-using ProcGen;
+using Planets;
 using UnityEngine;
 
 namespace Entities.Entities

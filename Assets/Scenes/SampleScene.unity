@@ -2937,8 +2937,8 @@ GameObject:
   m_Component:
   - component: {fileID: 273182491}
   - component: {fileID: 273182490}
-  - component: {fileID: 273182492}
   - component: {fileID: 273182493}
+  - component: {fileID: 273182494}
   m_Layer: 9
   m_Name: Planet
   m_TagString: Planet
@@ -3094,25 +3094,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &273182492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 273182489}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e041c3b333d28304e901c54e78b8ba7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radius: 64
-  surfaceCameraBackground: {fileID: 0}
-  surfaceBackgroundColor: {r: 0.57254905, g: 0.7411765, b: 0.78039217, a: 0}
-  atmosphereRadius: 128
-  maxDrag: 0.8
-  maxGravityMultiplier: 1.25
-  threshold: 0.75
 --- !u!114 &273182493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3302,6 +3283,29 @@ MonoBehaviour:
     sortingOrder: 0
   bgTerrainMaterialFg: {fileID: 2100000, guid: 97b9fe0f2d6f57749ab98b15b0d013a1, type: 2}
   bgTerrainMaterialMg: {fileID: 2100000, guid: f5ed4b77062dae64faf8732eb7fafeb7, type: 2}
+--- !u!114 &273182494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273182489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e2c23d3a6b4c04699e3fea2b0d8809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orePrefab: {fileID: 6068771061300366300, guid: d437e401f7e501c42b9b080c987ec7da, type: 3}
+  oreSpritePool:
+  - {fileID: 21300000, guid: 8b8364dfc6eda7d40a6e105c01dec487, type: 3}
+  - {fileID: 21300000, guid: da6f79dd171120943b98c8c1a1a61157, type: 3}
+  - {fileID: 21300000, guid: 81c80039d1deff245b16713e6f8735e0, type: 3}
+  veinDiameter: 5
+  oreSpawnHeight: 0.75
+  chunkSampleGap: 0.5
+  chunkSampleGenAttempts: 30
+  veinSampleGap: 10
+  veinSampleGenAttempts: 30
 --- !u!1 &277992682
 GameObject:
   m_ObjectHideFlags: 0

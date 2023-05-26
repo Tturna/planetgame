@@ -4,10 +4,11 @@ using System.Linq;
 using UnityEngine;
 using Utilities;
 
-namespace ProcGen
+namespace Planets
 {
     // [RequireComponent(typeof(Planet))]
     [RequireComponent(typeof(PlanetDecorator))]
+    [RequireComponent(typeof(PlanetOrePopulator))]
     public class PlanetGenerator : MonoBehaviour
     {
         [SerializeField] private GameObject cellPrefab;
@@ -63,6 +64,7 @@ namespace ProcGen
         private List<MeshFilter> _surfaceMeshFilters = new();
         private GameObject _cellParent;
         private PlanetDecorator _decorator;
+        private PlanetOrePopulator _orePopulator;
         private float SizeResRatio => diameter / resolution;
         private float Radius => diameter / 2;
         
@@ -112,6 +114,9 @@ namespace ProcGen
             _decorator.SpawnTrees(this);
             _decorator.CreateBackgroundDecorations(this);
             _decorator.CreateBackgroundTerrain(_surfaceMeshFilters.ToArray());
+
+            _orePopulator = GetComponent<PlanetOrePopulator>();
+            _orePopulator.GenerateVeins();
             
             print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
             

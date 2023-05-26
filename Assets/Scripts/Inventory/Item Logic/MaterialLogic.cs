@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Entities;
-using ProcGen;
+using Planets;
 using UnityEngine;
 
 namespace Inventory.Inventory.Item_Logic
