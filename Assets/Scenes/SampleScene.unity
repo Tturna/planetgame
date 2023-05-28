@@ -3296,13 +3296,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orePrefab: {fileID: 6068771061300366300, guid: d437e401f7e501c42b9b080c987ec7da, type: 3}
-  oreSpritePool:
-  - {fileID: 21300000, guid: 8b8364dfc6eda7d40a6e105c01dec487, type: 3}
-  - {fileID: 21300000, guid: da6f79dd171120943b98c8c1a1a61157, type: 3}
-  - {fileID: 21300000, guid: 81c80039d1deff245b16713e6f8735e0, type: 3}
-  veinDiameter: 5
+  veinTypes:
+  - oreSo: {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
+    oreSpawnHeight: 0.75
+    veinDiameter: 6
+    chunkSampleGap: 0.5
+    oreSprites:
+    - {fileID: -159330456, guid: 0335d8dab7e4c9a40bca6a7fd9c62f5a, type: 3}
+    - {fileID: -1315323614, guid: 0335d8dab7e4c9a40bca6a7fd9c62f5a, type: 3}
+    - {fileID: 423237991, guid: 0335d8dab7e4c9a40bca6a7fd9c62f5a, type: 3}
+    oreToughness: 3
+  - oreSo: {fileID: 11400000, guid: 560b1e357129d734ca102bf0b7f2538a, type: 2}
+    oreSpawnHeight: 0.75
+    veinDiameter: 5
+    chunkSampleGap: 0.5
+    oreSprites:
+    - {fileID: -827789830, guid: 35ae8c23cb51a8f4f887ef526a8a4bdb, type: 3}
+    - {fileID: -1148241012, guid: 35ae8c23cb51a8f4f887ef526a8a4bdb, type: 3}
+    oreToughness: 3
+  - oreSo: {fileID: 11400000, guid: 5f0a6e6335ca16f41a6bc8a5ba2054cd, type: 2}
+    oreSpawnHeight: 0.65
+    veinDiameter: 4
+    chunkSampleGap: 0.5
+    oreSprites:
+    - {fileID: -1626901190, guid: 2fb79fa6956631d42b1167c30a604c26, type: 3}
+    - {fileID: -1852316556, guid: 2fb79fa6956631d42b1167c30a604c26, type: 3}
+    - {fileID: -1758960249, guid: 2fb79fa6956631d42b1167c30a604c26, type: 3}
+    oreToughness: 5
+  - oreSo: {fileID: 11400000, guid: aca811514951fa546a33ba3262f46cdf, type: 2}
+    oreSpawnHeight: 0.4
+    veinDiameter: 3
+    chunkSampleGap: 0.5
+    oreSprites:
+    - {fileID: -2105113815, guid: d93b05d2287d4b24f9119637b34fad37, type: 3}
+    - {fileID: -1807513137, guid: d93b05d2287d4b24f9119637b34fad37, type: 3}
+    oreToughness: 7
   oreSpawnHeight: 0.75
-  chunkSampleGap: 0.5
   chunkSampleGenAttempts: 30
   veinSampleGap: 10
   veinSampleGenAttempts: 30

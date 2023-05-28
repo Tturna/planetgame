@@ -422,11 +422,9 @@ namespace Inventory.Inventory
             {
                 // TODO: Make it so you can drop stacks of the same item.
                 // This would reduce the amount of items required to instantiate
-                var item = Instantiate(instance.itemPrefab);
-                item.GetComponent<ItemEntity>().item = droppedItem;
                 var pos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
                 pos.z = 0;
-                item.transform.position = pos;
+                SpawnItem(droppedItem, pos);
             }
         }
 
@@ -652,6 +650,13 @@ namespace Inventory.Inventory
         private static void OnItemEquipped(Item item)
         {
             ItemEquipped?.Invoke(item);
+        }
+
+        public static void SpawnItem(Item item, Vector3 position)
+        {
+            var itemEntity = Instantiate(instance.itemPrefab);
+            itemEntity.GetComponent<ItemEntity>().item = item;
+            itemEntity.transform.position = position;
         }
     }
 }

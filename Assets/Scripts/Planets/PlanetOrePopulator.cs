@@ -1,23 +1,33 @@
+// This script populates a planet with ore veins. Ore veins are generated using
+// the Poisson-Disc sampling algorithm to keep ore chunks from overlapping.
+// Implemented by following this video:
+// https://www.youtube.com/watch?v=flQgnCUxHlw
+
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Planets
 {
-    // This script populates a planet with ore veins. Ore veins are generated using
-    // the Poisson-Disc sampling algorithm to keep ore chunks from overlapping.
-    // Implemented by following this video:
-    // https://www.youtube.com/watch?v=flQgnCUxHlw
     public class PlanetOrePopulator : MonoBehaviour
     {
-        [SerializeField] private GameObject orePrefab;
-        [SerializeField] private Sprite[] oreSpritePool;
+        [System.Serializable]
+        private struct VeinType
+        {
+            public ScriptableObject oreSo;
+            [Range(0f, 1f)] public float oreSpawnHeight;
+            public float veinDiameter;
+            public float chunkSampleGap;
+            public Sprite[] oreSprites;
+            public int oreToughness;
+        }
         
-        [SerializeField] private int veinDiameter;
+        [SerializeField] private GameObject orePrefab;
+        [SerializeField] private VeinType[] veinTypes;
+        
+        [Header("Shit to be removed probably")]
         [SerializeField, Range(0.1f, 1f)] private float oreSpawnHeight;
         
-        [FormerlySerializedAs("sampleGap")] [SerializeField] private float chunkSampleGap; // r
-        [FormerlySerializedAs("sampleGenAttempts")] [SerializeField] private int chunkSampleGenAttempts; // k
+        [SerializeField] private int chunkSampleGenAttempts; // k
         [SerializeField] private float veinSampleGap;
         [SerializeField] private int veinSampleGenAttempts;
         
@@ -49,21 +59,31 @@ namespace Planets
                 veinParentTransform.parent = _oreParentTransform;
                 veinParentTransform.localPosition = corVeinPos;
 
-                var chunkGrid = PoissonDisc(veinDiameter, chunkSampleGap, chunkSampleGenAttempts);
+                // TODO: Each vein type should have a rarity and...
+                // they should all generate with their own sampling configuration, but
+                // still not overlap with other veins.
+                var veinType = veinTypes[Random.Range(0, veinTypes.Length)];
+
+                var chunkGrid = PoissonDisc(veinType.veinDiameter, veinType.chunkSampleGap, chunkSampleGenAttempts);
 
                 foreach (var oreChunk in chunkGrid)
                 {
                     if (oreChunk == null) continue;
                     var chunkPos = (Vector2)oreChunk;
-                    var corChunkPos = chunkPos - Vector2.one * veinDiameter * .5f;
+                    var corChunkPos = chunkPos - Vector2.one * veinType.veinDiameter * .5f;
                     
-                    if (corChunkPos.magnitude > veinDiameter * 0.5f) continue;
+                    if (corChunkPos.magnitude > veinType.veinDiameter * 0.5f) continue;
                     if (!Physics2D.OverlapPoint((Vector2)veinParentTransform.position + corChunkPos)) continue;
 
                     var oreClone = Instantiate(orePrefab, veinParentTransform, true);
                     oreClone.transform.localPosition = corChunkPos;
-                    oreClone.GetComponent<SpriteRenderer>().sprite =
-                        oreSpritePool[Random.Range(0, oreSpritePool.Length)];
+                    
+                    var oreSprite = veinType.oreSprites[Random.Range(0, veinType.oreSprites.Length)];
+                    oreClone.GetComponent<SpriteRenderer>().sprite = oreSprite;
+                    
+                    var oreInstance = oreClone.AddComponent<OreInstance>();
+                    oreInstance.oreSo = veinType.oreSo;
+                    oreInstance.oreToughness = veinType.oreToughness;
                 }
             }
         }
