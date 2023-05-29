@@ -235,7 +235,8 @@ namespace Entities
         
             // var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
 
-            var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, 1 << LayerMask.NameToLayer("Terrain"));
+            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, mask);
             
             if (!hit) return;
             

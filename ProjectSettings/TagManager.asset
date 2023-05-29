@@ -8,6 +8,7 @@ TagManager:
   - Item
   - Fog
   - Enemy
+  - Ore
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - DamagePlayer
   - Planet
   - Weapon
-  - 
+  - TerrainBits
   - 
   - 
   - 
@@ -56,4 +57,7 @@ TagManager:
     locked: 0
   - name: Healthbars
     uniqueID: 3466986709
+    locked: 0
+  - name: Player
+    uniqueID: 3230432971
     locked: 0

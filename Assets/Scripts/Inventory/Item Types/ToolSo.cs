@@ -7,5 +7,6 @@ namespace Inventory.Inventory.Item_Types
     {
         public float toolPower;
         public float toolUseArea;
+        public float toolRange;
     }
 }

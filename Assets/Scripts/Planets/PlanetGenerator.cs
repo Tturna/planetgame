@@ -366,8 +366,6 @@ namespace Planets
             }
 
             // This skips point calculation for cells outside the planet terrain
-            // Maybe it skips something else as well I can't remember lmao.
-            // I guess this system is a bit fucked then
             if (!bl.isSet && !br.isSet && !tl.isSet && !tr.isSet) return (-1, null, null);
 
             // Figure out cell pattern

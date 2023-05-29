@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6068771061300366297}
   - component: {fileID: 6068771061300366298}
   - component: {fileID: 6068771061300366299}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Ore
   m_TagString: Ore
   m_Icon: {fileID: 0}

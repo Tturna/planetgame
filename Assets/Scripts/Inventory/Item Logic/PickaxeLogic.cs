@@ -3,6 +3,7 @@ using System.Linq;
 using Inventory.Inventory.Item_Types;
 using Planets;
 using UnityEngine;
+using Utilities;
 using Object = UnityEngine.Object;
 
 namespace Inventory.Inventory.Item_Logic
@@ -11,8 +12,43 @@ namespace Inventory.Inventory.Item_Logic
     {
         private static float _soil;
         private PlanetGenerator _planetGen;
-        
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        private float _mineTimer;
+        private ItemAnimationManager _itemAnimationManager;
+
+        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY,
+            GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        {
+            if (_mineTimer > 0) return true;
+            
+            _itemAnimationManager ??= itemAnimationManager;
+            
+            var tool = (ToolSo)attackItem.itemSo;
+            var power = tool.toolPower;
+            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            
+            if (Vector3.Distance(playerObject.transform.position, mousePoint) > tool.toolRange) return true;
+                
+            var hits = Physics2D.OverlapPointAll(mousePoint);
+            
+            if (_mineTimer == 0)
+            {
+                _itemAnimationManager.AttackMelee("attackPickaxe");
+                _mineTimer = tool.attackCooldown;
+                GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
+            }
+
+            foreach (var hit in hits)
+            {
+                var hitObject = hit.gameObject;
+                if (hitObject.CompareTag("Ore"))
+                {
+                    DigOre(hitObject, power);
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
@@ -22,28 +58,35 @@ namespace Inventory.Inventory.Item_Logic
             var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
             
+            if (Vector3.Distance(playerObject.transform.position, mousePoint) > tool.toolRange) return true;
+            
+            var midHits = Physics2D.OverlapPointAll(mousePoint);
             var hits = Physics2D.CircleCastAll(mousePoint, useArea, Vector2.zero);
 
+            if (_mineTimer == 0)
+            {
+                _itemAnimationManager.AttackMelee("attackPickaxe");
+                _mineTimer = tool.attackCooldown;
+                GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
+                
+                foreach (var midHit in midHits)
+                {
+                    var hitObject = midHit.gameObject;
+
+                    if (!hitObject.CompareTag("Ore")) continue;
+                    DigOre(hitObject, power);
+                    return true;
+                }
+            }
+            
             foreach (var hit in hits)
             {
                 var hitObject = hit.collider.gameObject;
 
-                var tag = hitObject.tag;
-                switch (tag)
-                {
-                    case "Planet":
-                        DigTerrain(hitObject, mousePoint, power, useArea);
-                        break;
-                    case "Ore":
-                        DigOre(hitObject, power);
-                        break;
-                    default:
-                        continue;
-                }
-
+                if (!hitObject.CompareTag("Planet")) continue;
+                DigTerrain(hitObject, mousePoint, power, useArea);
                 return true;
             }
-
             return true;
         }
 
@@ -93,13 +136,13 @@ namespace Inventory.Inventory.Item_Logic
             hitObject.GetComponent<PolygonCollider2D>().points = cellData.triangles.Select(trindex => vertices2[trindex]).ToArray();
         }
 
-        private static void DigOre(GameObject hitObject, float power)
+        private void DigOre(GameObject hitObject, float power)
         {
             var oreInstance = hitObject.GetComponent<OreInstance>();
             var oreSo = (ItemSo)oreInstance.oreSo;
 
             oreInstance.oreToughness -= Mathf.FloorToInt(power);
-
+            
             if (oreInstance.oreToughness <= 0)
             {
                 var item = new Item();
