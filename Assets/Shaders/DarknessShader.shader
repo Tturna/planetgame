@@ -27,12 +27,14 @@ Shader "Custom/DarknessShader"
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
 
-            struct v2f {
+            struct v2f 
+            {
                 float2 uv : TEXCOORD0;
                 float4 vertex : POSITION;
             };
 
-            v2f vert(v2f v) {
+            v2f vert(v2f v) 
+            {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
@@ -51,7 +53,7 @@ Shader "Custom/DarknessShader"
 
             fixed4 frag(v2f i) : SV_TARGET
             {
-                // not multiplying both by 2 because of the + 2 step in the for loops
+                // not multiplying by 2 because of the + 2 step in the for loops
                 const int samples = pow(_BlurStrength + 0.5, 2);
                 const half2 texelSize = _MainTex_TexelSize.xy;
 
@@ -59,7 +61,7 @@ Shader "Custom/DarknessShader"
 
                 // + 2 step for optimization, dw abt it :)
                 // if you do want to use ++ then you need to multiply samples by 4
-                // because then it'd be (2 * (_BlurStrength + 1)) ^ 2
+                // which would be equal to (2 * (_BlurStrength + 0.5)) ^ 2
                 for (float x = -_BlurStrength; x < _BlurStrength; x += 2)
                 {
                     for (float y = -_BlurStrength; y < _BlurStrength; y += 2)
@@ -68,7 +70,7 @@ Shader "Custom/DarknessShader"
                     }
                 }
 
-                // average this fucker 💥🗞️
+                // average this fucker 🗞️💥
                 half result = sum / samples;
                 if (!result) discard;
                 if (_RetroLighting) result = applyRetroLight(result, samples);
