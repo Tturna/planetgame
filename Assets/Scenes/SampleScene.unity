@@ -3300,41 +3300,67 @@ MonoBehaviour:
   - oreSo: {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
     oreSpawnHeight: 0.75
     veinDiameter: 6
-    chunkSampleGap: 0.5
-    oreSprites:
+    oreToughness: 3
+    chunkSampleGapSmall: 0.175
+    chunkSampleGapMedium: 0.35
+    chunkSampleGapLarge: 0.6
+    oreSpritesSmall:
+    - {fileID: -74371568, guid: 7eea2f4756fed4b4a8e44cbc5c14d72a, type: 3}
+    - {fileID: 646920071, guid: 7eea2f4756fed4b4a8e44cbc5c14d72a, type: 3}
+    - {fileID: -1708658345, guid: 7eea2f4756fed4b4a8e44cbc5c14d72a, type: 3}
+    oreSpritesMedium:
     - {fileID: -159330456, guid: 0335d8dab7e4c9a40bca6a7fd9c62f5a, type: 3}
     - {fileID: -1315323614, guid: 0335d8dab7e4c9a40bca6a7fd9c62f5a, type: 3}
     - {fileID: 423237991, guid: 0335d8dab7e4c9a40bca6a7fd9c62f5a, type: 3}
-    oreToughness: 3
+    oreSpritesLarge:
+    - {fileID: -1399993740, guid: 050e8314c1bd0f54ca5693d455ef0001, type: 3}
+    - {fileID: 312991736, guid: 050e8314c1bd0f54ca5693d455ef0001, type: 3}
   - oreSo: {fileID: 11400000, guid: 560b1e357129d734ca102bf0b7f2538a, type: 2}
     oreSpawnHeight: 0.75
     veinDiameter: 5
-    chunkSampleGap: 0.5
-    oreSprites:
+    oreToughness: 3
+    chunkSampleGapSmall: 0
+    chunkSampleGapMedium: 0.25
+    chunkSampleGapLarge: 0
+    oreSpritesSmall: []
+    oreSpritesMedium:
     - {fileID: -827789830, guid: 35ae8c23cb51a8f4f887ef526a8a4bdb, type: 3}
     - {fileID: -1148241012, guid: 35ae8c23cb51a8f4f887ef526a8a4bdb, type: 3}
-    oreToughness: 3
+    oreSpritesLarge: []
   - oreSo: {fileID: 11400000, guid: 5f0a6e6335ca16f41a6bc8a5ba2054cd, type: 2}
     oreSpawnHeight: 0.65
     veinDiameter: 4
-    chunkSampleGap: 0.5
-    oreSprites:
+    oreToughness: 5
+    chunkSampleGapSmall: 0.175
+    chunkSampleGapMedium: 0.35
+    chunkSampleGapLarge: 0.7
+    oreSpritesSmall:
+    - {fileID: -237588492, guid: f84a75bd5b6e70f46b68cb64f82c20ca, type: 3}
+    - {fileID: 608788681, guid: f84a75bd5b6e70f46b68cb64f82c20ca, type: 3}
+    - {fileID: 348853886, guid: f84a75bd5b6e70f46b68cb64f82c20ca, type: 3}
+    oreSpritesMedium:
     - {fileID: -1626901190, guid: 2fb79fa6956631d42b1167c30a604c26, type: 3}
     - {fileID: -1852316556, guid: 2fb79fa6956631d42b1167c30a604c26, type: 3}
     - {fileID: -1758960249, guid: 2fb79fa6956631d42b1167c30a604c26, type: 3}
-    oreToughness: 5
+    oreSpritesLarge:
+    - {fileID: -167658847, guid: 0d891cacf681c7f4bb53e7607eddac57, type: 3}
+    - {fileID: 1547939360, guid: 0d891cacf681c7f4bb53e7607eddac57, type: 3}
   - oreSo: {fileID: 11400000, guid: aca811514951fa546a33ba3262f46cdf, type: 2}
     oreSpawnHeight: 0.4
     veinDiameter: 3
-    chunkSampleGap: 0.5
-    oreSprites:
+    oreToughness: 7
+    chunkSampleGapSmall: 0
+    chunkSampleGapMedium: 0.25
+    chunkSampleGapLarge: 0
+    oreSpritesSmall: []
+    oreSpritesMedium:
     - {fileID: -2105113815, guid: d93b05d2287d4b24f9119637b34fad37, type: 3}
     - {fileID: -1807513137, guid: d93b05d2287d4b24f9119637b34fad37, type: 3}
-    oreToughness: 7
+    oreSpritesLarge: []
   oreSpawnHeight: 0.75
-  chunkSampleGenAttempts: 30
   veinSampleGap: 10
   veinSampleGenAttempts: 30
+  debugCircle: {fileID: 391593832}
 --- !u!1 &277992682
 GameObject:
   m_ObjectHideFlags: 0
@@ -4535,6 +4561,90 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 388065862}
   m_CullTransparentMesh: 1
+--- !u!1 &391593832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 391593834}
+  - component: {fileID: 391593833}
+  m_Layer: 0
+  m_Name: debug circle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &391593833
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391593832}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.40392157}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &391593834
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391593832}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -250.7244, y: 33.77313, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &392915841
 GameObject:
   m_ObjectHideFlags: 0

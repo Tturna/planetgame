@@ -62,6 +62,7 @@ namespace Planets
         private Point[] _pointField;
         private GameObject[] _cellField;
         private List<MeshFilter> _surfaceMeshFilters = new();
+        private Transform _terrainParentTransform;
         private GameObject _cellParent;
         private PlanetDecorator _decorator;
         private PlanetOrePopulator _orePopulator;
@@ -116,7 +117,7 @@ namespace Planets
             _decorator.CreateBackgroundTerrain(_surfaceMeshFilters.ToArray());
 
             _orePopulator = GetComponent<PlanetOrePopulator>();
-            _orePopulator.GenerateVeins();
+            _orePopulator.GenerateVeins(_terrainParentTransform);
             
             print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
             
@@ -264,19 +265,22 @@ namespace Planets
 
         private GameObject MakeCellParent()
         {
+            var terrain = new GameObject("Terrain");
+            _terrainParentTransform = terrain.transform;
+            _terrainParentTransform.SetParent(transform);
+            _terrainParentTransform.localPosition = Vector3.zero;
+            terrain.tag = "Planet";
+            terrain.layer = LayerMask.NameToLayer("Terrain");
+
+            var rb = terrain.AddComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
+            
             var cp = new GameObject("Cells");
-            cp.transform.SetParent(transform);
+            cp.transform.SetParent(_terrainParentTransform);
             cp.transform.localPosition = Vector3.zero;
             cp.tag = "Planet";
             cp.layer = LayerMask.NameToLayer("Terrain");
-
-            // Give it a kinematic rigidbody so the planet can be collided with
-            var rb = cp.AddComponent<Rigidbody2D>();
-            rb.bodyType = RigidbodyType2D.Kinematic;
-            rb.constraints = RigidbodyConstraints2D.FreezeAll;
-
-            // var cc = cp.AddComponent<CompositeCollider2D>();
-            // cc.offsetDistance = 0.2f;
 
             return cp;
         }

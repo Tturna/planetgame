@@ -57,7 +57,6 @@ namespace Entities
             hitbox.isTrigger = true;
         }
 
-        private bool temp;
         private void Update()
         {
             if (!CalculatePlayerRelation()) return;
@@ -65,9 +64,6 @@ namespace Entities
             CheckAggro();
             
             globalMoveDirection = relativeMoveDirection.x > 0 ? transform.right : -transform.right;
-            
-            if (temp)
-                Debug.DrawLine(transform.position, transform.position + GetVectorToPlayer().normalized * 2.5f, Color.red);
         }
 
         protected override void FixedUpdate()
@@ -187,7 +183,6 @@ namespace Entities
                 var pattern = enemySo.shortAttacks[idx];
                 pattern.GetAttack().Invoke(this);
                 _animator.SetInteger("attackIndex", pattern.GetIndex());
-                temp = true;
             }
             
             _animator.SetTrigger("attack");
@@ -247,7 +242,6 @@ namespace Entities
             yield return new WaitForEndOfFrame();
             yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length + enemySo.attackRecoveryTime);
             _canMove = true;
-            temp = false;
         }
 
         private void OnDrawGizmos()
