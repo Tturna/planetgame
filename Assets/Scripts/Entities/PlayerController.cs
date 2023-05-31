@@ -195,7 +195,10 @@ namespace Entities
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(Camera.main!.ScreenToWorldPoint(Input.mousePosition), 0.5f);
+            var mousePos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0;
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(mousePos, 0.5f);
         }
 
         // Private methods

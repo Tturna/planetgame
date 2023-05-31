@@ -18,40 +18,41 @@ namespace Inventory.Inventory.Item_Logic
         public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY,
             GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
-            if (_mineTimer > 0) return true;
-            
-            _itemAnimationManager ??= itemAnimationManager;
-            
-            var tool = (ToolSo)attackItem.itemSo;
-            var power = tool.toolPower;
-            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
-            
-            if (Vector3.Distance(playerObject.transform.position, mousePoint) > tool.toolRange) return true;
-                
-            var hits = Physics2D.OverlapPointAll(mousePoint);
-            
-            if (_mineTimer == 0)
-            {
-                _itemAnimationManager.AttackMelee("attackPickaxe");
-                _mineTimer = tool.attackCooldown;
-                GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
-            }
-
-            foreach (var hit in hits)
-            {
-                var hitObject = hit.gameObject;
-                if (hitObject.CompareTag("Ore"))
-                {
-                    DigOre(hitObject, power);
-                    return true;
-                }
-            }
+            // if (_mineTimer > 0) return true;
+            //
+            // _itemAnimationManager ??= itemAnimationManager;
+            //
+            // var tool = (ToolSo)attackItem.itemSo;
+            // var power = tool.toolPower;
+            // var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            //
+            // if (Vector3.Distance(playerObject.transform.position, mousePoint) > tool.toolRange) return true;
+            //
+            // var mouseHits = new Collider2D[10];
+            // var mouseHitCount = Physics2D.OverlapPointNonAlloc(mousePoint, mouseHits);
+            //
+            // if (_mineTimer == 0)
+            // {
+            //     _itemAnimationManager.AttackMelee("attackPickaxe");
+            //     _mineTimer = tool.attackCooldown;
+            //     GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
+            // }
+            //
+            // foreach (var hit in mouseHits)
+            // {
+            //     var hitObject = hit.gameObject;
+            //     if (!hitObject.CompareTag("Ore")) continue;
+            //     DigOre(hitObject, power);
+            //     return true;
+            // }
 
             return false;
         }
 
         public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
         {
+            _itemAnimationManager ??= itemAnimationManager;
+            
             var tool = (ToolSo)attackItem.itemSo;
             var useArea = tool.toolUseArea;
             var power = tool.toolPower;
@@ -60,32 +61,38 @@ namespace Inventory.Inventory.Item_Logic
             
             if (Vector3.Distance(playerObject.transform.position, mousePoint) > tool.toolRange) return true;
             
-            var midHits = Physics2D.OverlapPointAll(mousePoint);
-            var hits = Physics2D.CircleCastAll(mousePoint, useArea, Vector2.zero);
-
+            // var midHits = Physics2D.OverlapPointAll(mousePoint);
+            var useAreaHits = new Collider2D[25];
+            // Physics2D.CircleCastNonAlloc(mousePoint, useArea, Vector2.zero, useAreaHits);
+            Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, 1 << LayerMask.NameToLayer("Terrain"));
+            
+            // var canMineOre = false;
             if (_mineTimer == 0)
             {
+                // canMineOre = true;
                 _itemAnimationManager.AttackMelee("attackPickaxe");
                 _mineTimer = tool.attackCooldown;
                 GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
-                
-                foreach (var midHit in midHits)
-                {
-                    var hitObject = midHit.gameObject;
-
-                    if (!hitObject.CompareTag("Ore")) continue;
-                    DigOre(hitObject, power);
-                    return true;
-                }
             }
+
+            // if (canMineOre)
+            // {
+            //     foreach (var midHit in midHits)
+            //     {
+            //         var hitObject = midHit.gameObject;
+            //         if (!hitObject.CompareTag("Ore")) continue;
+            //         DigOre(hitObject, power);
+            //         return true;
+            //     }
+            // }
             
-            foreach (var hit in hits)
+            foreach (var hit in useAreaHits)
             {
-                var hitObject = hit.collider.gameObject;
+                if (!hit) continue;
+                var hitObject = hit.gameObject;
 
                 if (!hitObject.CompareTag("Planet")) continue;
                 DigTerrain(hitObject, mousePoint, power, useArea);
-                return true;
             }
             return true;
         }
@@ -97,23 +104,30 @@ namespace Inventory.Inventory.Item_Logic
             // Get cell data
             var idx = int.Parse(hitObject.name[5..]);
             var cellCornerPoints = _planetGen.GetCellCornerPoints(idx);
-
+            
             // Do terraforming
             for (var index = 0; index < cellCornerPoints.Length; index++)
             {
                 var point = cellCornerPoints[index];
                 
+                // Debug.DrawLine(mousePoint, point.position, Color.blue, .5f);
+                
+                if (point.value >= 1f) continue;
                 if (Vector3.Distance(point.position, mousePoint) > useArea) continue;
+                // Debug.DrawLine(mousePoint, point.position, Color.red, .5f);
                 
                 var digAmount = power * Time.deltaTime;
                 if (point.value + digAmount > 1f) digAmount = 1f - point.value;
                 
                 point.value += digAmount;
+                
+                if (point.value > 1f) point.value = 1f;
+                
                 cellCornerPoints[index] = point;
                 
                 _soil += digAmount;
             }
-            Debug.Log($"Soil amount: {_soil}");
+            // Debug.Log($"Soil amount: {_soil}");
 
             // Update cell
             var (x, y) = _planetGen.GetXYFromIndex(idx);
@@ -136,7 +150,7 @@ namespace Inventory.Inventory.Item_Logic
             hitObject.GetComponent<PolygonCollider2D>().points = cellData.triangles.Select(trindex => vertices2[trindex]).ToArray();
         }
 
-        private void DigOre(GameObject hitObject, float power)
+        private static void DigOre(GameObject hitObject, float power)
         {
             var oreInstance = hitObject.GetComponent<OreInstance>();
             var oreSo = (ItemSo)oreInstance.oreSo;
