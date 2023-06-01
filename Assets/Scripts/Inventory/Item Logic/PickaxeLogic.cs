@@ -64,7 +64,8 @@ namespace Inventory.Inventory.Item_Logic
             // var midHits = Physics2D.OverlapPointAll(mousePoint);
             var useAreaHits = new Collider2D[25];
             // Physics2D.CircleCastNonAlloc(mousePoint, useArea, Vector2.zero, useAreaHits);
-            Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, 1 << LayerMask.NameToLayer("Terrain"));
+            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
             
             // var canMineOre = false;
             if (_mineTimer == 0)
@@ -85,14 +86,34 @@ namespace Inventory.Inventory.Item_Logic
             //         return true;
             //     }
             // }
-            
+
+            var terrainDug = false;
             foreach (var hit in useAreaHits)
             {
                 if (!hit) continue;
                 var hitObject = hit.gameObject;
 
-                if (!hitObject.CompareTag("Planet")) continue;
-                DigTerrain(hitObject, mousePoint, power, useArea);
+                if (hitObject.CompareTag("Planet"))
+                {
+                    DigTerrain(hitObject, mousePoint, power, useArea);
+                    terrainDug = true;
+                }
+                else if (terrainDug && hitObject.CompareTag("Ore"))
+                {
+                    var colliderWidth = hitObject.GetComponent<Collider2D>().bounds.size.x * .75f;
+                    var hits = new Collider2D[20];
+                    var hitCount = Physics2D.OverlapCircleNonAlloc(hitObject.transform.position, colliderWidth, hits,
+                        1 << LayerMask.NameToLayer("Terrain"));
+
+                    if (hitCount != 0) continue;
+                    var oreInstance = hitObject.GetComponent<OreInstance>();
+                    var oreSo = (ItemSo)oreInstance.oreSo;
+
+                    var item = new Item();
+                    item.itemSo = oreSo;
+                    InventoryManager.SpawnItem(item, hitObject.transform.position);
+                    Object.Destroy(hitObject);
+                }
             }
             return true;
         }
