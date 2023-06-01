@@ -3317,7 +3317,7 @@ MonoBehaviour:
     - {fileID: 312991736, guid: 050e8314c1bd0f54ca5693d455ef0001, type: 3}
   - oreSo: {fileID: 11400000, guid: 560b1e357129d734ca102bf0b7f2538a, type: 2}
     oreSpawnHeight: 0.75
-    veinDiameter: 5
+    veinDiameter: 2
     oreToughness: 3
     chunkSampleGapSmall: 0
     chunkSampleGapMedium: 0.25
@@ -3347,7 +3347,7 @@ MonoBehaviour:
     - {fileID: 1547939360, guid: 0d891cacf681c7f4bb53e7607eddac57, type: 3}
   - oreSo: {fileID: 11400000, guid: aca811514951fa546a33ba3262f46cdf, type: 2}
     oreSpawnHeight: 0.4
-    veinDiameter: 3
+    veinDiameter: 1
     oreToughness: 7
     chunkSampleGapSmall: 0
     chunkSampleGapMedium: 0.25
@@ -3360,7 +3360,6 @@ MonoBehaviour:
   oreSpawnHeight: 0.75
   veinSampleGap: 10
   veinSampleGenAttempts: 30
-  debugCircle: {fileID: 391593832}
 --- !u!1 &277992682
 GameObject:
   m_ObjectHideFlags: 0

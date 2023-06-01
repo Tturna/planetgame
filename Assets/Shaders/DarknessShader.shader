@@ -3,7 +3,7 @@ Shader "Custom/DarknessShader"
     Properties {
         _MainTex("Texture", 2D) = "white" {}
         _Color("Colour", Color) = (1, 1, 1, 1)
-        _BlurStrength("Blur Strength", Int) = 10
+        _BlurSize("Blur Size", Int) = 10
         [MaterialToggle] _RetroLighting("Retro Lighting", Int) = 0
     }
 
@@ -33,7 +33,7 @@ Shader "Custom/DarknessShader"
                 float4 vertex : POSITION;
             };
 
-            v2f vert(v2f v) 
+            v2f vert(const v2f v) 
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -42,7 +42,7 @@ Shader "Custom/DarknessShader"
             }
 
             fixed4 _Color;
-            int _BlurStrength;
+            int _BlurSize;
             int _RetroLighting;
 
             // this basically makes it so darkness values change by 0.135 (/ 0.15 chosen using trial and error)
@@ -53,29 +53,39 @@ Shader "Custom/DarknessShader"
 
             fixed4 frag(v2f i) : SV_TARGET
             {
-                // not multiplying by 2 because of the + 2 step in the for loops
-                const int samples = pow(_BlurStrength + 0.5, 2);
+                if (tex2D(_MainTex, i.uv).a == 0) discard;
+                
+                const int sampleCount = pow(_BlurSize, 2);
                 const half2 texelSize = _MainTex_TexelSize.xy;
 
                 half sum = 0;
-
-                // + 2 step for optimization, dw abt it :)
-                // if you do want to use ++ then you need to multiply samples by 4
-                // which would be equal to (2 * (_BlurStrength + 0.5)) ^ 2
-                for (float x = -_BlurStrength; x < _BlurStrength; x += 2)
+                for (float x = -_BlurSize; x < _BlurSize; x += 2)
                 {
-                    for (float y = -_BlurStrength; y < _BlurStrength; y += 2)
+                    for (float y = -_BlurSize; y < _BlurSize; y += 2)
                     {
                         sum += tex2D(_MainTex, i.uv + float2(x, y) * texelSize).a;
                     }
                 }
 
-                // average this fucker 🗞️💥
-                half result = sum / samples;
-                if (!result) discard;
-                if (_RetroLighting) result = applyRetroLight(result, samples);
-                // multiply by alpha so darkness doesn't get drawn on non-terrain texels
-                return fixed4(_Color.rgb, smoothstep(0, 1, result) * tex2D(_MainTex, i.uv).a);
+                half result = sum / sampleCount;
+
+                // TODO: Make it so blur starts after a certain distance from the surface.
+                
+                if (_RetroLighting) result = applyRetroLight(result, sampleCount);
+
+                // yoinked from grass shader to check for edges
+                // const fixed2 x_pos = fixed2(_MainTex_TexelSize.x, 0),
+                // y_pos = fixed2(0, _MainTex_TexelSize.y);
+                //
+                // const float edge_count = tex2D(_MainTex, i.uv + y_pos).a +
+                //     tex2D(_MainTex, i.uv - y_pos).a +
+                //     tex2D(_MainTex, i.uv + x_pos).a +
+                //     tex2D(_MainTex, i.uv - x_pos).a;
+                //
+                // if (!edge_count) discard;
+                // if (edge_count < 4) discard;
+                
+                return fixed4(_Color.rgb, result * result);
             }
             ENDCG
         }
