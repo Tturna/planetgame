@@ -22,6 +22,7 @@ namespace Entities
         private Animator _animator;
         private SpriteRenderer _sr;
         private HealthbarManager _healthbarManager;
+        private Shader _defaultShader, _flashShader;
         
         private float _calculationTimer, _evasionTimer, _attackTimer;
         private float _distanceToPlayer;
@@ -55,6 +56,9 @@ namespace Entities
             hitbox.offset = enemySo.hitboxOffset;
             hitbox.size = enemySo.hitboxSize;
             hitbox.isTrigger = true;
+            
+            _defaultShader = _sr.material.shader;
+            _flashShader = Shader.Find("GUI/Text Shader");
         }
 
         private void Update()
@@ -214,8 +218,11 @@ namespace Entities
             }
 
             // Flash white
-            _sr.material.SetFloat("_FlashAmount", .75f);
-            GameUtilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
+            // _sr.material.SetFloat("_FlashAmount", .75f);
+            // GameUtilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
+
+            _sr.sharedMaterial.shader = _flashShader;
+            GameUtilities.instance.DelayExecute(() => _sr.sharedMaterial.shader = _defaultShader, 0.1f);
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
