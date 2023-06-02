@@ -535,7 +535,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -926,7 +926,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1355,6 +1355,7 @@ GameObject:
   - component: {fileID: 667072762}
   - component: {fileID: 667072766}
   - component: {fileID: 667072761}
+  - component: {fileID: 667072767}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1376,19 +1377,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityMultiplier: 25
   handsAnimator: {fileID: 1798997162}
-  equippedItemObject: {fileID: 1167736327}
+  handsParent: {fileID: 0}
   accelerationSpeed: 25
   maxMoveSpeed: 4
   jumpForce: 120
   maxJumpForceTime: 0.1
-  maxHealth: 100
-  health: 100
-  maxEnergy: 100
-  energy: 100
-  energyRegenDelay: 3
-  energyRegenRate: 15
-  healthRegenDelay: 5
-  healthRegenRate: 10
 --- !u!61 &667072761
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1476,7 +1469,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1542,6 +1535,26 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.4, y: 0.82}
   m_Direction: 0
+--- !u!114 &667072767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667072759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72a23e7fb29dd9647b6f4b6a25a43354, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
+  health: 0
+  maxEnergy: 0
+  energy: 0
+  energyRegenDelay: 0
+  energyRegenRate: 0
+  healthRegenDelay: 0
+  healthRegenRate: 0
 --- !u!1 &775195100
 GameObject:
   m_ObjectHideFlags: 0
@@ -1631,7 +1644,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1939,6 +1952,7 @@ MonoBehaviour:
   inventoryObject: {fileID: 1382503478}
   itemPrefab: {fileID: 0}
   itemTooltipObject: {fileID: 0}
+  equippedItemObject: {fileID: 0}
   emptySlotSprite: {fileID: 754175486, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
   filledSlotSprite: {fileID: -1436522534, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
   emptySlotSelectedSprite: {fileID: 1268810055, guid: fb328d91cbbebca41bd90a0dadfb63dd, type: 3}
@@ -2088,7 +2102,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2172,7 +2186,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2295,7 +2309,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2364,7 +2378,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2962,7 +2976,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3668,7 +3682,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3766,6 +3780,8 @@ GameObject:
   - component: {fileID: 1742544769}
   - component: {fileID: 1742544768}
   - component: {fileID: 1742544770}
+  - component: {fileID: 1742544772}
+  - component: {fileID: 1742544771}
   m_Layer: 6
   m_Name: ProcPlanet
   m_TagString: Planet
@@ -3785,10 +3801,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 504971a180ae1ea42b08fa84b8ce2e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellMaterial: {fileID: 2100000, guid: cb57d485792a0c845a13972bdf9fcb0b, type: 2}
-  diameter: 128
-  xResolution: 200
-  yResolution: 200
+  cellPrefab: {fileID: 0}
+  octaves: 0
+  persistence: 0
+  lacunarity: 0
+  noiseResultCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  edgeSmoothThreshold: 0
   xOrg: 50
   yOrg: 50
   noiseScale: 30
@@ -3834,8 +3857,14 @@ MonoBehaviour:
   ySurfaceOrg: 0
   surfaceNoiseScale: 16
   surfaceNoiseStrength: 4
-  debugCircle: {fileID: 1986575938}
-  makeDebugPoints: 0
+  diameter: 128
+  resolution: 0
+  atmosphereRadius: 0
+  maxDrag: 0
+  maxGravityMultiplier: 0
+  maxPhysicsThreshold: 0
+  surfaceCameraBackground: {fileID: 0}
+  surfaceBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!4 &1742544769
 Transform:
   m_ObjectHideFlags: 0
@@ -3870,6 +3899,187 @@ MonoBehaviour:
   maxDrag: 0.8
   maxGravityMultiplier: 1
   threshold: 0.5
+--- !u!114 &1742544771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742544767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e2c23d3a6b4c04699e3fea2b0d8809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orePrefab: {fileID: 0}
+  veinTypes: []
+  oreSpawnHeight: 0
+  veinSampleGap: 0
+  veinSampleGenAttempts: 0
+--- !u!114 &1742544772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742544767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c7e583ce313f8542a1fb346c273315d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  realTreeOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  fgTreeOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  mgBushOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  mgBirdOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  bgMountainOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  bgIslandOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  flowerOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  grassOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  rockOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  bushOptions:
+    spritePool: []
+    animate: 0
+    move: 0
+    objectName: 
+    layer: 0
+    count: 0
+    minSpawnHeight: 0
+    minAngleIncrement: 0
+    maxAngleIncrement: 0
+    minHeightOffset: 0
+    maxHeightOffset: 0
+    spriteColor: {r: 0, g: 0, b: 0, a: 0}
+    sortingLayer: 
+    sortingOrder: 0
+  bgTerrainMaterialFg: {fileID: 0}
+  bgTerrainMaterialMg: {fileID: 0}
 --- !u!1 &1768356389
 GameObject:
   m_ObjectHideFlags: 0
@@ -3922,7 +4132,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4027,7 +4237,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4288,7 +4498,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4539,7 +4749,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
