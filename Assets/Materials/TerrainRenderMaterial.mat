@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TerrainRenderMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: 28cf3ac4cf0dedb40a2b108df50694f6, type: 3}
+  m_Shader: {fileID: 4800000, guid: df9a7c63eb80b704d8a7b1f9c81c5a51, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -28,6 +28,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlurSubGraph_c2ed7a260a034657ac993cd6bf5be22c_InputTexture_3466051240:
+        m_Texture: {fileID: 8400000, guid: e2cba095e13a8ae4c8365f13edcf6f5e, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GhettoBlurSubGraph_69f2edd46eff4d14884898fbfaa89056_InputTexture_3466051240:
+        m_Texture: {fileID: 8400000, guid: e2cba095e13a8ae4c8365f13edcf6f5e, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GhettoBlurSubGraph_c2ed7a260a034657ac993cd6bf5be22c_InputTexture_3466051240:
         m_Texture: {fileID: 8400000, guid: e2cba095e13a8ae4c8365f13edcf6f5e, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -77,11 +85,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BlurSize: 8
+    - _BlurSkip: 2
     - _EnableExternalAlpha: 0
+    - _Glossiness: 0.5
+    - _Metallic: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _RayReach: 30
     - _ShadeBlurSize: 10
-    - _SunlightAngle: 0
+    - _SquareBlur: 0
+    - _SunLightAndle: 173
+    - _SunLightAngle: 51
+    - _SunlightAngle: 91.1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
