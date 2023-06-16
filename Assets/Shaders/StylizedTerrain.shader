@@ -9,7 +9,10 @@ Shader "Custom/StylizedTerrain"
         _Brightness ("Brightness", Range(0, 1)) = 1
         _BlurSize ("Blur Size", Range(0, 8)) = 8
         _BlurSkip ("Blur Skip", Range(1, 10)) = 2
+        _BlurOffset ("Blur Offset", Range(0, 10)) = 1
         [MaterialToggle] _SquareBlur ("Blur Squared", int) = 0
+        [MaterialToggle] _Stylize ("Stylize", int) = 0
+        _StyleBands ("Style Bands", Range(1, 8)) = 4
     }
     
     SubShader
@@ -79,7 +82,10 @@ Shader "Custom/StylizedTerrain"
             float _Brightness;
             float _BlurSize;
             float _BlurSkip;
+            float _BlurOffset;
             float _SquareBlur;
+            float _Stylize;
+            float _StyleBands;
 
             // #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -139,7 +145,7 @@ Shader "Custom/StylizedTerrain"
                 {
                     for (int y = -_BlurSize; y < _BlurSize; y += _BlurSkip)
                     {
-                        const float2 blurOffset = float2(x, y) * _MainTex_TexelSize.x;
+                        const float2 blurOffset = float2(x, y) * _MainTex_TexelSize.x * _BlurOffset;
                 
                         for (int n = 1; n <= 20; n++)
                         {
@@ -161,7 +167,8 @@ Shader "Custom/StylizedTerrain"
                 }
                 
                 alphaSum = alphaSum / pow(_BlurSize * 2 / _BlurSkip, 2);
-                
+
+                // TODO: Consider removing if statements.
                 if (_SquareBlur)
                 {
                     alphaSum = alphaSum * alphaSum;
@@ -172,7 +179,16 @@ Shader "Custom/StylizedTerrain"
                 // power of 4 to limit the light reach in terrain
                 alphaSum = clamp(alphaSum + pow(shapeLight0.r, 4), 0, 1);
 
-                return half4(main.rgb * alphaSum, main.a);
+                alphaSum = smoothstep(0, 1, alphaSum);
+                
+                float result = alphaSum;
+                if (_Stylize)
+                {
+                    const float celSize = 1 / _StyleBands;
+                    result = round(alphaSum * _StyleBands) * celSize;
+                }
+                
+                return half4(main.rgb * result, main.a);
 
                 // Stuff for normal 2D lighting:
                 
