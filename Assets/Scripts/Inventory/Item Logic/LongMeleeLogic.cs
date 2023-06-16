@@ -1,4 +1,5 @@
 using Entities;
+using Entities.Entities;
 using UnityEngine;
 
 namespace Inventory.Inventory.Item_Logic

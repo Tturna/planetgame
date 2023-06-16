@@ -1,5 +1,5 @@
-using System;
 using System.Collections;
+using Entities.Entities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -17,6 +17,9 @@ namespace Environment
         private Vector2 windChangeIntervalGap;
 
         [SerializeField] private float maxWindStrength;
+        [SerializeField, Range(0, 1)] private float brightness;
+        
+        private Material _terrainMaterial;
 
         private void TriggerOnFogStarted()
         {
@@ -25,9 +28,18 @@ namespace Environment
 
         private void Start()
         {
+            _terrainMaterial = PlayerController.instance.GetTerrainMaterial();
             // TriggerOnFogStarted();
 
             StartCoroutine(ChangeWind());
+        }
+
+        private void Update()
+        {
+            // TODO: Optimize updating brightness.
+            // Doing this every frame, especially with a string based look up is cringe.
+            _terrainMaterial.SetFloat("_Brightness", brightness);
+            GlobalLight.instance.SetIntensity(brightness);
         }
 
         private IEnumerator ChangeWind()

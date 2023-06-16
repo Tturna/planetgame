@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Entities;
+using Entities.Entities;
 using Inventory.Inventory.Entities;
 using Inventory.Inventory.Item_Types;
 using TMPro;

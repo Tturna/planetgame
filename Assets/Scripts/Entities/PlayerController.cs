@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Entities.Entities;
 using UnityEngine;
+using UnityEngine.UI;
 using Utilities;
 
-namespace Entities
+namespace Entities.Entities
 {
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
@@ -15,6 +15,7 @@ namespace Entities
             [Header("Components")]
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
+            [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
         
             [Header("Movement Settings")]
             [SerializeField] private float accelerationSpeed;
@@ -374,6 +375,11 @@ namespace Entities
         public void AddForceTowardsCursor(float magnitude)
         {
             Rigidbody.AddForce(_mouseDirection * magnitude);
+        }
+
+        public Material GetTerrainMaterial()
+        {
+            return terrainRenderImage.material;
         }
     }
 }

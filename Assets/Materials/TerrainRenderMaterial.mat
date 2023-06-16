@@ -87,6 +87,7 @@ Material:
     m_Floats:
     - _BlurSize: 8
     - _BlurSkip: 2
+    - _Brightness: 1
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5
     - _Metallic: 0
@@ -96,7 +97,7 @@ Material:
     - _ShadeBlurSize: 10
     - _SquareBlur: 0
     - _SunLightAndle: 173
-    - _SunLightAngle: 51
+    - _SunLightAngle: 63
     - _SunlightAngle: 91.1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
