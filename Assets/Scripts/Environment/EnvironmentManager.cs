@@ -36,6 +36,8 @@ namespace Environment
 
         private void Update()
         {
+            // brightness -= Time.deltaTime * 0.1f;
+            
             // TODO: Optimize updating brightness.
             // Doing this every frame, especially with a string based look up is cringe.
             _terrainMaterial.SetFloat("_Brightness", brightness);
