@@ -13,6 +13,8 @@ Shader "Custom/StylizedTerrain"
         [MaterialToggle] _SquareBlur ("Blur Squared", int) = 0
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
+        _GrassColor ("Grass Color", Color) = (1,1,1,1)
+        _GrassThickness ("Grass Thickness", Range(1, 10)) = 3
     }
     
     SubShader
@@ -145,6 +147,8 @@ Shader "Custom/StylizedTerrain"
             float _SquareBlur;
             float _Stylize;
             float _StyleBands;
+            float _GrassThickness;
+            float4 _GrassColor;
 
             // #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -196,6 +200,13 @@ Shader "Custom/StylizedTerrain"
 
                 if (main.a == 0) discard;
 
+                const half4 grassCheckSample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
+                
+                if (grassCheckSample.a == 0)
+                {
+                    return _GrassColor;
+                }
+                
                 const float rad = radians(_SunLightAngle);
                 const float2 sunDir = float2(cos(rad), sin(rad));
                 float alphaSum = 0;
@@ -254,10 +265,11 @@ Shader "Custom/StylizedTerrain"
 
                     // Different easing functions for hue.
                     // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
-                    const float t = pow(ialpha/0.75, 3);
+                    const float t = pow(ia01, 3);
                     // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
                     // const float t = -(cos(PI * ia01) - 1) / 2;
-                    
+
+                    // hue 240 = blue
                     hsvColor.r = angleLerp(hsvColor.r * 360.0, 240.0, t) / 360.0;
                     hsvColor.g = lerp(hsvColor.g, hsvColor.g * 0.675, ia01);
                     hsvColor.b = lerp(hsvColor.b, hsvColor.b * 0.125, 1 - pow(1 - ia01, 2));
@@ -267,7 +279,6 @@ Shader "Custom/StylizedTerrain"
                     const float bitMask = resultAlpha > 0 ? 1 : 0;
                     return half4(resultColor * bitMask, main.a);
                 }
-
 
                 return half4(resultColor * resultAlpha, main.a);
 
