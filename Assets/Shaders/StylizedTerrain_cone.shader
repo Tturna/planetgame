@@ -1,4 +1,4 @@
-Shader "Custom/StylizedTerrain"
+Shader "Custom/StylizedTerrainCone"
 {
     Properties
     {
@@ -7,9 +7,9 @@ Shader "Custom/StylizedTerrain"
         [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
         _SunLightAngle ("Sun Light Angle", Range(0, 360)) = 0
         _Brightness ("Brightness", Range(0, 1)) = 1
-        _BlurSize ("Blur Size", Range(0, 8)) = 8
-        _BlurSkip ("Blur Skip", Range(1, 10)) = 2
-        _BlurOffset ("Blur Offset", Range(0, 10)) = 1
+        _BlurSize ("Blur Size", Range(0, 20)) = 8
+        _BlurSkip ("Blur Skip", Range(1, 20)) = 2
+//        _BlurOffset ("Blur Offset", Range(0, 10)) = 1
         [MaterialToggle] _SquareBlur ("Blur Squared", int) = 0
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
@@ -143,7 +143,7 @@ Shader "Custom/StylizedTerrain"
             float _Brightness;
             float _BlurSize;
             float _BlurSkip;
-            float _BlurOffset;
+            // float _BlurOffset;
             float _SquareBlur;
             float _Stylize;
             float _StyleBands;
@@ -207,26 +207,60 @@ Shader "Custom/StylizedTerrain"
                     return _GrassColor;
                 }
                 
-                const float rad = radians(_SunLightAngle);
-                const float2 sunDir = float2(cos(rad), sin(rad));
+                const float sunRad = radians(_SunLightAngle);
+                const float2 sunDir = float2(cos(sunRad), sin(sunRad));
                 float alphaSum = 0;
                 
-                for (int x = -_BlurSize; x < _BlurSize; x += _BlurSkip)
+                // for (int x = -_BlurSize; x < _BlurSize; x += _BlurSkip)
+                // {
+                //     for (int y = -_BlurSize; y < _BlurSize; y += _BlurSkip)
+                //     {
+                //         const float2 blurOffset = float2(x, y) * _MainTex_TexelSize.x * _BlurOffset;
+                //
+                //         for (int n = 1; n <= 20; n++)
+                //         {
+                //             const float dist = n * _MainTex_TexelSize.x * 5;
+                //             const float2 offsetUv = i.uv + sunDir * dist + blurOffset;
+                //
+                //             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
+                //             // have to be determined in the loop (which causes a warning about using a
+                //             // gradient instruction in a loop with variable size).
+                //             float4 sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offsetUv, 0);
+                //
+                //             if (sample.a > 0)
+                //             {
+                //                 alphaSum += sample.a;
+                //                 break;
+                //             }
+                //         }
+                //     }
+                // }
+
+                const float coneRad = radians(45);
+                const float coneRayCount = 8;
+                const float coneRadStep = coneRad / coneRayCount;
+                const float coneRaySamples = _BlurSize;
+                for (int r = 0; r < coneRayCount; r++)
                 {
-                    for (int y = -_BlurSize; y < _BlurSize; y += _BlurSkip)
+                    const float offR = r - coneRayCount / 2;
+                    const float rayRad = sunRad + offR * coneRadStep;
+                    const float2 rayDir = float2(cos(rayRad), sin(rayRad));
+
+                    for (int n = 1; n <= coneRaySamples; n++)
                     {
-                        const float2 blurOffset = float2(x, y) * _MainTex_TexelSize.x * _BlurOffset;
-                
-                        for (int n = 1; n <= 20; n++)
+                        const float sunRaySamples = 20;
+                        const float2 coneRaySampleOffset = rayDir * n * _MainTex_TexelSize.x * _BlurSkip;
+
+                        for (int m = 1; m <= sunRaySamples; m++)
                         {
-                            const float dist = n * _MainTex_TexelSize.x * 5;
-                            const float2 offsetUv = i.uv + sunDir * dist + blurOffset;
-                
+                            const float2 sunRaySampleOffset = coneRaySampleOffset + sunDir * m * _MainTex_TexelSize.x * 5;
+                            const float2 offsetUv = i.uv + sunRaySampleOffset;
+                            
                             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
                             // have to be determined in the loop (which causes a warning about using a
                             // gradient instruction in a loop with variable size).
                             float4 sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offsetUv, 0);
-                
+                            
                             if (sample.a > 0)
                             {
                                 alphaSum += sample.a;
@@ -236,8 +270,9 @@ Shader "Custom/StylizedTerrain"
                     }
                 }
                 
-                alphaSum = alphaSum / pow(_BlurSize * 2 / _BlurSkip, 2);
-
+                // alphaSum = alphaSum / pow(_BlurSize * 2 / _BlurSkip, 2);
+                alphaSum = alphaSum / (coneRayCount * coneRaySamples);
+                
                 // TODO: Consider removing if statements.
                 if (_SquareBlur)
                 {
@@ -246,10 +281,11 @@ Shader "Custom/StylizedTerrain"
 
                 alphaSum = 1 - alphaSum;
                 alphaSum *= _Brightness;
+                
                 // raised to a power to limit the light reach in terrain
                 alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
 
-                alphaSum = smoothstep(0, 1, alphaSum);
+                // alphaSum = smoothstep(0, 1, alphaSum);
 
                 float resultAlpha = alphaSum;
                 float3 resultColor = main.rgb;
@@ -258,6 +294,7 @@ Shader "Custom/StylizedTerrain"
                     const float celSize = 1 / _StyleBands;
                     // Stepped shading. Addition is to center the bands so that the surface
                     // is not thinner than the other bands.
+                    // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
                     resultAlpha = round(alphaSum * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
                     float3 hsvColor = rgb_to_hsv_no_clip(resultColor);
                     const float ialpha = 1 - resultAlpha;

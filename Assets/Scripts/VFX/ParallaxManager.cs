@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Entities;
 using Entities.Entities;
 using Planets;
-using ProcGen;
 using UnityEngine;
 
 namespace VFX
@@ -26,7 +24,7 @@ namespace VFX
         // Update is called once per frame
         private void Update()
         {
-            if (_layerParents == null && _layerParents.Length == 0)
+            if (_layerParents == null || _layerParents.Length == 0)
             {
                 Debug.LogWarning("Layer parent list empty. Current planet is probably not set.");
                 return;
@@ -57,10 +55,10 @@ namespace VFX
 
 #region Move Updating Decor
 
-            for (var i = 0; i < _updatingDecorObjects.Count; i++)
+            foreach (var updatingDecor in _updatingDecorObjects)
             {
-                var options = _updatingDecorObjects[i].Value;
-                var decor = _updatingDecorObjects[i].Key;
+                var options = updatingDecor.Value;
+                var decor = updatingDecor.Key;
 
                 if (options.move)
                 {

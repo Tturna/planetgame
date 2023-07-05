@@ -37,7 +37,7 @@ namespace Planets
         [SerializeField] private Material bgTerrainMaterialFg, bgTerrainMaterialMg;
 
         private Transform[] _backgroundLayerParents;
-        private List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
+        private readonly List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
 
         public void SpawnTrees(PlanetGenerator planetGen)
         {
