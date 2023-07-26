@@ -24,6 +24,7 @@ namespace Planets
             public Color spriteColor;
             public string sortingLayer;
             public int sortingOrder;
+            public string tag;
         }
         
         public enum BackgroundLayer { This, Foreground, Midground, BackgroundOne, BackgroundTwo }
@@ -176,6 +177,7 @@ namespace Planets
 
                 // spawn decor objects
                 var decor = new GameObject(options.objectName);
+                decor.tag = tag;
                 decor.transform.SetParent(_backgroundLayerParents[(int)options.layer]);
                 
                 var sr = decor.AddComponent<SpriteRenderer>();

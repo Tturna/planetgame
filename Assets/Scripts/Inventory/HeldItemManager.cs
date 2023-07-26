@@ -28,6 +28,9 @@ namespace Inventory.Inventory
         private Item _equippedItem;
         private StatsManager _statsManager; // This component is also used by PlayerController
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
+        
+        public delegate void ItemUsedHandler(Item item);
+        public static event ItemUsedHandler ItemUsed;
             
         private void Start()
         {
@@ -130,7 +133,7 @@ namespace Inventory.Inventory
             }
 
             // Use Item
-            Func<GameObject, Item, bool, GameObject, ItemAnimationManager, bool> useitemFunction;
+            Func<ItemLogicBase.UseParameters, bool> useitemFunction;
 
             if (once)
             {
@@ -144,16 +147,27 @@ namespace Inventory.Inventory
                     ? _equippedItem.logicScript.UseContinuousSecondary
                     : _equippedItem.logicScript.UseContinuous;
             }
-            
-            var res = useitemFunction(equippedItemTransform.gameObject, _equippedItem, _equippedSr.flipY, gameObject, _itemAnimationManager);
+
+            var useParameters = new ItemLogicBase.UseParameters
+            {
+                equippedItemObject = equippedItemTransform.gameObject,
+                attackItem = _equippedItem,
+                flipY = _equippedSr.flipY,
+                playerObject = gameObject,
+                itemAnimationManager = _itemAnimationManager
+            };
+
+            var res = useitemFunction(useParameters);
             
             if (!res) return false;
+            
+            OnItemUsed(_equippedItem);
 
             if (usableItemSo.energyCost > 0)
             {
                 StartCoroutine(HandleWeaponCooldown(usableItemSo));
             }
-
+            
             // Update energy
             _statsManager.ChangeEnergy(usableItemSo.energyCost);
                 
@@ -184,6 +198,11 @@ namespace Inventory.Inventory
             usableItem.isOnCooldown = true;
             yield return new WaitForSeconds(usableItem.attackCooldown);
             usableItem.isOnCooldown = false;
+        }
+
+        private void OnItemUsed(Item item)
+        {
+            ItemUsed?.Invoke(item);
         }
     }
 }

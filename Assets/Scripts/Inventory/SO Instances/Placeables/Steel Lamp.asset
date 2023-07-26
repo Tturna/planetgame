@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2321becc647e45b29b642315c48953bb, type: 3}
+  m_Name: Steel Lamp
+  m_EditorClassIdentifier: 
+  id: 1dab836b-68c3-42be-b433-b0eb865749ee
+  name: Steel Lamp
+  description: Strong static illumination device
+  maxStack: 100
+  sprite: {fileID: 21300000, guid: 053893f071759d4448bb124f4f4f9fb4, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  logicCode: 5
+  attackCooldown: 0
+  energyCost: 0
+  recoilHorizontal: 0
+  recoilAngular: 0
+  recoilSpeedHorizontal: 0
+  recoilSpeedAngular: 0
+  cameraShakeTime: 0
+  cameraShakeStrength: 0
+  playerRecoilStrength: 0
+  useRange: 2.5
+  incrementStackOnUse: 1
+  toughness: 1
+  lights:
+  - range: 6
+    falloffStrength: 0.6
+    intensity: 1
+    color: {r: 1, g: 1, b: 1, a: 1}

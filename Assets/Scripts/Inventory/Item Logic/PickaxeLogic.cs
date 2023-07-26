@@ -15,8 +15,7 @@ namespace Inventory.Inventory.Item_Logic
         private float _mineTimer;
         private ItemAnimationManager _itemAnimationManager;
 
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY,
-            GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        public override bool UseOnce(UseParameters useParameters)
         {
             // if (_mineTimer > 0) return true;
             //
@@ -49,22 +48,23 @@ namespace Inventory.Inventory.Item_Logic
             return false;
         }
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        public override bool UseContinuous(UseParameters useParameters)
         {
-            _itemAnimationManager ??= itemAnimationManager;
+            _itemAnimationManager ??= useParameters.itemAnimationManager;
             
-            var tool = (ToolSo)attackItem.itemSo;
+            var tool = (ToolSo)useParameters.attackItem.itemSo;
             var useArea = tool.toolUseArea;
             var power = tool.toolPower;
             var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
             
-            if (Vector3.Distance(playerObject.transform.position, mousePoint) > tool.toolRange) return true;
+            if (Vector3.Distance(useParameters.playerObject.transform.position, mousePoint) > tool.toolRange) return true;
             
-            // var midHits = Physics2D.OverlapPointAll(mousePoint);
             var useAreaHits = new Collider2D[25];
-            // Physics2D.CircleCastNonAlloc(mousePoint, useArea, Vector2.zero, useAreaHits);
+            var midHits = new Collider2D[10];
             var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            
+            Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
             Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
             
             // var canMineOre = false;
@@ -87,6 +87,24 @@ namespace Inventory.Inventory.Item_Logic
             //     }
             // }
 
+            foreach (var hit in midHits)
+            {
+                if (!hit) continue;
+                var hitObject = hit.gameObject;
+                Debug.Log($"Clicked on {hitObject.name}");
+                
+                if (!hitObject.CompareTag("Breakable")) continue;
+                
+                var breakableInstance = hitObject.GetComponent<BreakableItemInstance>();
+                var itemSo = (ItemSo)breakableInstance.itemSo;
+
+                var item = new Item();
+                item.itemSo = itemSo;
+                InventoryManager.SpawnItem(item, hitObject.transform.position);
+                Object.Destroy(hitObject);
+                return true;
+            }
+
             var terrainDug = false;
             foreach (var hit in useAreaHits)
             {
@@ -106,8 +124,8 @@ namespace Inventory.Inventory.Item_Logic
                         1 << LayerMask.NameToLayer("Terrain"));
 
                     if (hitCount != 0) continue;
-                    var oreInstance = hitObject.GetComponent<OreInstance>();
-                    var oreSo = (ItemSo)oreInstance.oreSo;
+                    var oreInstance = hitObject.GetComponent<BreakableItemInstance>();
+                    var oreSo = (ItemSo)oreInstance.itemSo;
 
                     var item = new Item();
                     item.itemSo = oreSo;
@@ -173,12 +191,12 @@ namespace Inventory.Inventory.Item_Logic
 
         private static void DigOre(GameObject hitObject, float power)
         {
-            var oreInstance = hitObject.GetComponent<OreInstance>();
-            var oreSo = (ItemSo)oreInstance.oreSo;
+            var oreInstance = hitObject.GetComponent<BreakableItemInstance>();
+            var oreSo = (ItemSo)oreInstance.itemSo;
 
-            oreInstance.oreToughness -= Mathf.FloorToInt(power);
+            oreInstance.toughness -= Mathf.FloorToInt(power);
             
-            if (oreInstance.oreToughness <= 0)
+            if (oreInstance.toughness <= 0)
             {
                 var item = new Item();
                 item.itemSo = oreSo;
@@ -187,8 +205,8 @@ namespace Inventory.Inventory.Item_Logic
             }
         }
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseOnceSecondary(UseParameters useParameters) => false;
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseContinuousSecondary(UseParameters useParameters) => false;
     }
 }

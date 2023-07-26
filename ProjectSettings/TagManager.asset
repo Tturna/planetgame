@@ -9,6 +9,7 @@ TagManager:
   - Fog
   - Enemy
   - Ore
+  - Breakable
   layers:
   - Default
   - TransparentFX
@@ -54,6 +55,9 @@ TagManager:
     locked: 0
   - name: Terrain
     uniqueID: 3105638163
+    locked: 0
+  - name: Placeables
+    uniqueID: 3295210719
     locked: 0
   - name: Healthbars
     uniqueID: 3466986709

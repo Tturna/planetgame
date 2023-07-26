@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Entities;
 using Entities.Entities;
 using Inventory.Inventory.Entities;
 using Inventory.Inventory.Item_Types;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
@@ -33,6 +33,7 @@ namespace Inventory.Inventory
     {
         [SerializeField] private GameObject inventoryObject;
         [SerializeField] private GameObject itemPrefab;
+        public GameObject breakablePrefab;
         [SerializeField] private GameObject itemTooltipObject;
         [SerializeField] private GameObject equippedItemObject;
         [SerializeField] private Sprite emptySlotSprite;
@@ -100,20 +101,21 @@ namespace Inventory.Inventory
 
             PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
+            HeldItemManager.ItemUsed += TryDecrementSelectedStack;
         }
 
-        private float scrollDelta;
+        private float _scrollDelta;
         private void Update()
         {
             // Check controls
-            scrollDelta = Input.mouseScrollDelta.y;
+            _scrollDelta = Input.mouseScrollDelta.y;
 
-            if (scrollDelta != 0)
+            if (_scrollDelta != 0)
             {
-                if (SelectSlot(_selectedIndex - (int)scrollDelta))
+                if (SelectSlot(_selectedIndex - (int)_scrollDelta))
                 {
                     DeselectSlot(_selectedIndex);
-                    _selectedIndex -= (int)scrollDelta;
+                    _selectedIndex -= (int)_scrollDelta;
                 }
             }
 
@@ -428,7 +430,26 @@ namespace Inventory.Inventory
                 SpawnItem(droppedItem, pos);
             }
         }
-
+        
+        private static void DecrementStack(int index, bool hotbar, int amount = 1)
+        {
+            var segmentSlots = hotbar ? _hotSlots : _stashSlots;
+            var segmentObjects = hotbar ? _hotSlotObjects : _stashSlotObjects;
+            var slot = segmentSlots[index];
+            
+            if (slot.stack <= 0) return;
+            
+            slot.stack -= amount;
+            if (slot.stack == 0)
+            {
+                slot = new Slot(slot.index);
+                // segmentObjects[index].gameObject.GetComponent<Image>().sprite = instance.emptySlotSprite;
+            }
+            
+            UpdateSlotGraphics(ref slot, segmentObjects[index]);
+            UpdateLogicalSlot(slot);
+        }
+        
         private static void DeselectSlot(int slotIndex)
         {
             var img = _hotSlotObjects[slotIndex].GetComponent<Image>();
@@ -506,6 +527,11 @@ namespace Inventory.Inventory
             else
             {
                 _hotSlots[slot.index] = slot;
+
+                if (slot.index == _selectedIndex)
+                {
+                    instance.EquipItem(slot.item);
+                }
             }
         }
 
@@ -651,6 +677,16 @@ namespace Inventory.Inventory
         private static void OnItemEquipped(Item item)
         {
             ItemEquipped?.Invoke(item);
+        }
+
+        private static void TryDecrementSelectedStack(Item item)
+        {
+            var usableItem = (UsableItemSo)item.itemSo;
+
+            if (usableItem.incrementStackOnUse)
+            {
+                DecrementStack(_selectedIndex, true);
+            }
         }
 
         public static void SpawnItem(Item item, Vector3 position)

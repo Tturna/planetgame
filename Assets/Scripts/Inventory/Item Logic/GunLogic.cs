@@ -9,22 +9,22 @@ namespace Inventory.Inventory.Item_Logic
         private GameUtilities _utilities;
         private GameObject _projectilePrefab;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        public override bool UseOnce(UseParameters useParameters)
         {
-            var weaponSo = (WeaponSo)attackItem.itemSo;
+            var weaponSo = (WeaponSo)useParameters.attackItem.itemSo;
             
             _utilities ??= GameUtilities.instance;
             _projectilePrefab ??= _utilities.GetProjectilePrefab();
             
             // Spawn projectile
-            var pos = (Vector2)equippedItemObject.transform.position;
-            var rot = equippedItemObject.transform.eulerAngles;
+            var pos = (Vector2)useParameters.equippedItemObject.transform.position;
+            var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
-            var projectile = GameUtilities.Spawn(_projectilePrefab, pos, rot, equippedItemObject.transform);
+            var projectile = GameUtilities.Spawn(_projectilePrefab, pos, rot, useParameters.equippedItemObject.transform);
 
             // Set projectile position to muzzle position
             var localPos = weaponSo.muzzlePosition;
-            localPos.y = flipY ? -localPos.y : localPos.y;
+            localPos.y = useParameters.flipY ? -localPos.y : localPos.y;
             projectile.transform.localPosition = localPos;
             projectile.transform.SetParent(null);
             
@@ -37,7 +37,7 @@ namespace Inventory.Inventory.Item_Logic
             // Choose random muzzle flash
             if (weaponSo.muzzleFlashes.Length > 0)
             {
-                var muzzleFlashObject = equippedItemObject.transform.GetChild(0).gameObject;
+                var muzzleFlashObject = useParameters.equippedItemObject.transform.GetChild(0).gameObject;
                 muzzleFlashObject.transform.localPosition = weaponSo.muzzlePosition;
                 
                 var flashSr = muzzleFlashObject.GetComponent<SpriteRenderer>();
@@ -52,8 +52,8 @@ namespace Inventory.Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseContinuous(UseParameters useParameters) => false;
+        public override bool UseOnceSecondary(UseParameters useParameters) => false;
+        public override bool UseContinuousSecondary(UseParameters useParameters) => false;
     }
 }

@@ -1,10 +1,11 @@
-Shader "Custom/StylizedTerrainCone"
+Shader "Custom/CaveBg"
 {
     Properties
     {
         [HideInInspector] _MaskTex("Mask", 2D) = "white" {}
         [HideInInspector] _Color ("Color", Color) = (1,1,1,1)
         [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
+        _TerrainTex("Terrain", 2D) = "white" {}
         _SunLightAngle ("Sun Light Angle", Range(0, 360)) = 0
         _Brightness ("Brightness", Range(0, 1)) = 1
         _BlurSize ("Blur Size", Range(0, 20)) = 8
@@ -133,8 +134,10 @@ Shader "Custom/StylizedTerrainCone"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/LightingUtility.hlsl"
 
             TEXTURE2D(_MainTex);
+            TEXTURE2D(_TerrainTex);
             SAMPLER(sampler_MainTex);
-            float4 _MainTex_TexelSize;
+            SAMPLER(sampler_TerrainTex);
+            float4 _TerrainTex_TexelSize;
             half4 _MainTex_ST;
             // TEXTURE2D(_MaskTex);
             // SAMPLER(sampler_MaskTex);
@@ -197,9 +200,12 @@ Shader "Custom/StylizedTerrainCone"
                 half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
                 // const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
+                const half4 terrain = SAMPLE_TEXTURE2D(_TerrainTex, sampler_TerrainTex, i.lightingUV);
 
-                if (main.a == 0) discard;
+                if (terrain.a > 0) return half4(1,0,0,1);
                 
+                if (main.a == 0) discard;
+
                 const float sunRad = radians(_SunLightAngle);
                 const float2 sunDir = float2(cos(sunRad), sin(sunRad));
                 float alphaSum = 0;
@@ -242,21 +248,22 @@ Shader "Custom/StylizedTerrainCone"
                     for (int n = 1; n <= coneRaySamples; n++)
                     {
                         const float sunRaySamples = 20;
-                        const float2 coneRaySampleOffset = rayDir * n * _MainTex_TexelSize.x * _BlurSkip;
+                        const float2 coneRaySampleOffset = rayDir * n * _TerrainTex_TexelSize.x * _BlurSkip;
 
                         for (int m = 1; m <= sunRaySamples; m++)
                         {
-                            const float2 sunRaySampleOffset = coneRaySampleOffset + sunDir * m * _MainTex_TexelSize.x * 5;
+                            const float2 sunRaySampleOffset = coneRaySampleOffset + sunDir * m * _TerrainTex_TexelSize.x * 5;
                             const float2 offsetUv = i.uv + sunRaySampleOffset;
                             
                             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
                             // have to be determined in the loop (which causes a warning about using a
                             // gradient instruction in a loop with variable size).
-                            float4 sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offsetUv, 0);
+                            float4 terrainSample = SAMPLE_TEXTURE2D_LOD(_TerrainTex, sampler_TerrainTex, offsetUv, 0);
+                            // return sample;
                             
-                            if (sample.a > 0)
+                            if (terrainSample.a > 0)
                             {
-                                alphaSum += sample.a;
+                                alphaSum += terrainSample.a;
                                 break;
                             }
                         }
@@ -277,7 +284,7 @@ Shader "Custom/StylizedTerrainCone"
                 
                 // raised to a power to limit the light reach in terrain
                 alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
-
+                
                 // alphaSum = smoothstep(0, 1, alphaSum);
 
                 float resultAlpha = alphaSum;
@@ -289,13 +296,6 @@ Shader "Custom/StylizedTerrainCone"
                     // is not thinner than the other bands.
                     // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
                     resultAlpha = round(alphaSum * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
-
-                    const half4 grassCheckSample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
-                    
-                    if (grassCheckSample.a == 0)
-                    {
-                        return _GrassColor * resultAlpha;
-                    }
                     
                     float3 hsvColor = rgb_to_hsv_no_clip(resultColor);
                     const float ialpha = 1 - resultAlpha;

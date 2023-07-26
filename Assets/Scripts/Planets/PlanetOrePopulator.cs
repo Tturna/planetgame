@@ -361,9 +361,9 @@ namespace Planets
             var oreCollider = oreClone.GetComponent<BoxCollider2D>();
             oreCollider.size = oreSprite.bounds.size;
 
-            var oreInstance = oreClone.AddComponent<OreInstance>();
-            oreInstance.oreSo = veinType.oreSo;
-            oreInstance.oreToughness = veinType.oreToughness;
+            var oreInstance = oreClone.AddComponent<BreakableItemInstance>();
+            oreInstance.itemSo = veinType.oreSo;
+            oreInstance.toughness = veinType.oreToughness;
         }
     }
 }

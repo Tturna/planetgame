@@ -79,13 +79,9 @@ namespace Entities.Entities
         {
             base.Start();
 
-            Physics2D.queriesHitTriggers = false;
-        
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
             _statsManager = GetComponent<StatsManager>();
-
-            Physics2D.queriesHitTriggers = false;
         }
 
         private void Update()

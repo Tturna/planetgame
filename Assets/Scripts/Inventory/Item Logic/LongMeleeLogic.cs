@@ -9,20 +9,20 @@ namespace Inventory.Inventory.Item_Logic
         private ItemAnimationManager _itemAnimationManager;
         private PlayerController _player;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        public override bool UseOnce(UseParameters useParameters)
         {
-            _itemAnimationManager ??= itemAnimationManager;
+            _itemAnimationManager ??= useParameters.itemAnimationManager;
             
             _itemAnimationManager.AttackMelee("attackLongMelee");
 
             return true;
         }
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseContinuous(UseParameters useParameters) => false;
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        public override bool UseOnceSecondary(UseParameters useParameters)
         {
-            _itemAnimationManager ??= itemAnimationManager;
+            _itemAnimationManager ??= useParameters.itemAnimationManager;
             _player ??= PlayerController.instance;
            
             _player.ResetVelocity(true, false, true);
@@ -35,6 +35,6 @@ namespace Inventory.Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseContinuousSecondary(UseParameters useParameters) => false;
     }
 }
