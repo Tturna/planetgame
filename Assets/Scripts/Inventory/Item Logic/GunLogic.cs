@@ -37,7 +37,7 @@ namespace Inventory.Inventory.Item_Logic
             // Choose random muzzle flash
             if (weaponSo.muzzleFlashes.Length > 0)
             {
-                var muzzleFlashObject = useParameters.equippedItemObject.transform.GetChild(0).gameObject;
+                var muzzleFlashObject = useParameters.equippedItemObject.transform.GetChild(0).GetChild(0).gameObject;
                 muzzleFlashObject.transform.localPosition = weaponSo.muzzlePosition;
                 
                 var flashSr = muzzleFlashObject.GetComponent<SpriteRenderer>();
