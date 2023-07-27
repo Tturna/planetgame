@@ -32,7 +32,7 @@ MonoBehaviour:
   incrementStackOnUse: 1
   toughness: 1
   lights:
-  - range: 6
-    falloffStrength: 0.6
+  - range: 7
+    falloffStrength: 0.5
     intensity: 1
     color: {r: 1, g: 1, b: 1, a: 1}

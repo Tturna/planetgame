@@ -23,7 +23,7 @@ TagManager:
   - Planet
   - Weapon
   - TerrainBits
-  - 
+  - Background
   - 
   - 
   - 
@@ -46,6 +46,9 @@ TagManager:
   m_SortingLayers:
   - name: Background
     uniqueID: 1321353181
+    locked: 0
+  - name: Cave Background
+    uniqueID: 14695197
     locked: 0
   - name: Default
     uniqueID: 0

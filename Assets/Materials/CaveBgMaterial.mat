@@ -91,7 +91,7 @@ Material:
     m_Floats:
     - _BlurOffset: 2
     - _BlurSize: 8
-    - _BlurSkip: 13.4
+    - _BlurSkip: 6.2
     - _Brightness: 1
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5

@@ -1,18 +1,18 @@
 using UnityEngine;
 
-namespace CameraScripts
+namespace Entities.Entities
 {
     public class TerrainCameraController : MonoBehaviour
     {
         [SerializeField] private RectTransform terrainRender;
         
-        private Camera mainCam;
+        private Camera _mainCam;
 
         private void LateUpdate()
         {
-            mainCam ??= Camera.main;
+            _mainCam ??= Camera.main;
 
-            transform.position = mainCam!.transform.position;
+            transform.position = _mainCam!.transform.position;
             
             // prevent rotation
             transform.rotation = Quaternion.identity;

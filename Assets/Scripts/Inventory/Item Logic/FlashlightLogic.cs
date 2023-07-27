@@ -17,10 +17,11 @@ namespace Inventory.Inventory.Item_Logic
                 _flashlightObject.transform.localEulerAngles = Vector3.forward * -90f;
                 
                 var light = _flashlightObject.AddComponent<Light2D>();
+                light.intensity = 1.5f;
                 light.pointLightOuterRadius = 10f;
                 light.pointLightInnerAngle = 35f;
-                light.pointLightOuterAngle = 110f;
-                light.falloffIntensity = .75f;
+                light.pointLightOuterAngle = 125f;
+                light.falloffIntensity = .45f;
                 return true;
             }
             

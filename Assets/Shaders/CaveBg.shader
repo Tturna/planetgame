@@ -200,9 +200,11 @@ Shader "Custom/CaveBg"
                 half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
                 // const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
-                const half4 terrain = SAMPLE_TEXTURE2D(_TerrainTex, sampler_TerrainTex, i.lightingUV);
+                const half4 terrain = SAMPLE_TEXTURE2D(_TerrainTex, sampler_TerrainTex, i.uv);
 
-                if (terrain.a > 0) return half4(1,0,0,1);
+                // return main;
+                
+                if (terrain.a > 0) return half4(0, 0, 0, 1);
                 
                 if (main.a == 0) discard;
 
@@ -283,7 +285,7 @@ Shader "Custom/CaveBg"
                 alphaSum *= _Brightness;
                 
                 // raised to a power to limit the light reach in terrain
-                alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
+                alphaSum = clamp(alphaSum + shapeLight0.r, 0, 1);
                 
                 // alphaSum = smoothstep(0, 1, alphaSum);
 
