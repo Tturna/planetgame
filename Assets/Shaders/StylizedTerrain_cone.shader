@@ -15,6 +15,7 @@ Shader "Custom/StylizedTerrainCone"
         _StyleBands ("Style Bands", Range(1, 8)) = 4
         _GrassColor ("Grass Color", Color) = (1,1,1,1)
         _GrassThickness ("Grass Thickness", Range(1, 10)) = 3
+        _TempNoiseOffset ("Temp Noise Offset", Range(0, 1)) = 0
     }
     
     SubShader
@@ -51,6 +52,57 @@ Shader "Custom/StylizedTerrainCone"
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
             #pragma multi_compile _ DEBUG_DISPLAY
+
+            inline float unity_noise_randomValue (float2 uv)
+            {
+                return frac(sin(dot(uv, float2(12.9898, 78.233)))*43758.5453);
+            }
+            
+            inline float unity_noise_interpolate (float a, float b, float t)
+            {
+                return (1.0-t)*a + (t*b);
+            }
+            
+            inline float unity_valueNoise (float2 uv)
+            {
+                float2 i = floor(uv);
+                float2 f = frac(uv);
+                f = f * f * (3.0 - 2.0 * f);
+            
+                uv = abs(frac(uv) - 0.5);
+                float2 c0 = i + float2(0.0, 0.0);
+                float2 c1 = i + float2(1.0, 0.0);
+                float2 c2 = i + float2(0.0, 1.0);
+                float2 c3 = i + float2(1.0, 1.0);
+                float r0 = unity_noise_randomValue(c0);
+                float r1 = unity_noise_randomValue(c1);
+                float r2 = unity_noise_randomValue(c2);
+                float r3 = unity_noise_randomValue(c3);
+            
+                float bottomOfGrid = unity_noise_interpolate(r0, r1, f.x);
+                float topOfGrid = unity_noise_interpolate(r2, r3, f.x);
+                float t = unity_noise_interpolate(bottomOfGrid, topOfGrid, f.y);
+                return t;
+            }
+            
+            float Unity_SimpleNoise_float(float2 UV, float Scale)
+            {
+                float t = 0.0;
+            
+                float freq = pow(2.0, float(0));
+                float amp = pow(0.5, float(3-0));
+                t += unity_valueNoise(float2(UV.x*Scale/freq, UV.y*Scale/freq))*amp;
+            
+                freq = pow(2.0, float(1));
+                amp = pow(0.5, float(3-1));
+                t += unity_valueNoise(float2(UV.x*Scale/freq, UV.y*Scale/freq))*amp;
+            
+                freq = pow(2.0, float(2));
+                amp = pow(0.5, float(3-2));
+                t += unity_valueNoise(float2(UV.x*Scale/freq, UV.y*Scale/freq))*amp;
+            
+                return t;
+            }
             
             float3 rgb_to_hsv_no_clip(float3 RGB)
             {
@@ -149,6 +201,7 @@ Shader "Custom/StylizedTerrainCone"
             float _StyleBands;
             float _GrassThickness;
             float4 _GrassColor;
+            float _TempNoiseOffset;
 
             // #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -194,6 +247,10 @@ Shader "Custom/StylizedTerrainCone"
             
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
+                float noise = Unity_SimpleNoise_float(i.uv, 400);
+                // return half4(noise, noise, noise, 1);
+                // i.uv += float2(noise, noise) * _TempNoiseOffset;
+                
                 half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
                 // const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
@@ -247,7 +304,9 @@ Shader "Custom/StylizedTerrainCone"
                         for (int m = 1; m <= sunRaySamples; m++)
                         {
                             const float2 sunRaySampleOffset = coneRaySampleOffset + sunDir * m * _MainTex_TexelSize.x * 5;
-                            const float2 offsetUv = i.uv + sunRaySampleOffset;
+                            float2 offsetUv = i.uv + sunRaySampleOffset;
+                            // float noise = Unity_SimpleNoise_float(i.uv, 1);
+                            // offsetUv += float2(noise, noise) * _TempNoiseOffset;
                             
                             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
                             // have to be determined in the loop (which causes a warning about using a
@@ -288,7 +347,11 @@ Shader "Custom/StylizedTerrainCone"
                     // Stepped shading. Addition is to center the bands so that the surface
                     // is not thinner than the other bands.
                     // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
+
+                    float coolNoise = saturate(noise + _TempNoiseOffset);
+                    alphaSum *= coolNoise;
                     resultAlpha = round(alphaSum * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
+                    // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
 
                     const half4 grassCheckSample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
                     
