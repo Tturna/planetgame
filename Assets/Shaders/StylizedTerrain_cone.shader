@@ -15,7 +15,8 @@ Shader "Custom/StylizedTerrainCone"
         _StyleBands ("Style Bands", Range(1, 8)) = 4
         _GrassColor ("Grass Color", Color) = (1,1,1,1)
         _GrassThickness ("Grass Thickness", Range(1, 10)) = 3
-        _TempNoiseOffset ("Temp Noise Offset", Range(0, 1)) = 0
+        _ShadeDistortionStrength ("Shade Distortion Strength", Range(0, 5)) = 0
+        _ShadeDistortionFidelity ("Shade Distortion Fidelity", Range(1, 100)) = 15
     }
     
     SubShader
@@ -176,9 +177,9 @@ Shader "Custom/StylizedTerrainCone"
                 half4   color       : COLOR;
                 float2  uv          : TEXCOORD0;
                 half2   lightingUV  : TEXCOORD1;
-                #if defined(DEBUG_DISPLAY)
+                // #if defined(DEBUG_DISPLAY)
                 float3  positionWS  : TEXCOORD2;
-                #endif
+                // #endif
                 UNITY_VERTEX_OUTPUT_STEREO
             };
             
@@ -201,7 +202,8 @@ Shader "Custom/StylizedTerrainCone"
             float _StyleBands;
             float _GrassThickness;
             float4 _GrassColor;
-            float _TempNoiseOffset;
+            float _ShadeDistortionStrength;
+            float _ShadeDistortionFidelity;
 
             // #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -226,9 +228,9 @@ Shader "Custom/StylizedTerrainCone"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 o.positionCS = TransformObjectToHClip(v.positionOS);
-                #if defined(DEBUG_DISPLAY)
+                // #if defined(DEBUG_DISPLAY)
                 o.positionWS = TransformObjectToWorld(v.positionOS);
-                #endif
+                // #endif
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.lightingUV = half2(ComputeScreenPos(o.positionCS / o.positionCS.w).xy);
 
@@ -247,7 +249,7 @@ Shader "Custom/StylizedTerrainCone"
             
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
-                float noise = Unity_SimpleNoise_float(i.uv, 400);
+                float noise = Unity_SimpleNoise_float(i.positionWS, _ShadeDistortionFidelity);
                 // return half4(noise, noise, noise, 1);
                 // i.uv += float2(noise, noise) * _TempNoiseOffset;
                 
@@ -339,6 +341,8 @@ Shader "Custom/StylizedTerrainCone"
 
                 // alphaSum = smoothstep(0, 1, alphaSum);
 
+                // return half4(alphaSum, alphaSum, alphaSum, 1);
+
                 float resultAlpha = alphaSum;
                 float3 resultColor = main.rgb;
                 if (_Stylize)
@@ -348,7 +352,9 @@ Shader "Custom/StylizedTerrainCone"
                     // is not thinner than the other bands.
                     // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
 
-                    float coolNoise = saturate(noise + _TempNoiseOffset);
+                    // float coolNoise = saturate(noise + _TempNoiseOffset);
+                    const float coolNoise = 1 - (1 - saturate(noise + 1 - _ShadeDistortionStrength)) * (1 - alphaSum);
+                    // return half4(coolNoise, coolNoise, coolNoise, 1);
                     alphaSum *= coolNoise;
                     resultAlpha = round(alphaSum * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
                     // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
