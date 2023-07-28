@@ -15,7 +15,6 @@ namespace Entities.Entities
             [Header("Components")]
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
-            [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
         
             [Header("Movement Settings")]
             [SerializeField] private float accelerationSpeed;
@@ -371,11 +370,6 @@ namespace Entities.Entities
         public void AddForceTowardsCursor(float magnitude)
         {
             Rigidbody.AddForce(_mouseDirection * magnitude);
-        }
-
-        public Material GetTerrainMaterial()
-        {
-            return terrainRenderImage.material;
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Utilities
 {
     public class GameUtilities : MonoBehaviour
     {
         [SerializeField] private GameObject projectilePrefab;
+        [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
+        
         private static Camera _mainCam;
         
         public static GameUtilities instance;
@@ -69,6 +72,11 @@ namespace Utilities
         public GameObject GetProjectilePrefab()
         {
             return projectilePrefab;
+        }
+        
+        public static Material GetTerrainMaterial()
+        {
+            return instance.terrainRenderImage.material;
         }
     }
 }

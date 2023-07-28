@@ -2645,11 +2645,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.25
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.5
+      value: 0.3125
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -3389,6 +3389,7 @@ MonoBehaviour:
     tag: Untagged
   bgTerrainMaterialFg: {fileID: 2100000, guid: 97b9fe0f2d6f57749ab98b15b0d013a1, type: 2}
   bgTerrainMaterialMg: {fileID: 2100000, guid: f5ed4b77062dae64faf8732eb7fafeb7, type: 2}
+  styledSpriteMaterial: {fileID: 2100000, guid: 9a35ebc22acfb3d40863c9a0bcb5e67d, type: 2}
 --- !u!114 &273182494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7059,6 +7060,22 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
@@ -8017,7 +8034,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 9a35ebc22acfb3d40863c9a0bcb5e67d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8085,7 +8102,6 @@ MonoBehaviour:
   gravityMultiplier: 30
   handsAnimator: {fileID: 1739784015}
   handsParent: {fileID: 1739784014}
-  terrainRenderImage: {fileID: 1297968441}
   accelerationSpeed: 25
   maxMoveSpeed: 4
   jumpForce: 120
@@ -8797,7 +8813,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: dd3fc24e0000000031ec5c4b13471cb9d504a6cecb7e8cc0dfec68c4
+  m_ApplyToSortingLayers: 0000000031ec5c4b13471cb9d504a6cecb7e8cc0dfec68c41d3be000dd3fc24e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -16148,7 +16164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.5
+      value: 0.4375
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -16970,7 +16986,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 0000000031ec5c4bd504a6cecb7e8cc0dfec68c4dd3fc24e
+  m_ApplyToSortingLayers: 0000000031ec5c4bd504a6cedfec68c4dd3fc24ecb7e8cc0
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -20839,7 +20855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.4375
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -21454,6 +21470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 5772806534296229048, guid: 6bf260eada9d3604ea407bfcd443e046, type: 3}
+  terrainRenderImage: {fileID: 1297968441}
 --- !u!114 &1968306436
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Planets
@@ -27,6 +28,13 @@ namespace Planets
             public string tag;
         }
         
+        public struct DecorData
+        {
+            public Transform[] layerParents;
+            public List<KeyValuePair<GameObject, DecorOptions>> updatingDecorObjects;
+            public GameObject bgTerrainFg, bgTerrainMg;
+        }
+        
         public enum BackgroundLayer { This, Foreground, Midground, BackgroundOne, BackgroundTwo }
         
         // TODO: Make these options into one array
@@ -36,9 +44,11 @@ namespace Planets
         [SerializeField] private DecorOptions bgMountainOptions, bgIslandOptions;
         [SerializeField] private DecorOptions flowerOptions, grassOptions, rockOptions, bushOptions;
         [SerializeField] private Material bgTerrainMaterialFg, bgTerrainMaterialMg;
+        [SerializeField] private Material styledSpriteMaterial;
 
         private Transform[] _backgroundLayerParents;
         private readonly List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
+        private GameObject bgTerrainFg, bgTerrainMg;
 
         public void SpawnTrees(PlanetGenerator planetGen)
         {
@@ -130,8 +140,8 @@ namespace Planets
             
             meshSimplifier.SimplifyMesh(.35f);
 
-            var bgTerrainFg = new GameObject("bgTerrain");
-            var bgTerrainMg = new GameObject("bgTerrain2");
+            bgTerrainFg = new GameObject("bgTerrain");
+            bgTerrainMg = new GameObject("bgTerrain2");
             bgTerrainFg.transform.parent = _backgroundLayerParents![1];
             bgTerrainMg.transform.parent = _backgroundLayerParents![2];
             
@@ -153,9 +163,17 @@ namespace Planets
             print($"Mesh vertices: { meshFilterFg.mesh.vertices.Length }");
         }
 
-        public (Transform[], List<KeyValuePair<GameObject, DecorOptions>>) GetDecorData()
+        public DecorData GetDecorData()
         {
-            return (_backgroundLayerParents, _updatingDecorObjects);
+            var decorData = new DecorData
+            {
+                layerParents = _backgroundLayerParents,
+                updatingDecorObjects = _updatingDecorObjects,
+                bgTerrainFg = bgTerrainFg,
+                bgTerrainMg = bgTerrainMg
+            };
+
+            return decorData;
         }
         
         private void SpawnDecor(PlanetGenerator planetGen, DecorOptions options)
@@ -183,6 +201,7 @@ namespace Planets
                 var sr = decor.AddComponent<SpriteRenderer>();
                 sr.sprite = options.spritePool[Random.Range(0, options.spritePool.Length)];
                 sr.color = options.spriteColor;
+                sr.material = styledSpriteMaterial;
 
                 if (options.sortingLayer != "")
                 {

@@ -1,4 +1,6 @@
-﻿using Entities.Entities;
+﻿using System.Reflection;
+using System.Linq;
+using Entities.Entities;
 using Inventory.Inventory.Item_Types;
 using Planets;
 using UnityEngine;
@@ -71,6 +73,13 @@ namespace Inventory.Inventory.Item_Logic
                 lightComponent.falloffIntensity = light.falloffStrength;
                 lightComponent.pointLightInnerRadius = .5f;
                 lightComponent.pointLightOuterRadius = light.range;
+                
+                // Hacky shit to change the target sorting layers. This is a Unity L AFAIK
+                FieldInfo targetSortingLayersField = typeof(Light2D).GetField("m_ApplyToSortingLayers",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+                var maskLayers = SortingLayer.layers.Where(sl => sl.name != "Background");
+                var mask = maskLayers.Select(ml => ml.id).ToArray();
+                targetSortingLayersField.SetValue(lightComponent, mask);
             }
             return true;
         }

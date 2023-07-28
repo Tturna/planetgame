@@ -1,6 +1,8 @@
 using System.Collections;
 using Entities.Entities;
 using UnityEngine;
+using Utilities;
+using VFX;
 using Random = UnityEngine.Random;
 
 namespace Environment
@@ -28,7 +30,7 @@ namespace Environment
 
         private void Start()
         {
-            _terrainMaterial = PlayerController.instance.GetTerrainMaterial();
+            _terrainMaterial = GameUtilities.GetTerrainMaterial();
             // TriggerOnFogStarted();
 
             StartCoroutine(ChangeWind());
@@ -41,6 +43,8 @@ namespace Environment
             // TODO: Optimize updating brightness.
             // Doing this every frame, especially with a string based look up is cringe.
             _terrainMaterial.SetFloat("_Brightness", brightness);
+            BackgroundImageManager.SetBackgroundBrightness(brightness);
+            ParallaxManager.SetParallaxTerrainBrightness(brightness);
             GlobalLight.instance.SetIntensity(brightness);
         }
 

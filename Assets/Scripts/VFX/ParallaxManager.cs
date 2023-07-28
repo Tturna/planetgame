@@ -11,12 +11,16 @@ namespace VFX
         
         private Transform[] _layerParents;
         private List<KeyValuePair<GameObject, PlanetDecorator.DecorOptions>> _updatingDecorObjects;
+        private MeshRenderer bgTerrainFgRenderer, bgTerrainMgRenderer;
         private Transform _currentPlanetTransform;
         private PlayerController _player;
         private float _oldZ;
+        
+        public static ParallaxManager instance;
 
         private void Start()
         {
+            instance = this;
             _player = PlayerController.instance;
             _player.OnEnteredPlanet += OnPlanetEntered;
         }
@@ -87,7 +91,18 @@ namespace VFX
         private void OnPlanetEntered(GameObject planet)
         {
             _currentPlanetTransform = planet.transform;
-            (_layerParents, _updatingDecorObjects) = planet.GetComponent<PlanetDecorator>().GetDecorData();
+            var decorData = planet.GetComponent<PlanetDecorator>().GetDecorData();
+            _layerParents = decorData.layerParents;
+            _updatingDecorObjects = decorData.updatingDecorObjects;
+            // Careful, bg terrains might not exist yet?
+            bgTerrainFgRenderer = decorData.bgTerrainFg.GetComponent<MeshRenderer>();
+            bgTerrainMgRenderer = decorData.bgTerrainMg.GetComponent<MeshRenderer>();
+        }
+        
+        public static void SetParallaxTerrainBrightness(float brightness)
+        {
+            instance.bgTerrainFgRenderer.material.SetFloat("_Brightness", brightness);
+            instance.bgTerrainMgRenderer.material.SetFloat("_Brightness", brightness);
         }
     }
 }

@@ -337,7 +337,8 @@ Shader "Custom/StylizedTerrainCone"
                 alphaSum *= _Brightness;
                 
                 // raised to a power to limit the light reach in terrain
-                alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
+                // alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
+                alphaSum = clamp(alphaSum + shapeLight0.r, 0, 1);
 
                 // alphaSum = smoothstep(0, 1, alphaSum);
 
@@ -353,9 +354,10 @@ Shader "Custom/StylizedTerrainCone"
                     // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
 
                     // float coolNoise = saturate(noise + _TempNoiseOffset);
-                    const float coolNoise = 1 - (1 - saturate(noise + 1 - _ShadeDistortionStrength)) * (1 - alphaSum);
-                    // return half4(coolNoise, coolNoise, coolNoise, 1);
-                    alphaSum *= coolNoise;
+                    // return half4((1 - alphaSum / _Brightness).xxx, 1);
+                    const float limitedNoise = 1 - (1 - saturate(noise + 1 - _ShadeDistortionStrength)) * saturate(1 - alphaSum / _Brightness);
+                    // return half4(limitedNoise.xxx, 1);
+                    alphaSum *= limitedNoise;
                     resultAlpha = round(alphaSum * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
                     // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
 
@@ -363,7 +365,7 @@ Shader "Custom/StylizedTerrainCone"
                     
                     if (grassCheckSample.a == 0)
                     {
-                        return _GrassColor * resultAlpha;
+                        return half4(_GrassColor.rgb * resultAlpha, main.a);
                     }
                     
                     float3 hsvColor = rgb_to_hsv_no_clip(resultColor);

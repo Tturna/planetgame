@@ -12,7 +12,8 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _STYLIZE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -97,12 +98,16 @@ Material:
     - _QueueOffset: 0
     - _RayReach: 30
     - _ShadeBlurSize: 10
+    - _ShadeDistortionFidelity: 16.3
+    - _ShadeDistortionSize: 21.2
+    - _ShadeDistortionStrength: 1.02
     - _SquareBlur: 0
     - _StyleBands: 4.25
-    - _Stylize: 0
+    - _Stylize: 1
     - _SunLightAndle: 173
     - _SunLightAngle: 90
     - _SunlightAngle: 91.1
+    - _TempNoiseOffset: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
