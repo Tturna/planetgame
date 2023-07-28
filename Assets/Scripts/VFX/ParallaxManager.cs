@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Entities;
-using ProcGen;
+using Entities.Entities;
+using Planets;
 using UnityEngine;
 
 namespace VFX
@@ -11,12 +11,16 @@ namespace VFX
         
         private Transform[] _layerParents;
         private List<KeyValuePair<GameObject, PlanetDecorator.DecorOptions>> _updatingDecorObjects;
+        private MeshRenderer bgTerrainFgRenderer, bgTerrainMgRenderer;
         private Transform _currentPlanetTransform;
         private PlayerController _player;
         private float _oldZ;
+        
+        public static ParallaxManager instance;
 
         private void Start()
         {
+            instance = this;
             _player = PlayerController.instance;
             _player.OnEnteredPlanet += OnPlanetEntered;
         }
@@ -24,7 +28,7 @@ namespace VFX
         // Update is called once per frame
         private void Update()
         {
-            if (_layerParents == null && _layerParents.Length == 0)
+            if (_layerParents == null || _layerParents.Length == 0)
             {
                 Debug.LogWarning("Layer parent list empty. Current planet is probably not set.");
                 return;
@@ -55,10 +59,10 @@ namespace VFX
 
 #region Move Updating Decor
 
-            for (var i = 0; i < _updatingDecorObjects.Count; i++)
+            foreach (var updatingDecor in _updatingDecorObjects)
             {
-                var options = _updatingDecorObjects[i].Value;
-                var decor = _updatingDecorObjects[i].Key;
+                var options = updatingDecor.Value;
+                var decor = updatingDecor.Key;
 
                 if (options.move)
                 {
@@ -87,7 +91,18 @@ namespace VFX
         private void OnPlanetEntered(GameObject planet)
         {
             _currentPlanetTransform = planet.transform;
-            (_layerParents, _updatingDecorObjects) = planet.GetComponent<PlanetDecorator>().GetDecorData();
+            var decorData = planet.GetComponent<PlanetDecorator>().GetDecorData();
+            _layerParents = decorData.layerParents;
+            _updatingDecorObjects = decorData.updatingDecorObjects;
+            // Careful, bg terrains might not exist yet?
+            bgTerrainFgRenderer = decorData.bgTerrainFg.GetComponent<MeshRenderer>();
+            bgTerrainMgRenderer = decorData.bgTerrainMg.GetComponent<MeshRenderer>();
+        }
+        
+        public static void SetParallaxTerrainBrightness(float brightness)
+        {
+            instance.bgTerrainFgRenderer.material.SetFloat("_Brightness", brightness);
+            instance.bgTerrainMgRenderer.material.SetFloat("_Brightness", brightness);
         }
     }
 }

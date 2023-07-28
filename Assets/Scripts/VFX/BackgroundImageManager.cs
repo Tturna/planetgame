@@ -1,5 +1,5 @@
-using Entities;
-using ProcGen;
+using Entities.Entities;
+using Planets;
 using UnityEngine;
 using Utilities;
 
@@ -12,9 +12,13 @@ namespace VFX
     
         private PlanetGenerator _currentPlanetGen;
         private PlayerController _player;
+        private Color bg2Color;
+        
+        public static BackgroundImageManager instance;
 
         private void Start()
         {
+            instance = this;
             _player = PlayerController.instance;
             _player.OnEnteredPlanet += OnEnteredPlanet;
             _player.OnExitPlanet += OnExitedPlanet;
@@ -32,9 +36,7 @@ namespace VFX
             var limitedPerc = GameUtilities.InverseLerp(0f, 0.5f, perc);
         
             var c = bg2.color;
-
             c.a = limitedPerc;
-
             bg2.color = c;
         }
 
@@ -43,13 +45,26 @@ namespace VFX
             _currentPlanetGen = planetObject.GetComponent<PlanetGenerator>();
 
             bg2.sprite = _currentPlanetGen.surfaceCameraBackground ? _currentPlanetGen.surfaceCameraBackground : defaultSprite;
-            bg2.color = _currentPlanetGen.surfaceBackgroundColor;
+            bg2Color = _currentPlanetGen.surfaceBackgroundColor;
+            bg2.color = bg2Color;
         }
 
         private void OnExitedPlanet(GameObject planetObject)
         {
             _currentPlanetGen = null;
             bg2.sprite = defaultSprite;
+            bg2.color = Color.clear;
+        }
+        
+        public static void SetBackgroundBrightness(float brightness)
+        {
+            var c = instance.bg2.color;
+            // var c = instance.bg2Color;
+            // var a = c.a;
+            // c *= brightness;
+            // c.a = a;
+            c.a *= brightness;
+            instance.bg2.color = c;
         }
     }
 }

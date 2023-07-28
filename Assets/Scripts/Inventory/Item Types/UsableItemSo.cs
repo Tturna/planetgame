@@ -18,6 +18,8 @@ namespace Inventory.Inventory.Item_Types
         public float cameraShakeTime;
         public float cameraShakeStrength;
         public float playerRecoilStrength;
+        public float useRange;
+        public bool incrementStackOnUse;
 
         [System.NonSerialized] public bool isOnCooldown;
     }

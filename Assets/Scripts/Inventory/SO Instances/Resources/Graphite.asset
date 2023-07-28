@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40fe3dc444f14c11bd56f2ff9736089d, type: 3}
+  m_Name: Graphite
+  m_EditorClassIdentifier: 
+  id: 10a76443-d151-41fd-9a75-3c05a9f8bbb3
+  name: Graphite
+  description: self fucking explanatory
+  maxStack: 100
+  sprite: {fileID: -2105113815, guid: d93b05d2287d4b24f9119637b34fad37, type: 3}
+  handPositionOffset: {x: 0, y: 0}

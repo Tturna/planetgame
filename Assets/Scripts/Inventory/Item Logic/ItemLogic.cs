@@ -15,7 +15,9 @@ namespace Inventory.Inventory.Item_Logic
             Gun = 1,
             LongMelee = 2,
             Pickaxe = 3,
-            Material = 4
+            Material = 4,
+            Placeable = 5,
+            Flashlight = 6
         }
 
         private static readonly ItemLogicBase[] Scripts = {
@@ -23,7 +25,9 @@ namespace Inventory.Inventory.Item_Logic
             new GunLogic(),
             new LongMeleeLogic(),
             new PickaxeLogic(),
-            new MaterialLogic()
+            new MaterialLogic(),
+            new PlaceableLogic(),
+            new FlashlightLogic()
         };
 
         public static ItemLogicBase GetScript(LogicCode key)

@@ -10,7 +10,7 @@ namespace Inventory.Inventory
         public ItemSo itemSo;
         public ItemLogicBase logicScript;
         
-        //public Item() {}
+        public Item() {}
 
         // Clone constructor
         public Item(Item source)

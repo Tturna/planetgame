@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Entities;
-using ProcGen;
+using Entities.Entities;
+using Planets;
 using UnityEngine;
 
 namespace Inventory.Inventory.Item_Logic
@@ -11,9 +11,9 @@ namespace Inventory.Inventory.Item_Logic
         private Camera _camera;
         private PlayerController _player;
         
-        public override bool UseOnce(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseOnce(UseParameters useParameters) => false;
 
-        public override bool UseContinuous(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager)
+        public override bool UseContinuous(UseParameters useParameters)
         {
             _player ??= PlayerController.instance;
             var usePlanet = _player.CurrentPlanetObject.GetComponent<PlanetGenerator>();
@@ -132,8 +132,8 @@ namespace Inventory.Inventory.Item_Logic
             return true;
         }
 
-        public override bool UseOnceSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseOnceSecondary(UseParameters useParameters) => false;
 
-        public override bool UseContinuousSecondary(GameObject equippedItemObject, Item attackItem, bool flipY, GameObject playerObject, ItemAnimationManager itemAnimationManager) => false;
+        public override bool UseContinuousSecondary(UseParameters useParameters) => false;
     }
 }

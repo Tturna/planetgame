@@ -21,7 +21,7 @@ namespace Inventory.Inventory.Item_Types
     }
     #endif
     
-    [CreateAssetMenu(fileName="Item", menuName="SO/Item")]
+    [CreateAssetMenu(fileName="Item", menuName="SO/BasicItem")]
     public class ItemSo : ScriptableObject
     {
         [ScriptableObjectId]

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Entities.Entities;
 using UnityEngine;
+using UnityEngine.UI;
 using Utilities;
 
-namespace Entities
+namespace Entities.Entities
 {
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
@@ -78,13 +78,9 @@ namespace Entities
         {
             base.Start();
 
-            Physics2D.queriesHitTriggers = false;
-        
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
             _statsManager = GetComponent<StatsManager>();
-
-            Physics2D.queriesHitTriggers = false;
         }
 
         private void Update()
@@ -195,7 +191,10 @@ namespace Entities
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(Camera.main!.ScreenToWorldPoint(Input.mousePosition), 0.5f);
+            var mousePos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            mousePos.z = 0;
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(mousePos, 0.5f);
         }
 
         // Private methods
@@ -235,7 +234,8 @@ namespace Entities
         
             // var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
 
-            var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, 1 << LayerMask.NameToLayer("Terrain"));
+            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, mask);
             
             if (!hit) return;
             

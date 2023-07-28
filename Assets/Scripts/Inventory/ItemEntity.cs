@@ -22,6 +22,7 @@ namespace Inventory.Inventory
 
                 gameObject.name = item.itemSo.name;
                 GetComponent<SpriteRenderer>().sprite = item.itemSo.sprite;
+                GetComponent<BoxCollider2D>().size = item.itemSo.sprite.bounds.size;
             }
 
             [MenuItem("CONTEXT/ItemEntity/InitializeForEditor")]
