@@ -1,31 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StatsUIManager : MonoBehaviour
+namespace Entities.Entities
 {
-    [SerializeField] private Image hpIcon;
-    [SerializeField] private Image hpRing;
-    [SerializeField] private Image energyIcon;
-    [SerializeField] private Image energyRing;
+    public class StatsUIManager : MonoBehaviour
+    {
+        // [SerializeField] private Image hpIcon;
+        // [SerializeField] private Image hpRing;
+        // [SerializeField] private Image energyIcon;
+        // [SerializeField] private Image energyRing;
+
+        [SerializeField] private Image hpBar;
+        [SerializeField] private Image energyBar;
     
-    public static StatsUIManager Instance;
+        public static StatsUIManager instance;
 
-    private void Start()
-    {
-        Instance = this;
-    }
+        private void Start()
+        {
+            instance = this;
+        }
 
-    public void UpdateHealthUI(float health, float maxHealth)
-    {
-        var val = health / maxHealth;
-        hpIcon.fillAmount = val;
-        hpRing.fillAmount = val;
-    }
+        public void UpdateHealthUI(float health, float maxHealth)
+        {
+            var val = health / maxHealth;
+            hpBar.fillAmount = val;
+        }
 
-    public void UpdateEnergyUI(float energy, float maxEnergy)
-    {
-        var val = Mathf.Lerp(0, 0.75f, energy / maxEnergy);
-        energyIcon.fillAmount = energy / maxEnergy;
-        energyRing.fillAmount = val;
+        public void UpdateEnergyUI(float energy, float maxEnergy)
+        {
+            var val = energy / maxEnergy;
+            energyBar.fillAmount = val;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Entities.Entities;
 using UnityEngine;
 
 namespace Entities
@@ -30,7 +31,7 @@ namespace Entities
             else
             {
                 energy = Mathf.Clamp(energy + energyRegenRate * Time.deltaTime, 0, maxEnergy);
-                StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
+                StatsUIManager.instance.UpdateEnergyUI(energy, maxEnergy);
             }
 
             if (_healthRegenTimer > 0)
@@ -40,7 +41,7 @@ namespace Entities
             else
             {
                 health = Mathf.Clamp(health + healthRegenRate * Time.deltaTime, 0, maxEnergy);
-                StatsUIManager.Instance.UpdateHealthUI(health, maxHealth);
+                StatsUIManager.instance.UpdateHealthUI(health, maxHealth);
             }
         }
         
@@ -54,7 +55,7 @@ namespace Entities
         {
             health = Mathf.Clamp(health - amount, 0, maxHealth);
             _healthRegenTimer = healthRegenDelay;
-            StatsUIManager.Instance.UpdateHealthUI(health, maxHealth);
+            StatsUIManager.instance.UpdateHealthUI(health, maxHealth);
 
             return health <= 0;
         }
@@ -73,7 +74,7 @@ namespace Entities
         {
             energy = Mathf.Clamp(energy - amount, 0, maxEnergy);
             _energyRegenTimer = energyRegenDelay;
-            StatsUIManager.Instance.UpdateEnergyUI(energy, maxEnergy);
+            StatsUIManager.instance.UpdateEnergyUI(energy, maxEnergy);
 
             return energy <= 0;
         }

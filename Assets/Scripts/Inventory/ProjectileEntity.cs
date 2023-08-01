@@ -42,6 +42,7 @@ namespace Inventory.Inventory
             if (_data.canHurtPlayer || damageable is not PlayerController)
             {
                 damageable.TakeDamage(_data.damage);
+                damageable.Knockback(transform.position, _data.knockback);
 
                 if (!_data.piercing)
                 {

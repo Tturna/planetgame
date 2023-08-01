@@ -28,10 +28,13 @@ MonoBehaviour:
   cameraShakeTime: 0.1
   cameraShakeStrength: 0.025
   playerRecoilStrength: 0
+  useRange: 0
+  incrementStackOnUse: 0
   projectile:
     sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
     projectileSpeed: 15
     damage: 6
+    knockback: 100
     piercing: 0
     useGravity: 0
     collideWithWorld: 0

@@ -31,11 +31,36 @@ namespace Inventory.Inventory
 
     public class InventoryManager : MonoBehaviour
     {
-        [SerializeField] private GameObject inventoryObject;
+        [Header("Inventory Objects")]
+        [SerializeField] private GameObject stashObject;
+        [SerializeField] private GameObject hotbarObject;
+        [SerializeField] private GameObject accessoryObject;
+        [SerializeField] private GameObject mouseSlotObject;
+        [SerializeField] private Image mouseSlotImage;
+        [SerializeField] private TextMeshProUGUI mouseSlotStackText;
+        [SerializeField] private GameObject pauseMenuButtonObject;
+        
+        [Header("Other Objects")]
+        [SerializeField] private GameObject equippedItemObject;
+
+        [Header("Tooltip Objects")]
+        [SerializeField] private RectTransform itemTooltipRect;
+
+        [SerializeField] private TextMeshProUGUI ttNameText;
+        [SerializeField] private Image ttImage;
+        [SerializeField] private TextMeshProUGUI ttTypeText;
+        [SerializeField] private RectTransform ttStatsParentRect;
+        [SerializeField] private Transform ttStatNamesParent;
+        [SerializeField] private Transform ttStatValuesParent;
+        [SerializeField] private Transform ttStatNameTemplate;
+        [SerializeField] private Transform ttStatValueTemplate;
+        
+        [Header("Inventory Prefabs")]
         [SerializeField] private GameObject itemPrefab;
         public GameObject breakablePrefab;
-        [SerializeField] private GameObject itemTooltipObject;
-        [SerializeField] private GameObject equippedItemObject;
+        
+        // To be removed probably
+        [Header("Inventory Sprites")]
         [SerializeField] private Sprite emptySlotSprite;
         [SerializeField] private Sprite filledSlotSprite;
         [SerializeField] private Sprite emptySlotSelectedSprite;
@@ -45,14 +70,17 @@ namespace Inventory.Inventory
 
         public static InventoryManager instance;
 
-        private static GameObject _stashObject;
-        private static GameObject _mouseSlotObject;
         private static Transform[] _hotSlotObjects;
         private static Transform[] _stashSlotObjects;
         private static Slot[] _hotSlots;
         private static Slot[] _stashSlots;
         private static Slot _mouseSlot;
         private static int _selectedIndex;
+        
+        private const int MaxTooltipStats = 5;
+        private KeyValuePair<GameObject, TextMeshProUGUI>[] _ttStatNames;
+        private KeyValuePair<GameObject, TextMeshProUGUI>[] _ttStatValues;
+        private GameObject _itemTooltipObject;
 
         public delegate void ItemEquippedHandler(Item item);
         public static event ItemEquippedHandler ItemEquipped;
@@ -62,21 +90,9 @@ namespace Inventory.Inventory
             #region Initialize Inventory
             
             instance = this;
-            
-            if (!inventoryObject)
-            {
-                Debug.LogError("No inventory object set for inventory manager.");
-            }
 
-            if (!itemTooltipObject)
-            {
-                Debug.LogError("No item tooltip object set for inventory manager.");
-            }
-
-            _hotSlotObjects = inventoryObject.transform.GetChild(0).Cast<Transform>().ToArray();
-            _stashObject = inventoryObject.transform.GetChild(1).gameObject;
-            _stashSlotObjects = _stashObject.transform.Cast<Transform>().ToArray();
-            _mouseSlotObject = inventoryObject.transform.GetChild(2).gameObject;
+            _hotSlotObjects = hotbarObject.transform.Cast<Transform>().ToArray();
+            _stashSlotObjects = stashObject.transform.Cast<Transform>().ToArray();
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
             _mouseSlot = new Slot(-1);
@@ -94,10 +110,28 @@ namespace Inventory.Inventory
             }
             
             SelectSlot(_selectedIndex);
-            _stashObject.SetActive(false);
-            itemTooltipObject.SetActive(false);
+            stashObject.SetActive(false);
+            accessoryObject.SetActive(false);
+            pauseMenuButtonObject.SetActive(false);
             
             #endregion
+            
+            // Initialize item tooltip
+            _itemTooltipObject = itemTooltipRect.gameObject;
+            _ttStatNames = new KeyValuePair<GameObject, TextMeshProUGUI>[MaxTooltipStats];
+            _ttStatValues = new KeyValuePair<GameObject, TextMeshProUGUI>[MaxTooltipStats];
+
+            for (var i = 0; i < MaxTooltipStats; i++)
+            {
+                var statName = Instantiate(ttStatNameTemplate, ttStatNamesParent);
+                var statValue = Instantiate(ttStatValueTemplate, ttStatValuesParent);
+                
+                _ttStatNames[i] = new KeyValuePair<GameObject, TextMeshProUGUI>(statName.gameObject, statName.GetComponent<TextMeshProUGUI>());
+                _ttStatValues[i] = new KeyValuePair<GameObject, TextMeshProUGUI>(statValue.gameObject, statValue.GetComponent<TextMeshProUGUI>());
+            }
+            
+            _itemTooltipObject.SetActive(false);
+            
 
             PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
@@ -132,14 +166,13 @@ namespace Inventory.Inventory
             // Check for inventory switch
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                _stashObject.SetActive(!_stashObject.activeInHierarchy);
+                stashObject.SetActive(!stashObject.activeInHierarchy);
+                accessoryObject.SetActive(!accessoryObject.activeInHierarchy);
+                pauseMenuButtonObject.SetActive(!pauseMenuButtonObject.activeInHierarchy);
             }
             
             // Make mouse slot follow the cursor
-            _mouseSlotObject.transform.position = Input.mousePosition;
-            
-            // Make the item tooltip object follor the cursor
-            itemTooltipObject.transform.position = Input.mousePosition + (Vector3)(Vector2.one * 10f);
+            mouseSlotObject.transform.position = Input.mousePosition;
             
             if (Input.GetMouseButtonDown(0))
             {
@@ -157,6 +190,12 @@ namespace Inventory.Inventory
                 
                 HandleMouseTwo(ref slot, clickedSlotObject);
             }
+        }
+
+        private void LateUpdate()
+        {
+            // Make the item tooltip object follor the cursor
+            _itemTooltipObject.transform.position = Input.mousePosition + (Vector3)(Vector2.one * 10f);
         }
 
         private void HandleMouseOne(ref Slot clickedSlot, GameObject clickedSlotObject)
@@ -306,7 +345,7 @@ namespace Inventory.Inventory
             // If slot was empty, change the sprite
             if (segmentSlots[index].stack == 0)
             {
-                segmentObjects[index].gameObject.GetComponent<Image>().sprite = instance.filledSlotSprite;
+                // segmentObjects[index].gameObject.GetComponent<Image>().sprite = instance.filledSlotSprite;
             }
             
             // Add item to slot with space
@@ -401,8 +440,8 @@ namespace Inventory.Inventory
         {
             if (slotIndex < 0 || slotIndex > _hotSlots.Length - 1) return false;
             
-            var img = _hotSlotObjects[slotIndex].gameObject.GetComponent<Image>();
-            img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSelectedSprite : instance.emptySlotSelectedSprite;
+            // var img = _hotSlotObjects[slotIndex].gameObject.GetComponent<Image>();
+            // img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSelectedSprite : instance.emptySlotSelectedSprite;
             
             EquipItem(_hotSlots[slotIndex].item);
             return true;
@@ -452,8 +491,8 @@ namespace Inventory.Inventory
         
         private static void DeselectSlot(int slotIndex)
         {
-            var img = _hotSlotObjects[slotIndex].GetComponent<Image>();
-            img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSprite : instance.emptySlotSprite;
+            // var img = _hotSlotObjects[slotIndex].GetComponent<Image>();
+            // img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSprite : instance.emptySlotSprite;
         }
 
         private static void UpdateSlotGraphics(ref Slot slot, Transform slotObject)
@@ -472,47 +511,47 @@ namespace Inventory.Inventory
             itemStack.text = stack > 1 ? stack.ToString() : "";
             
             // Update slot graphics
-            var slotImg = slotObject.GetComponent<Image>();
-            if (stack > 0)
-            {
-                if (_selectedIndex == slot.index && !slot.isInStash)
-                {
-                    slotImg.sprite = instance.filledSlotSelectedSprite;
-                }
-                else if (slot.isInStash)
-                {
-                    slotImg.sprite = instance.filledStashSprite;
-                }
-                else
-                {
-                    slotImg.sprite = instance.filledSlotSprite;
-                }
-            }
-            else
-            {
-                if (_selectedIndex == slot.index && !slot.isInStash)
-                {
-                    slotImg.sprite = instance.emptySlotSelectedSprite;
-                }
-                else if (slot.isInStash)
-                {
-                    slotImg.sprite = instance.emptyStashSprite;
-                }
-                else
-                {
-                    slotImg.sprite = instance.emptySlotSprite;
-                }
-            }
+            // var slotImg = slotObject.GetComponent<Image>();
+            // if (stack > 0)
+            // {
+            //     if (_selectedIndex == slot.index && !slot.isInStash)
+            //     {
+            //         slotImg.sprite = instance.filledSlotSelectedSprite;
+            //     }
+            //     else if (slot.isInStash)
+            //     {
+            //         slotImg.sprite = instance.filledStashSprite;
+            //     }
+            //     else
+            //     {
+            //         slotImg.sprite = instance.filledSlotSprite;
+            //     }
+            // }
+            // else
+            // {
+            //     if (_selectedIndex == slot.index && !slot.isInStash)
+            //     {
+            //         slotImg.sprite = instance.emptySlotSelectedSprite;
+            //     }
+            //     else if (slot.isInStash)
+            //     {
+            //         slotImg.sprite = instance.emptyStashSprite;
+            //     }
+            //     else
+            //     {
+            //         slotImg.sprite = instance.emptySlotSprite;
+            //     }
+            // }
         }
 
         private static void UpdateMouseSlotGraphics()
         {
-            var itemImg = _mouseSlotObject.transform.GetChild(0).GetComponent<Image>();
+            var itemImg = instance.mouseSlotImage;
             itemImg.sprite = _mouseSlot.item?.itemSo.sprite;
             itemImg.color = itemImg.sprite ? Color.white : Color.clear;
             itemImg.SetNativeSize();
 
-            var itemStack = _mouseSlotObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+            var itemStack = instance.mouseSlotStackText;
             var stack = _mouseSlot.stack;
             itemStack.text = stack > 1 ? stack.ToString() : "";
         }
@@ -534,104 +573,91 @@ namespace Inventory.Inventory
                 }
             }
         }
-
-        #region Tooltip Components
-
-        private Transform ttStats, ttStatNames, ttStatValues;
-        private TextMeshProUGUI ttNameText;
-        private Image ttImage;
-        private TextMeshProUGUI ttTypeText;
-        private TextMeshProUGUI ttStatName1, ttStatName2, ttStatName3;
-        private TextMeshProUGUI ttStatValue1, ttStatValue2, ttStatValue3;
-
-        #endregion
         
         private void UpdateItemTooltip(List<RaycastResult> elementsUnderMouse)
         {
             var slotObjectUnderMouse = GetHoveringSlotObject(elementsUnderMouse);
             GetSlotFromObject(slotObjectUnderMouse, out var slot);
             
-            if (!slotObjectUnderMouse || slot.stack == 0 || !_stashObject.activeInHierarchy)
+            if (!slotObjectUnderMouse || slot.stack == 0 || !stashObject.activeInHierarchy)
             {
-                itemTooltipObject.SetActive(false);
+                _itemTooltipObject.SetActive(false);
                 return;
             }
             
-            itemTooltipObject.SetActive(true);
+            _itemTooltipObject.SetActive(true);
 
-            var tr = itemTooltipObject.transform;
-            
-            // This is a bit shit but what can you do
-            if (!ttNameText)
-            {
-                ttNameText = tr.GetChild(0).GetComponent<TextMeshProUGUI>();
-                ttImage = tr.GetChild(1).GetComponent<Image>();
-                ttTypeText = tr.GetChild(2).GetComponent<TextMeshProUGUI>();
-                ttStats = tr.GetChild(3);
-                ttStatNames = ttStats.GetChild(0);
-                ttStatValues = ttStats.GetChild(1);
-
-                ttStatName1 = ttStatNames.GetChild(0).GetComponent<TextMeshProUGUI>();
-                ttStatName2 = ttStatNames.GetChild(1).GetComponent<TextMeshProUGUI>();
-                ttStatName3 = ttStatNames.GetChild(2).GetComponent<TextMeshProUGUI>();
-
-                ttStatValue1 = ttStatValues.GetChild(0).GetComponent<TextMeshProUGUI>();
-                ttStatValue2 = ttStatValues.GetChild(1).GetComponent<TextMeshProUGUI>();
-                ttStatValue3 = ttStatValues.GetChild(2).GetComponent<TextMeshProUGUI>();
-            }
-            
             ttNameText.text = slot.item.itemSo.name;
             ttImage.sprite = slot.item.itemSo.sprite;
             ttImage.SetNativeSize();
+
+            void UpdateTooltip(IReadOnlyList<string> statNames, IReadOnlyList<string> statValues, int statCount)
+            {
+                float maxWidth = 0;
+                for (var i = 0; i < MaxTooltipStats; i++)
+                {
+                    if (statCount == 0)
+                    {
+                        _ttStatNames[i].Key.SetActive(false);
+                        _ttStatValues[i].Key.SetActive(false);
+                        continue;
+                    }
+                    
+                    _ttStatNames[i].Key.SetActive(i < statCount);
+                    _ttStatValues[i].Key.SetActive(i < statCount);
+                    _ttStatNames[i].Value.text = i < statCount ? statNames[i] : "";
+                    _ttStatValues[i].Value.text = i < statCount ? statValues[i] : "";
+                    
+                    var nameRect = (RectTransform)_ttStatNames[i].Key.transform;
+                    var valueRect = (RectTransform)_ttStatValues[i].Key.transform;
+                    nameRect.anchoredPosition = Vector2.down * (50f * i);
+                    valueRect.anchoredPosition = Vector2.down * (50f * i);
+                    
+                    maxWidth = Mathf.Max(maxWidth, _ttStatNames[i].Value.preferredWidth + _ttStatValues[i].Value.preferredWidth);
+                }
+                
+                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth, maxWidth), 320f);
+                itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth);
+                ttStatsParentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 20);
+            }
             
             // TODO: Would be cool if you could choose which data in the scriptable object is shown in the tooltip.
+            // Custom editor script?
             switch (slot.item.itemSo)
             {
                 case ToolSo tool:
                     ttTypeText.text = "Tool";
-                    ttStatName1.text = "Damage";
-                    ttStatName2.text = "Use Speed";
-                    ttStatName3.text = "Tool Power";
-            
-                    ttStatValue1.text = tool.projectile.damage.ToString();
-                    ttStatValue2.text = tool.attackCooldown.ToString();
-                    ttStatValue3.text = tool.toolPower.ToString();
+
+                    string[] statNames = { "Damage", "Use Time", "Tool Power" };
+                    string[] statValues =
+                    {
+                        tool.projectile.damage.ToString(),
+                        tool.attackCooldown.ToString(),
+                        tool.toolPower.ToString()
+                    };
+
+                    UpdateTooltip(statNames, statValues, 3);
                     break;
                 
                 case WeaponSo weapon:
                     ttTypeText.text = "Weapon";
-                    ttStatName1.text = "Damage";
-                    ttStatName2.text = "Attack Speed";
-                    ttStatName3.text = "idk";
             
-                    ttStatValue1.text = weapon.projectile.damage.ToString();
-                    ttStatValue2.text = weapon.attackCooldown.ToString();
-                    ttStatValue3.text = "Something";
+                    statNames = new[] { "Damage", "Knockback", "Use Time" };
+                    statValues = new[]
+                    {
+                        weapon.projectile.damage.ToString(),
+                        weapon.projectile.knockback.ToString(),
+                        weapon.attackCooldown.ToString()
+                    };
+
+                    UpdateTooltip(statNames, statValues, 3);
                     break;
                 
                 default:
                     ttTypeText.text = "";
-                    ttStatName1.text = "";
-                    ttStatName2.text = "";
-                    ttStatName3.text = "";
-            
-                    ttStatValue1.text = "";
-                    ttStatValue2.text = "";
-                    ttStatValue3.text = "";
+                    UpdateTooltip(null, null, 0);
                     break;
             }
-            
-            // Position the elements
-            var statw1 = ttStatName1.preferredWidth + ttStatValue1.preferredWidth;
-            var statw2 = ttStatName2.preferredWidth + ttStatValue2.preferredWidth;
-            var statw3 = ttStatName3.preferredWidth + ttStatValue3.preferredWidth;
-            var statsWidth = Mathf.Max(statw1, Mathf.Max(statw2, statw3));
-            
-            var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth, statsWidth), 320f);
-            itemTooltipObject.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth);
-            
-            var statsRect = ttStats.GetComponent<RectTransform>();
-            statsRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 20);
         }
         
         /// <summary>
@@ -652,7 +678,7 @@ namespace Inventory.Inventory
                 return;
             }
 
-            var isStash = slotObject.transform.parent.gameObject == _stashObject;
+            var isStash = slotObject.transform.parent.gameObject == instance.stashObject;
             var segment = isStash ? _stashSlots : _hotSlots;
                 
             var slotIndex = isStash

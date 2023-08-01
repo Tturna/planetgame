@@ -4,12 +4,9 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - whiteBarNormal: {fileID: -900080851, guid: 95b6dab05c0a3034ca2f7036a077a85a, type: 3}
-  - actualBarNormal: {fileID: -979995666, guid: 95b6dab05c0a3034ca2f7036a077a85a, type: 3}
-  - bgNormal: {fileID: -1722768351, guid: 95b6dab05c0a3034ca2f7036a077a85a, type: 3}
-  - whiteBarBoss: {fileID: -954587497, guid: e6856391e53beb14c8eafc35f4df874b, type: 3}
-  - actualBarBoss: {fileID: 231396077, guid: e6856391e53beb14c8eafc35f4df874b, type: 3}
-  - bgBoss: {fileID: -1466085329, guid: e6856391e53beb14c8eafc35f4df874b, type: 3}
+  - whiteBarSprite: {fileID: 21300000, guid: 9138cc30cb37e964e8740961f6b76d0a, type: 3}
+  - redBarSprite: {fileID: 21300000, guid: 0e149336139b64a46a92b85e44df96e7, type: 3}
+  - bgSprite: {fileID: 21300000, guid: fbb9045560d75f04eadfd9cb453055f6, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
