@@ -651,14 +651,14 @@ namespace Inventory.Inventory
                     valueRect.anchoredPosition = Vector2.down * (8f * i);
                     iconRect.anchoredPosition = Vector2.down * (8f * i);
 
-                    var descriptorWidth = showAdvanced ? _ttStatNames[i].Value.renderedWidth + 7f : 5f; // 5 is the width of the icon
+                    var descriptorWidth = showAdvanced ? _ttStatNames[i].Value.renderedWidth + 10f : 5f; // 5 is the width of the icon
                     var comparedWidth = descriptorWidth + _ttStatValues[i].Value.renderedWidth + 6f;
                     maxWidth = Mathf.Max(maxWidth, comparedWidth);
                 }
                 
-                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth + 7f, maxWidth), 16f);
+                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth + 9f, maxWidth), 16f);
                 itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth);
-                itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 12f + statCount * 8f);
+                itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 14f + statCount * 8f);
                 ttStatsParentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 2f);
             }
             
