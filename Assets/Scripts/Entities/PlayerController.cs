@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Utilities;
 
 namespace Entities.Entities
@@ -15,6 +14,7 @@ namespace Entities.Entities
             [Header("Components")]
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
+            [SerializeField] private SpriteRenderer headSr;
         
             [Header("Movement Settings")]
             [SerializeField] private float accelerationSpeed;
@@ -211,6 +211,8 @@ namespace Entities.Entities
                 {
                     if (!_jumping) _jumpCooldownTimer = JumpSafetyCooldown;
                     _jumping = true;
+                    _animator.SetBool("jumping", true);
+                    handsAnimator.SetBool("jumping", true);
                     
                     // Actual jumping physics and the timer are in FixedUpdate()
                 }
@@ -244,6 +246,8 @@ namespace Entities.Entities
             if (_jumping)
             {
                 _jumping = false;
+                _animator.SetBool("jumping", false);
+                handsAnimator.SetBool("jumping", false);
                 
                 // Set velocity when landing to keep horizontal momentum
                 var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
@@ -285,7 +289,8 @@ namespace Entities.Entities
             // if (_inputVector.x == 0) return;
             // _sr.flipX = _inputVector.x > 0;
 
-            _sr.flipX = cursorAngle < 90;
+            _sr.flipX = cursorAngle > 90;
+            headSr.flipX = cursorAngle > 90;
             
             var scale = handsParent.localScale;
             // scale.x = _inputVector.x > 0 ? -1f : 1f;

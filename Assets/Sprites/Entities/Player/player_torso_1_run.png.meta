@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6d93d0f164d238547b717d9dddd18fa6
+guid: 24c4c6e2f2643c04393467dfb042d3fc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -118,13 +118,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: inventoryslots_0
+      name: player_torso_1_run_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 094c116f82ca57946a25e68feeb3427e
-      internalID: 1116185160
+      spriteID: c57a7184f0f3164479b46c09707db9c0
+      internalID: -851677673
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_1
+      name: player_torso_1_run_1
       rect:
         serializedVersion: 2
-        x: 15
+        x: 8
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,20 +153,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 953edc70fedd4b64cb85759848458eed
-      internalID: 878854978
+      spriteID: 32aecba4539db0a48ab5b20919d8def6
+      internalID: -490502037
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_2
+      name: player_torso_1_run_2
       rect:
         serializedVersion: 2
-        x: 30
+        x: 16
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,20 +174,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 11e33efe8aeee054a98042bbfc9de0fa
-      internalID: -2092666080
+      spriteID: 93d7ed334f85a7944bc4683dbdf10c0a
+      internalID: 1311889422
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_3
+      name: player_torso_1_run_3
       rect:
         serializedVersion: 2
-        x: 45
+        x: 24
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,20 +195,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b6abfab05aace6a4c9e9fe11f90dc9e2
-      internalID: -1502899623
+      spriteID: 46c68ea428f965d49b767280b04975ab
+      internalID: -241331344
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_4
+      name: player_torso_1_run_4
       rect:
         serializedVersion: 2
-        x: 60
+        x: 32
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -216,20 +216,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 65b87b91029c4ba44b6308e85415450a
-      internalID: 2086295279
+      spriteID: 41814f57c10b61e479a87d5faaa5da83
+      internalID: 694987721
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_5
+      name: player_torso_1_run_5
       rect:
         serializedVersion: 2
-        x: 75
+        x: 40
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -237,20 +237,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d416867e95b8aaf4982dc04a5cecde5a
-      internalID: -1812431904
+      spriteID: 3468736e3c76076418fc9df74e19ba16
+      internalID: 1853016117
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_6
+      name: player_torso_1_run_6
       rect:
         serializedVersion: 2
-        x: 90
+        x: 48
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -258,20 +258,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 20b8e20c1fd9cdf46ab874879545a8c5
-      internalID: -165060628
+      spriteID: 929178d7f1084154899050cd4cf25f2c
+      internalID: 2039953942
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_7
+      name: player_torso_1_run_7
       rect:
         serializedVersion: 2
-        x: 105
+        x: 56
         y: 0
-        width: 15
-        height: 16
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -279,50 +279,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1ad7650dbb02e9e418de565e38b900c6
-      internalID: -673081328
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_8
-      rect:
-        serializedVersion: 2
-        x: 120
-        y: 0
-        width: 15
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2050fcc18032e9b4ca116ead60948356
-      internalID: 1815269000
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_9
-      rect:
-        serializedVersion: 2
-        x: 135
-        y: 0
-        width: 15
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bac8f9723dc6c594a97983461566022a
-      internalID: 1208985359
+      spriteID: 2aa7b53bdd8ef2a48a4cf47251f34e80
+      internalID: -324397598
       vertices: []
       indices: 
       edges: []
@@ -338,16 +296,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      inventoryslots_5: -1812431904
-      inventoryslots_1: 878854978
-      inventoryslots_2: -2092666080
-      inventoryslots_0: 1116185160
-      inventoryslots_4: 2086295279
-      inventoryslots_9: 1208985359
-      inventoryslots_6: -165060628
-      inventoryslots_7: -673081328
-      inventoryslots_3: -1502899623
-      inventoryslots_8: 1815269000
+      player_torso_1_run_0: -851677673
+      player_torso_1_run_2: 1311889422
+      player_torso_1_run_7: -324397598
+      player_torso_1_run_6: 2039953942
+      player_torso_1_run_1: -490502037
+      player_torso_1_run_3: -241331344
+      player_torso_1_run_4: 694987721
+      player_torso_1_run_5: 1853016117
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 

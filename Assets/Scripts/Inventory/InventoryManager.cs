@@ -33,9 +33,11 @@ namespace Inventory.Inventory
     {
         [Header("Inventory Objects")]
         [SerializeField] private GameObject stashObject;
-        [SerializeField] private GameObject hotbarObject;
+        [SerializeField] private GameObject hotslotsParent;
         [SerializeField] private GameObject accessoryObject;
         [SerializeField] private GameObject mouseSlotObject;
+        [SerializeField] private RectTransform selectionOverlayRect;
+        [SerializeField] private RectTransform selectionArrowRect;
         [SerializeField] private Image mouseSlotImage;
         [SerializeField] private TextMeshProUGUI mouseSlotStackText;
         [SerializeField] private GameObject pauseMenuButtonObject;
@@ -91,7 +93,7 @@ namespace Inventory.Inventory
             
             instance = this;
 
-            _hotSlotObjects = hotbarObject.transform.Cast<Transform>().ToArray();
+            _hotSlotObjects = hotslotsParent.transform.Cast<Transform>().ToArray();
             _stashSlotObjects = stashObject.transform.Cast<Transform>().ToArray();
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
@@ -439,9 +441,17 @@ namespace Inventory.Inventory
         private bool SelectSlot(int slotIndex)
         {
             if (slotIndex < 0 || slotIndex > _hotSlots.Length - 1) return false;
-            
-            // var img = _hotSlotObjects[slotIndex].gameObject.GetComponent<Image>();
-            // img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSelectedSprite : instance.emptySlotSelectedSprite;
+
+            var nextrow = slotIndex > 4;
+            var x = 14f * (slotIndex % 5);
+            if (nextrow) x += 7f;
+            var y = nextrow ? -12f : 0f;
+            selectionOverlayRect.anchoredPosition = new Vector2(x, y);
+
+            x += 7.5f;
+            y = nextrow ? -23f : -5f;
+            selectionArrowRect.anchoredPosition = new Vector2(x, y);
+            selectionArrowRect.eulerAngles = Vector3.forward * (nextrow ? 180f : 0f);
             
             EquipItem(_hotSlots[slotIndex].item);
             return true;
@@ -587,7 +597,7 @@ namespace Inventory.Inventory
             
             _itemTooltipObject.SetActive(true);
 
-            ttNameText.text = slot.item.itemSo.name;
+            ttNameText.text = slot.item.itemSo.name.ToUpper();
             ttImage.sprite = slot.item.itemSo.sprite;
             ttImage.SetNativeSize();
 
@@ -610,15 +620,15 @@ namespace Inventory.Inventory
                     
                     var nameRect = (RectTransform)_ttStatNames[i].Key.transform;
                     var valueRect = (RectTransform)_ttStatValues[i].Key.transform;
-                    nameRect.anchoredPosition = Vector2.down * (50f * i);
-                    valueRect.anchoredPosition = Vector2.down * (50f * i);
+                    nameRect.anchoredPosition = Vector2.down * (8f * i);
+                    valueRect.anchoredPosition = Vector2.down * (8f * i);
                     
-                    maxWidth = Mathf.Max(maxWidth, _ttStatNames[i].Value.preferredWidth + _ttStatValues[i].Value.preferredWidth);
+                    maxWidth = Mathf.Max(maxWidth, _ttStatNames[i].Value.renderedWidth + _ttStatValues[i].Value.renderedWidth + 6);
                 }
                 
-                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth, maxWidth), 320f);
+                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth + 7, maxWidth), 16f);
                 itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth);
-                ttStatsParentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 20);
+                ttStatsParentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 2);
             }
             
             // TODO: Would be cool if you could choose which data in the scriptable object is shown in the tooltip.
@@ -626,28 +636,42 @@ namespace Inventory.Inventory
             switch (slot.item.itemSo)
             {
                 case ToolSo tool:
-                    ttTypeText.text = "Tool";
+                    ttTypeText.text = "TOOL";
 
-                    string[] statNames = { "Damage", "Use Time", "Tool Power" };
+                    string[] statNames = { "DAMAGE", "USE TIME", "POWER" };
                     string[] statValues =
                     {
-                        tool.projectile.damage.ToString(),
-                        tool.attackCooldown.ToString(),
-                        tool.toolPower.ToString()
+                        tool.projectile.damage.ToString().ToUpper(),
+                        tool.attackCooldown.ToString().ToUpper(),
+                        tool.toolPower.ToString().ToUpper()
                     };
 
                     UpdateTooltip(statNames, statValues, 3);
                     break;
                 
-                case WeaponSo weapon:
-                    ttTypeText.text = "Weapon";
-            
-                    statNames = new[] { "Damage", "Knockback", "Use Time" };
+                case MeleeSo melee:
+                    ttTypeText.text = "MELEE";
+                    
+                    statNames = new[] { "DAMAGE", "KNOCKBACK", "USE TIME" };
                     statValues = new[]
                     {
-                        weapon.projectile.damage.ToString(),
-                        weapon.projectile.knockback.ToString(),
-                        weapon.attackCooldown.ToString()
+                        melee.damage.ToString().ToUpper(),
+                        melee.knockback.ToString().ToUpper(),
+                        melee.attackCooldown.ToString().ToUpper()
+                    };
+                    
+                    UpdateTooltip(statNames, statValues, 3);
+                    break;
+                
+                case WeaponSo weapon:
+                    ttTypeText.text = "WEAPON";
+            
+                    statNames = new[] { "DAMAGE", "KNOCKBACK", "USE TIME" };
+                    statValues = new[]
+                    {
+                        weapon.projectile.damage.ToString().ToUpper(),
+                        weapon.projectile.knockback.ToString().ToUpper(),
+                        weapon.attackCooldown.ToString().ToUpper()
                     };
 
                     UpdateTooltip(statNames, statValues, 3);
