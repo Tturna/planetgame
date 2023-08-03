@@ -7,7 +7,6 @@ using Inventory.Inventory.Item_Types;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
@@ -28,6 +27,13 @@ namespace Inventory.Inventory
             this.index = index;
         }
     }
+    
+    [Serializable]
+    public struct TooltipStatIcon
+    {
+        public string name;
+        public Sprite sprite;
+    }
 
     public class InventoryManager : MonoBehaviour
     {
@@ -47,6 +53,7 @@ namespace Inventory.Inventory
 
         [Header("Tooltip Objects")]
         [SerializeField] private RectTransform itemTooltipRect;
+        [SerializeField] private TooltipStatIcon[] tooltipStatIcons;
 
         [SerializeField] private TextMeshProUGUI ttNameText;
         [SerializeField] private Image ttImage;
@@ -54,8 +61,10 @@ namespace Inventory.Inventory
         [SerializeField] private RectTransform ttStatsParentRect;
         [SerializeField] private Transform ttStatNamesParent;
         [SerializeField] private Transform ttStatValuesParent;
+        [SerializeField] private Transform ttStatIconsParent;
         [SerializeField] private Transform ttStatNameTemplate;
         [SerializeField] private Transform ttStatValueTemplate;
+        [SerializeField] private Transform ttStatIconTemplate;
         
         [Header("Inventory Prefabs")]
         [SerializeField] private GameObject itemPrefab;
@@ -82,7 +91,9 @@ namespace Inventory.Inventory
         private const int MaxTooltipStats = 5;
         private KeyValuePair<GameObject, TextMeshProUGUI>[] _ttStatNames;
         private KeyValuePair<GameObject, TextMeshProUGUI>[] _ttStatValues;
+        private KeyValuePair<GameObject, Image>[] _ttStatIcons;
         private GameObject _itemTooltipObject;
+        private Dictionary<string, Sprite> _tooltipStatIcons;
 
         public delegate void ItemEquippedHandler(Item item);
         public static event ItemEquippedHandler ItemEquipped;
@@ -122,14 +133,23 @@ namespace Inventory.Inventory
             _itemTooltipObject = itemTooltipRect.gameObject;
             _ttStatNames = new KeyValuePair<GameObject, TextMeshProUGUI>[MaxTooltipStats];
             _ttStatValues = new KeyValuePair<GameObject, TextMeshProUGUI>[MaxTooltipStats];
+            _ttStatIcons = new KeyValuePair<GameObject, Image>[MaxTooltipStats];
 
             for (var i = 0; i < MaxTooltipStats; i++)
             {
                 var statName = Instantiate(ttStatNameTemplate, ttStatNamesParent);
                 var statValue = Instantiate(ttStatValueTemplate, ttStatValuesParent);
-                
+                var statIcon = Instantiate(ttStatIconTemplate, ttStatIconsParent);
+
                 _ttStatNames[i] = new KeyValuePair<GameObject, TextMeshProUGUI>(statName.gameObject, statName.GetComponent<TextMeshProUGUI>());
                 _ttStatValues[i] = new KeyValuePair<GameObject, TextMeshProUGUI>(statValue.gameObject, statValue.GetComponent<TextMeshProUGUI>());
+                _ttStatIcons[i] = new KeyValuePair<GameObject, Image>(statIcon.gameObject, statIcon.GetComponent<Image>());
+            }
+            
+            _tooltipStatIcons = new Dictionary<string, Sprite>();
+            foreach (var statIcon in tooltipStatIcons)
+            {
+                _tooltipStatIcons.Add(statIcon.name, statIcon.sprite);
             }
             
             _itemTooltipObject.SetActive(false);
@@ -586,6 +606,8 @@ namespace Inventory.Inventory
         
         private void UpdateItemTooltip(List<RaycastResult> elementsUnderMouse)
         {
+            // TODO: Maybe make this function not run every frame that the mouse is over a slot
+            
             var slotObjectUnderMouse = GetHoveringSlotObject(elementsUnderMouse);
             GetSlotFromObject(slotObjectUnderMouse, out var slot);
             
@@ -603,6 +625,7 @@ namespace Inventory.Inventory
 
             void UpdateTooltip(IReadOnlyList<string> statNames, IReadOnlyList<string> statValues, int statCount)
             {
+                var showAdvanced = Input.GetKey(KeyCode.LeftAlt);
                 float maxWidth = 0;
                 for (var i = 0; i < MaxTooltipStats; i++)
                 {
@@ -610,25 +633,33 @@ namespace Inventory.Inventory
                     {
                         _ttStatNames[i].Key.SetActive(false);
                         _ttStatValues[i].Key.SetActive(false);
+                        _ttStatIcons[i].Key.SetActive(false);
                         continue;
                     }
                     
-                    _ttStatNames[i].Key.SetActive(i < statCount);
+                    _ttStatNames[i].Key.SetActive(showAdvanced && i < statCount);
                     _ttStatValues[i].Key.SetActive(i < statCount);
+                    _ttStatIcons[i].Key.SetActive(i < statCount);
                     _ttStatNames[i].Value.text = i < statCount ? statNames[i] : "";
                     _ttStatValues[i].Value.text = i < statCount ? statValues[i] : "";
+                    _ttStatIcons[i].Value.sprite = i < statCount ? _tooltipStatIcons[statNames[i]] : null;
                     
                     var nameRect = (RectTransform)_ttStatNames[i].Key.transform;
                     var valueRect = (RectTransform)_ttStatValues[i].Key.transform;
+                    var iconRect = (RectTransform)_ttStatIcons[i].Key.transform;
                     nameRect.anchoredPosition = Vector2.down * (8f * i);
                     valueRect.anchoredPosition = Vector2.down * (8f * i);
-                    
-                    maxWidth = Mathf.Max(maxWidth, _ttStatNames[i].Value.renderedWidth + _ttStatValues[i].Value.renderedWidth + 6);
+                    iconRect.anchoredPosition = Vector2.down * (8f * i);
+
+                    var descriptorWidth = showAdvanced ? _ttStatNames[i].Value.renderedWidth + 7f : 5f; // 5 is the width of the icon
+                    var comparedWidth = descriptorWidth + _ttStatValues[i].Value.renderedWidth + 6f;
+                    maxWidth = Mathf.Max(maxWidth, comparedWidth);
                 }
                 
-                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth + 7, maxWidth), 16f);
+                var tooltipWidth = Mathf.Max(Mathf.Max(ttNameText.preferredWidth + 7f, maxWidth), 16f);
                 itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth);
-                ttStatsParentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 2);
+                itemTooltipRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 12f + statCount * 8f);
+                ttStatsParentRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, tooltipWidth - 2f);
             }
             
             // TODO: Would be cool if you could choose which data in the scriptable object is shown in the tooltip.
@@ -638,7 +669,8 @@ namespace Inventory.Inventory
                 case ToolSo tool:
                     ttTypeText.text = "TOOL";
 
-                    string[] statNames = { "DAMAGE", "USE TIME", "POWER" };
+                    // TODO: Maybe make stat names into en enum
+                    string[] statNames = { "Damage", "Use Time", "Tool Power" };
                     string[] statValues =
                     {
                         tool.projectile.damage.ToString().ToUpper(),
@@ -652,7 +684,7 @@ namespace Inventory.Inventory
                 case MeleeSo melee:
                     ttTypeText.text = "MELEE";
                     
-                    statNames = new[] { "DAMAGE", "KNOCKBACK", "USE TIME" };
+                    statNames = new[] { "Melee Damage", "Knockback", "Use Time" };
                     statValues = new[]
                     {
                         melee.damage.ToString().ToUpper(),
@@ -666,7 +698,7 @@ namespace Inventory.Inventory
                 case WeaponSo weapon:
                     ttTypeText.text = "WEAPON";
             
-                    statNames = new[] { "DAMAGE", "KNOCKBACK", "USE TIME" };
+                    statNames = new[] { "Damage", "Knockback", "Use Time" };
                     statValues = new[]
                     {
                         weapon.projectile.damage.ToString().ToUpper(),
