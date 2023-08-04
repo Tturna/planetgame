@@ -3181,9 +3181,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  edgeSmoothThreshold: 0.927
-  xOrg: 400
-  yOrg: 400
+  edgeSmoothThreshold: 0.943
+  xOrg: 500
+  yOrg: 500
   noiseScale: 20
   isolevel: 0.42
   blendBias:
@@ -3219,14 +3219,14 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  xInnerOrg: 400
-  yInnerOrg: 400
+  xInnerOrg: 500
+  yInnerOrg: 500
   innerNoiseScale: 20
   innerIsoLevel: 0.3
   xSurfaceOrg: 0
   ySurfaceOrg: 0
   surfaceNoiseScale: 14
-  surfaceNoiseStrength: 3
+  surfaceNoiseStrength: 6
   diameter: 128
   resolution: 256
   atmosphereRadius: 128
@@ -5973,7 +5973,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &453637141
 SpriteRenderer:
   m_ObjectHideFlags: 0

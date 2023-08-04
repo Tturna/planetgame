@@ -134,7 +134,8 @@ namespace Planets
         /// <returns></returns>
         private Vector3 GetPointRelativePosition(float iterX, float iterY)
         {
-            return new Vector3(iterX * (diameter / resolution) - diameter / 2, iterY * (diameter / resolution) - diameter / 2);
+            return new Vector3(iterX * SizeResRatio - Radius, iterY * SizeResRatio - Radius);
+            // return new Vector3(iterX * (diameter / resolution) - diameter / 2, iterY * (diameter / resolution) - diameter / 2);
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace Planets
             var surfaceNormalized = Mathf.PerlinNoise(xc, yc);
             var surfaceAddition = surfaceNormalized * surfaceNoiseStrength;
             
-            return diameter / 2 - surfaceNoiseStrength + surfaceAddition;
+            return Radius - surfaceNoiseStrength + surfaceAddition;
         }
 
         public Vector2 GetRelativeSurfacePoint(float angle)
@@ -190,7 +191,7 @@ namespace Planets
         private Point MakePoint(float iterX, float iterY, Vector3 pointPos, Vector3 pointRelativePosition)
         {
             // Calculate point distance from the core
-            var distancePercentage = pointRelativePosition.magnitude / (diameter / 2);
+            var distancePercentage = pointRelativePosition.magnitude / Radius;
                 
             // Blend between outer and inner noise
             var v = blendBias.Evaluate(distancePercentage);
@@ -203,7 +204,7 @@ namespace Planets
             // Smooth points to air at the surface
             if (distancePercentage > edgeSmoothThreshold)
             {
-                var edgeSmoothPercentage = (distancePercentage - edgeSmoothThreshold) * 5;
+                var edgeSmoothPercentage = (distancePercentage - edgeSmoothThreshold) * 1 / (1 - edgeSmoothThreshold);
                 noiseResult = Mathf.Lerp(noiseResult, 1f, edgeSmoothPercentage);
             }
             
@@ -226,11 +227,11 @@ namespace Planets
                 
             // Restrict points to a circle (+- some surface noise)
             var surfaceHeight = GetCellSurfaceHeight(x, y);
-            var pointRadialDistance = pointRelativePosition.magnitude;
+            var pointRelativeRadialDistance = pointRelativePosition.magnitude;
 
             // If the point is not within the initial planet shape, just give it a position and set it to air.
             // This position is required so that the player can add terrain to it later.
-            if (pointRadialDistance > surfaceHeight) return new Point
+            if (pointRelativeRadialDistance > surfaceHeight) return new Point
             {
                 value = 1f,
                 position = pointPos,
