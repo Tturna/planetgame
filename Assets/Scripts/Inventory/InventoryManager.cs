@@ -104,8 +104,9 @@ namespace Inventory.Inventory
             
             instance = this;
 
-            _hotSlotObjects = hotslotsParent.transform.Cast<Transform>().ToArray();
-            _stashSlotObjects = stashObject.transform.Cast<Transform>().ToArray();
+            // Reverse the order of graphical slots because they're in reverse order in the hierarchy
+            _hotSlotObjects = hotslotsParent.transform.Cast<Transform>().Reverse().ToArray();
+            _stashSlotObjects = stashObject.transform.Cast<Transform>().Reverse().ToArray();
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
             _mouseSlot = new Slot(-1);
@@ -121,7 +122,7 @@ namespace Inventory.Inventory
                 _stashSlots[i].index = i;
                 _stashSlots[i].isInStash = true;
             }
-            
+
             SelectSlot(_selectedIndex);
             stashObject.SetActive(false);
             accessoryObject.SetActive(false);
@@ -372,7 +373,6 @@ namespace Inventory.Inventory
             
             // Add item to slot with space
             segmentSlots = AddToStack(segmentSlots, index, copy);
-
             UpdateSlotGraphics(ref segmentSlots[index], segmentObjects[index]);
             
             // Update the inventory variables using the temporary variables. Required because structs are value types.
@@ -425,7 +425,7 @@ namespace Inventory.Inventory
                     else if (slotSegment[i].item?.itemSo.id == item.itemSo.id)
                     {
                         if (slotSegment[i].stack >= item.itemSo.maxStack) continue;
-                        availableIndex = i;
+                        availableIndex = slotSegment[i].index;
                         break;
                     }
                 }
@@ -463,13 +463,13 @@ namespace Inventory.Inventory
             if (slotIndex < 0 || slotIndex > _hotSlots.Length - 1) return false;
 
             var nextrow = slotIndex > 4;
-            var x = 14f * (slotIndex % 5);
-            if (nextrow) x += 7f;
-            var y = nextrow ? -12f : 0f;
+            var x = 16f * (slotIndex % 5);
+            if (nextrow) x += 8f;
+            var y = nextrow ? -14f : 0f;
             selectionOverlayRect.anchoredPosition = new Vector2(x, y);
 
-            x += 7.5f;
-            y = nextrow ? -23f : -5f;
+            x += 8.5f;
+            y = nextrow ? -26.5f : -5.5f;
             selectionArrowRect.anchoredPosition = new Vector2(x, y);
             selectionArrowRect.eulerAngles = Vector3.forward * (nextrow ? 180f : 0f);
             
@@ -535,6 +535,13 @@ namespace Inventory.Inventory
             itemImg.sprite = slot.item?.itemSo.sprite;
             itemImg.color = itemImg.sprite ? Color.white : Color.clear;
             itemImg.SetNativeSize();
+            
+            // 2023-8-4:
+            // If the image has an even width, offset it by 0.5 pixels to fit the odd pixel width of the slot
+            if (itemImg.sprite && itemImg.sprite.texture.width % 2 == 0)
+            {
+                ((RectTransform)itemImg.transform).anchoredPosition = Vector2.right * 0.5f;
+            }
 
             var itemStack = slotObject.GetChild(1).GetComponent<TextMeshProUGUI>();
             var stack = slot.stack;
