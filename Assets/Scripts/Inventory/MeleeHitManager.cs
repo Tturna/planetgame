@@ -3,6 +3,7 @@
 // when the player equips one.
 
 using Entities;
+using Entities.Entities;
 using Inventory.Inventory.Item_Logic;
 using Inventory.Inventory.Item_Types;
 using UnityEngine;

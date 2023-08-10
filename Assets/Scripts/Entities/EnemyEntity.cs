@@ -1,12 +1,12 @@
 using System.Collections;
-using Entities.Entities;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
 
-namespace Entities
+namespace Entities.Entities
 {
     [RequireComponent(typeof(HealthbarManager))]
+    [RequireComponent(typeof(DamageNumberManager))]
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(Rigidbody2D))]
@@ -22,6 +22,7 @@ namespace Entities
         private Animator _animator;
         private SpriteRenderer _sr;
         private HealthbarManager _healthbarManager;
+        private DamageNumberManager _damageNumberManager;
         private Shader _defaultShader, _flashShader;
         
         private float _calculationTimer, _evasionTimer, _attackTimer;
@@ -37,6 +38,7 @@ namespace Entities
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
             _healthbarManager = GetComponent<HealthbarManager>();
+            _damageNumberManager = GetComponent<DamageNumberManager>();
             
             _animator.runtimeAnimatorController = enemySo.overrideAnimator;
 
@@ -209,7 +211,7 @@ namespace Entities
                 _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
             }
             
-            //TODO: damage numbers
+            _damageNumberManager.CreateDamageNumber(amount);
             
             if (_health <= 0)
             {
