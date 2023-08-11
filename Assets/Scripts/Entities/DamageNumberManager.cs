@@ -3,12 +3,14 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Entities.Entities
 {
     public class DamageNumberManager : MonoBehaviour
     {
         [SerializeField] private GameObject damageNumberPrefab;
+        [SerializeField] private TMP_FontAsset flashFont, normalFont;
 
         private static Guid _damageNumberPoolId = Guid.Empty;
         
@@ -53,22 +55,33 @@ namespace Entities.Entities
             GameUtilities.instance.StartCoroutine(HandleDamageNumberLifeTime(damageNumberObject, tmp, lifeTime, startMoveStrength));
         }
 
-        private static IEnumerator HandleDamageNumberLifeTime(GameObject damageNumberObject, TextMeshPro tmp, float lifeTime, float startMoveStrength)
+        private IEnumerator HandleDamageNumberLifeTime(GameObject damageNumberObject, TextMeshPro tmp, float lifeTime, float startMoveStrength)
         {
             var tr = damageNumberObject.transform;
+            tr.Translate(Random.insideUnitCircle * .5f);
+            tmp.font = flashFont;
+            
             var ogLifeTime = lifeTime;
+            var camTr = Camera.main!.transform;
+            
             while (lifeTime > 0)
             {
-                // TODO: More damage number effects
-                // Stretch and squeeze
-                // Scale?
-                // Fade after a certain amount of time/distance
-                // Slightly randomized position
+                tr.rotation = camTr.rotation;
                 
-                var moveStrength = Mathf.Lerp(0f, startMoveStrength, lifeTime / ogLifeTime);
-                tr.Translate(tr.up * (Time.deltaTime * moveStrength));
+                var nLifeTime = lifeTime / ogLifeTime;
+                var moveStrength = Mathf.Lerp(0f, startMoveStrength, nLifeTime);
+                tr.Translate(camTr.transform.up * (Time.deltaTime * moveStrength));
                 
-                tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, lifeTime / ogLifeTime);
+                var scaleX = Mathf.Lerp(1f, 1.7f, (nLifeTime - .75f) * 4f) + nLifeTime * .35f;
+                var scaleY = Mathf.Lerp(1f, .35f, nLifeTime) + nLifeTime * .35f;
+                tr.localScale = new Vector3(scaleX, scaleY, 1f);
+               
+                tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, nLifeTime * 2f);
+                
+                if (nLifeTime < .9f)
+                {
+                    tmp.font = normalFont;
+                }
                 
                 lifeTime -= Time.deltaTime;
                 yield return null;

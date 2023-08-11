@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: d962aa24babd1224cadb81e47c8fa835, type: 3}
+        m_Texture: {fileID: 2800000, guid: f91e09d057ad62b498ac82428de42fef, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -59,11 +59,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: ikeafont_outline
+  m_Name: ikeafont_outline_whitered
   m_EditorClassIdentifier: 
-  hashCode: -1381786774
+  hashCode: -846083039
   material: {fileID: -6140583929723363763}
-  materialHashCode: 676387722
+  materialHashCode: -556789919
   m_Version: 1.1.0
   m_SourceFontFileGUID: 6843d920ef35a2b48b7ba265e890e930
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 6843d920ef35a2b48b7ba265e890e930, type: 3}
