@@ -31,6 +31,7 @@ namespace Inventory.Inventory.Item_Types
         public int maxStack;
         public Sprite sprite;
         public Vector2 handPositionOffset;
+        public bool useBothHands;
 
         // TODO: here something to choose which data to show in tooltips
     }

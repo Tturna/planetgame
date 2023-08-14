@@ -5,9 +5,14 @@ namespace Inventory.Inventory.Item_Logic
 {
     public class ItemAnimationManager : MonoBehaviour
     {
+        [SerializeField] private SpriteRenderer handLeftSr, handRightSr, equippedItemSr;
+        [SerializeField] private TrailRenderer meleeTrailRenderer;
+        
         private bool _canQueueAttack;
         private bool _swingEnding; // This exists to prevent the player from attacking right after the combo time window is closed
         private Animator _recoilAnimator;
+        private int _attackIndex;
+        private string _lastTriggerName;
         
         public delegate void LogicCallback();
         private LogicCallback _animationEventCallback;
@@ -17,8 +22,17 @@ namespace Inventory.Inventory.Item_Logic
         public event SwingStartedHandler SwingStarted;
         public event SwingCompletedHandler SwingCompleted;
 
-        public void AttackMelee(string triggerName, LogicCallback animationEventCallback = null)
+        public void AttackMelee(string triggerName, LogicCallback animationEventCallback = null, bool roundRobin = false, int maxAttacks = 3)
         {
+            // TODO: This might need improvement
+            // There is probably still an issue if the player attacks with a round robin attack a couple times,
+            // and then changes to a different weapon of the same type that also uses round robin. This would cause
+            // the attack to start at the wrong index.
+            if (triggerName != _lastTriggerName || !roundRobin)
+            {
+                _attackIndex = 0;
+            }
+            
             if (_swingEnding) return;
             
             _recoilAnimator ??= GetComponent<Animator>();
@@ -29,18 +43,33 @@ namespace Inventory.Inventory.Item_Logic
             var attackQueued = _recoilAnimator.GetBool("attackQueued");
             if (_recoilAnimator.GetBool("swinging"))
             {
-                if (_canQueueAttack && !attackQueued) _recoilAnimator.SetBool("attackQueued", true);
+                if (!_canQueueAttack || attackQueued) return;
+                _recoilAnimator.SetBool("attackQueued", true);
+                _recoilAnimator.SetInteger("attackIndex", _attackIndex);
+                IncrementAttackIndex(maxAttacks);
                 return;
             }
             
             // Prevent triggering a swing if an attack is queued
             if (attackQueued) return;
             
+            _recoilAnimator.SetInteger("attackIndex", _attackIndex);
             _recoilAnimator.SetBool("swinging", true);
             _recoilAnimator.SetBool("attackQueued", false);
+            _recoilAnimator.SetBool("roundRobin", roundRobin);
             _recoilAnimator.SetTrigger(triggerName);
             _canQueueAttack = false;
             _animationEventCallback = animationEventCallback;
+            
+            IncrementAttackIndex(maxAttacks);
+            _lastTriggerName = triggerName;
+        }
+
+        private void IncrementAttackIndex(int maxAttacks = 3)
+        {
+            // Debug.Log($"Attack ({_attackIndex}) @ {Time.time}");
+            _attackIndex++;
+            if (_attackIndex >= maxAttacks) _attackIndex = 0;
         }
 
         // Designed to be called from an animation event
@@ -62,6 +91,28 @@ namespace Inventory.Inventory.Item_Logic
         public void AllowQueue()
         {
             _canQueueAttack = true;
+        }
+
+        // This is designed to be called from an animation event
+        // when the player's hand(s) and weapon should switch to be behind or in front of the player.
+        // E.g. when swinging a sword from side to side
+        [UsedImplicitly]
+        public void ToggleHandsLayerOrder(int bothHands = 0)
+        {
+            if (handLeftSr.sortingOrder == 9)
+            {
+                handLeftSr.sortingOrder = 12;
+                equippedItemSr.sortingOrder = 11;
+                meleeTrailRenderer.sortingLayerName = "Healthbars";
+            }
+            else
+            {
+                handLeftSr.sortingOrder = 9;
+                equippedItemSr.sortingOrder = 8;
+                meleeTrailRenderer.sortingLayerName = "Player";
+            }
+
+            handRightSr.sortingOrder = bothHands > 0 ? handLeftSr.sortingOrder : 12;
         }
 
         // Designed to be called from an animation event

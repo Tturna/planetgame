@@ -16,12 +16,16 @@ namespace Inventory.Inventory
         
         private MeleeSo _meleeSo;
         private EdgeCollider2D _edgeCollider;
+        private TrailRenderer _trailRenderer;
 
         private void Start()
         {
+            _edgeCollider = GetComponent<EdgeCollider2D>();
+            _trailRenderer = GetComponent<TrailRenderer>();
+            
             var itemAnimationManager = transform.parent.GetComponent<ItemAnimationManager>();
-            itemAnimationManager.SwingStarted += () => SetCollision(true);
-            itemAnimationManager.SwingCompleted += () => SetCollision(false);
+            itemAnimationManager.SwingStarted += () => ToggleSwing(true);
+            itemAnimationManager.SwingCompleted += () => ToggleSwing(false);
 
             InventoryManager.ItemEquipped += OnItemEquipped;
         }
@@ -32,7 +36,7 @@ namespace Inventory.Inventory
             {
                 _meleeSo = meleeSo;
                 SetWeaponStats(meleeSo.colliderPoints);
-                SetCollision(false);
+                ToggleSwing(false);
             }
             else
             {
@@ -42,13 +46,13 @@ namespace Inventory.Inventory
 
         private void SetWeaponStats(Vector2[] colliderPoints)
         {
-            _edgeCollider ??= _equippedItemObject.GetComponent<EdgeCollider2D>();
             _edgeCollider.points = colliderPoints;
         }
 
-        private void SetCollision(bool state)
+        private void ToggleSwing(bool state)
         {
             _edgeCollider.enabled = state;
+            _trailRenderer.enabled = state;
         }
         
         private void OnTriggerEnter2D(Collider2D col)

@@ -13,7 +13,7 @@ namespace Inventory.Inventory.Item_Logic
         {
             _itemAnimationManager ??= useParameters.itemAnimationManager;
             
-            _itemAnimationManager.AttackMelee("attackLongMelee");
+            _itemAnimationManager.AttackMelee("attackLongMelee", null, true, 2);
 
             return true;
         }

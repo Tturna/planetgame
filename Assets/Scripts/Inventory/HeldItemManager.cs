@@ -104,6 +104,7 @@ namespace Inventory.Inventory
             if (_equippedItem != null)
             {
                 handsAnimator.SetLayerWeight(1, 0f);
+                handsAnimator.SetLayerWeight(2, 0f);
 
                 var relativeOffset = _equippedItem.itemSo.handPositionOffset;
                 var itemRight = equippedItemTransform.right;
@@ -115,11 +116,22 @@ namespace Inventory.Inventory
                 var offset = x + y;
 
                 _handLeft.position = equippedItemTransform.position + offset;
+                
+                if (_equippedItem.itemSo.useBothHands)
+                {
+                    _handRight.position = equippedItemTransform.position + offset;
+                }
+                else
+                {
+                    _handRight.localPosition = Vector3.zero;
+                }
             }
             else
             {
                 handsAnimator.SetLayerWeight(1, 1f);
+                handsAnimator.SetLayerWeight(2, 1f);
                 _handLeft.localPosition = Vector3.zero;
+                _handRight.localPosition = Vector3.zero;
             }
         }
         
