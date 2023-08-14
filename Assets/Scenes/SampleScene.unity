@@ -2994,8 +2994,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   edgeSmoothThreshold: 0.926
-  xOrg: 500
-  yOrg: 500
+  xOrg: 600
+  yOrg: 600
   noiseScale: 20
   isolevel: 0.42
   blendBias:
@@ -3031,14 +3031,14 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  xInnerOrg: 500
-  yInnerOrg: 500
+  xInnerOrg: 600
+  yInnerOrg: 600
   innerNoiseScale: 20
   innerIsoLevel: 0.3
   xSurfaceOrg: 0
   ySurfaceOrg: 0
   surfaceNoiseScale: 14
-  surfaceNoiseStrength: 6
+  surfaceNoiseStrength: 4
   diameter: 128
   resolution: 256
   atmosphereRadius: 128
@@ -8562,8 +8562,9 @@ MonoBehaviour:
   handsAnimator: {fileID: 1739784015}
   handsParent: {fileID: 1739784014}
   headSr: {fileID: 314217879}
-  accelerationSpeed: 25
+  accelerationSpeed: 30
   maxMoveSpeed: 4
+  maxSlopeMultiplier: 2
   jumpForce: 120
   maxJumpForceTime: 0.1
 --- !u!95 &733822061

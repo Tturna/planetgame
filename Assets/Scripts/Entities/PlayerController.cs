@@ -19,6 +19,7 @@ namespace Entities.Entities
             [Header("Movement Settings")]
             [SerializeField] private float accelerationSpeed;
             [SerializeField] private float maxMoveSpeed;
+            [SerializeField] private float maxSlopeMultiplier;
             [SerializeField] private float jumpForce;
             [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
             
@@ -28,6 +29,7 @@ namespace Entities.Entities
         
             private SpriteRenderer _sr;
             private Animator _animator;
+            private CapsuleCollider2D _collider;
             
         #endregion
 
@@ -81,6 +83,7 @@ namespace Entities.Entities
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
             _statsManager = GetComponent<StatsManager>();
+            _collider = GetComponent<CapsuleCollider2D>();
         }
 
         private void Update()
@@ -102,6 +105,23 @@ namespace Entities.Entities
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            var localVelocity = Rigidbody.GetVector(Rigidbody.velocity);
+            _oldLocalVelocity = localVelocity;
+
+            // Reduce friction when moving
+            var pmat = _collider.sharedMaterial;
+            
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (Mathf.Abs(_inputVector.x) > 0.1f)
+            {
+                pmat.friction = 0.3f;
+            }
+            else
+            {
+                pmat.friction = Mathf.Lerp(0.85f, 0.2f, localVelocity.magnitude / maxMoveSpeed);
+            }
+            
+            _collider.sharedMaterial = pmat; // quite the meme
 
             if (CanControl)
             {
@@ -132,19 +152,17 @@ namespace Entities.Entities
 
                     if (dot > 0)
                     {
-                        force = direction * (accelerationSpeed * Mathf.Clamp(1f + dot * 3f, 1f, 1.3f));
+                        force = direction * (accelerationSpeed * Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier));
                     }
-                    
                 }
                 
                 // Checking for velocity.x or y doesn't work because the player can face any direction and still be moving "right" in relation to themselves
                 // That's why we use a local velocity
-                var localVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 if ((_inputVector.x > 0 && localVelocity.x < maxMoveSpeed) ||
                     (_inputVector.x < 0 && localVelocity.x > -maxMoveSpeed))
                 {
                     Rigidbody.AddForce(force);
-                    _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
+                    // _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
                 _animator.SetBool("running", _inputVector.x != 0);
@@ -207,15 +225,22 @@ namespace Entities.Entities
             if (Input.GetKey(KeyCode.Space))
             {
                 // Check if the jump key can be held to increase jump force
-                if (_jumpForceTimer < maxJumpForceTime)
+                if (_jumpForceTimer >= maxJumpForceTime) return;
+                
+                if (!_jumping)
                 {
-                    if (!_jumping) _jumpCooldownTimer = JumpSafetyCooldown;
-                    _jumping = true;
+                    _jumpCooldownTimer = JumpSafetyCooldown;
+                        
                     _animator.SetBool("jumping", true);
                     handsAnimator.SetBool("jumping", true);
-                    
-                    // Actual jumping physics and the timer are in FixedUpdate()
+                        
+                    var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
+                    tempVel.y = 0f;
+                    Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
                 }
+                _jumping = true;
+                    
+                // Actual jumping physics and the timer are in FixedUpdate()
             }
             else if (Input.GetKeyUp(KeyCode.Space))
             {
@@ -238,22 +263,21 @@ namespace Entities.Entities
 
             var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
             var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, mask);
-            
+
             if (!hit) return;
-            
+
+            // Allow another jump when landing
             _jumpForceTimer = 0;
-            
-            if (_jumping)
-            {
-                _jumping = false;
-                _animator.SetBool("jumping", false);
-                handsAnimator.SetBool("jumping", false);
+
+            if (!_jumping) return;
+            _jumping = false;
+            _animator.SetBool("jumping", false);
+            handsAnimator.SetBool("jumping", false);
                 
-                // Set velocity when landing to keep horizontal momentum
-                var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
-                tempVel.x = _oldLocalVelocity.x;
-                Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
-            }
+            // Set velocity when landing to keep horizontal momentum
+            var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
+            tempVel.x = _oldLocalVelocity.x;
+            Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
         }
 
         private void HandleInteraction()
