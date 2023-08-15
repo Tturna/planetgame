@@ -18,10 +18,11 @@ namespace Inventory.Inventory
         [SerializeField] private Transform equippedItemTransform;
         [SerializeField] private Transform recoilAnchor;
         [SerializeField] private Animator handsAnimator; // This component is also used by PlayerController
+        [SerializeField] private Transform effectParent;
+        [SerializeField] private Transform flippingEffectParent;
         
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
-        private Transform _effectParent;
         private SpriteRenderer _equippedSr;
         private CameraController _camControl;
         private Animator _recoilAnimator;
@@ -45,11 +46,10 @@ namespace Inventory.Inventory
             _handsParent = handsAnimator.transform;
             _handLeft = _handsParent.GetChild(0).GetChild(0);
             _handRight = _handsParent.GetChild(1).GetChild(0);
-            _effectParent = equippedItemTransform.GetChild(0);
 
             _equippedSr = equippedItemTransform.GetComponent<SpriteRenderer>();
 
-            InventoryManager.ItemEquipped += item => _equippedItem = item;
+            InventoryManager.ItemEquipped += ItemEquipped;
         }
 
         private void Update()
@@ -98,7 +98,7 @@ namespace Inventory.Inventory
             var scale = recoilAnchor.localScale;
             scale.y = cursorAngle < 90 ? -1f : 1f;
             _itemAnchor.localScale = scale;
-            _effectParent.localScale = scale; // preserve effect scales
+            flippingEffectParent.localScale = scale; // flip flipping effects
         
             // Manually set left hand position when holding an item
             if (_equippedItem != null)
@@ -218,6 +218,13 @@ namespace Inventory.Inventory
         private void OnItemUsed(Item item)
         {
             ItemUsed?.Invoke(item);
+        }
+
+        private void ItemEquipped(Item item)
+        {
+            _equippedItem = item;
+            var state = item != null && item.itemSo.altIdleAnimation;
+            _recoilAnimator.SetBool("altIdle", state);
         }
     }
 }

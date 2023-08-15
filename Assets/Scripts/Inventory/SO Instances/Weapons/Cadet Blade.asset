@@ -19,6 +19,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 7bfec993a80118b4390c4289616cb812, type: 3}
   handPositionOffset: {x: -0.22, y: -0.22}
   useBothHands: 1
+  altIdleAnimation: 1
   logicCode: 2
   attackCooldown: 0.25
   energyCost: 0

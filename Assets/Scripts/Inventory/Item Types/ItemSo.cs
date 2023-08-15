@@ -32,6 +32,7 @@ namespace Inventory.Inventory.Item_Types
         public Sprite sprite;
         public Vector2 handPositionOffset;
         public bool useBothHands;
+        public bool altIdleAnimation;
 
         // TODO: here something to choose which data to show in tooltips
     }

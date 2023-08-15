@@ -8,6 +8,8 @@ namespace Inventory.Inventory.Item_Logic
     {
         private GameUtilities _utilities;
         private GameObject _projectilePrefab;
+        private GameObject _muzzleFlashObject;
+        private SpriteRenderer _muzzleFlashSr;
         
         public override bool UseOnce(UseParameters useParameters)
         {
@@ -37,14 +39,19 @@ namespace Inventory.Inventory.Item_Logic
             // Choose random muzzle flash
             if (weaponSo.muzzleFlashes.Length > 0)
             {
-                var muzzleFlashObject = useParameters.equippedItemObject.transform.GetChild(0).GetChild(0).gameObject;
-                muzzleFlashObject.transform.localPosition = weaponSo.muzzlePosition;
+                if (!_muzzleFlashObject)
+                {
+                    _muzzleFlashObject = useParameters.equippedItemObject.transform.GetChild(0).GetChild(0).gameObject;
+                    _muzzleFlashSr = _muzzleFlashObject.GetComponent<SpriteRenderer>();
+                }
                 
-                var flashSr = muzzleFlashObject.GetComponent<SpriteRenderer>();
-                flashSr.sprite = weaponSo.muzzleFlashes[Random.Range(0, weaponSo.muzzleFlashes.Length)];
-                flashSr.color = weaponSo.muzzleFlashColor;
+                _muzzleFlashObject.SetActive(true);
+                _muzzleFlashObject.transform.localPosition = weaponSo.muzzlePosition;
                 
-                _utilities.DelayExecute(() => { flashSr.sprite = null; }, 0.1f);
+                _muzzleFlashSr.sprite = weaponSo.muzzleFlashes[Random.Range(0, weaponSo.muzzleFlashes.Length)];
+                _muzzleFlashSr.color = weaponSo.muzzleFlashColor;
+                
+                _utilities.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
             }
             
             //Debug.Log($"Shoot {weaponSo.name} with {weaponSo.projectile?.sprite?.name ?? "null"} @ {Time.time}");
