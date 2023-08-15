@@ -14,5 +14,6 @@ namespace Inventory.Inventory.Item_Types
         public bool useGravity;
         public bool collideWithWorld;
         public bool canHurtPlayer;
+        public Gradient trailColor;
     }
 }

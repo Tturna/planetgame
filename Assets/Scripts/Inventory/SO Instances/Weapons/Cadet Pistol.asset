@@ -18,8 +18,10 @@ MonoBehaviour:
   maxStack: 1
   sprite: {fileID: 21300000, guid: 96515105b3fc83140809f6fb705128fc, type: 3}
   handPositionOffset: {x: -0.2, y: -0.1}
+  useBothHands: 0
+  altIdleAnimation: 0
   logicCode: 1
-  attackCooldown: 0.3
+  attackCooldown: 0.2
   energyCost: 5
   recoilHorizontal: 0.589
   recoilAngular: 0.711
@@ -32,13 +34,42 @@ MonoBehaviour:
   incrementStackOnUse: 0
   projectile:
     sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
-    projectileSpeed: 15
+    projectileSpeed: 45
     damage: 6
     knockback: 100
     piercing: 0
     useGravity: 0
     collideWithWorld: 0
     canHurtPlayer: 0
+    trailColor:
+      serializedVersion: 2
+      key0: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 0.49803922}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
   muzzlePosition: {x: 0.55, y: 0.125}
   muzzleFlashes:
   - {fileID: 401124699, guid: 5d1f927952885c547a3fcce829665385, type: 3}

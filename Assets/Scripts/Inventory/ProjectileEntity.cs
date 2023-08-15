@@ -31,6 +31,7 @@ namespace Inventory.Inventory
             }
             
             Rigidbody.AddForce(transform.right * _data.projectileSpeed, ForceMode2D.Impulse);
+            GetComponent<TrailRenderer>().colorGradient = _data.trailColor;
         }
 
         protected override void OnTriggerEnter2D(Collider2D col)
