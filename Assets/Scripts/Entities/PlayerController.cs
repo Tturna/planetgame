@@ -52,10 +52,26 @@ namespace Entities.Entities
 
         public delegate void ItemPickedUpHandler(GameObject itemObject);
         public ItemPickedUpHandler ItemPickedUp;
+        
+        public delegate void JumpedHandler();
+        public event JumpedHandler Jumped;
+        
+        public delegate void GroundedHandler();
+        public event GroundedHandler Grounded;
 
         private void OnItemPickedUp(GameObject itemObject)
         {
             ItemPickedUp?.Invoke(itemObject);
+        }
+        
+        private void OnJumped()
+        {
+            Jumped?.Invoke();
+        }
+        
+        private void OnGrounded()
+        {
+            Grounded?.Invoke();
         }
         
         // -----------------------------------------------------
@@ -237,6 +253,8 @@ namespace Entities.Entities
                     var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
                     tempVel.y = 0f;
                     Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
+                    
+                    OnJumped();
                 }
                 _jumping = true;
                     
@@ -278,6 +296,8 @@ namespace Entities.Entities
             var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
             tempVel.x = _oldLocalVelocity.x;
             Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
+            
+            OnGrounded();
         }
 
         private void HandleInteraction()
