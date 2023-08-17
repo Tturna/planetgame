@@ -217,7 +217,8 @@ namespace Entities.Entities.Enemies
             
             if (pattern == null) return false;
             
-            pattern.GetAttack().Invoke(this, transform.right * relativeMoveDirection.x);
+            // TODO: Consider a system that allows different shot directions
+            pattern.GetAttack().Invoke(this, (transform.right * relativeMoveDirection.x + transform.up * 0.2f).normalized);
             _animator.SetInteger("attackIndex", pattern.GetIndex());
             _animator.SetTrigger("attack");
 

@@ -6,7 +6,7 @@ namespace Entities.Entities
 {
     public class EntityController : MonoBehaviour
     {
-        [SerializeField] private float gravityMultiplier;
+        [SerializeField] protected float gravityMultiplier;
         public GameObject CurrentPlanetObject { get; protected set; }
         protected PlanetGenerator CurrentPlanetGen { get; set; }
         protected Rigidbody2D Rigidbody { get; set; }

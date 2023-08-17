@@ -15,6 +15,9 @@ namespace Entities.Entities
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
             [SerializeField] private SpriteRenderer headSr;
+            
+            [Header("Other")]
+            [SerializeField] private Material flashMaterial;
         
             [Header("Movement Settings")]
             [SerializeField] private float accelerationSpeed;
@@ -48,6 +51,12 @@ namespace Entities.Entities
             private float _jumpCooldownTimer; // Same ^
             private float _jumpForceTimer; // Used to calculate how long the jump key can be held down to jump higher
             
+        #endregion
+        
+        #region Other
+
+            private Material _defaultMaterial;
+        
         #endregion
 
         public delegate void ItemPickedUpHandler(GameObject itemObject);
@@ -100,6 +109,8 @@ namespace Entities.Entities
             _sr = GetComponent<SpriteRenderer>();
             _statsManager = GetComponent<StatsManager>();
             _collider = GetComponent<CapsuleCollider2D>();
+            
+            _defaultMaterial = _sr.material;
         }
 
         private void Update()
@@ -374,6 +385,19 @@ namespace Entities.Entities
             var died = _statsManager.ChangeHealth(amount);
             if (died) Death();
             //TODO: damage numbers
+
+            // Make the player flash red unless the game is run in the editor.
+            // For some reason the editor lags like a motherfucker because of this.
+            if (!Application.isEditor)
+            {
+                _sr.material = flashMaterial;
+                headSr.material = flashMaterial;
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    _sr.material = _defaultMaterial;
+                    headSr.material = _defaultMaterial;
+                }, 0.1f);
+            }
             
             Debug.Log($"Took {amount} damage!");
         }

@@ -8909,6 +8909,7 @@ MonoBehaviour:
   handsAnimator: {fileID: 1739784015}
   handsParent: {fileID: 1739784014}
   headSr: {fileID: 314217879}
+  flashMaterial: {fileID: 2100000, guid: f4ab069e67c979343a7921f4e136e955, type: 2}
   accelerationSpeed: 30
   maxMoveSpeed: 4
   maxSlopeMultiplier: 2
@@ -25680,7 +25681,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hpBar: {fileID: 36326562}
+  hpBarBg: {fileID: 589109428}
+  hpBarIcon: {fileID: 1565568580}
   energyBar: {fileID: 403995564}
+  flashMaterial: {fileID: 2100000, guid: f4ab069e67c979343a7921f4e136e955, type: 2}
 --- !u!1 &1631753389
 GameObject:
   m_ObjectHideFlags: 0

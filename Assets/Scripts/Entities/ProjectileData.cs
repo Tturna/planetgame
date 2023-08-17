@@ -12,6 +12,8 @@ namespace Entities.Entities
         public float knockback;
         public bool piercing;
         public bool useGravity;
+        public float gravityMultiplier;
+        public bool faceDirectionOfTravel;
         public bool collideWithWorld;
         public bool canHurtPlayer;
         public Gradient trailColor;

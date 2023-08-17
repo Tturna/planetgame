@@ -154,7 +154,6 @@ namespace Entities.Entities.Enemies
             HandleGroundCheck(data.rb.transform, data.anim);
 
             _jumpCooldown -= Time.deltaTime;
-            Debug.Log(_jumpCooldown);
             if (_jumping || _jumpCooldown > 0) return;
             var timeSinceLastJump = Time.time - _lastJumpTime;
 

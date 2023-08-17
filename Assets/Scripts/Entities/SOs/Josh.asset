@@ -47,11 +47,13 @@ MonoBehaviour:
     preventsMovement: 1
     projectiles:
     - sprite: {fileID: 21300000, guid: 3fc1842a72da20d4bbbda5430a64ca84, type: 3}
-      projectileSpeed: 10
+      projectileSpeed: 8.5
       damage: 10
       knockback: 10
       piercing: 0
       useGravity: 1
+      gravityMultiplier: 11
+      faceDirectionOfTravel: 1
       collideWithWorld: 1
       canHurtPlayer: 1
       trailColor:
