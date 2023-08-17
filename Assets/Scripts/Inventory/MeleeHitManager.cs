@@ -4,6 +4,7 @@
 
 using Entities;
 using Entities.Entities;
+using Entities.Entities.Enemies;
 using Inventory.Inventory.Item_Logic;
 using Inventory.Inventory.Item_Types;
 using UnityEngine;

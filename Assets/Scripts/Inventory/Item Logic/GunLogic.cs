@@ -1,4 +1,5 @@
-﻿using Inventory.Inventory.Item_Types;
+﻿using Entities.Entities;
+using Inventory.Inventory.Item_Types;
 using UnityEngine;
 using Utilities;
 

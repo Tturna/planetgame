@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
 
-namespace Entities.Entities
+namespace Entities.Entities.Enemies
 {
     [RequireComponent(typeof(HealthbarManager))]
     [RequireComponent(typeof(DamageNumberManager))]
@@ -24,11 +25,14 @@ namespace Entities.Entities
         private HealthbarManager _healthbarManager;
         private DamageNumberManager _damageNumberManager;
         private Shader _defaultShader, _flashShader;
+        private MovementPattern _movementPattern;
+        private Action<MovementPattern.MovementFunctionData> _movementFunction;
+        private MovementPattern.MovementFunctionData _movementFunctionData;
         
         private float _calculationTimer, _evasionTimer, _attackTimer;
         private float _distanceToPlayer;
         private float _health, _maxHealth;
-        private bool _jumping, _aggravated, _canMove = true;
+        private bool _aggravated, _canMove = true;
 
         protected override void Start()
         {
@@ -47,6 +51,11 @@ namespace Entities.Entities
             _health = enemySo.health;
             _maxHealth = enemySo.maxHealth;
             
+            _movementPattern = enemySo.movementPattern;
+            _movementFunction = _movementPattern.GetMovement();
+            _movementPattern.Init();
+            _movementFunctionData = new MovementPattern.MovementFunctionData();
+
             _healthbarManager.Initialize(_health, _maxHealth, enemySo.isBoss, enemySo.healthbarDistance);
 
             var hitboxChild = new GameObject("Hitbox");
@@ -57,6 +66,7 @@ namespace Entities.Entities
             var hitbox = hitboxChild.AddComponent<BoxCollider2D>();
             hitbox.offset = enemySo.hitboxOffset;
             hitbox.size = enemySo.hitboxSize;
+            hitbox.edgeRadius = enemySo.hitboxEdgeRadius;
             hitbox.isTrigger = true;
             
             _defaultShader = _sr.material.shader;
@@ -79,6 +89,10 @@ namespace Entities.Entities
             if (_aggravated)
             {
                 AggroBehavior();
+            }
+            else
+            {
+                // TODO: Idle behavior
             }
         }
 
@@ -121,12 +135,10 @@ namespace Entities.Entities
         private void Aggro()
         {
             _aggravated = true;
-            
-            if (enemySo.isBoss)
-            {
-                _healthbarManager.EnableBossUIHealth();
-                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
-            }
+
+            if (!enemySo.isBoss) return;
+            _healthbarManager.EnableBossUIHealth();
+            _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
         }
 
         private void Deaggro()
@@ -139,63 +151,85 @@ namespace Entities.Entities
         {
             if (_attackTimer > 0)
             {
-                if (!_canMove) return;
-                
-                // Movement
-                _animator.SetBool("moving", true);
-                
-                var angleDiff = Vector3.SignedAngle(transform.position, _player.transform.position, Vector3.back);
-                relativeMoveDirection = angleDiff > 0 ? Vector3.right : Vector3.left;
-                Rigidbody.AddRelativeForce(relativeMoveDirection * enemySo.moveSpeed);
-
-                _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
-
                 _attackTimer -= Time.fixedDeltaTime;
             }
-            else
+            else if (!_animator.GetBool("jumping") && Attack())
             {
                 _attackTimer = enemySo.attackInterval;
-                Attack();
-            }
-        }
-
-        private void Attack()
-        {
-            var idx = 0;
-            if (enemySo.longAttacks.Length > 0 && _distanceToPlayer > enemySo.attackRangeThreshold)
-            {
-                // Long range or secondary attack
-                var count = enemySo.longAttacks.Length;
-                
-                if (count > 0)
-                {
-                    idx = Random.Range(0, count);
-                }
-
-                var pattern = enemySo.longAttacks[idx];
-                pattern.GetAttack().Invoke(this);
-                _animator.SetInteger("attackIndex", pattern.GetIndex());
-            }
-            else
-            {
-                // Short range or primary attack
-                var count = enemySo.shortAttacks.Length;
-                
-                if (count > 0)
-                {
-                    idx = Random.Range(0, count);
-                }
-                
-                var pattern = enemySo.shortAttacks[idx];
-                pattern.GetAttack().Invoke(this);
-                _animator.SetInteger("attackIndex", pattern.GetIndex());
             }
             
-            _animator.SetTrigger("attack");
-            _animator.SetBool("moving", false);
-            _canMove = false;
+            if (!_canMove) return;
+            
+            // Movement
+            _animator.SetBool("moving", true);
+            
+            // var angleDiff = Vector3.SignedAngle(transform.position, _player.transform.position, Vector3.back);
+            // Debug.Log($"Signed angle: {angleDiff}");
 
-            StartCoroutine(DelayEnableMovement());
+            var posDiff = GetVectorToPlayer();
+            var dot = Vector3.Dot(posDiff.normalized, transform.right);
+            
+            relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
+            _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
+            
+            _movementFunctionData.enemySo = enemySo;
+            _movementFunctionData.rb = Rigidbody;
+            _movementFunctionData.anim = _animator;
+            _movementFunctionData.playerTr = _player.transform;
+            _movementFunctionData.distanceToPlayer = _distanceToPlayer;
+            _movementFunctionData.dotToPlayer = dot;
+            _movementFunctionData.relativeMoveDirection = relativeMoveDirection;
+            
+            _movementFunction.Invoke(_movementFunctionData);
+        }
+
+        private bool Attack()
+        {
+            if (enemySo.attacks.Length == 0) return false;
+
+            AttackPattern pattern = null;
+            var usedIndices = new bool[enemySo.attacks.Length];
+            var rng = Random.Range(0, enemySo.attacks.Length);
+
+            foreach (var attackPattern in enemySo.attacks)
+            {
+                var ap = attackPattern;
+
+                if (enemySo.useRandomAttack)
+                {
+                    if (usedIndices[rng])
+                    {
+                        rng = (rng + 1) % enemySo.attacks.Length;
+                        continue;
+                    }
+                    ap = enemySo.attacks[rng];
+                }
+
+                if (!enemySo.alwaysAttack && ap.attackDistance < _distanceToPlayer)
+                {
+                    if (enemySo.useRandomAttack) usedIndices[rng] = true;
+                    continue;
+                }
+
+                pattern = ap;
+                break;
+            }
+            
+            if (pattern == null) return false;
+            
+            pattern.GetAttack().Invoke(this, transform.right * relativeMoveDirection.x);
+            _animator.SetInteger("attackIndex", pattern.GetIndex());
+            _animator.SetTrigger("attack");
+
+            if (pattern.preventsMovement)
+            {
+                _animator.SetBool("moving", false);
+                _canMove = false;
+
+                StartCoroutine(DelayEnableMovement());
+            }
+            
+            return true;
         }
 
         public void TakeDamage(float amount)

@@ -12,29 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84b1f98ea4654b84af66154f68a0f981, type: 3}
   m_Name: Swamp Thing
   m_EditorClassIdentifier: 
-  enemyName: 
+  enemyName: Swamp Thing
   maxHealth: 50
   health: 50
   contactDamage: 7
   knockback: 5
   aggroRange: 7
-  moveSpeed: 11
-  evasionTime: 7
-  attackInterval: 2
-  attackRecoveryTime: 0.5
-  attackRangeThreshold: 1.5
+  accelerationSpeed: 25
+  maxSpeed: 2
+  maxSlopeMultiplier: 3
+  jumpForce: 12
+  movementPattern:
+    movementType: 0
   isBoss: 0
   flipSprite: 1
   bossPortrait: {fileID: 0}
   hitboxOffset: {x: 0, y: 0}
-  hitboxSize: {x: 0.8, y: 0.75}
+  hitboxSize: {x: 0.25, y: 0.5}
+  hitboxEdgeRadius: 0
   healthbarDistance: 0.66
   overrideAnimator: {fileID: 22100000, guid: e7e7777931ce10d489565a67e3591277, type: 2}
-  shortAttacks:
+  evasionTime: 7
+  attackInterval: 2
+  attackRecoveryTime: 0.5
+  alwaysAttack: 0
+  useRandomAttack: 0
+  attacks:
   - attackFunction: 0
     animationIndex: 1
     damage: 10
     knockback: 5
     attackDistance: 1.5
     attackDelay: 0.4
-  longAttacks: []
+    preventsMovement: 1
+    projectiles: []

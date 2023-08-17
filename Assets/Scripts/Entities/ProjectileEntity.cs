@@ -1,9 +1,6 @@
-﻿using Entities;
-using Entities.Entities;
-using Inventory.Inventory.Item_Types;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Inventory.Inventory
+namespace Entities.Entities
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class ProjectileEntity : EntityController
