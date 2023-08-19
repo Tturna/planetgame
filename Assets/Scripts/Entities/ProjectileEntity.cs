@@ -1,22 +1,52 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using Utilities;
 
 namespace Entities.Entities
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class ProjectileEntity : EntityController
     {
+        private ParticleSystem _breakPs;
         private ProjectileData _data;
         private int _terrainLayer;
         private int _terrainBitsLayer;
+        private int _ignorePlayerLayer;
+        private Vector3 _lastPos;
         
         protected override void Start()
         {
             // base.Start();
 
+            _breakPs = GetComponentInChildren<ParticleSystem>();
             GetComponent<SpriteRenderer>().sprite = _data.sprite;
             _terrainLayer = LayerMask.NameToLayer("Terrain");
             _terrainBitsLayer = LayerMask.NameToLayer("TerrainBits");
+            _ignorePlayerLayer = LayerMask.NameToLayer("IgnorePlayer");
+            
+            _lastPos = transform.position;
+        }
+
+        private void Update()
+        {
+            // Raycast to last position to prevent projectiles from going through stuff
+            var mask = 1 << _terrainLayer | 1 << _terrainBitsLayer | 1 << _ignorePlayerLayer;
+            var distance = Vector3.Distance(_lastPos, transform.position);
+            var direction = (transform.position - _lastPos).normalized;
+            var hit = Physics2D.Raycast(_lastPos, direction, distance, mask);
+            
+            if (hit)
+            {
+                transform.position = hit.point;
+                DestroyProjectile(hit.collider);
+                return;
+            }
+            
+            _lastPos = transform.position;
+            
+            if (_data.faceDirectionOfTravel)
+            {
+                transform.right = Rigidbody.velocity.normalized;
+            }
         }
 
         public void Init(ProjectileData projectileData)
@@ -35,15 +65,28 @@ namespace Entities.Entities
             gravityMultiplier = _data.gravityMultiplier;
             
             Rigidbody.AddForce(transform.right * _data.projectileSpeed, ForceMode2D.Impulse);
-            GetComponent<TrailRenderer>().colorGradient = _data.trailColor;
+            var trailRenderer = GetComponent<TrailRenderer>();
+            trailRenderer.colorGradient = _data.trailColor;
+            trailRenderer.time = _data.trailTime;
         }
 
-        private void Update()
+        private void DestroyProjectile(Collider2D col)
         {
-            if (_data.faceDirectionOfTravel)
-            {
-                transform.right = Rigidbody.velocity.normalized;
-            }
+            var colDiff = (col.transform.position - transform.position).normalized; 
+            var angle = Mathf.Atan2(colDiff.y, colDiff.x) * Mathf.Rad2Deg;
+            
+            // TODO: object pooling
+            var psTr = _breakPs.transform;
+            psTr.SetParent(null);
+            psTr.localScale = Vector3.one;
+            psTr.eulerAngles = Vector3.forward * angle;
+            
+            var main = _breakPs.main;
+            main.startColor = _data.trailColor.Evaluate(0f);
+            _breakPs.Play();
+            
+            GameUtilities.instance.DelayExecute(() => Destroy(_breakPs.gameObject), 1f);
+            Destroy(gameObject);
         }
 
         protected override void OnTriggerEnter2D(Collider2D col)
@@ -51,7 +94,7 @@ namespace Entities.Entities
             base.OnTriggerEnter2D(col);
             if (col.gameObject.layer == _terrainLayer || col.gameObject.layer == _terrainBitsLayer)
             {
-                Destroy(gameObject);
+                DestroyProjectile(col);
             }
 
             if (!col.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
@@ -63,7 +106,7 @@ namespace Entities.Entities
 
                 if (!_data.piercing)
                 {
-                    Destroy(gameObject);
+                    DestroyProjectile(col);
                 }
             }
         }

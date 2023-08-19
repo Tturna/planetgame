@@ -12,6 +12,7 @@ namespace Inventory.Inventory.Item_Logic
         private bool _swingEnding; // This exists to prevent the player from attacking right after the combo time window is closed
         private Animator _recoilAnimator;
         private int _attackIndex;
+        private int _altIdleIndex;
         private string _lastTriggerName;
         
         public delegate void LogicCallback();
@@ -31,6 +32,7 @@ namespace Inventory.Inventory.Item_Logic
             if (triggerName != _lastTriggerName || !roundRobin)
             {
                 _attackIndex = 0;
+                _altIdleIndex = 0;
             }
             
             if (_swingEnding) return;
@@ -52,8 +54,11 @@ namespace Inventory.Inventory.Item_Logic
             
             // Prevent triggering a swing if an attack is queued
             if (attackQueued) return;
+
+            if (roundRobin) _altIdleIndex = (_altIdleIndex + 1) % 2;
             
             _recoilAnimator.SetInteger("attackIndex", _attackIndex);
+            _recoilAnimator.SetInteger("altIdleIndex", _altIdleIndex);
             _recoilAnimator.SetBool("swinging", true);
             _recoilAnimator.SetBool("attackQueued", false);
             _recoilAnimator.SetBool("roundRobin", roundRobin);

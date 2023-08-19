@@ -17,5 +17,6 @@ namespace Entities.Entities
         public bool collideWithWorld;
         public bool canHurtPlayer;
         public Gradient trailColor;
+        public float trailTime;
     }
 }
