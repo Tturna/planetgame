@@ -39,6 +39,8 @@ MonoBehaviour:
     knockback: 100
     piercing: 0
     useGravity: 0
+    gravityMultiplier: 0
+    faceDirectionOfTravel: 0
     collideWithWorld: 0
     canHurtPlayer: 0
     trailColor:
@@ -70,6 +72,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    trailTime: 0.05
   muzzlePosition: {x: 0.7, y: 0.1}
   muzzleFlashes:
   - {fileID: 401124699, guid: 5d1f927952885c547a3fcce829665385, type: 3}
