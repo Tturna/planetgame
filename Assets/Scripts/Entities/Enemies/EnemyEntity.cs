@@ -24,6 +24,8 @@ namespace Entities.Entities.Enemies
         private SpriteRenderer _sr;
         private HealthbarManager _healthbarManager;
         private DamageNumberManager _damageNumberManager;
+        private ParticleSystem _deathPs;
+        
         private Shader _defaultShader, _flashShader;
         private MovementPattern _movementPattern;
         private Action<MovementPattern.MovementFunctionData> _movementFunction;
@@ -43,6 +45,7 @@ namespace Entities.Entities.Enemies
             _sr = GetComponent<SpriteRenderer>();
             _healthbarManager = GetComponent<HealthbarManager>();
             _damageNumberManager = GetComponent<DamageNumberManager>();
+            _deathPs = GetComponentInChildren<ParticleSystem>();
             
             _animator.runtimeAnimatorController = enemySo.overrideAnimator;
 
@@ -273,6 +276,10 @@ namespace Entities.Entities.Enemies
 
         public void Death()
         {
+            // TODO: object pooling
+            _deathPs.transform.SetParent(null);
+            _deathPs.Play();
+            GameUtilities.instance.DelayExecute(() => Destroy(_deathPs.gameObject), 1f);
             Destroy(gameObject);
         }
 

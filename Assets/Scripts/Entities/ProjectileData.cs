@@ -16,6 +16,7 @@ namespace Entities.Entities
         public bool faceDirectionOfTravel;
         public bool collideWithWorld;
         public bool canHurtPlayer;
+        public Color breakParticleColor;
         public Gradient trailColor;
         public float trailTime;
     }

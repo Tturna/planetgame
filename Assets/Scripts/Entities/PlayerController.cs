@@ -399,6 +399,8 @@ namespace Entities.Entities
                 }, 0.1f);
             }
             
+            CameraController.CameraShake(0.1f, 0.1f);
+            
             Debug.Log($"Took {amount} damage!");
         }
 

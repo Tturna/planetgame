@@ -231,7 +231,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.55, y: 0.2}
+  m_Size: {x: 0.7, y: 0.2}
   m_Direction: 1
 --- !u!96 &6292807227448631207
 TrailRenderer:
@@ -534,9 +534,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startSpeed:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 5
-      minScalar: 5
+      minMaxState: 3
+      scalar: 6
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -651,7 +651,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.0625
+      scalar: 0.1875
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1115,7 +1115,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.18
+      value: 0.09
       mode: 0
       spread: 0
       speed:
@@ -1172,7 +1172,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
     arc:
-      value: 180
+      value: 360
       mode: 0
       spread: 0
       speed:
@@ -1788,8 +1788,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
@@ -1907,7 +1907,10 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 305450899, guid: fe6bca3cdc61a0f4ea6a6baa73b3577c, type: 3}
+    - sprite: {fileID: 612939235, guid: fe6bca3cdc61a0f4ea6a6baa73b3577c, type: 3}
+    - sprite: {fileID: 128003143, guid: fe6bca3cdc61a0f4ea6a6baa73b3577c, type: 3}
+    - sprite: {fileID: -1279580013, guid: fe6bca3cdc61a0f4ea6a6baa73b3577c, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:

@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections;
-using CameraScripts;
 using Entities;
+using Entities.Entities;
 using Inventory.Inventory.Item_Logic;
 using Inventory.Inventory.Item_Types;
 using UnityEngine;
@@ -24,7 +24,6 @@ namespace Inventory.Inventory
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
         private SpriteRenderer _equippedSr;
-        private CameraController _camControl;
         private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
         private Item _equippedItem;
@@ -40,7 +39,6 @@ namespace Inventory.Inventory
             _recoilAnimator = recoilAnchor.GetComponent<Animator>();
             _itemAnimationManager = recoilAnchor.GetComponent<ItemAnimationManager>();
             _rigidbody = GetComponent<Rigidbody2D>();
-            _camControl = GetComponentInChildren<CameraController>();
             _statsManager = GetComponent<StatsManager>();
 
             _handsParent = handsAnimator.transform;
@@ -198,7 +196,7 @@ namespace Inventory.Inventory
             _rigidbody.AddForce(recoilDirection * usableItemSo.playerRecoilStrength, ForceMode2D.Impulse);
             
             // Camera shake
-            _camControl.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
+            CameraController.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
 
             return true;
         }

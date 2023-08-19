@@ -1,19 +1,19 @@
 using System.Collections;
-using Entities;
-using Entities.Entities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace CameraScripts
+namespace Entities.Entities
 {
     public class CameraController : MonoBehaviour
     {
         [SerializeField] private Vector3 defaultCamPosition;
     
+        public static CameraController instance;
         private Transform _planetTransform;
 
         private void Start()
         {
+            instance = this;
             PlayerController.instance.OnEnteredPlanet += SetTargetPlanet;
         }
 
@@ -31,17 +31,17 @@ namespace CameraScripts
             _planetTransform = planet.transform;
         }
 
-        public void CameraShake(float time, float strength)
+        public static void CameraShake(float time, float strength)
         {
-            StartCoroutine(_CameraShake(time, strength));
+            instance.StartCoroutine(_CameraShake(time, strength));
         }
 
-        private IEnumerator _CameraShake(float time, float strength)
+        private static IEnumerator _CameraShake(float time, float strength)
         {
             while (time > 0f)
             {
                 var rnd = Random.insideUnitCircle * strength;
-                transform.localPosition =  defaultCamPosition + (Vector3)rnd;
+                instance.transform.localPosition =  instance.defaultCamPosition + (Vector3)rnd;
                 time -= Time.deltaTime;
                 yield return new WaitForEndOfFrame();
             }

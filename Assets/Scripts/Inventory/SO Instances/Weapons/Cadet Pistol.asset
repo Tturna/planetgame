@@ -43,6 +43,7 @@ MonoBehaviour:
     faceDirectionOfTravel: 0
     collideWithWorld: 0
     canHurtPlayer: 0
+    breakParticleColor: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
     trailColor:
       serializedVersion: 2
       key0: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}

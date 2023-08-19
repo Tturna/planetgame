@@ -82,7 +82,7 @@ namespace Entities.Entities
             psTr.eulerAngles = Vector3.forward * angle;
             
             var main = _breakPs.main;
-            main.startColor = _data.trailColor.Evaluate(0f);
+            main.startColor = _data.breakParticleColor;
             _breakPs.Play();
             
             GameUtilities.instance.DelayExecute(() => Destroy(_breakPs.gameObject), 1f);
