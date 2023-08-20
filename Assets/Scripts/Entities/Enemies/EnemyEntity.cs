@@ -17,7 +17,7 @@ namespace Entities.Entities.Enemies
     {
         [SerializeField] private EnemySo enemySo;
         
-        public Vector3 relativeMoveDirection, globalMoveDirection;
+        [HideInInspector] public Vector3 relativeMoveDirection, globalMoveDirection;
         
         private PlayerController _player;
         private Animator _animator;
@@ -239,7 +239,10 @@ namespace Entities.Entities.Enemies
         public void TakeDamage(float amount)
         {
             if (_health <= 0) return;
-            
+
+            // TODO: Figure out critical hits
+            amount = Mathf.Round(Random.Range(amount * 0.8f, amount * 1.2f));
+
             _health = Mathf.Clamp(_health - amount, 0, _maxHealth);
             _healthbarManager.UpdateHealthbar(_health, _maxHealth);
             
@@ -270,7 +273,11 @@ namespace Entities.Entities.Enemies
             if (amount == 0) return;
             
             Rigidbody.velocity = Vector2.zero;
-            var knockbackDirection = (transform.position - damageSourcePosition).normalized;
+            
+            // check if the damage source is on the left or the right in relation to the enemy
+            var dot = Vector3.Dot((damageSourcePosition - transform.position).normalized, transform.right);
+            var knockbackDirection = dot > 0 ? -transform.right : transform.right;
+            
             Rigidbody.AddForce(knockbackDirection * amount, ForceMode2D.Force);
         }
 

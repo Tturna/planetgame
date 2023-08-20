@@ -2,8 +2,6 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
-using Entities;
-using Entities.Entities;
 using Entities.Entities.Enemies;
 using Inventory.Inventory.Item_Logic;
 using Inventory.Inventory.Item_Types;
@@ -13,20 +11,19 @@ namespace Inventory.Inventory
 {
     public class MeleeHitManager : MonoBehaviour
     {
+        [SerializeField] private TrailRenderer trailRenderer;
         private GameObject _equippedItemObject => gameObject;
         
         private MeleeSo _meleeSo;
         private EdgeCollider2D _edgeCollider;
-        private TrailRenderer _trailRenderer;
 
         private void Start()
         {
             _edgeCollider = GetComponent<EdgeCollider2D>();
-            _trailRenderer = GetComponent<TrailRenderer>();
             
             var itemAnimationManager = transform.parent.GetComponent<ItemAnimationManager>();
-            itemAnimationManager.SwingStarted += () => ToggleSwing(true);
-            itemAnimationManager.SwingCompleted += () => ToggleSwing(false);
+            itemAnimationManager.SwingStarted += (trailState) => ToggleSwing(true, trailState);
+            itemAnimationManager.SwingCompleted += () => ToggleSwing(false, false);
 
             InventoryManager.ItemEquipped += OnItemEquipped;
         }
@@ -36,8 +33,8 @@ namespace Inventory.Inventory
             if (item?.itemSo is MeleeSo meleeSo)
             {
                 _meleeSo = meleeSo;
-                SetWeaponStats(meleeSo.colliderPoints);
-                ToggleSwing(false);
+                SetWeaponStats(_meleeSo);
+                ToggleSwing(false, false);
             }
             else
             {
@@ -45,15 +42,23 @@ namespace Inventory.Inventory
             }
         }
 
-        private void SetWeaponStats(Vector2[] colliderPoints)
+        private void SetWeaponStats(MeleeSo meleeSo)
         {
-            _edgeCollider.points = colliderPoints;
+            if (meleeSo == null)
+            {
+                _edgeCollider.points = null;
+                return;
+            }
+            
+            _edgeCollider.points = meleeSo.colliderPoints;
+            trailRenderer.transform.localPosition = meleeSo.swingTrailOffset;
+            trailRenderer.startWidth = meleeSo.swingTrailWidth;
         }
 
-        private void ToggleSwing(bool state)
+        private void ToggleSwing(bool state, bool trailState)
         {
             _edgeCollider.enabled = state;
-            _trailRenderer.enabled = state;
+            trailRenderer.enabled = trailState;
         }
         
         private void OnTriggerEnter2D(Collider2D col)

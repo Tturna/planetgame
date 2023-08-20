@@ -8,5 +8,7 @@ namespace Inventory.Inventory.Item_Types
         public float damage;
         public float knockback;
         public Vector2[] colliderPoints;
+        public Vector2 swingTrailOffset;
+        public float swingTrailWidth;
     }
 }

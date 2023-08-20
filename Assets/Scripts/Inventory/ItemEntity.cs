@@ -25,13 +25,13 @@ namespace Inventory.Inventory
                 GetComponent<BoxCollider2D>().size = item.itemSo.sprite.bounds.size;
             }
 
-            [MenuItem("CONTEXT/ItemEntity/InitializeForEditor")]
-            static void InitializeForEditor(MenuCommand command)
-            {
-                var itemEntity = (ItemEntity)command.context;
-                itemEntity.gameObject.name = "(item) " + itemEntity.item.itemSo.name;
-                itemEntity.GetComponent<SpriteRenderer>().sprite = itemEntity.item.itemSo.sprite;
-            }
+            // [MenuItem("CONTEXT/ItemEntity/InitializeForEditor")]
+            // static void InitializeForEditor(MenuCommand command)
+            // {
+            //     var itemEntity = (ItemEntity)command.context;
+            //     itemEntity.gameObject.name = "(item) " + itemEntity.item.itemSo.name;
+            //     itemEntity.GetComponent<SpriteRenderer>().sprite = itemEntity.item.itemSo.sprite;
+            // }
         }
     }
 }

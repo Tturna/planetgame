@@ -36,7 +36,7 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 505e23aa09edc1d42b41ad936a9397e9, type: 3}
     projectileSpeed: 50
     damage: 15
-    knockback: 100
+    knockback: 200
     piercing: 0
     useGravity: 0
     gravityMultiplier: 0

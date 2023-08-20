@@ -37,7 +37,7 @@ namespace Entities.Entities
             if (hit)
             {
                 transform.position = hit.point;
-                DestroyProjectile(hit.collider);
+                ProjectileHit(hit.collider);
                 return;
             }
             
@@ -70,9 +70,9 @@ namespace Entities.Entities
             trailRenderer.time = _data.trailTime;
         }
 
-        private void DestroyProjectile(Collider2D col)
+        private void DestroyProjectile(Vector3 hitObjectPos)
         {
-            var colDiff = (col.transform.position - transform.position).normalized; 
+            var colDiff = (hitObjectPos - transform.position).normalized; 
             var angle = Mathf.Atan2(colDiff.y, colDiff.x) * Mathf.Rad2Deg;
             
             // TODO: object pooling
@@ -89,26 +89,30 @@ namespace Entities.Entities
             Destroy(gameObject);
         }
 
-        protected override void OnTriggerEnter2D(Collider2D col)
+        private void ProjectileHit(Collider2D col)
         {
-            base.OnTriggerEnter2D(col);
             if (col.gameObject.layer == _terrainLayer || col.gameObject.layer == _terrainBitsLayer)
             {
-                DestroyProjectile(col);
+                DestroyProjectile(col.transform.position);
             }
 
             if (!col.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
+            if (!_data.canHurtPlayer && damageable is PlayerController) return;
             
-            if (_data.canHurtPlayer || damageable is not PlayerController)
-            {
-                damageable.TakeDamage(_data.damage);
-                damageable.Knockback(transform.position, _data.knockback);
+            damageable.TakeDamage(_data.damage);
+            // Here we use last position because the projectile might have moved past the collider
+            damageable.Knockback(_lastPos, _data.knockback);
 
-                if (!_data.piercing)
-                {
-                    DestroyProjectile(col);
-                }
+            if (!_data.piercing)
+            {
+                DestroyProjectile(col.transform.position);
             }
+        }
+
+        protected override void OnTriggerEnter2D(Collider2D col)
+        {
+            base.OnTriggerEnter2D(col);
+            ProjectileHit(col);
         }
 
         protected override void OnTriggerExit2D(Collider2D other)

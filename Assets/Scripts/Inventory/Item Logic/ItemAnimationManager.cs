@@ -18,7 +18,7 @@ namespace Inventory.Inventory.Item_Logic
         public delegate void LogicCallback();
         private LogicCallback _animationEventCallback;
 
-        public delegate void SwingStartedHandler();
+        public delegate void SwingStartedHandler(bool trailState);
         public delegate void SwingCompletedHandler();
         public event SwingStartedHandler SwingStarted;
         public event SwingCompletedHandler SwingCompleted;
@@ -80,10 +80,10 @@ namespace Inventory.Inventory.Item_Logic
         // Designed to be called from an animation event
         // when a swing starts so the queue is reset.
         [UsedImplicitly]
-        public void SwingStart()
+        public void SwingStart(int trailState)
         {
             _recoilAnimator.SetBool("attackQueued", false);
-            SwingStarted?.Invoke();
+            SwingStarted?.Invoke(trailState != 0);
         }
         
         // This is designed to be called from an animation event
