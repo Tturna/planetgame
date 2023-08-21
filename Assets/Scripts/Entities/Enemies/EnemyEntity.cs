@@ -277,8 +277,11 @@ namespace Entities.Entities.Enemies
             // check if the damage source is on the left or the right in relation to the enemy
             var dot = Vector3.Dot((damageSourcePosition - transform.position).normalized, transform.right);
             var knockbackDirection = dot > 0 ? -transform.right : transform.right;
+            knockbackDirection = (knockbackDirection + transform.up * 0.6f).normalized;
             
             Rigidbody.AddForce(knockbackDirection * amount, ForceMode2D.Force);
+            _canMove = false;
+            GameUtilities.instance.DelayExecute(() => _canMove = true, 0.3f);
         }
 
         public void Death()
