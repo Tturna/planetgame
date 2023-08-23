@@ -12359,6 +12359,7 @@ GameObject:
   - component: {fileID: 586715937}
   - component: {fileID: 586715936}
   - component: {fileID: 586715935}
+  - component: {fileID: 586715943}
   m_Layer: 3
   m_Name: swampthing (2)
   m_TagString: Enemy
@@ -12548,6 +12549,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &586715943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586715934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &589109426
 GameObject:
   m_ObjectHideFlags: 0
@@ -18948,6 +18963,7 @@ GameObject:
   - component: {fileID: 762272806}
   - component: {fileID: 762272805}
   - component: {fileID: 762272804}
+  - component: {fileID: 762272812}
   m_Layer: 3
   m_Name: swampthing
   m_TagString: Enemy
@@ -19137,6 +19153,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &762272812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762272803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1001 &763072881
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19606,6 +19636,7 @@ GameObject:
   - component: {fileID: 777927721}
   - component: {fileID: 777927720}
   - component: {fileID: 777927719}
+  - component: {fileID: 777927727}
   m_Layer: 3
   m_Name: swampthing (7)
   m_TagString: Enemy
@@ -19795,6 +19826,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &777927727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 777927718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &778831239
 GameObject:
   m_ObjectHideFlags: 0
@@ -52504,6 +52549,7 @@ GameObject:
   - component: {fileID: 1379177156}
   - component: {fileID: 1379177155}
   - component: {fileID: 1379177154}
+  - component: {fileID: 1379177162}
   m_Layer: 3
   m_Name: swampthing (6)
   m_TagString: Enemy
@@ -52693,6 +52739,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1379177162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379177153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &1397419123
 GameObject:
   m_ObjectHideFlags: 0
@@ -66091,6 +66151,7 @@ GameObject:
   - component: {fileID: 1759212760}
   - component: {fileID: 1759212759}
   - component: {fileID: 1759212758}
+  - component: {fileID: 1759212766}
   m_Layer: 3
   m_Name: swampthing (3)
   m_TagString: Enemy
@@ -66280,6 +66341,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1759212766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759212757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &1769118933
 GameObject:
   m_ObjectHideFlags: 0
@@ -67769,6 +67844,7 @@ GameObject:
   - component: {fileID: 1867480359}
   - component: {fileID: 1867480358}
   - component: {fileID: 1867480357}
+  - component: {fileID: 1867480365}
   m_Layer: 3
   m_Name: swampthing (4)
   m_TagString: Enemy
@@ -67958,6 +68034,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1867480365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867480356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &1879968186
 GameObject:
   m_ObjectHideFlags: 0
@@ -67974,6 +68064,7 @@ GameObject:
   - component: {fileID: 1879968189}
   - component: {fileID: 1879968188}
   - component: {fileID: 1879968187}
+  - component: {fileID: 1879968195}
   m_Layer: 3
   m_Name: swampthing (5)
   m_TagString: Enemy
@@ -68163,6 +68254,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1879968195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1879968186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &1886244611
 GameObject:
   m_ObjectHideFlags: 0
@@ -75836,6 +75941,7 @@ GameObject:
   - component: {fileID: 2073278740}
   - component: {fileID: 2073278739}
   - component: {fileID: 2073278738}
+  - component: {fileID: 2073278746}
   m_Layer: 3
   m_Name: swampthing (1)
   m_TagString: Enemy
@@ -76025,6 +76131,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2073278746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073278737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3dfbfbeb570895418770a750bf39a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropMultiple: 0
+  lootTable: []
 --- !u!1 &2105677430
 GameObject:
   m_ObjectHideFlags: 0
