@@ -1,5 +1,5 @@
 # Planet Game
-2D Fantasy, Action-Adventure, Sandbox game inspired by Terraria. Made with Unity.
+2D Sci-fi, Action-Adventure, Sandbox game inspired by Terraria. Made with Unity.
 
 This game is inspired mainly by Terraria and Starbound. I'm working on this project with an artist.
 
