@@ -87,3 +87,11 @@ MonoBehaviour:
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       trailTime: 0.15
+  dropMultiple: 1
+  lootTable:
+  - item:
+      itemSo: {fileID: 11400000, guid: 5b93495cb1666574580e4dea3033f68a, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: f1c180f1245a7204294b9af69c8fc1a8, type: 2}
+    dropChance: 50

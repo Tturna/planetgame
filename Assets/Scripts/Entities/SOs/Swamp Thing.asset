@@ -46,3 +46,11 @@ MonoBehaviour:
     attackDelay: 0.4
     preventsMovement: 1
     projectiles: []
+  dropMultiple: 1
+  lootTable:
+  - item:
+      itemSo: {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+    dropChance: 75
+  - item:
+      itemSo: {fileID: 11400000, guid: aca811514951fa546a33ba3262f46cdf, type: 2}
+    dropChance: 25

@@ -35,6 +35,14 @@ namespace Entities.Entities.Enemies
         private float _distanceToPlayer;
         private float _health, _maxHealth;
         private bool _aggravated, _canMove = true;
+        
+        public delegate void DeathHandler(EnemySo enemySo);
+        public event DeathHandler OnDeath;
+        
+        private void TriggerOnDeath()
+        {
+            OnDeath?.Invoke(enemySo);
+        }
 
         protected override void Start()
         {
@@ -289,10 +297,9 @@ namespace Entities.Entities.Enemies
             // TODO: object pooling
             _deathPs.transform.SetParent(null);
             _deathPs.Play();
+            TriggerOnDeath();
             GameUtilities.instance.DelayExecute(() => Destroy(_deathPs.gameObject), 1f);
             
-            // Note: if this is changed so that it doesn't destroy the gameobject, make sure to 
-            // change when the OnDeath event is triggered in EntityController
             Destroy(gameObject);
         }
 
@@ -308,11 +315,6 @@ namespace Entities.Entities.Enemies
             _canMove = true;
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
-        }
-
         protected override void OnTriggerEnter2D(Collider2D col)
         {
             base.OnTriggerEnter2D(col);
@@ -323,6 +325,11 @@ namespace Entities.Entities.Enemies
                 player.TakeDamage(enemySo.contactDamage);
                 player.Knockback(transform.position, enemySo.knockback);
             }
+        }
+        
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
         }
     }
 }

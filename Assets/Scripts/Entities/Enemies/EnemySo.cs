@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Inventory.Inventory;
+using UnityEngine;
 
 namespace Entities.Entities.Enemies
 {
@@ -38,7 +40,15 @@ namespace Entities.Entities.Enemies
         public bool useRandomAttack;
         public AttackPattern[] attacks;
         
-        // [Header("Loot")]
-        
+        [Serializable]
+        public struct LootDrop
+        {
+            public Item item;
+            [Range(0f, 100f)] public float dropChance;
+        }
+
+        [Header("Loot")]
+        public bool dropMultiple;
+        public LootDrop[] lootTable;
     }
 }
