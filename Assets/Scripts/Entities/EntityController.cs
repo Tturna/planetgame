@@ -18,9 +18,11 @@ namespace Entities.Entities
         
         public delegate void EnteredPlanetHandler(GameObject enteredPlanetObject);
         public delegate void ExitedPlanetHandler(GameObject exitedPlanetObject);
+        public delegate void DeathHandler();
         
         public event EnteredPlanetHandler OnEnteredPlanet;
         public event ExitedPlanetHandler OnExitPlanet;
+        public event DeathHandler OnDeath;
 
         private void TriggerOnPlanetEntered(GameObject enteredPlanet)
         {
@@ -30,6 +32,11 @@ namespace Entities.Entities
         private void TriggerOnPlanetExited(GameObject exitedPlanet)
         {
             OnExitPlanet?.Invoke(exitedPlanet);
+        }
+        
+        private void TriggerOnDeath()
+        {
+            OnDeath?.Invoke();
         }
         
         #endregion
@@ -102,6 +109,11 @@ namespace Entities.Entities
                 
                 TriggerOnPlanetExited(other.gameObject);
             }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            TriggerOnDeath();
         }
     }
 }

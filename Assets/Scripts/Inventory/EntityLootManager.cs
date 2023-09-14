@@ -1,8 +1,11 @@
 using System;
+using Entities.Entities;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Inventory.Inventory
 {
+    [RequireComponent(typeof(EntityController))]
     public class EntityLootManager : MonoBehaviour
     {
         [Serializable]
@@ -14,27 +17,24 @@ namespace Inventory.Inventory
 
         [SerializeField] private bool dropMultiple;
         [SerializeField] private LootDrop[] lootTable;
-        
-        public void DropLoot()
+
+        private void Start()
         {
-            // TODO: Check what copilot fucked up
+            GetComponent<EntityController>().OnDeath += DropLoot;
+        }
+
+        private void DropLoot()
+        {
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var lootDrop in lootTable)
             {
-                if (UnityEngine.Random.Range(0f, 100f) <= lootDrop.dropChance)
-                {
-                    if (dropMultiple)
-                    {
-                        var amount = UnityEngine.Random.Range(1, 4);
-                        for (var i = 0; i < amount; i++)
-                        {
-                            // InventoryManager.instance.AddItem(lootDrop.item);
-                        }
-                    }
-                    else
-                    {
-                        // InventoryManager.instance.AddItem(lootDrop.item);
-                    }
-                }
+                var rng = Random.Range(0f, 100f);
+
+                if (rng > lootDrop.dropChance) continue;
+                // drop item
+                InventoryManager.SpawnItem(lootDrop.item, transform.position);
+
+                if (!dropMultiple) return;
             }
         }
     }

@@ -76433,7 +76433,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dropMultiple: 0
-  lootTable: []
+  lootTable:
+  - item:
+      itemSo: {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+    dropChance: 100
 --- !u!1 &2105677430
 GameObject:
   m_ObjectHideFlags: 0

@@ -290,6 +290,9 @@ namespace Entities.Entities.Enemies
             _deathPs.transform.SetParent(null);
             _deathPs.Play();
             GameUtilities.instance.DelayExecute(() => Destroy(_deathPs.gameObject), 1f);
+            
+            // Note: if this is changed so that it doesn't destroy the gameobject, make sure to 
+            // change when the OnDeath event is triggered in EntityController
             Destroy(gameObject);
         }
 

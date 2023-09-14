@@ -37,5 +37,8 @@ namespace Entities.Entities.Enemies
         public bool alwaysAttack;
         public bool useRandomAttack;
         public AttackPattern[] attacks;
+        
+        // [Header("Loot")]
+        
     }
 }
