@@ -183,6 +183,17 @@ namespace Entities.Entities.Enemies
             relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
             _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
             
+            Move(GetVectorToPlayer());
+        }
+
+        private void Move(Vector3 positionDifferenceToTarget)
+        {
+            var posDiff = positionDifferenceToTarget;
+            var dot = Vector3.Dot(posDiff.normalized, transform.right);
+            
+            relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
+            _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
+            
             _movementFunctionData.enemySo = enemySo;
             _movementFunctionData.rb = Rigidbody;
             _movementFunctionData.anim = _animator;
