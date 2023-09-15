@@ -50,6 +50,9 @@ namespace Entities.Entities
             else
             {
                 tmp.text = amount.ToString();
+                // Every time a damage number is created, it will get an equal or higher sorting order than the previous one
+                // 10 is min, 30 is max, 2 is time multiplier that can be increased to make the numbers change sorting order faster
+                tmp.sortingOrder = 10 + (int)(Time.time * 2) % 20;
             }
             
             GameUtilities.instance.StartCoroutine(HandleDamageNumberLifeTime(damageNumberObject, tmp, lifeTime, startMoveStrength));

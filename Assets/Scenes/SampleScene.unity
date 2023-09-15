@@ -11940,8 +11940,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &533967562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12712,8 +12712,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &586715936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24189,8 +24189,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &762272805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24860,8 +24860,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &777927720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39245,8 +39245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &1107307657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57990,8 +57990,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &1379177155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71065,8 +71065,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &1665619951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71777,8 +71777,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &1759212759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73468,8 +73468,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &1867480358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73686,8 +73686,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &1879968188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75286,7 +75286,33 @@ MonoBehaviour:
   pauseMenuButtonObject: {fileID: 413990149}
   equippedItemObject: {fileID: 1422684843}
   itemTooltipRect: {fileID: 50618057}
-  tooltipStatIcons: []
+  tooltipStatIcons:
+  - name: Ranged Damage
+    sprite: {fileID: 859420766, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Armor
+    sprite: {fileID: 1652451488, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Damage
+    sprite: {fileID: -179382502, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Minion Power
+    sprite: {fileID: -1786150385, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Health Regeneration
+    sprite: {fileID: -96992631, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Health
+    sprite: {fileID: -125068076, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Energy Damage
+    sprite: {fileID: 860605859, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Movement Speed
+    sprite: {fileID: -982606208, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Use Time
+    sprite: {fileID: 1589759297, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Melee Damage
+    sprite: {fileID: 2071560997, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Jetpack Power
+    sprite: {fileID: 451202392, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Tool Power
+    sprite: {fileID: 692864890, guid: add43653deaceae40a313aa873f638e4, type: 3}
+  - name: Knockback
+    sprite: {fileID: 942127, guid: add43653deaceae40a313aa873f638e4, type: 3}
   ttNameText: {fileID: 2067133946}
   ttImage: {fileID: 1065666223}
   ttTypeText: {fileID: 2105677433}
@@ -86410,8 +86436,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: 353dca0011711fb44b7b8310b7454305, type: 2}
-  normalFont: {fileID: 11400000, guid: 5ac42ba633ac9064cb8dead8dbf08e07, type: 2}
+  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
+  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
 --- !u!114 &2073278739
 MonoBehaviour:
   m_ObjectHideFlags: 0
