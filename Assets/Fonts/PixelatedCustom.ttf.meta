@@ -3,16 +3,16 @@ guid: c3f7650e02500ab4488ef8c9e12ac8a1
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
-  fontSize: 5
-  forceTextureCase: 3
+  fontSize: 16
+  forceTextureCase: -2
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
   fontNames:
   - PixelatedCustom
   fallbackFontReferences: []
-  customCharacters: ABCDEFGHIJKLMNOPQRSTUVWXYZ&abcdefghijklmnopqrstuvwxyz[1234567890.,;:#'"!?+-=%/()]
-  fontRenderingMode: 2
+  customCharacters: 
+  fontRenderingMode: 0
   ascentCalculationMode: 1
   useLegacyBoundsCalculation: 0
   shouldRoundAdvanceValue: 1

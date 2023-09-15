@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ikeafont_outline Material
-  m_Shader: {fileID: 4800000, guid: 9c87359f5f610f840a9c462a6522fa98, type: 3}
+  m_Shader: {fileID: 4800000, guid: 48bb5f55d8670e349b6e614913f9d910, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -28,12 +28,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: d962aa24babd1224cadb81e47c8fa835, type: 3}
+        m_Texture: {fileID: 2800000, guid: abc286f90cb502b44b2e8543dce5f131, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AAColorWeight: 0.5
     - _ColorMask: 15
     - _CullMode: 0
     - _MaskSoftnessX: 0
@@ -47,9 +46,8 @@ Material:
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
     m_Colors:
-    - _AccentColor: {r: 0.27058825, g: 0.15686275, b: 0.23529412, a: 1}
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _FaceColor: {r: 0.8509804, g: 0.34039214, b: 0.3875233, a: 1}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &11400000
 MonoBehaviour:
@@ -61,7 +59,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: ikeafont_outline_red
+  m_Name: ikeafont_outline_red_old
   m_EditorClassIdentifier: 
   hashCode: -1012811642
   material: {fileID: -6140583929723363763}
