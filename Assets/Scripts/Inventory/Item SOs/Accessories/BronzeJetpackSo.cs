@@ -1,25 +1,42 @@
-﻿using UnityEngine;
+﻿using Entities;
+using UnityEngine;
 
 namespace Inventory.Item_SOs.Accessories
 {
     [CreateAssetMenu(fileName = "Bronze Jetpack", menuName = "SO/Accessories/Bronze Jetpack")]
     public class BronzeJetpackSo : BasicAccessorySo
     {
-        // TODO: Call this accessory update method from somewhere
-        // Player's update method?
-        public void UpdateProcess()
+        private ParticleSystem _jetpackParticles;
+        private bool _particlesPlaying;
+        
+        public override void UpdateProcess()
         {
-            // TODO: Jetpack
-            // Check if the player is holding the jump button
-            // Check if the player has enough energy to use the jetpack
-            // Check if the player is grounded
+            if (_jetpackParticles == null)
+            {
+                _jetpackParticles = PlayerController.instance.GetJetpackParticles();
+            }
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                if (PlayerStatsManager.GetJetpackCharge() > 0)
+                {
+                    PlayerStatsManager.ChangeJetpackCharge(-Time.deltaTime);
+                    PlayerController.instance.AddRelativeForce(Vector3.up * (3000f * Time.deltaTime), ForceMode2D.Force);
+                    
+                    if (!_particlesPlaying)
+                    {
+                        _particlesPlaying = true;
+                        _jetpackParticles.Play();
+                    }
+                    
+                    // Play jetpack sound
+
+                    return;
+                }
+            }
             
-            // Activate the jetpack
-            // Drain jetpack charge
-            // Play jetpack sound
-            // Play jetpack particle effect
-            // Play jetpack animation
-            // Apply jetpack force
+            _jetpackParticles.Stop();
+            _particlesPlaying = false;
         }
     }
 }

@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Inventory.Item_SOs.Accessories
 {
-    // This intentionally doesn't have an asset menu entry as this is supposed to be used by other scriptable objects.
-    public abstract class BasicAccessorySo : ItemSo
+    [CreateAssetMenu(fileName = "Basic Accessory", menuName = "SO/Accessories/Basic Accessory")]
+    public class BasicAccessorySo : ItemSo
     {
         // Making all the variables into virtual properties so that they can be overridden by other scriptable objects.
         // This preserves polymorphism.
@@ -73,5 +73,9 @@ namespace Inventory.Item_SOs.Accessories
         
         [field: SerializeField]
         public virtual float JetpackChargeIncrease { get; set; }
+        
+        //
+        
+        public virtual void UpdateProcess() { }
     }
 }

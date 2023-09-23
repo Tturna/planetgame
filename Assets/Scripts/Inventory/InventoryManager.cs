@@ -4,6 +4,7 @@ using System.Linq;
 using Entities;
 using Inventory.Entities;
 using Inventory.Item_SOs;
+using Inventory.Item_SOs.Accessories;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -257,7 +258,12 @@ namespace Inventory
             }
             
             // Update accessory behavior
-            
+            for (var i = 0; i < _accessorySlots.Length; i++)
+            {
+                if (_accessorySlots[i].stack <= 0) continue;
+                var accessorySo = (BasicAccessorySo)_accessorySlots[i].item.itemSo;
+                accessorySo.UpdateProcess();
+            }
         }
 
         private void LateUpdate()
@@ -440,6 +446,51 @@ namespace Inventory
             }
         }
 
+        private static void EquipAccessory(BasicAccessorySo accessorySo)
+        {
+            var accessoryData = new PlayerStatsManager.AccessoryModifierData()
+            {
+                maxHealthAdder = accessorySo.MaxHealthIncrease,
+                maxHealthMultiplier = accessorySo.MaxHealthMultiplier,
+                maxEnergyAdder = accessorySo.MaxEnergyIncrease,
+                maxEnergyMultiplier = accessorySo.MaxEnergyMultiplier,
+                defenseAdder = accessorySo.DefenseIncrease,
+                defenseMultiplier = accessorySo.DefenseMultiplier,
+                damageReductionMultiplier = accessorySo.DamageReductionMultiplier,
+                damageAdder = accessorySo.DamageIncrease,
+                damageMultiplier = accessorySo.DamageMultiplier,
+                defensePenetrationAdder = accessorySo.DefensePenetrationIncrease,
+                defensePenetrationMultiplier = accessorySo.DefensePenetrationMultiplier,
+                critChanceMultiplier = accessorySo.CritChanceMultiplier,
+                knockbackMultiplier = accessorySo.KnockbackMultiplier,
+                moveSpeedMultiplier = accessorySo.MoveSpeedMultiplier,
+                jumpHeightMultiplier = accessorySo.JumpHeightMultiplier,
+                attackSpeedMultiplier = accessorySo.AttackSpeedMultiplier,
+                miningSpeedMultiplier = accessorySo.MiningSpeedMultiplier,
+                miningPowerMultiplier = accessorySo.MiningPowerMultiplier,
+                buildingSpeedMultiplier = accessorySo.BuildingSpeedMultiplier,
+                jetpackRechargeMultiplier = accessorySo.JetpackRechargeMultiplier,
+                jetpackChargeAdder = accessorySo.JetpackChargeIncrease
+            };
+            
+            PlayerStatsManager.AddAccessoryModifiers(accessoryData, accessorySo.id);
+            
+            if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
+            {
+                PlayerController.instance.SetJetpackSprite(accessorySo.sprite);
+            }
+        }
+        
+        private static void UnequipAccessory(BasicAccessorySo accessorySo)
+        {
+            PlayerStatsManager.RemoveAccessoryModifiers(accessorySo.id);
+            
+            if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
+            {
+                PlayerController.instance.SetJetpackSprite(null);
+            }
+        }
+
         private void AddItem(Item item)
         {
             // Copy item
@@ -491,6 +542,20 @@ namespace Inventory
             UpdateLogicalSlot(slot);
             UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
             UpdateMouseSlotGraphics();
+            
+            // Activate equipped accessory
+            if (slot.stack > 0 && slot.inventorySegmentType == InventorySegmentType.Accessory)
+            {
+                var accessorySo = (BasicAccessorySo)slot.item.itemSo;
+                EquipAccessory(accessorySo);
+            }
+            
+            // Unequip grabbed accessory
+            if (_mouseSlot.stack > 0 && slot.inventorySegmentType == InventorySegmentType.Accessory)
+            {
+                var accessorySo = (BasicAccessorySo)_mouseSlot.item.itemSo;
+                UnequipAccessory(accessorySo);
+            }
         }
 
         private static bool HasSpaceForItem(Item item, out int availableIndex, out InventorySegmentType availableInventorySegmentType)

@@ -1,4 +1,3 @@
-using System;
 using Entities.Enemies;
 using Inventory;
 using UnityEngine;

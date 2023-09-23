@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utilities;
 
 namespace Entities
 {
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]
-    [RequireComponent(typeof(StatsManager))]
+    [RequireComponent(typeof(PlayerStatsManager))]
     public class PlayerController : EntityController, IDamageable
     {
         #region Serialized Fields
@@ -15,6 +16,9 @@ namespace Entities
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
             [SerializeField] private SpriteRenderer headSr;
+            [SerializeField] private Transform extraSpritesParent;
+            [SerializeField] private SpriteRenderer jetpackSr;
+            [SerializeField] private ParticleSystem jetpackParticles;
             
             [Header("Other")]
             [SerializeField] private Material flashMaterial;
@@ -91,7 +95,6 @@ namespace Entities
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Vector3 _mouseDirection;
         private int _terrainLayerMask;
-        private StatsManager _statsManager;
 
         // Built-in methods
         
@@ -107,7 +110,6 @@ namespace Entities
 
             _animator = GetComponent<Animator>();
             _sr = GetComponent<SpriteRenderer>();
-            _statsManager = GetComponent<StatsManager>();
             _collider = GetComponent<CapsuleCollider2D>();
             
             _defaultMaterial = _sr.material;
@@ -351,6 +353,11 @@ namespace Entities
             // scale.x = _inputVector.x > 0 ? -1f : 1f;
             scale.x = cursorAngle < 90 ? -1f : 1f;
             handsParent.localScale = scale;
+            
+            // Flip the extra sprites
+            scale = extraSpritesParent.localScale;
+            scale.x = cursorAngle > 90 ? -1f : 1f;
+            extraSpritesParent.localScale = scale;
         }
 
         private Interactable GetClosestInteractable()
@@ -382,7 +389,7 @@ namespace Entities
         
         public void TakeDamage(float amount)
         {
-            var died = _statsManager.ChangeHealth(amount);
+            var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
             //TODO: damage numbers
 
@@ -445,6 +452,16 @@ namespace Entities
         public void AddForceTowardsCursor(float magnitude)
         {
             Rigidbody.AddForce(_mouseDirection * magnitude);
+        }
+
+        public void SetJetpackSprite(Sprite sprite)
+        {
+            jetpackSr.sprite = sprite;
+        }
+
+        public ParticleSystem GetJetpackParticles()
+        {
+            return jetpackParticles;
         }
     }
 }

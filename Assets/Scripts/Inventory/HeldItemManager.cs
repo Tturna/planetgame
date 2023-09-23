@@ -11,7 +11,7 @@ using Utilities;
 namespace Inventory
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(StatsManager))]
+    [RequireComponent(typeof(PlayerStatsManager))]
     public class HeldItemManager : MonoBehaviour
     {
         [SerializeField] private Transform equippedItemTransform;
@@ -26,7 +26,6 @@ namespace Inventory
         private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
         private Item _equippedItem;
-        private StatsManager _statsManager; // This component is also used by PlayerController
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
         
         public delegate void ItemUsedHandler(Item item);
@@ -38,7 +37,6 @@ namespace Inventory
             _recoilAnimator = recoilAnchor.GetComponent<Animator>();
             _itemAnimationManager = recoilAnchor.GetComponent<ItemAnimationManager>();
             _rigidbody = GetComponent<Rigidbody2D>();
-            _statsManager = GetComponent<StatsManager>();
 
             _handsParent = handsAnimator.transform;
             _handLeft = _handsParent.GetChild(0).GetChild(0);
@@ -140,7 +138,7 @@ namespace Inventory
             if (_equippedItem.logicScript == null) return false;
             if (usableItemSo.isOnCooldown) return false;
 
-            if (_statsManager.GetEnergy() < usableItemSo.energyCost)
+            if (PlayerStatsManager.GetEnergy() < usableItemSo.energyCost)
             {
                 NoEnergy();
                 return false;
@@ -183,7 +181,7 @@ namespace Inventory
             }
             
             // Update energy
-            _statsManager.ChangeEnergy(usableItemSo.energyCost);
+            PlayerStatsManager.ChangeEnergy(-usableItemSo.energyCost);
                 
             // Recoil
             _recoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
