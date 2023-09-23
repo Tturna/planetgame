@@ -1,8 +1,8 @@
 ﻿using System;
-using Inventory.Inventory.Item_Logic;
-using Inventory.Inventory.Item_Types;
+using Inventory.Item_Logic;
+using Inventory.Item_SOs;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
     [Serializable]
     public class Item

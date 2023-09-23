@@ -1,8 +1,9 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Inventory.Inventory.Item_Types
+namespace Inventory.Item_SOs
 {
     public class ScriptableObjectIdAttribute : PropertyAttribute {}
     
@@ -33,7 +34,8 @@ namespace Inventory.Inventory.Item_Types
         public Vector2 handPositionOffset;
         public bool useBothHands;
         public bool altIdleAnimation;
-
+        public SuitableItemType suitableSlotItemType;
+        
         // TODO: here something to choose which data to show in tooltips
     }
 }

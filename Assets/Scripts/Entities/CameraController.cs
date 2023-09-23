@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Entities.Entities
+namespace Entities
 {
     public class CameraController : MonoBehaviour
     {

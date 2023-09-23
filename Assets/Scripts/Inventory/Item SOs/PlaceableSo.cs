@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inventory.Inventory.Item_Types
+namespace Inventory.Item_SOs
 {
     [CreateAssetMenu(fileName = "Placeable", menuName = "SO/Placeable")]
     public class PlaceableSo : UsableItemSo

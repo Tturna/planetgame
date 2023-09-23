@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class FlashlightLogic : ItemLogicBase
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Entities.Entities
+namespace Entities
 {
     [Serializable]
     public class ProjectileData

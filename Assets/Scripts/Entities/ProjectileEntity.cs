@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Utilities;
 
-namespace Entities.Entities
+namespace Entities
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class ProjectileEntity : EntityController

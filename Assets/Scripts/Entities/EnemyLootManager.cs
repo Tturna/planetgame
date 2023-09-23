@@ -1,7 +1,6 @@
 using System;
-using Entities.Entities;
-using Entities.Entities.Enemies;
-using Inventory.Inventory;
+using Entities.Enemies;
+using Inventory;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

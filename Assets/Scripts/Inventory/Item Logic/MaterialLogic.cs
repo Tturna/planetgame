@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using Entities.Entities;
+using Entities;
 using Planets;
 using UnityEngine;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class MaterialLogic : ItemLogicBase
     {

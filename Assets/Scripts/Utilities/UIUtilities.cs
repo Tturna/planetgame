@@ -19,6 +19,11 @@ namespace Utilities
         private void Update()
         {
             MouseRaycast();
+            
+            if (Results.Count > 0)
+            {
+                Debug.Log(Results[0].gameObject.name);
+            }
         }
 
         /// <summary>
@@ -39,6 +44,11 @@ namespace Utilities
         public static List<RaycastResult> GetMouseRaycast()
         {
             return Results;
+        }
+        
+        public static bool IsMouseOverUI()
+        {
+            return Results.Count > 0;
         }
     }
 }

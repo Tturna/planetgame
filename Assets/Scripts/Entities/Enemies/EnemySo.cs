@@ -1,8 +1,8 @@
 ﻿using System;
-using Inventory.Inventory;
+using Inventory;
 using UnityEngine;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [CreateAssetMenu(fileName = "Enemy", menuName = "SO/Enemy")]
     public class EnemySo : ScriptableObject

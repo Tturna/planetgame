@@ -1,33 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Entities.Entities;
-using Inventory.Inventory.Entities;
-using Inventory.Inventory.Item_Types;
+using Entities;
+using Inventory.Entities;
+using Inventory.Item_SOs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
-    internal struct Slot
-    {
-        internal Item item;
-        internal int stack;
-        internal bool isInStash;
-        internal int index;
-
-        internal Slot(int index)
-        {
-            item = default;
-            stack = default;
-            isInStash = default;
-            this.index = index;
-        }
-    }
-    
     [Serializable]
     public struct TooltipStatIcon
     {
@@ -35,12 +20,47 @@ namespace Inventory.Inventory
         public Sprite sprite;
     }
 
+    internal enum InventorySegmentType
+    {
+        Hotbar,
+        Stash,
+        Accessory
+    }
+
+    public enum SuitableItemType
+    {
+        Any,
+        Trinket,
+        Helmet,
+        Armor,
+        Jetpack,
+        Pet
+    }
+    
+    internal struct Slot
+    {
+        internal Item item;
+        internal int stack;
+        internal InventorySegmentType inventorySegmentType;
+        internal SuitableItemType suitableItemType; 
+        internal int index;
+
+        internal Slot(int index)
+        {
+            item = default;
+            stack = default;
+            inventorySegmentType = default;
+            suitableItemType = default;
+            this.index = index;
+        }
+    }
+
     public class InventoryManager : MonoBehaviour
     {
         [Header("Inventory Objects")]
-        [SerializeField] private GameObject stashObject;
+        [FormerlySerializedAs("stashObject")] [SerializeField] private GameObject stashParent;
         [SerializeField] private GameObject hotslotsParent;
-        [SerializeField] private GameObject accessoryObject;
+        [FormerlySerializedAs("accessoryObject")] [SerializeField] private GameObject accessoryParent;
         [SerializeField] private GameObject mouseSlotObject;
         [SerializeField] private RectTransform selectionOverlayRect;
         [SerializeField] private RectTransform selectionArrowRect;
@@ -83,8 +103,10 @@ namespace Inventory.Inventory
 
         private static Transform[] _hotSlotObjects;
         private static Transform[] _stashSlotObjects;
+        private static Transform[] _accessorySlotObjects;
         private static Slot[] _hotSlots;
         private static Slot[] _stashSlots;
+        private static Slot[] _accessorySlots;
         private static Slot _mouseSlot;
         private static int _selectedIndex;
         
@@ -106,9 +128,11 @@ namespace Inventory.Inventory
 
             // Reverse the order of graphical slots because they're in reverse order in the hierarchy
             _hotSlotObjects = hotslotsParent.transform.Cast<Transform>().Reverse().ToArray();
-            _stashSlotObjects = stashObject.transform.Cast<Transform>().Reverse().ToArray();
+            _stashSlotObjects = stashParent.transform.Cast<Transform>().Reverse().ToArray();
+            _accessorySlotObjects = accessoryParent.transform.Cast<Transform>().Reverse().ToArray();
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
+            _accessorySlots = new Slot[_accessorySlotObjects.Length];
             _mouseSlot = new Slot(-1);
 
             // Initialize values for slots
@@ -117,15 +141,33 @@ namespace Inventory.Inventory
                 if (i < _hotSlots.Length)
                 {
                     _hotSlots[i].index = i;
+                    _hotSlots[i].inventorySegmentType = InventorySegmentType.Hotbar;
+                    _hotSlots[i].suitableItemType = SuitableItemType.Any;
+                }
+                
+                if (i < _accessorySlots.Length)
+                {
+                    _accessorySlots[i].index = i;
+                    _accessorySlots[i].inventorySegmentType = InventorySegmentType.Accessory;
+                    
+                    _accessorySlots[i].suitableItemType = i switch
+                    {
+                        5 => SuitableItemType.Helmet,
+                        6 => SuitableItemType.Armor,
+                        7 => SuitableItemType.Jetpack,
+                        8 => SuitableItemType.Pet,
+                        _ => SuitableItemType.Trinket
+                    };
                 }
 
                 _stashSlots[i].index = i;
-                _stashSlots[i].isInStash = true;
+                _stashSlots[i].inventorySegmentType = InventorySegmentType.Stash;
+                _stashSlots[i].suitableItemType = SuitableItemType.Any;
             }
 
             SelectSlot(_selectedIndex);
-            stashObject.SetActive(false);
-            accessoryObject.SetActive(false);
+            stashParent.SetActive(false);
+            accessoryParent.SetActive(false);
             pauseMenuButtonObject.SetActive(false);
             
             #endregion
@@ -189,8 +231,8 @@ namespace Inventory.Inventory
             // Check for inventory switch
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                stashObject.SetActive(!stashObject.activeInHierarchy);
-                accessoryObject.SetActive(!accessoryObject.activeInHierarchy);
+                stashParent.SetActive(!stashParent.activeInHierarchy);
+                accessoryParent.SetActive(!accessoryParent.activeInHierarchy);
                 pauseMenuButtonObject.SetActive(!pauseMenuButtonObject.activeInHierarchy);
             }
             
@@ -213,6 +255,9 @@ namespace Inventory.Inventory
                 
                 HandleMouseTwo(ref slot, clickedSlotObject);
             }
+            
+            // Update accessory behavior
+            
         }
 
         private void LateUpdate()
@@ -230,6 +275,8 @@ namespace Inventory.Inventory
                 DropItems(_mouseSlot.stack);
                 return;
             }
+            
+            if (!stashParent.activeInHierarchy) return;
 
             // Check if both mouse slot and clicked slot have an item
             // check if they're the same
@@ -352,6 +399,46 @@ namespace Inventory.Inventory
                 UpdateMouseSlotGraphics();
             }
         }
+        
+        private static Slot[] GetInventorySegment(InventorySegmentType inventorySegmentType)
+        {
+            return inventorySegmentType switch
+            {
+                InventorySegmentType.Hotbar => _hotSlots,
+                InventorySegmentType.Stash => _stashSlots,
+                InventorySegmentType.Accessory => _accessorySlots,
+                _ => throw new ArgumentOutOfRangeException(nameof(inventorySegmentType), inventorySegmentType, null)
+            };
+        }
+        
+        private static Transform[] GetInventorySegmentObjects(InventorySegmentType inventorySegmentType)
+        {
+            return inventorySegmentType switch
+            {
+                InventorySegmentType.Hotbar => _hotSlotObjects,
+                InventorySegmentType.Stash => _stashSlotObjects,
+                InventorySegmentType.Accessory => _accessorySlotObjects,
+                _ => throw new ArgumentOutOfRangeException(nameof(inventorySegmentType), inventorySegmentType, null)
+            };
+        }
+        
+        private static void UpdateInventorySegment(Slot[] segmentData, InventorySegmentType segmentType)
+        {
+            switch (segmentType)
+            {
+                case InventorySegmentType.Hotbar:
+                    _hotSlots = segmentData;
+                    break;
+                case InventorySegmentType.Stash:
+                    _stashSlots = segmentData;
+                    break;
+                case InventorySegmentType.Accessory:
+                    _accessorySlots = segmentData;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(segmentType), segmentType, null);
+            }
+        }
 
         private void AddItem(Item item)
         {
@@ -359,11 +446,11 @@ namespace Inventory.Inventory
             var copy = new Item(item);
             
             // Check if inventory has space
-            if (!HasSpaceForItem(copy, out var index, out var isStash)) return;
+            if (!HasSpaceForItem(copy, out var index, out var availableSlotType)) return;
 
             // Create temporary variables to make inventory management easier with the separate hotbar and stash
-            var segmentSlots = isStash ? _stashSlots : _hotSlots;
-            var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
+            var segmentSlots = GetInventorySegment(availableSlotType);
+            var segmentObjects = GetInventorySegmentObjects(availableSlotType);
             
             // If slot was empty, change the sprite
             if (segmentSlots[index].stack == 0)
@@ -375,15 +462,7 @@ namespace Inventory.Inventory
             segmentSlots = AddToStack(segmentSlots, index, copy);
             UpdateSlotGraphics(ref segmentSlots[index], segmentObjects[index]);
             
-            // Update the inventory variables using the temporary variables. Required because structs are value types.
-            if (isStash)
-            {
-                _stashSlots = segmentSlots;
-            }
-            else
-            {
-                _hotSlots = segmentSlots;
-            }
+            UpdateInventorySegment(segmentSlots, availableSlotType);
             
             // Update selected slot
             if (index == _selectedIndex) SelectSlot(_selectedIndex);
@@ -391,6 +470,14 @@ namespace Inventory.Inventory
 
         private void SwapMouseSlot(ref Slot slot, GameObject clickedSlotObject)
         {
+            if (_mouseSlot.stack > 0)
+            {
+                if (slot.suitableItemType != SuitableItemType.Any)
+                {
+                    if (slot.suitableItemType != _mouseSlot.item.itemSo.suitableSlotItemType) return;
+                }
+            }
+
             // (_mouseSlot, slot) = (slot, _mouseSlot);
             // (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
             (_mouseSlot.item, slot.item) = (slot.item, _mouseSlot.item);
@@ -404,19 +491,27 @@ namespace Inventory.Inventory
             UpdateLogicalSlot(slot);
             UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
             UpdateMouseSlotGraphics();
-            
-            // TODO: If swapping an item into a selected slot, equip it
         }
 
-        private static bool HasSpaceForItem(Item item, out int availableIndex, out bool isStash)
+        private static bool HasSpaceForItem(Item item, out int availableIndex, out InventorySegmentType availableInventorySegmentType)
         {
+            bool IsEmptySlotSuitable(int availableIndex, Slot slot)
+            {
+                if (availableIndex != -1) return false;
+                if (slot.stack != 0) return false;
+                
+                if (slot.suitableItemType == SuitableItemType.Any) return true;
+                
+                return slot.suitableItemType == item.itemSo.suitableSlotItemType;
+            }
+            
             int FindIndex(Slot[] slotSegment)
             {
                 var availableIndex = -1;
                 for (var i = 0; i < slotSegment.Length; i++)
                 {
-                    // This will find the first empty slot in the slot segment (hotbar or stash)
-                    if (availableIndex == -1 && slotSegment[i].stack == 0)
+                    // This will find the first empty slot in the slot segment
+                    if (IsEmptySlotSuitable(availableIndex, slotSegment[i]))
                     {
                         availableIndex = i;
                     }
@@ -433,16 +528,20 @@ namespace Inventory.Inventory
                 return availableIndex;
             }
 
-            isStash = false;
+            availableInventorySegmentType = InventorySegmentType.Hotbar;
             availableIndex = FindIndex(_hotSlots);
 
-            if (availableIndex >= -1) return true;
+            if (availableIndex > -1) return true;
             
+            availableInventorySegmentType = InventorySegmentType.Stash;
             availableIndex = FindIndex(_stashSlots);
 
-            if (availableIndex == -1) return false;
-            isStash = true;
-            return true;
+            if (availableIndex > -1) return true;
+            
+            availableInventorySegmentType = InventorySegmentType.Accessory;
+            availableIndex = FindIndex(_accessorySlots);
+            
+            return availableIndex != -1;
         }
 
         private static Slot[] AddToStack(Slot[] segment, int index, Item item)
@@ -530,7 +629,6 @@ namespace Inventory.Inventory
             // var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
             // var segmentSlots = isStash ? _stashSlots : _hotSlots;
             
-            // Slot item
             var itemImg = slotObject.GetChild(0).GetComponent<Image>();
             itemImg.sprite = slot.item?.itemSo.sprite;
             itemImg.color = itemImg.sprite ? Color.white : Color.clear;
@@ -547,38 +645,10 @@ namespace Inventory.Inventory
             var stack = slot.stack;
             itemStack.text = stack > 1 ? stack.ToString() : "";
             
-            // Update slot graphics
-            // var slotImg = slotObject.GetComponent<Image>();
-            // if (stack > 0)
-            // {
-            //     if (_selectedIndex == slot.index && !slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.filledSlotSelectedSprite;
-            //     }
-            //     else if (slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.filledStashSprite;
-            //     }
-            //     else
-            //     {
-            //         slotImg.sprite = instance.filledSlotSprite;
-            //     }
-            // }
-            // else
-            // {
-            //     if (_selectedIndex == slot.index && !slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.emptySlotSelectedSprite;
-            //     }
-            //     else if (slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.emptyStashSprite;
-            //     }
-            //     else
-            //     {
-            //         slotImg.sprite = instance.emptySlotSprite;
-            //     }
-            // }
+            // Disable accessory slot icons if there's an item in the slot
+            if (slot.inventorySegmentType != InventorySegmentType.Accessory) return;
+            var accessoryTypeIcon = slotObject.GetChild(2).gameObject;
+            accessoryTypeIcon.SetActive(slot.item == null);
         }
 
         private static void UpdateMouseSlotGraphics()
@@ -596,17 +666,31 @@ namespace Inventory.Inventory
         private static void UpdateLogicalSlot(Slot slot)
         {
             // Update inventory
-            if (slot.isInStash)
+            switch (slot.inventorySegmentType)
             {
-                _stashSlots[slot.index] = slot;
-            }
-            else
-            {
-                _hotSlots[slot.index] = slot;
-
-                if (slot.index == _selectedIndex)
+                case InventorySegmentType.Stash:
                 {
-                    instance.EquipItem(slot.item);
+                    _stashSlots[slot.index] = slot;
+                    break;
+                }
+                case InventorySegmentType.Hotbar:
+                {
+                    _hotSlots[slot.index] = slot;
+
+                    if (slot.index == _selectedIndex)
+                    {
+                        instance.EquipItem(slot.item);
+                    }
+                    break;
+                }
+                case InventorySegmentType.Accessory:
+                {
+                    _accessorySlots[slot.index] = slot;
+                    break;
+                }
+                default:
+                {
+                    throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -618,7 +702,7 @@ namespace Inventory.Inventory
             var slotObjectUnderMouse = GetHoveringSlotObject(elementsUnderMouse);
             GetSlotFromObject(slotObjectUnderMouse, out var slot);
             
-            if (!slotObjectUnderMouse || slot.stack == 0 || !stashObject.activeInHierarchy)
+            if (!slotObjectUnderMouse || slot.stack == 0 || !stashParent.activeInHierarchy)
             {
                 _itemTooltipObject.SetActive(false);
                 return;
@@ -741,12 +825,23 @@ namespace Inventory.Inventory
                 return;
             }
 
-            var isStash = slotObject.transform.parent.gameObject == instance.stashObject;
-            var segment = isStash ? _stashSlots : _hotSlots;
-                
-            var slotIndex = isStash
-                ? Array.FindIndex(_stashSlotObjects, x => x == slotObject.transform)
-                : Array.FindIndex(_hotSlotObjects, x => x == slotObject.transform);
+            var slotParent = slotObject.transform.parent.gameObject;
+            var objectSlotType = slotParent switch
+            {
+                _ when slotParent == instance.stashParent => InventorySegmentType.Stash,
+                _ when slotParent == instance.accessoryParent => InventorySegmentType.Accessory,
+                _ => InventorySegmentType.Hotbar
+            };
+
+            var segment = GetInventorySegment(objectSlotType);
+            
+            var slotIndex = objectSlotType switch
+            {
+                InventorySegmentType.Hotbar => Array.FindIndex(_hotSlotObjects, x => x == slotObject.transform),
+                InventorySegmentType.Stash => Array.FindIndex(_stashSlotObjects, x => x == slotObject.transform),
+                InventorySegmentType.Accessory => Array.FindIndex(_accessorySlotObjects, x => x == slotObject.transform),
+                _ => throw new ArgumentOutOfRangeException(nameof(objectSlotType), objectSlotType, null)
+            };
 
             slot = segment[slotIndex];
         }

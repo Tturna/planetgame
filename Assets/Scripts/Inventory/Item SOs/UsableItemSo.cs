@@ -1,9 +1,9 @@
-using Inventory.Inventory.Item_Logic;
+using Inventory.Item_Logic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Inventory.Inventory.Item_Types
+namespace Inventory.Item_SOs
 {
     // This intentionally doesn't have an asset menu entry as this is supposed to be used by other scriptable objects.
     public abstract class UsableItemSo : ItemSo

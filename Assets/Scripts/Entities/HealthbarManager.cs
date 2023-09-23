@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
-namespace Entities.Entities
+namespace Entities
 {
     public class HealthbarManager : MonoBehaviour
     {

@@ -5,7 +5,7 @@
     in the item constructor, get the actual logic that would be used when attacking from here.
 */
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public static class ItemLogic
     {

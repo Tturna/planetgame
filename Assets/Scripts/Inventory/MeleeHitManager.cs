@@ -2,12 +2,12 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
-using Entities.Entities.Enemies;
-using Inventory.Inventory.Item_Logic;
-using Inventory.Inventory.Item_Types;
+using Entities.Enemies;
+using Inventory.Item_Logic;
+using Inventory.Item_SOs;
 using UnityEngine;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
     public class MeleeHitManager : MonoBehaviour
     {

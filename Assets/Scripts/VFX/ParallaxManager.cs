@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Entities.Entities;
+using Entities;
 using Planets;
 using UnityEngine;
 

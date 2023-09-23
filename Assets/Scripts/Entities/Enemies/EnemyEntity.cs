@@ -4,7 +4,7 @@ using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [RequireComponent(typeof(HealthbarManager))]
     [RequireComponent(typeof(DamageNumberManager))]

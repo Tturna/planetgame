@@ -1,12 +1,12 @@
-﻿using System.Reflection;
-using System.Linq;
-using Entities.Entities;
-using Inventory.Inventory.Item_Types;
+﻿using System.Linq;
+using System.Reflection;
+using Entities;
+using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class PlaceableLogic : ItemLogicBase
     {

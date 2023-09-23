@@ -3,13 +3,12 @@
 using System;
 using System.Collections;
 using Entities;
-using Entities.Entities;
-using Inventory.Inventory.Item_Logic;
-using Inventory.Inventory.Item_Types;
+using Inventory.Item_Logic;
+using Inventory.Item_SOs;
 using UnityEngine;
 using Utilities;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(StatsManager))]
@@ -55,6 +54,8 @@ namespace Inventory.Inventory
             var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
             var cursorAngle = GameUtilities.GetCursorAngle(mouseDirection, transform.right);
             HandleItemAiming(mouseDirection, cursorAngle);
+            
+            if (UIUtilities.IsMouseOverUI()) return;
             
             // Use Item
             // UseItem functions return a bool based on if the attack was called with "once" on or off.

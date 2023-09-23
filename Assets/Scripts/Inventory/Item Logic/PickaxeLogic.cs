@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
-using Inventory.Inventory.Item_Types;
+using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
 using Utilities;
 using Object = UnityEngine.Object;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class PickaxeLogic : ItemLogicBase
     {

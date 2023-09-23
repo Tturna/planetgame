@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
 
-namespace Entities.Entities
+namespace Entities
 {
     [RequireComponent(typeof(SpriteRenderer))]
     [RequireComponent(typeof(Animator))]

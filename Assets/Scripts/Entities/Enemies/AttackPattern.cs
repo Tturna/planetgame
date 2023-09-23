@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [Serializable]
     public class AttackPattern

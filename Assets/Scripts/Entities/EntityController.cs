@@ -2,7 +2,7 @@ using System;
 using Planets;
 using UnityEngine;
 
-namespace Entities.Entities
+namespace Entities
 {
     public class EntityController : MonoBehaviour
     {

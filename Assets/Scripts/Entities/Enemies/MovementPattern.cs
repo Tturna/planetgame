@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [Serializable]
     public class MovementPattern

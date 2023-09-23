@@ -1,8 +1,6 @@
 using Entities;
-using Entities.Entities;
-using UnityEngine;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class LongMeleeLogic : ItemLogicBase
     {

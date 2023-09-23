@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
 
-namespace Entities.Entities
+namespace Entities
 {
     public class StatsUIManager : MonoBehaviour
     {

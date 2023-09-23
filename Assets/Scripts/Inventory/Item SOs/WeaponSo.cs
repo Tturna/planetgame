@@ -1,7 +1,7 @@
-using Entities.Entities;
+using Entities;
 using UnityEngine;
 
-namespace Inventory.Inventory.Item_Types
+namespace Inventory.Item_SOs
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "SO/Weapon")]
     public class WeaponSo : UsableItemSo
