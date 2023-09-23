@@ -76,6 +76,8 @@ namespace Inventory.Item_SOs.Accessories
         
         //
         
+        public virtual void ResetBehavior() { }
+        
         public virtual void UpdateProcess() { }
     }
 }

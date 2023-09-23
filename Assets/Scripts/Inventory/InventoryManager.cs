@@ -548,6 +548,7 @@ namespace Inventory
             {
                 var accessorySo = (BasicAccessorySo)slot.item.itemSo;
                 EquipAccessory(accessorySo);
+                accessorySo.ResetBehavior();
             }
             
             // Unequip grabbed accessory
@@ -555,6 +556,7 @@ namespace Inventory
             {
                 var accessorySo = (BasicAccessorySo)_mouseSlot.item.itemSo;
                 UnequipAccessory(accessorySo);
+                accessorySo.ResetBehavior();
             }
         }
 
