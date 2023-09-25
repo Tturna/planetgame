@@ -4,8 +4,6 @@ using Utilities;
 
 namespace Entities.Entities
 {
-    [RequireComponent(typeof(SpriteRenderer))]
-    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(StatsManager))]
     public class PlayerController : EntityController, IDamageable
     {
@@ -15,6 +13,8 @@ namespace Entities.Entities
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
             [SerializeField] private SpriteRenderer headSr;
+            [SerializeField] private SpriteRenderer bodySr;
+            [SerializeField] private Animator bodyAnimator;
             
             [Header("Other")]
             [SerializeField] private Material flashMaterial;
@@ -30,8 +30,6 @@ namespace Entities.Entities
 
         #region Unserialized Components
         
-            private SpriteRenderer _sr;
-            private Animator _animator;
             private CapsuleCollider2D _collider;
             
         #endregion
@@ -105,12 +103,12 @@ namespace Entities.Entities
         {
             base.Start();
 
-            _animator = GetComponent<Animator>();
-            _sr = GetComponent<SpriteRenderer>();
+            bodyAnimator = GetComponent<Animator>();
+            bodySr = GetComponent<SpriteRenderer>();
             _statsManager = GetComponent<StatsManager>();
             _collider = GetComponent<CapsuleCollider2D>();
             
-            _defaultMaterial = _sr.material;
+            _defaultMaterial = bodySr.material;
         }
 
         private void Update()
@@ -192,7 +190,7 @@ namespace Entities.Entities
                     // _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
-                _animator.SetBool("running", _inputVector.x != 0);
+                bodyAnimator.SetBool("running", _inputVector.x != 0);
                 handsAnimator.SetBool("running", _inputVector.x != 0);
                 
                 // Jumping
@@ -258,7 +256,7 @@ namespace Entities.Entities
                 {
                     _jumpCooldownTimer = JumpSafetyCooldown;
                         
-                    _animator.SetBool("jumping", true);
+                    bodyAnimator.SetBool("jumping", true);
                     handsAnimator.SetBool("jumping", true);
                         
                     var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
@@ -300,7 +298,7 @@ namespace Entities.Entities
 
             if (!_jumping) return;
             _jumping = false;
-            _animator.SetBool("jumping", false);
+            bodyAnimator.SetBool("jumping", false);
             handsAnimator.SetBool("jumping", false);
                 
             // Set velocity when landing to keep horizontal momentum
@@ -344,7 +342,7 @@ namespace Entities.Entities
             // if (_inputVector.x == 0) return;
             // _sr.flipX = _inputVector.x > 0;
 
-            _sr.flipX = cursorAngle > 90;
+            bodySr.flipX = cursorAngle > 90;
             headSr.flipX = cursorAngle > 90;
             
             var scale = handsParent.localScale;
@@ -373,7 +371,7 @@ namespace Entities.Entities
 
         public override void ToggleSpriteRenderer(bool state)
         {
-            _sr.enabled = state;
+            bodySr.enabled = state;
             handsParent.gameObject.SetActive(state);
         }
 
@@ -390,11 +388,11 @@ namespace Entities.Entities
             // For some reason the editor lags like a motherfucker because of this.
             if (!Application.isEditor)
             {
-                _sr.material = flashMaterial;
+                bodySr.material = flashMaterial;
                 headSr.material = flashMaterial;
                 GameUtilities.instance.DelayExecute(() =>
                 {
-                    _sr.material = _defaultMaterial;
+                    bodySr.material = _defaultMaterial;
                     headSr.material = _defaultMaterial;
                 }, 0.1f);
             }
@@ -445,6 +443,11 @@ namespace Entities.Entities
         public void AddForceTowardsCursor(float magnitude)
         {
             Rigidbody.AddForce(_mouseDirection * magnitude);
+        }
+
+        public Transform GetBodyTransform()
+        {
+            return bodySr.transform;
         }
     }
 }
