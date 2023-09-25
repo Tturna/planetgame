@@ -5,8 +5,6 @@ using Utilities;
 
 namespace Entities
 {
-    [RequireComponent(typeof(SpriteRenderer))]
-    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(PlayerStatsManager))]
     public class PlayerController : EntityController, IDamageable
     {
@@ -15,10 +13,13 @@ namespace Entities
             [Header("Components")]
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
-            [SerializeField] private SpriteRenderer headSr;
             [SerializeField] private Transform extraSpritesParent;
             [SerializeField] private SpriteRenderer jetpackSr;
+            [SerializeField] private Transform bodyTr;
             [SerializeField] private ParticleSystem jetpackParticles;
+            [SerializeField] private SpriteRenderer headSr;
+            [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
+            [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
             
             [Header("Other")]
             [SerializeField] private Material flashMaterial;
@@ -34,8 +35,6 @@ namespace Entities
 
         #region Unserialized Components
         
-            private SpriteRenderer _sr;
-            private Animator _animator;
             private CapsuleCollider2D _collider;
             
         #endregion
@@ -108,11 +107,9 @@ namespace Entities
         {
             base.Start();
 
-            _animator = GetComponent<Animator>();
-            _sr = GetComponent<SpriteRenderer>();
             _collider = GetComponent<CapsuleCollider2D>();
             
-            _defaultMaterial = _sr.material;
+            _defaultMaterial = torsoSr.material;
         }
 
         private void Update()
@@ -194,7 +191,7 @@ namespace Entities
                     // _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
-                _animator.SetBool("running", _inputVector.x != 0);
+                torsoAnimator.SetBool("running", _inputVector.x != 0);
                 handsAnimator.SetBool("running", _inputVector.x != 0);
                 
                 // Jumping
@@ -260,7 +257,7 @@ namespace Entities
                 {
                     _jumpCooldownTimer = JumpSafetyCooldown;
                         
-                    _animator.SetBool("jumping", true);
+                    torsoAnimator.SetBool("jumping", true);
                     handsAnimator.SetBool("jumping", true);
                         
                     var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
@@ -302,7 +299,7 @@ namespace Entities
 
             if (!_jumping) return;
             _jumping = false;
-            _animator.SetBool("jumping", false);
+            torsoAnimator.SetBool("jumping", false);
             handsAnimator.SetBool("jumping", false);
                 
             // Set velocity when landing to keep horizontal momentum
@@ -346,18 +343,18 @@ namespace Entities
             // if (_inputVector.x == 0) return;
             // _sr.flipX = _inputVector.x > 0;
 
-            _sr.flipX = cursorAngle > 90;
-            headSr.flipX = cursorAngle > 90;
-            
-            var scale = handsParent.localScale;
-            // scale.x = _inputVector.x > 0 ? -1f : 1f;
-            scale.x = cursorAngle < 90 ? -1f : 1f;
-            handsParent.localScale = scale;
-            
-            // Flip the extra sprites
-            scale = extraSpritesParent.localScale;
-            scale.x = cursorAngle > 90 ? -1f : 1f;
-            extraSpritesParent.localScale = scale;
+            // torsoSr.flipX = cursorAngle > 90;
+            // headSr.flipX = cursorAngle > 90;
+            //
+            // var scale = handsParent.localScale;
+            // // scale.x = _inputVector.x > 0 ? -1f : 1f;
+            // scale.x = cursorAngle < 90 ? -1f : 1f;
+            // handsParent.localScale = scale;
+            //
+            // // Flip the extra sprites
+            // scale = extraSpritesParent.localScale;
+            // scale.x = cursorAngle > 90 ? -1f : 1f;
+            // extraSpritesParent.localScale = scale;
         }
 
         private Interactable GetClosestInteractable()
@@ -380,7 +377,7 @@ namespace Entities
 
         public override void ToggleSpriteRenderer(bool state)
         {
-            _sr.enabled = state;
+            torsoSr.enabled = state;
             handsParent.gameObject.SetActive(state);
         }
 
@@ -397,11 +394,11 @@ namespace Entities
             // For some reason the editor lags like a motherfucker because of this.
             if (!Application.isEditor)
             {
-                _sr.material = flashMaterial;
+                torsoSr.material = flashMaterial;
                 headSr.material = flashMaterial;
                 GameUtilities.instance.DelayExecute(() =>
                 {
-                    _sr.material = _defaultMaterial;
+                    torsoSr.material = _defaultMaterial;
                     headSr.material = _defaultMaterial;
                 }, 0.1f);
             }
@@ -462,6 +459,11 @@ namespace Entities
         public ParticleSystem GetJetpackParticles()
         {
             return jetpackParticles;
+        }
+
+        public Transform GetBodyTransform()
+        {
+            return bodyTr;
         }
     }
 }

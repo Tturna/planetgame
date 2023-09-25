@@ -8,9 +8,8 @@ namespace Inventory.Item_SOs.Accessories
     [CreateAssetMenu(fileName = "Bronze Jetpack", menuName = "SO/Accessories/Bronze Jetpack")]
     public class BronzeJetpackSo : BasicAccessorySo
     {
-        private Transform _playerTransform;
+        private Transform _playerBodyTransform;
         private ParticleSystem _jetpackParticles;
-        private bool _particlesPlaying;
         private float _doubleTapTimer;
         private const float DoubleTapTime = 0.2f;
 
@@ -31,15 +30,9 @@ namespace Inventory.Item_SOs.Accessories
 
         public override void ResetBehavior()
         {
-            if (_jetpackParticles == null)
-            {
-                _jetpackParticles = PlayerController.instance.GetJetpackParticles();
-            }
-
-            if (_playerTransform == null)
-            {
-                _playerTransform = PlayerController.instance.transform;
-            }
+            _jetpackParticles = PlayerController.instance.GetJetpackParticles();
+            _playerBodyTransform = PlayerController.instance.GetBodyTransform();
+            _doubleTapTimer = 0f;
         }
         
         public override void UpdateProcess()
@@ -72,7 +65,7 @@ namespace Inventory.Item_SOs.Accessories
 
             while (timer > 0f)
             {
-                // _playerTransform.localEulerAngles = new Vector3(0, 0, Mathf.Lerp(0f, 20f, timer / duration));
+                _playerBodyTransform.localEulerAngles = Vector3.forward * Mathf.Lerp(20f, 0f, timer / duration);
                 timer -= Time.deltaTime;
                 yield return null;
             }
