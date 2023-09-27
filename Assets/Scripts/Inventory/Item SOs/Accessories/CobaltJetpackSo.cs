@@ -5,14 +5,14 @@ namespace Inventory.Item_SOs.Accessories
 {
     public class CobaltJetpackSo : BasicAccessorySo
     {
-        private ParticleSystem _jetpackParticles;
+        private ParticleSystem _jetpackParticles1, _jetpackParticles2;
         private bool _particlesPlaying;
         
         public override void UpdateProcess()
         {
-            if (_jetpackParticles == null)
+            if (_jetpackParticles1 == null)
             {
-                _jetpackParticles = PlayerController.instance.GetJetpackParticles();
+                (_jetpackParticles1, _jetpackParticles2) = PlayerController.instance.GetJetpackParticles();
             }
 
             if (Input.GetKey(KeyCode.Space))
@@ -26,7 +26,8 @@ namespace Inventory.Item_SOs.Accessories
                     if (!_particlesPlaying)
                     {
                         _particlesPlaying = true;
-                        _jetpackParticles.Play();
+                        _jetpackParticles1.Play();
+                        _jetpackParticles2.Play();
                     }
 
                     // Play jetpack sound
@@ -35,7 +36,8 @@ namespace Inventory.Item_SOs.Accessories
                 }
             }
 
-            _jetpackParticles.Stop();
+            _jetpackParticles1.Stop();
+            _jetpackParticles2.Stop();
             _particlesPlaying = false;
         }
     }
