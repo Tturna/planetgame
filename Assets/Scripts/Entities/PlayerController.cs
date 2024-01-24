@@ -16,7 +16,7 @@ namespace Entities
             [SerializeField] private Transform extraSpritesParent;
             [SerializeField] private SpriteRenderer jetpackSr;
             [SerializeField] private Transform bodyTr;
-            [SerializeField] private ParticleSystem jetpackParticles;
+            [SerializeField] private ParticleSystem jetpackParticles1, jetpackParticles2;
             [SerializeField] private SpriteRenderer headSr;
             [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
             [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
@@ -343,18 +343,18 @@ namespace Entities
             // if (_inputVector.x == 0) return;
             // _sr.flipX = _inputVector.x > 0;
 
-            // torsoSr.flipX = cursorAngle > 90;
-            // headSr.flipX = cursorAngle > 90;
-            //
-            // var scale = handsParent.localScale;
-            // // scale.x = _inputVector.x > 0 ? -1f : 1f;
-            // scale.x = cursorAngle < 90 ? -1f : 1f;
-            // handsParent.localScale = scale;
-            //
-            // // Flip the extra sprites
-            // scale = extraSpritesParent.localScale;
-            // scale.x = cursorAngle > 90 ? -1f : 1f;
-            // extraSpritesParent.localScale = scale;
+            torsoSr.flipX = cursorAngle > 90;
+            headSr.flipX = cursorAngle > 90;
+            
+            var scale = handsParent.localScale;
+            // scale.x = _inputVector.x > 0 ? -1f : 1f;
+            scale.x = cursorAngle < 90 ? -1f : 1f;
+            handsParent.localScale = scale;
+            
+            // Flip the extra sprites
+            scale = extraSpritesParent.localScale;
+            scale.x = cursorAngle > 90 ? -1f : 1f;
+            extraSpritesParent.localScale = scale;
         }
 
         private Interactable GetClosestInteractable()
@@ -456,9 +456,9 @@ namespace Entities
             jetpackSr.sprite = sprite;
         }
 
-        public ParticleSystem GetJetpackParticles()
+        public (ParticleSystem, ParticleSystem) GetJetpackParticles()
         {
-            return jetpackParticles;
+            return (jetpackParticles1, jetpackParticles2);
         }
 
         public Transform GetBodyTransform()
