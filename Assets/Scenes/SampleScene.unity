@@ -33646,6 +33646,7 @@ MonoBehaviour:
   jetpackCharge: 100
   jetpackRechargeDelay: 1
   jetpackRechargeRate: 40
+  baseStats: []
 --- !u!114 &733822066
 MonoBehaviour:
   m_ObjectHideFlags: 0

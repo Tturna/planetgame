@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Inventory.Item_SOs.Accessories;
 using UnityEngine;
 
 namespace Entities
@@ -15,69 +16,13 @@ namespace Entities
         [SerializeField] private float energy;
         [SerializeField] private float energyRegenDelay;
         [SerializeField] private float energyRegenRate;
-
+        
         [SerializeField] private float maxJetpackCharge;
         [SerializeField] private float jetpackCharge;
         [SerializeField] private float jetpackRechargeDelay;
         [SerializeField] private float jetpackRechargeRate;
         
-        // 2023-9-20:
-        // Accessories will add all of their modifiers when they're equipped.
-        // They will remove them when they're unequipped.
-        // This feels kinda dumb to do it this way because it's very repetitive.
-        // My brain feels fried
-        // TODO: Figure out how to do this better. Maybe a loop?
-        public struct AccessoryModifierData
-        {
-            public float maxHealthAdder;
-            public float maxHealthMultiplier;
-            public float maxEnergyAdder;
-            public float maxEnergyMultiplier;
-            public float defenseAdder;
-            public float defenseMultiplier;
-            public float damageReductionMultiplier;
-            public float damageAdder;
-            public float damageMultiplier;
-            public float defensePenetrationAdder;
-            public float defensePenetrationMultiplier;
-            public float critChanceMultiplier;
-            public float knockbackMultiplier;
-            public float moveSpeedMultiplier;
-            public float jumpHeightMultiplier;
-            public float attackSpeedMultiplier;
-            public float miningSpeedMultiplier;
-            public float miningPowerMultiplier;
-            public float buildingSpeedMultiplier;
-            public float jetpackRechargeMultiplier;
-            public float jetpackChargeAdder;
-        }
-        
-        // Containers for stat modifiers. Accessories will add to these.
-        // Modifiers are a dictionary with a string for the id of the accessory that adds the value.
-
-        #region Stat Modifiers
-        private Dictionary<string, float> _maxHealthAdders = new();
-        private Dictionary<string, float> _maxHealthMultipliers = new();
-        private Dictionary<string, float> _maxEnergyAdders = new();
-        private Dictionary<string, float> _maxEnergyMultipliers = new();
-        private Dictionary<string, float> _defenseAdders = new();
-        private Dictionary<string, float> _defenseMultipliers = new();
-        private Dictionary<string, float> _damageReductionMultipliers = new();
-        private Dictionary<string, float> _damageAdders = new();
-        private Dictionary<string, float> _damageMultipliers = new();
-        private Dictionary<string, float> _defensePenetrationAdders = new();
-        private Dictionary<string, float> _defensePenetrationMultipliers = new();
-        private Dictionary<string, float> _critChanceMultipliers = new();
-        private Dictionary<string, float> _knockbackMultipliers = new();
-        private Dictionary<string, float> _moveSpeedMultipliers = new();
-        private Dictionary<string, float> _jumpHeightMultipliers = new();
-        private Dictionary<string, float> _attackSpeedMultipliers = new();
-        private Dictionary<string, float> _miningSpeedMultipliers = new();
-        private Dictionary<string, float> _miningPowerMultipliers = new();
-        private Dictionary<string, float> _buildingSpeedMultipliers = new();
-        private Dictionary<string, float> _jetpackRechargeMultipliers = new();
-        private Dictionary<string, float> _jetpackChargeAdders = new();
-        #endregion
+        private Dictionary<string, List<StatModifier>> _accessoryModifierLists;
 
         private float _energyRegenTimer, _healthRegenTimer, _jetpackRechargeTimer;
         
@@ -171,64 +116,62 @@ namespace Entities
             return instance.jetpackCharge <= 0;
         }
 
-        public static float GetEnergy()
+        // TODO: Continue making everything use stats from this stat manager
+        // TODO: Consider refactoring these functions because they seems to be repetitive
+        public static float GetHealth()
         {
-            return instance.energy;
-        }
-        
-        public static float GetJetpackCharge()
-        {
-            return instance.jetpackCharge;
+            var totalHealth = instance.health;
+            var healthMultiplier = 1f;
+            
+            foreach (var modifierList in instance._accessoryModifierLists.Values)
+            {
+                foreach (var modifier in modifierList)
+                {
+                    if (modifier.statModifierType == StatModifierEnum.MaxHealthIncrease)
+                    {
+                        totalHealth += modifier.value;
+                    }
+                    else if (modifier.statModifierType == StatModifierEnum.MaxHealthMultiplier)
+                    {
+                        healthMultiplier += modifier.value;
+                    }
+                }
+            }
+            
+            return totalHealth * healthMultiplier;
         }
 
-        public static void AddAccessoryModifiers(AccessoryModifierData data, string id)
+        public static float GetJetpackCharge()
         {
-            instance._maxHealthAdders.Add(id, data.maxHealthAdder);
-            instance._maxHealthMultipliers.Add(id, data.maxHealthMultiplier);
-            instance._maxEnergyAdders.Add(id, data.maxEnergyAdder);
-            instance._maxEnergyMultipliers.Add(id, data.maxEnergyMultiplier);
-            instance._defenseAdders.Add(id, data.defenseAdder);
-            instance._defenseMultipliers.Add(id, data.defenseMultiplier);
-            instance._damageReductionMultipliers.Add(id, data.damageReductionMultiplier);
-            instance._damageAdders.Add(id, data.damageAdder);
-            instance._damageMultipliers.Add(id, data.damageMultiplier);
-            instance._defensePenetrationAdders.Add(id, data.defensePenetrationAdder);
-            instance._defensePenetrationMultipliers.Add(id, data.defensePenetrationMultiplier);
-            instance._critChanceMultipliers.Add(id, data.critChanceMultiplier);
-            instance._knockbackMultipliers.Add(id, data.knockbackMultiplier);
-            instance._moveSpeedMultipliers.Add(id, data.moveSpeedMultiplier);
-            instance._jumpHeightMultipliers.Add(id, data.jumpHeightMultiplier);
-            instance._attackSpeedMultipliers.Add(id, data.attackSpeedMultiplier);
-            instance._miningSpeedMultipliers.Add(id, data.miningSpeedMultiplier);
-            instance._miningPowerMultipliers.Add(id, data.miningPowerMultiplier);
-            instance._buildingSpeedMultipliers.Add(id, data.buildingSpeedMultiplier);
-            instance._jetpackRechargeMultipliers.Add(id, data.jetpackRechargeMultiplier);
-            instance._jetpackChargeAdders.Add(id, data.jetpackChargeAdder);
+            var totalJetpackCharge = instance.jetpackCharge;
+            var jetpackChargeMultiplier = 1f;
+            
+            foreach (var modifierList in instance._accessoryModifierLists.Values)
+            {
+                foreach (var modifier in modifierList)
+                {
+                    if (modifier.statModifierType == StatModifierEnum.MaxJetpackChargeIncrease)
+                    {
+                        totalJetpackCharge += modifier.value;
+                    }
+                    else if (modifier.statModifierType == StatModifierEnum.MaxJetpackChargeMultiplier)
+                    {
+                        jetpackChargeMultiplier += modifier.value;
+                    }
+                }
+            }
+            
+            return totalJetpackCharge * jetpackChargeMultiplier;
+        }
+
+        public static void AddAccessoryModifiers(List<StatModifier> modifiers, string id)
+        {
+            instance._accessoryModifierLists.Add(id, modifiers);
         }
 
         public static void RemoveAccessoryModifiers(string id)
         {
-            instance._maxHealthAdders.Remove(id);
-            instance._maxHealthMultipliers.Remove(id);
-            instance._maxEnergyAdders.Remove(id);
-            instance._maxEnergyMultipliers.Remove(id);
-            instance._defenseAdders.Remove(id);
-            instance._defenseMultipliers.Remove(id);
-            instance._damageReductionMultipliers.Remove(id);
-            instance._damageAdders.Remove(id);
-            instance._damageMultipliers.Remove(id);
-            instance._defensePenetrationAdders.Remove(id);
-            instance._defensePenetrationMultipliers.Remove(id);
-            instance._critChanceMultipliers.Remove(id);
-            instance._knockbackMultipliers.Remove(id);
-            instance._moveSpeedMultipliers.Remove(id);
-            instance._jumpHeightMultipliers.Remove(id);
-            instance._attackSpeedMultipliers.Remove(id);
-            instance._miningSpeedMultipliers.Remove(id);
-            instance._miningPowerMultipliers.Remove(id);
-            instance._buildingSpeedMultipliers.Remove(id);
-            instance._jetpackRechargeMultipliers.Remove(id);
-            instance._jetpackChargeAdders.Remove(id);
+            instance._accessoryModifierLists.Remove(id);
         }
     }
 }

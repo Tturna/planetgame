@@ -448,32 +448,7 @@ namespace Inventory
 
         private static void EquipAccessory(BasicAccessorySo accessorySo)
         {
-            var accessoryData = new PlayerStatsManager.AccessoryModifierData()
-            {
-                maxHealthAdder = accessorySo.MaxHealthIncrease,
-                maxHealthMultiplier = accessorySo.MaxHealthMultiplier,
-                maxEnergyAdder = accessorySo.MaxEnergyIncrease,
-                maxEnergyMultiplier = accessorySo.MaxEnergyMultiplier,
-                defenseAdder = accessorySo.DefenseIncrease,
-                defenseMultiplier = accessorySo.DefenseMultiplier,
-                damageReductionMultiplier = accessorySo.DamageReductionMultiplier,
-                damageAdder = accessorySo.DamageIncrease,
-                damageMultiplier = accessorySo.DamageMultiplier,
-                defensePenetrationAdder = accessorySo.DefensePenetrationIncrease,
-                defensePenetrationMultiplier = accessorySo.DefensePenetrationMultiplier,
-                critChanceMultiplier = accessorySo.CritChanceMultiplier,
-                knockbackMultiplier = accessorySo.KnockbackMultiplier,
-                moveSpeedMultiplier = accessorySo.MoveSpeedMultiplier,
-                jumpHeightMultiplier = accessorySo.JumpHeightMultiplier,
-                attackSpeedMultiplier = accessorySo.AttackSpeedMultiplier,
-                miningSpeedMultiplier = accessorySo.MiningSpeedMultiplier,
-                miningPowerMultiplier = accessorySo.MiningPowerMultiplier,
-                buildingSpeedMultiplier = accessorySo.BuildingSpeedMultiplier,
-                jetpackRechargeMultiplier = accessorySo.JetpackRechargeMultiplier,
-                jetpackChargeAdder = accessorySo.JetpackChargeIncrease
-            };
-            
-            PlayerStatsManager.AddAccessoryModifiers(accessoryData, accessorySo.id);
+            PlayerStatsManager.AddAccessoryModifiers(accessorySo.statModifiers, accessorySo.id);
             
             if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
             {
