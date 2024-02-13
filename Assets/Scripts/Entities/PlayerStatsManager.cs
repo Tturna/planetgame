@@ -1,28 +1,81 @@
+using System;
 using System.Collections.Generic;
 using Inventory.Item_SOs.Accessories;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Entities
 {
     public class PlayerStatsManager : MonoBehaviour
     {
-        // Base stats
-        [SerializeField] private float maxHealth;
-        [SerializeField] private float health;
-        [SerializeField] private float healthRegenDelay;
-        [SerializeField] private float healthRegenRate;
+        /*
+         * Some stats that modify item stats like damage, knockback, crit chance, etc. can have a flat increase and a multiplier.
+         * The flat increase is added to the base value of the item, and the sum is then multiplied by the multiplier.
+         */
+    
+        #region Base Stats
+
+        private const float BaseMaxHealth = 100f;
+        private const float BaseHealth = 100f;
+        private const float BaseHealthRegenDelay = 2f;
+        private const float BaseHealthRegenRate = 10f;
+        private const float BaseMaxEnergy = 200f;
+        private const float BaseEnergy = 200f;
+        private const float BaseEnergyRegenDelay = 1f;
+        private const float BaseEnergyRegenRate = 30f;
+        private const float BaseMaxJetpackCharge = 100f;
+        private const float BaseJetpackCharge = 100f;
+        private const float BaseJetpackRechargeDelay = 1f;
+        private const float BaseJetpackRechargeRate = 40f;
+        private const float BaseDefense = 0f;
+        private const float BaseDamageIncrease = 0f;
+        private const float BaseDamageMultiplier = 1f;
+        private const float BaseMeleeDamageIncrease = 0f;
+        private const float BaseMeleeDamageMultiplier = 1f;
+        private const float BaseRangedDamageIncrease = 0f;
+        private const float BaseRangedDamageMultiplier = 1f;
+        private const float BaseDefensePenetration = 0f;
+        private const float BaseCritChance = 5f;
+        private const float BaseKnockbackMultiplier = 1f;
+        private const float BaseMaxMoveSpeed = 4f;
+        private const float BaseAccelerationSpeed = 25f;
+        private const float BaseJumpHeight = 1f;
+        private const float BaseAttackSpeed = 1f;
+
+        #endregion
         
-        [SerializeField] private float maxEnergy;
-        [SerializeField] private float energy;
-        [SerializeField] private float energyRegenDelay;
-        [SerializeField] private float energyRegenRate;
+        public static float MaxHealth { get; private set; }
+        public static float Health { get; private set; }
+        public static float HealthRegenDelay { get; private set; }
+        public static float HealthRegenRate { get; private set; }
         
-        [SerializeField] private float maxJetpackCharge;
-        [SerializeField] private float jetpackCharge;
-        [SerializeField] private float jetpackRechargeDelay;
-        [SerializeField] private float jetpackRechargeRate;
+        public static float MaxEnergy { get; private set; }
+        public static float Energy { get; private set; }
+        public static float EnergyRegenDelay { get; private set; }
+        public static float EnergyRegenRate { get; private set; }
         
-        private Dictionary<string, List<StatModifier>> _accessoryModifierLists;
+        public static float MaxJetpackCharge { get; private set; }
+        public static float JetpackCharge { get; private set; }
+        public static float JetpackRechargeDelay { get; private set; }
+        public static float JetpackRechargeRate { get; private set; }
+        
+        public static float Defense { get; private set; }
+        public static float DamageIncrease { get; private set; }
+        public static float DamageMultiplier { get; private set; }
+        public static float MeleeDamageIncrease { get; private set; }
+        public static float MeleeDamageMultiplier { get; private set; }
+        public static float RangedDamageIncrease { get; private set; }
+        public static float RangedDamageMultiplier { get; private set; }
+        public static float DefensePenetration { get; private set; }
+        public static float CritChance { get; private set; }
+        public static float KnockbackMultiplier { get; private set; }
+        public static float MaxMoveSpeed { get; private set; }
+        public static float AccelerationSpeed { get; private set; }
+        public static float JumpHeight { get; private set; }
+        public static float AttackSpeed { get; private set; }
+        
+        // Each accessory has an id and a list of stat modifiers
+        private static readonly Dictionary<string, List<StatModifier>> AccessoryModifierLists = new();
 
         private float _energyRegenTimer, _healthRegenTimer, _jetpackRechargeTimer;
         
@@ -38,6 +91,12 @@ namespace Entities
             {
                 Debug.LogError("Multiple PlayerStatsManager instances found!");
             }
+            
+            RecalculateStats();
+            
+            Health = BaseHealth;
+            Energy = BaseEnergy;
+            JetpackCharge = BaseJetpackCharge;
         }
 
         private void Update()
@@ -53,8 +112,8 @@ namespace Entities
             }
             else
             {
-                energy = Mathf.Clamp(energy + energyRegenRate * Time.deltaTime, 0, maxEnergy);
-                StatsUIManager.instance.UpdateEnergyUI(energy, maxEnergy);
+                Energy = Mathf.Clamp(Energy + EnergyRegenRate * Time.deltaTime, 0, MaxEnergy);
+                StatsUIManager.instance.UpdateEnergyUI(Energy, MaxEnergy);
             }
 
             if (_healthRegenTimer > 0)
@@ -63,8 +122,8 @@ namespace Entities
             }
             else
             {
-                health = Mathf.Clamp(health + healthRegenRate * Time.deltaTime, 0, maxEnergy);
-                StatsUIManager.instance.UpdateHealthUI(health, maxHealth);
+                Health = Mathf.Clamp(Health + HealthRegenRate * Time.deltaTime, 0, MaxEnergy);
+                StatsUIManager.instance.UpdateHealthUI(Health, MaxHealth);
             }
             
             if (_jetpackRechargeTimer > 0)
@@ -73,105 +132,193 @@ namespace Entities
             }
             else
             {
-                jetpackCharge = Mathf.Clamp(jetpackCharge + jetpackRechargeRate * Time.deltaTime, 0, maxJetpackCharge);
+                JetpackCharge = Mathf.Clamp(JetpackCharge + JetpackRechargeRate * Time.deltaTime, 0, MaxJetpackCharge);
                 //StatsUIManager.instance.UpdateJetpackUI(jetpackCharge, maxJetpackCharge);
+            }
+        }
+        
+        private static void RecalculateStats()
+        {
+            // Reset stats
+            MaxHealth = BaseMaxHealth;
+            // Health = _baseHealth;
+            HealthRegenDelay = BaseHealthRegenDelay;
+            HealthRegenRate = BaseHealthRegenRate;
+            MaxEnergy = BaseMaxEnergy;
+            // Energy = _baseEnergy;
+            EnergyRegenDelay = BaseEnergyRegenDelay;
+            EnergyRegenRate = BaseEnergyRegenRate;
+            MaxJetpackCharge = BaseMaxJetpackCharge;
+            // JetpackCharge = _baseJetpackCharge;
+            JetpackRechargeDelay = BaseJetpackRechargeDelay;
+            JetpackRechargeRate = BaseJetpackRechargeRate;
+            Defense = BaseDefense;
+            DamageIncrease = BaseDamageIncrease;
+            DamageMultiplier = BaseDamageMultiplier;
+            MeleeDamageIncrease = BaseMeleeDamageIncrease;
+            MeleeDamageMultiplier = BaseMeleeDamageMultiplier;
+            RangedDamageIncrease = BaseRangedDamageIncrease;
+            RangedDamageMultiplier = BaseRangedDamageMultiplier;
+            DefensePenetration = BaseDefensePenetration;
+            CritChance = BaseCritChance;
+            KnockbackMultiplier = BaseKnockbackMultiplier;
+            MaxMoveSpeed = BaseMaxMoveSpeed;
+            AccelerationSpeed = BaseAccelerationSpeed;
+            JumpHeight = BaseJumpHeight;
+            AttackSpeed = BaseAttackSpeed;
+            
+            foreach (var accessoryModifiers in AccessoryModifierLists)
+            {
+                // Apply fixed increases
+                foreach (var modifier in accessoryModifiers.Value)
+                {
+                    switch (modifier.statModifierType)
+                    {
+                        case StatModifierEnum.MaxHealthIncrease:
+                            MaxHealth += modifier.value;
+                            break;
+                        case StatModifierEnum.MaxEnergyIncrease:
+                            MaxEnergy += modifier.value;
+                            break;
+                        case StatModifierEnum.MaxJetpackChargeIncrease:
+                            MaxJetpackCharge += modifier.value;
+                            break;
+                        case StatModifierEnum.DefenseIncrease:
+                            Defense += modifier.value;
+                            break;
+                        case StatModifierEnum.DamageIncrease:
+                            DamageIncrease += modifier.value;
+                            break;
+                        case StatModifierEnum.MeleeDamageIncrease:
+                            MeleeDamageIncrease += modifier.value;
+                            break;
+                        case StatModifierEnum.RangedDamageIncrease:
+                            RangedDamageIncrease += modifier.value;
+                            break;
+                        case StatModifierEnum.DefensePenetrationIncrease:
+                            DefensePenetration += modifier.value;
+                            break;
+                        default:
+                            Debug.LogWarning("Unknown stat modifier type: " + modifier.statModifierType);
+                            break;
+                    }
+                }
+                
+                // Apply multipliers
+                foreach (var modifier in accessoryModifiers.Value)
+                {
+                    switch (modifier.statModifierType)
+                    {
+                        case StatModifierEnum.MaxHealthMultiplier:
+                            MaxHealth *= modifier.value;
+                            break;
+                        case StatModifierEnum.MaxEnergyMultiplier:
+                            MaxEnergy *= modifier.value;
+                            break;
+                        case StatModifierEnum.MaxJetpackChargeMultiplier:
+                            MaxJetpackCharge *= modifier.value;
+                            break;
+                        case StatModifierEnum.DefenseMultiplier:
+                            Defense *= modifier.value;
+                            break;
+                        case StatModifierEnum.DamageMultiplier:
+                            DamageMultiplier += modifier.value;
+                            break;
+                        case StatModifierEnum.MeleeDamageMultiplier:
+                            MeleeDamageMultiplier += modifier.value;
+                            break;
+                        case StatModifierEnum.RangedDamageMultiplier:
+                            RangedDamageMultiplier += modifier.value;
+                            break;
+                        case StatModifierEnum.DefensePenetrationMultiplier:
+                            DefensePenetration *= modifier.value;
+                            break;
+                        case StatModifierEnum.CritChanceMultiplier:
+                            CritChance *= modifier.value;
+                            break;
+                        case StatModifierEnum.KnockbackMultiplier:
+                            KnockbackMultiplier += modifier.value;
+                            break;
+                        case StatModifierEnum.MaxMoveSpeedMultiplier:
+                            MaxMoveSpeed *= modifier.value;
+                            break;
+                        case StatModifierEnum.AccelerationSpeedMultiplier:
+                            AccelerationSpeed *= modifier.value;
+                            break;
+                        case StatModifierEnum.JumpHeightMultiplier:
+                            JumpHeight *= modifier.value;
+                            break;
+                        case StatModifierEnum.AttackSpeedMultiplier:
+                            AttackSpeed *= modifier.value;
+                            break;
+                        default:
+                            Debug.LogWarning("Unknown stat modifier type: " + modifier.statModifierType);
+                            break;
+                    }
+                }
             }
         }
         
         // public stuff
 
-        /// <summary>
-        /// Changes health by the given amount. Returns true if the remaining health is 0.
-        /// </summary>
-        /// <param name="amount"></param>
         public static bool ChangeHealth(float amount)
         {
-            instance.health = Mathf.Clamp(instance.health + amount, 0, instance.maxHealth);
-            instance._healthRegenTimer = instance.healthRegenDelay;
-            StatsUIManager.instance.UpdateHealthUI(instance.health, instance.maxHealth);
+            Health = Mathf.Clamp(Health + amount, 0, MaxHealth);
+            instance._healthRegenTimer = HealthRegenDelay;
+            StatsUIManager.instance.UpdateHealthUI(Health, MaxHealth);
 
-            return instance.health <= 0;
+            return Health <= 0;
         }
 
-        /// <summary>
-        /// Changes energy by the given amount. Returns true if the remaining energy is 0.
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <returns></returns>
         public static bool ChangeEnergy(float amount)
         {
-            instance.energy = Mathf.Clamp(instance.energy + amount, 0, instance.maxEnergy);
-            instance._energyRegenTimer = instance.energyRegenDelay;
-            StatsUIManager.instance.UpdateEnergyUI(instance.energy, instance.maxEnergy);
+            Energy = Mathf.Clamp(Energy + amount, 0, MaxEnergy);
+            instance._energyRegenTimer = EnergyRegenDelay;
+            StatsUIManager.instance.UpdateEnergyUI(Energy, MaxEnergy);
 
-            return instance.energy <= 0;
+            return Energy <= 0;
         }
         
         public static bool ChangeJetpackCharge(float amount)
         {
-            instance.jetpackCharge = Mathf.Clamp(instance.jetpackCharge + amount, 0, instance.maxJetpackCharge);
-            instance._jetpackRechargeTimer = instance.jetpackRechargeDelay;
+            JetpackCharge = Mathf.Clamp(JetpackCharge + amount, 0, MaxJetpackCharge);
+            instance._jetpackRechargeTimer = JetpackRechargeDelay;
             //StatsUIManager.instance.UpdateJetpackUI(instance.jetpackCharge, instance.maxJetpackCharge);
 
-            return instance.jetpackCharge <= 0;
+            return JetpackCharge <= 0;
         }
 
-        // TODO: Continue making everything use stats from this stat manager
-        // TODO: Consider refactoring these functions because they seems to be repetitive
-        public static float GetHealth()
+        private static float CalculateCritDamage(float damage, float itemBaseCritChance)
         {
-            var totalHealth = instance.health;
-            var healthMultiplier = 1f;
-            
-            foreach (var modifierList in instance._accessoryModifierLists.Values)
-            {
-                foreach (var modifier in modifierList)
-                {
-                    if (modifier.statModifierType == StatModifierEnum.MaxHealthIncrease)
-                    {
-                        totalHealth += modifier.value;
-                    }
-                    else if (modifier.statModifierType == StatModifierEnum.MaxHealthMultiplier)
-                    {
-                        healthMultiplier += modifier.value;
-                    }
-                }
-            }
-            
-            return totalHealth * healthMultiplier;
+            var rng = Random.Range(0f, 100f);
+            var critChance = itemBaseCritChance + CritChance;
+            return rng <= critChance ? damage * Random.Range(1.5f, 3f) : damage;
         }
-
-        public static float GetJetpackCharge()
+        
+        public static float CalculateMeleeDamage(float itemBaseDamage, float itemBaseCritChance)
         {
-            var totalJetpackCharge = instance.jetpackCharge;
-            var jetpackChargeMultiplier = 1f;
-            
-            foreach (var modifierList in instance._accessoryModifierLists.Values)
-            {
-                foreach (var modifier in modifierList)
-                {
-                    if (modifier.statModifierType == StatModifierEnum.MaxJetpackChargeIncrease)
-                    {
-                        totalJetpackCharge += modifier.value;
-                    }
-                    else if (modifier.statModifierType == StatModifierEnum.MaxJetpackChargeMultiplier)
-                    {
-                        jetpackChargeMultiplier += modifier.value;
-                    }
-                }
-            }
-            
-            return totalJetpackCharge * jetpackChargeMultiplier;
+            var flatDamage = itemBaseDamage + DamageIncrease + MeleeDamageIncrease;
+            var realDamage = flatDamage * DamageMultiplier * MeleeDamageMultiplier;
+            return CalculateCritDamage(realDamage, itemBaseCritChance);
+        }
+        
+        public static float CalculateRangedDamage(float itemBaseDamage, float itemBaseCritChance)
+        {
+            var flatDamage = itemBaseDamage + DamageIncrease + RangedDamageIncrease;
+            var realDamage = flatDamage * DamageMultiplier * RangedDamageMultiplier;
+            return CalculateCritDamage(realDamage, itemBaseCritChance);
         }
 
         public static void AddAccessoryModifiers(List<StatModifier> modifiers, string id)
         {
-            instance._accessoryModifierLists.Add(id, modifiers);
+            AccessoryModifierLists.Add(id, modifiers);
+            RecalculateStats();
         }
 
         public static void RemoveAccessoryModifiers(string id)
         {
-            instance._accessoryModifierLists.Remove(id);
+            AccessoryModifierLists.Remove(id);
+            RecalculateStats();
         }
     }
 }

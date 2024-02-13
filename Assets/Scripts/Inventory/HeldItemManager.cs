@@ -5,6 +5,7 @@ using System.Collections;
 using Entities;
 using Inventory.Item_Logic;
 using Inventory.Item_SOs;
+using JetBrains.Annotations;
 using UnityEngine;
 using Utilities;
 
@@ -25,7 +26,7 @@ namespace Inventory
         private SpriteRenderer _equippedSr;
         private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
-        private Item _equippedItem;
+        [CanBeNull] private Item _equippedItem;
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
         
         public delegate void ItemUsedHandler(Item item);
@@ -98,7 +99,7 @@ namespace Inventory
             flippingEffectParent.localScale = scale; // flip flipping effects
         
             // Manually set left hand position when holding an item
-            if (_equippedItem != null)
+            if (_equippedItem?.itemSo != null)
             {
                 handsAnimator.SetLayerWeight(1, 0f);
                 handsAnimator.SetLayerWeight(2, 0f);
@@ -138,7 +139,7 @@ namespace Inventory
             if (_equippedItem.logicScript == null) return false;
             if (usableItemSo.isOnCooldown) return false;
 
-            if (PlayerStatsManager.GetEnergy() < usableItemSo.energyCost)
+            if (PlayerStatsManager.Energy < usableItemSo.energyCost)
             {
                 NoEnergy();
                 return false;
@@ -175,13 +176,13 @@ namespace Inventory
             
             OnItemUsed(_equippedItem);
 
+            // TODO: Use attack speed from PlayerStatsManager
             if (usableItemSo.energyCost > 0)
             {
                 StartCoroutine(HandleWeaponCooldown(usableItemSo));
+                PlayerStatsManager.ChangeEnergy(-usableItemSo.energyCost);
             }
             
-            // Update energy
-            PlayerStatsManager.ChangeEnergy(-usableItemSo.energyCost);
                 
             // Recoil
             _recoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);

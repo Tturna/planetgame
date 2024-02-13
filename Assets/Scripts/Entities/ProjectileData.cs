@@ -10,6 +10,7 @@ namespace Entities
         public float projectileSpeed;
         public float damage;
         public float knockback;
+        public float critChance;
         public bool piercing;
         public bool useGravity;
         public float gravityMultiplier;

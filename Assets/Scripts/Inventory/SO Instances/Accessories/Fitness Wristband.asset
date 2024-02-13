@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ed025fc127f98c4e8a3f47fd9e85d0b, type: 3}
+  m_Name: Fitness Wristband
+  m_EditorClassIdentifier: 
+  id: 8b9548cd-3708-4da0-a0ce-3a74f0ca1687
+  name: Fitness Wristband
+  description: Everybody knows you're faster with cool gear
+  maxStack: 1
+  sprite: {fileID: 21300000, guid: 435bba378686eff46a6eb538d0b147ad, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  useBothHands: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 1
+  statModifiers:
+  - statModifierType: 18
+    value: 1.5
+  - statModifierType: 19
+    value: 1.5

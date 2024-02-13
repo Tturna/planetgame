@@ -2,6 +2,7 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
+using Entities;
 using Entities.Enemies;
 using Inventory.Item_Logic;
 using Inventory.Item_SOs;
@@ -66,8 +67,13 @@ namespace Inventory
             if (col.gameObject.CompareTag("Enemy"))
             {
                 var enemy = col.gameObject.GetComponent<EnemyEntity>();
-                enemy.TakeDamage(_meleeSo.damage);
-                enemy.Knockback(transform.position, _meleeSo.knockback);
+                
+                // TODO: Implement entity defense and defense penetration
+                var damage = PlayerStatsManager.CalculateMeleeDamage(_meleeSo.damage, _meleeSo.critChance);
+                var knockback = _meleeSo.knockback * PlayerStatsManager.KnockbackMultiplier;
+                
+                enemy.TakeDamage(damage);
+                enemy.Knockback(transform.position, knockback);
             }
         }
     }
