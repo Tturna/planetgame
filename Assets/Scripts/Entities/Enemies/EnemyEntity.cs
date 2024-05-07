@@ -259,7 +259,6 @@ namespace Entities.Enemies
         {
             if (_health <= 0) return;
 
-            // TODO: Figure out critical hits
             amount = Mathf.Round(Random.Range(amount * 0.8f, amount * 1.2f));
 
             _health = Mathf.Clamp(_health - amount, 0, _maxHealth);

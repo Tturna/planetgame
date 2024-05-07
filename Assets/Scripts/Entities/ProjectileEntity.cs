@@ -99,9 +99,13 @@ namespace Entities
             if (!col.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
             if (!_data.canHurtPlayer && damageable is PlayerController) return;
             
-            damageable.TakeDamage(_data.damage);
+            // TODO: Implement entity defense and defense penetration
+            var damage = PlayerStatsManager.CalculateRangedDamage(_data.damage, _data.critChance);
+            var trueKnockback = _data.knockback * PlayerStatsManager.KnockbackMultiplier;
+            
+            damageable.TakeDamage(damage);
             // Here we use last position because the projectile might have moved past the collider
-            damageable.Knockback(_lastPos, _data.knockback);
+            damageable.Knockback(_lastPos, trueKnockback);
 
             if (!_data.piercing)
             {

@@ -20,10 +20,10 @@ namespace Utilities
         {
             MouseRaycast();
             
-            if (Results.Count > 0)
-            {
-                Debug.Log(Results[0].gameObject.name);
-            }
+            // if (Results.Count > 0)
+            // {
+            //     Debug.Log(Results[0].gameObject.name);
+            // }
         }
 
         /// <summary>

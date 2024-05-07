@@ -7,6 +7,7 @@ namespace Inventory.Item_SOs
     {
         public float damage;
         public float knockback;
+        public float critChance;
         public Vector2[] colliderPoints;
         public Vector2 swingTrailOffset;
         public float swingTrailWidth;

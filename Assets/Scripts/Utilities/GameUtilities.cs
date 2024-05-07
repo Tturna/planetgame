@@ -40,6 +40,11 @@ namespace Utilities
             return thing;
         }
         
+        public static float Lerp(float a, float b, float v)
+        {
+            return a + (b - a) * v;
+        }
+        
         public static float InverseLerp(float a, float b, float v)
         {
             return b - a == 0 ? 0f : Mathf.Clamp01((v - a) / (b - a));

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 792748d8df9c4b2eadfe7144a1c4c116, type: 3}
+  m_Name: Cobalt Jetpack
+  m_EditorClassIdentifier: 
+  id: 4ed6a53d-ec25-4a1a-b259-18821d627c6d
+  name: Cobalt Jetpack
+  description: 
+  maxStack: 1
+  sprite: {fileID: 21300000, guid: dc4dc01422acbe647a0cc0b72f2edfc7, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  useBothHands: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 4
+  statModifiers:
+  - statModifierType: 16
+    value: 0.5

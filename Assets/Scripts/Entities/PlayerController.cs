@@ -25,8 +25,6 @@ namespace Entities
             [SerializeField] private Material flashMaterial;
         
             [Header("Movement Settings")]
-            [SerializeField] private float accelerationSpeed;
-            [SerializeField] private float maxMoveSpeed;
             [SerializeField] private float maxSlopeMultiplier;
             [SerializeField] private float jumpForce;
             [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
@@ -144,14 +142,14 @@ namespace Entities
             }
             else
             {
-                pmat.friction = Mathf.Lerp(0.85f, 0.2f, localVelocity.magnitude / maxMoveSpeed);
+                pmat.friction = Mathf.Lerp(0.85f, 0.2f, localVelocity.magnitude / PlayerStatsManager.MaxMoveSpeed);
             }
             
             _collider.sharedMaterial = pmat; // quite the meme
 
             if (CanControl)
             {
-                var force = transform.right * (_inputVector.x * accelerationSpeed);
+                var force = transform.right * (_inputVector.x * PlayerStatsManager.AccelerationSpeed);
                 
                 // Figure out the slope angle of the terrain that the player is walking on
                 var rayStartPoint = transform.position - transform.up * 0.4f;
@@ -178,14 +176,14 @@ namespace Entities
 
                     if (dot > 0)
                     {
-                        force = direction * (accelerationSpeed * Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier));
+                        force = direction * (PlayerStatsManager.AccelerationSpeed * Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier));
                     }
                 }
                 
                 // Checking for velocity.x or y doesn't work because the player can face any direction and still be moving "right" in relation to themselves
                 // That's why we use a local velocity
-                if ((_inputVector.x > 0 && localVelocity.x < maxMoveSpeed) ||
-                    (_inputVector.x < 0 && localVelocity.x > -maxMoveSpeed))
+                if ((_inputVector.x > 0 && localVelocity.x < PlayerStatsManager.MaxMoveSpeed) ||
+                    (_inputVector.x < 0 && localVelocity.x > -PlayerStatsManager.MaxMoveSpeed))
                 {
                     Rigidbody.AddForce(force);
                     // _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
@@ -199,6 +197,7 @@ namespace Entities
                 {
                     // The jump force timer is here so it syncs with physics
                     _jumpForceTimer += Time.deltaTime;
+                    // TODO: Make this use jump height from PlayerStatsManager
                     Rigidbody.AddForce(transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
                 }
             }
@@ -386,6 +385,7 @@ namespace Entities
         
         public void TakeDamage(float amount)
         {
+            // TODO: Implement defense using PlayerStatsManager
             var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
             //TODO: damage numbers
@@ -464,6 +464,11 @@ namespace Entities
         public Transform GetBodyTransform()
         {
             return bodyTr;
+        }
+        
+        public Vector2 GetInputVector()
+        {
+            return _inputVector;
         }
     }
 }
