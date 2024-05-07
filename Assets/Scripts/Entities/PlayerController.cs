@@ -26,7 +26,6 @@ namespace Entities
         
             [Header("Movement Settings")]
             [SerializeField] private float maxSlopeMultiplier;
-            [SerializeField] private float jumpForce;
             [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
             
         #endregion
@@ -61,7 +60,7 @@ namespace Entities
         #endregion
 
         public delegate void ItemPickedUpHandler(GameObject itemObject);
-        public ItemPickedUpHandler ItemPickedUp;
+        public ItemPickedUpHandler itemPickedUp;
         
         public delegate void JumpedHandler();
         public event JumpedHandler Jumped;
@@ -71,7 +70,7 @@ namespace Entities
 
         private void OnItemPickedUp(GameObject itemObject)
         {
-            ItemPickedUp?.Invoke(itemObject);
+            itemPickedUp?.Invoke(itemObject);
         }
         
         private void OnJumped()
@@ -197,8 +196,7 @@ namespace Entities
                 {
                     // The jump force timer is here so it syncs with physics
                     _jumpForceTimer += Time.deltaTime;
-                    // TODO: Make this use jump height from PlayerStatsManager
-                    Rigidbody.AddForce(transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
+                    Rigidbody.AddForce(transform.up * (PlayerStatsManager.JumpForce * Time.deltaTime), ForceMode2D.Impulse);
                 }
             }
         }
@@ -311,19 +309,14 @@ namespace Entities
 
         private void HandleInteraction()
         {
-            // Interaction
             if (_interactablesInRange.Count <= 0) return;
         
-            // Check for closest interactable when moving
             if (_inputVector.magnitude > 0)
             {
-                // Find closest interactable
                 _newClosestInteractable = GetClosestInteractable();
 
-                // Check if the closest interactable is the same as the previous closest one
                 if (_newClosestInteractable != _closestInteractable)
                 {
-                    // Disable the prompt on the old one if there is one
                     if (_closestInteractable) _closestInteractable.DisablePrompt();
                     
                     _closestInteractable = _newClosestInteractable;
@@ -350,7 +343,6 @@ namespace Entities
             scale.x = cursorAngle < 90 ? -1f : 1f;
             handsParent.localScale = scale;
             
-            // Flip the extra sprites
             scale = extraSpritesParent.localScale;
             scale.x = cursorAngle > 90 ? -1f : 1f;
             extraSpritesParent.localScale = scale;
@@ -385,7 +377,7 @@ namespace Entities
         
         public void TakeDamage(float amount)
         {
-            // TODO: Implement defense using PlayerStatsManager
+            amount = Mathf.Clamp(amount - PlayerStatsManager.Defense, 0, amount);
             var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
             //TODO: damage numbers

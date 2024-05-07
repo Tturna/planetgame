@@ -39,40 +39,43 @@ namespace Entities
         private const float BaseKnockbackMultiplier = 1f;
         private const float BaseMaxMoveSpeed = 4f;
         private const float BaseAccelerationSpeed = 25f;
-        private const float BaseJumpHeight = 1f;
+        private const float BaseJumpHeight = 120f;
         private const float BaseAttackSpeed = 1f;
 
         #endregion
-        
-        public static float MaxHealth { get; private set; }
-        public static float Health { get; private set; }
-        public static float HealthRegenDelay { get; private set; }
-        public static float HealthRegenRate { get; private set; }
-        
-        public static float MaxEnergy { get; private set; }
+
+        private static float MaxHealth { get; set; }
+        private static float Health { get; set; }
+        private static float HealthRegenDelay { get; set; }
+        private static float HealthRegenRate { get; set; }
+
+        private static float MaxEnergy { get; set; }
         public static float Energy { get; private set; }
-        public static float EnergyRegenDelay { get; private set; }
-        public static float EnergyRegenRate { get; private set; }
-        
-        public static float MaxJetpackCharge { get; private set; }
+        private static float EnergyRegenDelay { get; set; }
+        private static float EnergyRegenRate { get; set; }
+
+        private static float MaxJetpackCharge { get; set; }
         public static float JetpackCharge { get; private set; }
-        public static float JetpackRechargeDelay { get; private set; }
-        public static float JetpackRechargeRate { get; private set; }
+        private static float JetpackRechargeDelay { get; set; }
+        private static float JetpackRechargeRate { get; set; }
         
         public static float Defense { get; private set; }
-        public static float DamageIncrease { get; private set; }
-        public static float DamageMultiplier { get; private set; }
-        public static float MeleeDamageIncrease { get; private set; }
-        public static float MeleeDamageMultiplier { get; private set; }
-        public static float RangedDamageIncrease { get; private set; }
-        public static float RangedDamageMultiplier { get; private set; }
+        private static float DamageIncrease { get; set; }
+        private static float DamageMultiplier { get; set; }
+        private static float MeleeDamageIncrease { get; set; }
+        private static float MeleeDamageMultiplier { get; set; }
+        private static float RangedDamageIncrease { get; set; }
+        private static float RangedDamageMultiplier { get; set; }
         public static float DefensePenetration { get; private set; }
-        public static float CritChance { get; private set; }
+        private static float CritChance { get; set; }
         public static float KnockbackMultiplier { get; private set; }
         public static float MaxMoveSpeed { get; private set; }
         public static float AccelerationSpeed { get; private set; }
-        public static float JumpHeight { get; private set; }
+        public static float JumpForce { get; private set; }
         public static float AttackSpeed { get; private set; }
+        // TODO: Implement status effect duration multipliers
+        public static float BuffDurationMultiplier { get; private set; }
+        public static float DebuffDurationMultiplier { get; private set; }
         
         // Each accessory has an id and a list of stat modifiers
         private static readonly Dictionary<string, List<StatModifier>> AccessoryModifierLists = new();
@@ -164,7 +167,7 @@ namespace Entities
             KnockbackMultiplier = BaseKnockbackMultiplier;
             MaxMoveSpeed = BaseMaxMoveSpeed;
             AccelerationSpeed = BaseAccelerationSpeed;
-            JumpHeight = BaseJumpHeight;
+            JumpForce = BaseJumpHeight;
             AttackSpeed = BaseAttackSpeed;
             
             foreach (var accessoryModifiers in AccessoryModifierLists)
@@ -198,9 +201,7 @@ namespace Entities
                         case StatModifierEnum.DefensePenetrationIncrease:
                             DefensePenetration += modifier.value;
                             break;
-                        default:
-                            Debug.LogWarning("Unknown stat modifier type: " + modifier.statModifierType);
-                            break;
+                        // No warning here because the modifier could be a multiplier
                     }
                 }
                 
@@ -246,7 +247,7 @@ namespace Entities
                             AccelerationSpeed *= modifier.value;
                             break;
                         case StatModifierEnum.JumpHeightMultiplier:
-                            JumpHeight *= modifier.value;
+                            JumpForce *= modifier.value;
                             break;
                         case StatModifierEnum.AttackSpeedMultiplier:
                             AttackSpeed *= modifier.value;
@@ -295,6 +296,7 @@ namespace Entities
             return rng <= critChance ? damage * Random.Range(1.5f, 3f) : damage;
         }
         
+        // Consider refactoring these functions into 1, especially if more damage types are added (energy)
         public static float CalculateMeleeDamage(float itemBaseDamage, float itemBaseCritChance)
         {
             var flatDamage = itemBaseDamage + DamageIncrease + MeleeDamageIncrease;

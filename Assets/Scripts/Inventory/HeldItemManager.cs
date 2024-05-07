@@ -145,7 +145,6 @@ namespace Inventory
                 return false;
             }
 
-            // Use Item
             Func<ItemLogicBase.UseParameters, bool> useitemFunction;
 
             if (once)
@@ -176,26 +175,21 @@ namespace Inventory
             
             OnItemUsed(_equippedItem);
 
-            // TODO: Use attack speed from PlayerStatsManager
             if (usableItemSo.energyCost > 0)
             {
                 StartCoroutine(HandleWeaponCooldown(usableItemSo));
                 PlayerStatsManager.ChangeEnergy(-usableItemSo.energyCost);
             }
-            
                 
-            // Recoil
             _recoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
             _recoilAnimator.SetLayerWeight(2, usableItemSo.recoilAngular);
             _recoilAnimator.SetFloat("recoil_shpeed_horizontal", usableItemSo.recoilSpeedHorizontal);
             _recoilAnimator.SetFloat("recoil_shpeed_angular", usableItemSo.recoilSpeedAngular);
             _recoilAnimator.SetTrigger("recoil");
             
-            // Player recoil
             var recoilDirection = -_itemAnchor.right;
             _rigidbody.AddForce(recoilDirection * usableItemSo.playerRecoilStrength, ForceMode2D.Impulse);
             
-            // Camera shake
             CameraController.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
 
             return true;
@@ -209,7 +203,7 @@ namespace Inventory
         private IEnumerator HandleWeaponCooldown(UsableItemSo usableItem)
         {
             usableItem.isOnCooldown = true;
-            yield return new WaitForSeconds(usableItem.attackCooldown);
+            yield return new WaitForSeconds(usableItem.attackCooldown / PlayerStatsManager.AttackSpeed);
             usableItem.isOnCooldown = false;
         }
 

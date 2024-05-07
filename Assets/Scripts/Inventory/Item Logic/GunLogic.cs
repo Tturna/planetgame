@@ -19,25 +19,21 @@ namespace Inventory.Item_Logic
             _utilities ??= GameUtilities.instance;
             _projectilePrefab ??= _utilities.GetProjectilePrefab();
             
-            // Spawn projectile
             var pos = (Vector2)useParameters.equippedItemObject.transform.position;
             var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
             var projectile = GameUtilities.Spawn(_projectilePrefab, pos, rot, useParameters.equippedItemObject.transform);
 
-            // Set projectile position to muzzle position
             var localPos = weaponSo.muzzlePosition;
             localPos.y = useParameters.flipY ? -localPos.y : localPos.y;
             projectile.transform.localPosition = localPos;
             projectile.transform.SetParent(null);
             
-            // Initialize projectile
             var entity = projectile.GetComponent<ProjectileEntity>();
             entity.Init(weaponSo.projectile);
             
             //TODO: Object pooling
             
-            // Choose random muzzle flash
             if (weaponSo.muzzleFlashes.Length > 0)
             {
                 if (!_muzzleFlashObject)

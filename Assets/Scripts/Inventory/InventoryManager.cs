@@ -199,7 +199,7 @@ namespace Inventory
             _itemTooltipObject.SetActive(false);
             
 
-            PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
+            PlayerController.instance.itemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
             HeldItemManager.ItemUsed += TryDecrementSelectedStack;
         }
