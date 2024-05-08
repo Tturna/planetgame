@@ -40,9 +40,15 @@ namespace Entities
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            
+            if (!_canFly) return;
+            if (!_passenger) return;
+            if (_inputVector.magnitude < 0.1f) return;
 
             Rigidbody.AddForce(transform.up * (_inputVector.y * moveSpeed.y));
+            var passengerRotation = _passenger.transform.rotation;
             transform.Rotate(0,0,-_inputVector.x * moveSpeed.x, Space.Self);
+            _passenger.transform.rotation = passengerRotation;
         }
 
         private void Controls()
@@ -69,7 +75,7 @@ namespace Entities
 
             if (_canFly)
             {
-                TogglePhysics(true);
+                // TogglePhysics(true);
                 
                 _passenger = sourceEntity;
                 _passenger.ToggleControl(false);
@@ -83,7 +89,7 @@ namespace Entities
             }
             else
             {
-                TogglePhysics(false);
+                // TogglePhysics(false);
                 
                 _passenger.ToggleControl(true);
                 _passenger.TogglePhysics(true);
@@ -93,22 +99,6 @@ namespace Entities
                 _oldPassengerParent = null;
                 
                 _passenger = null;
-            }
-        }
-    
-        protected override void OnTriggerEnter2D(Collider2D col)
-        {
-            if (col.gameObject.CompareTag("Planet"))
-            {
-                CurrentPlanetObject = col.gameObject;
-            }
-        }
-
-        protected override void OnTriggerExit2D(Collider2D other)
-        {
-            if (other.gameObject.CompareTag("Planet"))
-            {
-                CurrentPlanetObject = null;
             }
         }
     }

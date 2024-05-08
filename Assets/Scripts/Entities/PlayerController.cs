@@ -21,6 +21,7 @@ namespace Entities
             [SerializeField] private SpriteRenderer headSr;
             [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
             [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
+            [SerializeField] private GameObject itemAnchor;
             
             [Header("Other")]
             [SerializeField] private Material flashMaterial;
@@ -374,7 +375,9 @@ namespace Entities
         public override void ToggleSpriteRenderer(bool state)
         {
             torsoSr.enabled = state;
+            headSr.enabled = state;
             handsParent.gameObject.SetActive(state);
+            itemAnchor.SetActive(state);
         }
 
         

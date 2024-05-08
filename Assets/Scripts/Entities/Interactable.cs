@@ -48,7 +48,7 @@ namespace Entities
 
         public virtual void Interact(GameObject sourceObject)
         {
-            Debug.Log($"{sourceObject.name} interacted with {gameObject.name}.");
+            // Debug.Log($"{sourceObject.name} interacted with {gameObject.name}.");
             OnInteracted(sourceObject);
         }
 

@@ -13,6 +13,7 @@ namespace Inventory
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(PlayerStatsManager))]
+    [RequireComponent(typeof(PlayerController))]
     public class HeldItemManager : MonoBehaviour
     {
         [SerializeField] private Transform equippedItemTransform;
@@ -28,6 +29,7 @@ namespace Inventory
         private ItemAnimationManager _itemAnimationManager;
         [CanBeNull] private Item _equippedItem;
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
+        private PlayerController _playerController;
         
         public delegate void ItemUsedHandler(Item item);
         public static event ItemUsedHandler ItemUsed;
@@ -38,6 +40,7 @@ namespace Inventory
             _recoilAnimator = recoilAnchor.GetComponent<Animator>();
             _itemAnimationManager = recoilAnchor.GetComponent<ItemAnimationManager>();
             _rigidbody = GetComponent<Rigidbody2D>();
+            _playerController = GetComponent<PlayerController>();
 
             _handsParent = handsAnimator.transform;
             _handLeft = _handsParent.GetChild(0).GetChild(0);
@@ -50,6 +53,8 @@ namespace Inventory
 
         private void Update()
         {
+            if (!_playerController.CanControl) return;
+            
             var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
             var cursorAngle = GameUtilities.GetCursorAngle(mouseDirection, transform.right);
             HandleItemAiming(mouseDirection, cursorAngle);

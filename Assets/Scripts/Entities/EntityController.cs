@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Planets;
 using UnityEngine;
 
@@ -7,12 +8,12 @@ namespace Entities
     public class EntityController : MonoBehaviour
     {
         [SerializeField] protected float gravityMultiplier;
-        public GameObject CurrentPlanetObject { get; protected set; }
+        [CanBeNull] public GameObject CurrentPlanetObject { get; protected set; }
         public bool IsAlive { get; protected set; } = true;
-        protected PlanetGenerator CurrentPlanetGen { get; set; }
+        [CanBeNull] protected PlanetGenerator CurrentPlanetGen { get; set; }
         protected Rigidbody2D Rigidbody { get; set; }
         protected bool CalculatePhysics { get; private set; } = true;
-        protected bool CanControl { get; private set; } = true;
+        public bool CanControl { get; private set; } = true;
         protected bool FollowPlanetRotation { get; private set; } = true;
 
         #region Events
@@ -55,6 +56,7 @@ namespace Entities
             if (!Rigidbody) return;
             if (!CalculatePhysics) return;
             if (!CurrentPlanetObject) return;
+            if (!CurrentPlanetGen) return;
                 
             var trPos = transform.position;
             var dirToPlanet = (CurrentPlanetObject.transform.position - trPos).normalized;
