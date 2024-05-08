@@ -14,7 +14,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - IgnorePlayer
+  - Enemy
   - Water
   - UI
   - Terrain

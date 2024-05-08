@@ -6,6 +6,7 @@ using Utilities;
 namespace Entities
 {
     [RequireComponent(typeof(PlayerStatsManager))]
+    [RequireComponent(typeof(PlayerDeathManager))]
     public class PlayerController : EntityController, IDamageable
     {
         #region Serialized Fields
@@ -33,6 +34,7 @@ namespace Entities
         #region Unserialized Components
         
             private CapsuleCollider2D _collider;
+            private PlayerDeathManager _deathManager;
             
         #endregion
 
@@ -91,6 +93,7 @@ namespace Entities
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Vector3 _mouseDirection;
         private int _terrainLayerMask;
+        private Vector2 _spawnPosition;
 
         // Built-in methods
         
@@ -105,8 +108,10 @@ namespace Entities
             base.Start();
 
             _collider = GetComponent<CapsuleCollider2D>();
+            _deathManager = GetComponent<PlayerDeathManager>();
             
             _defaultMaterial = torsoSr.material;
+            _spawnPosition = transform.position;
         }
 
         private void Update()
@@ -411,7 +416,29 @@ namespace Entities
 
         public void Death()
         {
-            Debug.Log("Death.");
+            bodyTr.gameObject.SetActive(false);
+            _collider.enabled = false;
+            ToggleControl(false);
+            TogglePhysics(false);
+            
+            var skullObject = _deathManager.Explode(10f);
+            CameraController.SetCameraParent(skullObject.transform);
+            CameraController.SetDefaultCameraPosition(Vector2.zero);
+            CameraController.CameraShake(0.5f, 0.5f);
+            
+            UIUtilities.ShowDeathOverlay();
+            
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                bodyTr.gameObject.SetActive(true);
+                _collider.enabled = true;
+                ToggleControl(true);
+                TogglePhysics(true);
+                transform.position = _spawnPosition;
+                CameraController.SetCameraParent(transform);
+                CameraController.ResetDefaultCameraPosition();
+                UIUtilities.HideDeathOverlay();
+            }, 10f);
         }
 
         /// <summary>
