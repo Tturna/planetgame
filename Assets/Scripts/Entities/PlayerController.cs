@@ -416,6 +416,7 @@ namespace Entities
 
         public void Death()
         {
+            IsAlive = false;
             bodyTr.gameObject.SetActive(false);
             _collider.enabled = false;
             ToggleControl(false);
@@ -430,6 +431,7 @@ namespace Entities
             
             GameUtilities.instance.DelayExecute(() =>
             {
+                IsAlive = true;
                 bodyTr.gameObject.SetActive(true);
                 _collider.enabled = true;
                 ToggleControl(true);

@@ -31,7 +31,7 @@ namespace Entities.Enemies
         private Action<MovementPattern.MovementFunctionData> _movementFunction;
         private MovementPattern.MovementFunctionData _movementFunctionData;
         
-        private float _calculationTimer, _evasionTimer, _attackTimer;
+        private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer;
         private float _distanceToPlayer;
         private float _health, _maxHealth;
         private bool _aggravated, _canMove = true;
@@ -103,7 +103,7 @@ namespace Entities.Enemies
             }
             else
             {
-                // TODO: Idle behavior
+                IdleBehavior();
             }
         }
 
@@ -123,6 +123,11 @@ namespace Entities.Enemies
         {
             if (_aggravated)
             {
+                if (!_player.IsAlive)
+                {
+                    Deaggro();
+                    _evasionTimer = 0f;
+                }
                 if (_distanceToPlayer > enemySo.aggroRange)
                 {
                     _evasionTimer -= Time.deltaTime;
@@ -177,13 +182,39 @@ namespace Entities.Enemies
             // var angleDiff = Vector3.SignedAngle(transform.position, _player.transform.position, Vector3.back);
             // Debug.Log($"Signed angle: {angleDiff}");
 
-            var posDiff = GetVectorToPlayer();
-            var dot = Vector3.Dot(posDiff.normalized, transform.right);
-            
-            relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
-            _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
+            // var posDiff = GetVectorToPlayer();
+            // var dot = Vector3.Dot(posDiff.normalized, transform.right);
+            //
+            // relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
+            // _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
             
             Move(GetVectorToPlayer());
+        }
+
+        private void IdleBehavior()
+        {
+            if (_idleTimer > 0)
+            {
+                _idleTimer -= Time.fixedDeltaTime;
+
+                if (_idleTimer <= 0)
+                {
+                    _idleActionTimer = Random.Range(3f, 6f);
+                    relativeMoveDirection = Random.Range(0, 2) == 0 ? Vector3.right : Vector3.left;
+                }
+            }
+            else if (_idleActionTimer > 0)
+            {
+                _idleActionTimer -= Time.fixedDeltaTime;
+                
+                _animator.SetBool("moving", true);
+                Move(relativeMoveDirection);
+            }
+            else
+            {
+                _idleTimer = Random.Range(3f, 6f);
+                _animator.SetBool("moving", false);
+            }
         }
 
         private void Move(Vector3 positionDifferenceToTarget)

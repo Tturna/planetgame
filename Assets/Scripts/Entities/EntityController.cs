@@ -8,6 +8,7 @@ namespace Entities
     {
         [SerializeField] protected float gravityMultiplier;
         public GameObject CurrentPlanetObject { get; protected set; }
+        public bool IsAlive { get; protected set; } = true;
         protected PlanetGenerator CurrentPlanetGen { get; set; }
         protected Rigidbody2D Rigidbody { get; set; }
         protected bool CalculatePhysics { get; private set; } = true;

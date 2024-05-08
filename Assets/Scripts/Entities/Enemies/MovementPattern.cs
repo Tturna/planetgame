@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Entities.Enemies
@@ -22,12 +23,13 @@ namespace Entities.Enemies
             public EnemySo enemySo;
             public Rigidbody2D rb;
             public Animator anim;
-            public Transform playerTr;
-            public float distanceToPlayer;
-            public float dotToPlayer;
+            [CanBeNull] public Transform playerTr;
+            public float? distanceToPlayer;
+            public float? dotToPlayer;
             public Vector3 relativeMoveDirection;
         }
         
+        // Set in inspector
         public MovementTypes movementType;
         
         public Dictionary<MovementTypes, Action<MovementFunctionData>> MovementLookupTable => new()
@@ -44,6 +46,7 @@ namespace Entities.Enemies
         private int _terrainBitsLayerMask = -1;
         private bool _jumping;
         private float _jumpCooldown;
+        private float _stuckTimer;
 
         public Action<MovementFunctionData> GetMovement()
         {
@@ -112,8 +115,18 @@ namespace Entities.Enemies
             }
             
             if (_jumping) return;
-            var hit = Physics2D.Raycast(entityTr.position, relativeMoveDirection, .5f, _terrainLayerMask);
-            if (!hit) return;
+
+            if (relativeMoveDirection.magnitude > 0.1f && Mathf.Abs(rb.GetVector(rb.velocity).x) < 0.1f)
+            {
+                _stuckTimer -= Time.deltaTime;
+            }
+            else
+            {
+                _stuckTimer = 0.5f;
+            }
+            
+            var horizontalHit = Physics2D.Raycast(entityTr.position, relativeMoveDirection, 1f, _terrainLayerMask);
+            if (!horizontalHit && _stuckTimer > 0) return;
             
             rb.AddForce(entityTr.up * jumpForce, ForceMode2D.Impulse);
             _jumping = true;
