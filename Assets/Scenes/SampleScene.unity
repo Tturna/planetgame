@@ -34524,7 +34524,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: uninstall
+  m_text: remember to like and subscribe
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15677cc5c1d9de44089064d9bb6c9d4d, type: 2}
   m_sharedMaterial: {fileID: -6140583929723363763, guid: 15677cc5c1d9de44089064d9bb6c9d4d, type: 2}
@@ -74153,7 +74153,7 @@ SpriteRenderer:
   m_SortingLayer: -2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 5d14d0d175cdc24499225ed1a7a16c60, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.6077607, g: 0.9150943, b: 0.91211236, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -82080,7 +82080,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1539267464}
   serializedVersion: 8
-  lengthInSec: 0.1
+  lengthInSec: 0.25
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -82208,7 +82208,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 7
+      scalar: 9
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -82907,7 +82907,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 500
+      scalar: 750
       minScalar: 10
       maxCurve:
         serializedVersion: 2

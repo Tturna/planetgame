@@ -37,7 +37,7 @@ namespace Entities
                     
                     var rb = deathFxObject.GetComponent<Rigidbody2D>();
                     rb.angularDrag = 0f;
-                    rb.AddRelativeForce(Vector2.up * Random.Range(3, 10), ForceMode2D.Impulse);
+                    rb.AddRelativeForce(Vector2.up * Random.Range(8, 16), ForceMode2D.Impulse);
                     rb.AddRelativeForce(Vector2.right * Random.Range(-10, 10), ForceMode2D.Impulse);
                     rb.AddTorque(Random.Range(-3, 3), ForceMode2D.Impulse);
                     
