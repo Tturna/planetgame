@@ -8,6 +8,7 @@ namespace Entities
     public class EntityController : MonoBehaviour
     {
         [SerializeField] protected float gravityMultiplier;
+        [SerializeField] protected Collider2D mainCollider;
         [CanBeNull] public GameObject CurrentPlanetObject { get; protected set; }
         public bool IsAlive { get; protected set; } = true;
         [CanBeNull] protected PlanetGenerator CurrentPlanetGen { get; set; }
@@ -15,6 +16,7 @@ namespace Entities
         protected bool CalculatePhysics { get; private set; } = true;
         public bool CanControl { get; private set; } = true;
         protected bool FollowPlanetRotation { get; private set; } = true;
+        protected bool CanCollide { get; private set; } = true;
 
         #region Events
         
@@ -57,7 +59,7 @@ namespace Entities
             if (!CalculatePhysics) return;
             if (!CurrentPlanetObject) return;
             if (!CurrentPlanetGen) return;
-                
+
             var trPos = transform.position;
             var dirToPlanet = (CurrentPlanetObject.transform.position - trPos).normalized;
 
@@ -68,7 +70,6 @@ namespace Entities
 
             Rigidbody.drag = CurrentPlanetGen.GetDrag(trPos);
 
-            // Keep entity oriented in relation to the planet
             if (FollowPlanetRotation)
             {
                 transform.LookAt(transform.position + Vector3.forward, -dirToPlanet);
@@ -79,6 +80,12 @@ namespace Entities
         public void ToggleControl(bool state) => CanControl = state;
         public void ToggleAutoRotation(bool state) => FollowPlanetRotation = state;
         public virtual void ToggleSpriteRenderer(bool state) => throw new NotImplementedException();
+
+        public void ToggleCollision(bool state)
+        {
+            CanCollide = state;
+            mainCollider.enabled = state;
+        }
 
         public void AddRelativeForce(Vector3 force, ForceMode2D forceMode)
         {

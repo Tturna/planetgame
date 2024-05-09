@@ -134,6 +134,7 @@ namespace Entities
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            
             var localVelocity = Rigidbody.GetVector(Rigidbody.velocity);
             _oldLocalVelocity = localVelocity;
 
@@ -332,8 +333,8 @@ namespace Entities
 
             if (!Input.GetKeyDown(KeyCode.F)) return;
             
-            _closestInteractable.Interact(gameObject);
             _closestInteractable.DisablePrompt();
+            _closestInteractable.Interact(gameObject);
         }
 
         private void HandlePlayerFlipping(float cursorAngle)
@@ -426,8 +427,8 @@ namespace Entities
             TogglePhysics(false);
             
             var skullObject = _deathManager.Explode(10f);
-            CameraController.SetCameraParent(skullObject.transform);
-            CameraController.SetDefaultCameraPosition(Vector2.zero);
+            CameraController.SetParent(skullObject.transform);
+            CameraController.SetDefaultPosition(Vector2.zero);
             CameraController.CameraShake(0.5f, 0.5f);
             
             UIUtilities.ShowDeathOverlay();
@@ -440,8 +441,8 @@ namespace Entities
                 ToggleControl(true);
                 TogglePhysics(true);
                 transform.position = _spawnPosition;
-                CameraController.SetCameraParent(transform);
-                CameraController.ResetDefaultCameraPosition();
+                CameraController.SetParent(transform);
+                CameraController.ResetDefaultPosition();
                 UIUtilities.HideDeathOverlay();
             }, 10f);
         }

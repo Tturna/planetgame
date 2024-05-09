@@ -10,6 +10,7 @@ namespace Entities
         [SerializeField] private Vector2 moveSpeed;
         [SerializeField] private ParticleSystem thrusterParticles;
         [SerializeField] private Vector2 thrusterParticleOffset;
+        [SerializeField] private Transform starMapMarker;
     
         private bool _landingMode = true, _canFly;
         private bool _grounded;
@@ -32,6 +33,10 @@ namespace Entities
             if (!horizontalThruster)
             {
                 thrusterParticles.transform.localRotation = Quaternion.Euler(0,0,90);
+            }
+            else
+            {
+                starMapMarker.localRotation = Quaternion.Euler(0,0,-90);
             }
         }
 
@@ -72,6 +77,7 @@ namespace Entities
             if (!_passenger) return;
             if (_inputVector.magnitude < 0.1f) return;
             
+            _passenger.transform.position = transform.position;
             var direction = horizontalThruster ? transform.right : transform.up;
 
             Rigidbody.AddForce(direction * (_inputVector.y * moveSpeed.y));
@@ -118,12 +124,14 @@ namespace Entities
                 _passenger = sourceEntity;
                 _passenger.ToggleControl(false);
                 _passenger.TogglePhysics(false);
+                // _passenger.ToggleCollision(false);
                 _passenger.ToggleSpriteRenderer(false);
 
                 var passengerTransform = _passenger.transform;
                 _oldPassengerParent = passengerTransform.parent;
                 
                 passengerTransform.SetParent(transform);
+                CameraController.SetZoomMultiplierSmooth(1.8f, 1f);
             }
             else
             {
@@ -131,12 +139,14 @@ namespace Entities
                 
                 _passenger.ToggleControl(true);
                 _passenger.TogglePhysics(true);
+                // _passenger.ToggleCollision(true);
                 _passenger.ToggleSpriteRenderer(true);
                 
                 _passenger.transform.SetParent(_oldPassengerParent);
                 _oldPassengerParent = null;
                 
                 _passenger = null;
+                CameraController.SetZoomMultiplierSmooth(1f, 1f);
             }
         }
     }

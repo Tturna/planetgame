@@ -1,23 +1,40 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Entities
 {
+    [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private Vector3 defaultCamPosition;
+        [SerializeField] private Transform bgImagesParent;
     
         public static CameraController instance;
+        private Camera mainCam;
         private TerrainCameraController[] _terrainCameraControllers;
         private Transform _planetTransform;
+        private Vector3 _defaultCamPosition;
         private Vector3 _usedDefaultCamPosition;
+        private float _defaultMainCamZoom;
+        private float _defaultTerrainCamZoom;
+
+        private void Awake()
+        {
+            instance = this;
+            mainCam = Camera.main!;
+            _defaultCamPosition = transform.localPosition;
+            _usedDefaultCamPosition = _defaultCamPosition;
+            _defaultMainCamZoom = mainCam.orthographicSize;
+        }
 
         private void Start()
         {
             instance = this;
-            _usedDefaultCamPosition = defaultCamPosition;
+            mainCam = Camera.main!;
             _terrainCameraControllers = FindObjectsOfType<TerrainCameraController>();
+            _defaultTerrainCamZoom = _terrainCameraControllers[0].Camera.orthographicSize;
+            
             PlayerController.instance.OnEnteredPlanet += SetTargetPlanet;
         }
 
@@ -40,7 +57,7 @@ namespace Entities
             instance.StartCoroutine(_CameraShake(time, strength));
         }
         
-        public static void SetCameraParent(Transform parent)
+        public static void SetParent(Transform parent)
         {
             instance.transform.SetParent(parent);
             foreach (var tcc in instance._terrainCameraControllers)
@@ -49,18 +66,58 @@ namespace Entities
             }
         }
         
-        public static void SetDefaultCameraPosition(Vector2 position)
+        public static void SetDefaultPosition(Vector2 position)
         {
             var newDefaultPos = (Vector3)position;
-            newDefaultPos.z = instance.defaultCamPosition.z;
+            newDefaultPos.z = instance._defaultCamPosition.z;
             instance._usedDefaultCamPosition = newDefaultPos;
             instance.transform.localPosition = newDefaultPos;
         }
         
-        public static void ResetDefaultCameraPosition()
+        public static void ResetDefaultPosition()
         {
-            instance._usedDefaultCamPosition = instance.defaultCamPosition;
-            instance.transform.localPosition = instance.defaultCamPosition;
+            instance._usedDefaultCamPosition = instance._defaultCamPosition;
+            instance.transform.localPosition = instance._defaultCamPosition;
+        }
+        
+        public static void SetZoomMultiplierSmooth(float zoomMultiplier, float smoothTime)
+        {
+            instance.StartCoroutine(_SetZoomMultiplierSmooth(zoomMultiplier, smoothTime));
+        }
+        
+        private static IEnumerator _SetZoomMultiplierSmooth(float targetZoomMultiplier, float lerpTime)
+        {
+            var timer = 0f;
+            var currentZoomMultiplier = instance.mainCam.orthographicSize / instance._defaultMainCamZoom;
+            // x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2
+
+            while (timer < lerpTime)
+            {
+                timer += Time.deltaTime;
+                
+                var normalTime = timer / lerpTime;
+                var easeValue = normalTime < 0.5f
+                    ? 4 * normalTime * normalTime * normalTime
+                    : 1 - Mathf.Pow(-2 * normalTime + 2, 3) / 2;
+                var zoomMultiplier = Mathf.Lerp(currentZoomMultiplier, targetZoomMultiplier, easeValue);
+                SetZoomMultiplier(zoomMultiplier);
+                
+                yield return new WaitForEndOfFrame();
+            }
+            
+            SetZoomMultiplier(targetZoomMultiplier);
+        }
+
+        private static void SetZoomMultiplier(float zoomMultiplier)
+        {
+            instance.mainCam.orthographicSize = instance._defaultMainCamZoom * zoomMultiplier;
+            
+            foreach (var tcc in instance._terrainCameraControllers)
+            {
+                tcc.Camera.orthographicSize = instance._defaultTerrainCamZoom * zoomMultiplier;
+            }
+            
+            instance.bgImagesParent.localScale = Vector3.one * zoomMultiplier;
         }
 
         private static IEnumerator _CameraShake(float time, float strength)
