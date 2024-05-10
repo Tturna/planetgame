@@ -210,28 +210,29 @@ namespace Entities
 
         protected void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
-            {
-                _interactablesInRange.Add(interactable);
-            }
-            else if (col.gameObject.CompareTag("Item"))
+            // if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
+            // {
+            //     _interactablesInRange.Add(interactable);
+            // }
+            
+            if (col.gameObject.CompareTag("Item"))
             {
                 OnItemPickedUp(col.transform.parent.gameObject);
                 Destroy(col.transform.parent.gameObject);
             }
         }
 
-        protected void OnTriggerExit2D(Collider2D other)
-        {
-            if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
-            {
-                interactable.DisablePrompt();
-                
-                if (interactable == _closestInteractable) _closestInteractable = null;
-                
-                _interactablesInRange.Remove(interactable);
-            }
-        }
+        // protected void OnTriggerExit2D(Collider2D other)
+        // {
+        //     if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
+        //     {
+        //         interactable.DisablePrompt();
+        //         
+        //         if (interactable == _closestInteractable) _closestInteractable = null;
+        //         
+        //         _interactablesInRange.Remove(interactable);
+        //     }
+        // }
 
         private void OnDrawGizmos()
         {
@@ -323,7 +324,7 @@ namespace Entities
                     if (_closestInteractable) _closestInteractable.DisablePrompt();
                     
                     _closestInteractable = _newClosestInteractable;
-                    _closestInteractable.PromptInteraction();
+                    _closestInteractable.EnablePrompt();
                 }
             }
 
@@ -354,16 +355,15 @@ namespace Entities
         private Interactable GetClosestInteractable()
         {
             var closest = _interactablesInRange[0];
+            var closestDist = (closest.transform.position - transform.position).magnitude;
 
             foreach (var interactable in _interactablesInRange)
             {
-                var distToCurrent = (closest.transform.position - transform.position).magnitude;
                 var distToNew = (interactable.transform.position - transform.position).magnitude;
 
-                if (distToNew < distToCurrent)
-                {
-                    closest = interactable;
-                }
+                if (!(distToNew < closestDist)) continue;
+                closest = interactable;
+                closestDist = distToNew;
             }
 
             return closest;
@@ -376,7 +376,6 @@ namespace Entities
             handsParent.gameObject.SetActive(state);
             itemAnchor.SetActive(state);
         }
-
         
         // Public methods
         
@@ -490,6 +489,17 @@ namespace Entities
         public Vector2 GetInputVector()
         {
             return _inputVector;
+        }
+        
+        public void AddInteractableInRange(Interactable interactable)
+        {
+            _interactablesInRange.Add(interactable);
+        }
+
+        public void RemoveInteractableInRange(Interactable interactable)
+        {
+            _interactablesInRange.Remove(interactable);
+            if (interactable == _closestInteractable) _closestInteractable = null;
         }
     }
 }

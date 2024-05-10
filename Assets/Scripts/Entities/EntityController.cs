@@ -72,23 +72,27 @@ namespace Entities
             // so it will never calculate the closest planet while flying.
             // if (Rigidbody.velocity.magnitude > 0.1f)
             {
-                if (_closestPlanetCheckTimer < ClosestPlanetCheckInterval)
+                // Prevent useless calculations when the entity is on a planet
+                if (!CurrentPlanetObject || !CurrentPlanetGen)
                 {
-                    _closestPlanetCheckTimer += Time.fixedDeltaTime;
-                }
-                else
-                {
-                    _closestPlanetCheckTimer = 0f;
-                    var closestDist = float.MaxValue;
-                    
-                    foreach (var planet in GameUtilities.GetAllPlanets())
+                    if (_closestPlanetCheckTimer < ClosestPlanetCheckInterval)
                     {
-                        var dist = Vector3.Distance(transform.position, planet.transform.position);
+                        _closestPlanetCheckTimer += Time.fixedDeltaTime;
+                    }
+                    else
+                    {
+                        _closestPlanetCheckTimer = 0f;
+                        var closestDist = float.MaxValue;
+                        
+                        foreach (var planet in GameUtilities.GetAllPlanets())
+                        {
+                            var dist = Vector3.Distance(transform.position, planet.transform.position);
 
-                        if (!(dist < closestDist)) continue;
-                        closestDist = dist;
-                        ClosestPlanetGen = planet;
-                        ClosestPlanetObject = planet.gameObject;
+                            if (!(dist < closestDist)) continue;
+                            closestDist = dist;
+                            ClosestPlanetGen = planet;
+                            ClosestPlanetObject = planet.gameObject;
+                        }
                     }
                 }
             }
@@ -125,7 +129,7 @@ namespace Entities
             if (DistanceFromClosestPlanet < ClosestPlanetGen!.atmosphereRadius)
             {
                 if (CurrentPlanetObject == ClosestPlanetObject) return posDiff;
-                Debug.Log($"{name} is entering atmosphere of {ClosestPlanetObject.name}");
+                // Debug.Log($"{name} is entering atmosphere of {ClosestPlanetObject.name}");
                 CurrentPlanetObject = ClosestPlanetObject;
                 CurrentPlanetGen = ClosestPlanetGen;
                 TriggerOnPlanetEntered(CurrentPlanetObject);
@@ -133,7 +137,7 @@ namespace Entities
             else
             {
                 if (CurrentPlanetObject != ClosestPlanetObject) return posDiff;
-                Debug.Log($"{name} is exiting atmosphere of {ClosestPlanetObject.name}");
+                // Debug.Log($"{name} is exiting atmosphere of {ClosestPlanetObject.name}");
                 CurrentPlanetObject = null;
                 CurrentPlanetGen = null;
                 TriggerOnPlanetExited(ClosestPlanetObject);

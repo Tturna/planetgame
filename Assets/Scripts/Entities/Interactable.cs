@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Entities
@@ -11,23 +12,39 @@ namespace Entities
         public bool hasToggleInteraction;
 
         private GameObject _promptObject;
+        private PlayerController _player;
+        private float _distanceToPlayer;
+        private bool _inRange;
 
         public delegate void OnInteractEventHandler(GameObject sourceObject);
         public event OnInteractEventHandler Interacted;
     
         private void Start()
         {
-            var interactor = new GameObject("Interactor");
-            interactor.transform.SetParent(transform);
-            interactor.transform.localPosition = Vector3.zero;
-            interactor.layer = 7;
-        
-            var circleCollider = interactor.AddComponent<CircleCollider2D>();
-            circleCollider.radius = interactRange;
-            circleCollider.isTrigger = true;
+            _player = FindObjectOfType<PlayerController>();
         }
 
-        public virtual void PromptInteraction()
+        // This system is not using trigger collider events because they seem to be VERY unreliable.
+        private void Update()
+        { 
+            // TODO: Consider optimizing this so it doesn't run every frame.
+            // Maybe check if this interactable is in the same planet as the player.
+            _distanceToPlayer = Vector2.Distance(transform.position, _player.transform.position);
+            
+            if (!_inRange && _distanceToPlayer <= interactRange)
+            {
+                _inRange = true;
+                _player.AddInteractableInRange(this);
+            }
+            else if (_inRange && _distanceToPlayer > interactRange)
+            {
+                _inRange = false;
+                _player.RemoveInteractableInRange(this);
+                DisablePrompt();
+            }
+        }
+
+        public virtual void EnablePrompt()
         {
             if (!_promptObject)
             {
