@@ -32,7 +32,7 @@ namespace VFX
             if (!_currentPlanetGen) return;
             
             // Smooth transition between backgrounds according to player position.
-            var perc = _currentPlanetGen.GetDistancePercentage(_player.transform.position);
+            var perc = _currentPlanetGen.NormalizeDistanceFromPlanet(_player.DistanceFromClosestPlanet);
             var limitedPerc = GameUtilities.InverseLerp(0f, 0.5f, perc);
         
             var c = bg2.color;

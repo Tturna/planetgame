@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
+using Planets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +13,7 @@ namespace Utilities
         [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
         
         private static Camera _mainCam;
+        private static PlanetGenerator[] _allPlanets;
         
         public static GameUtilities instance;
 
@@ -82,6 +85,17 @@ namespace Utilities
         public static Material GetTerrainMaterial()
         {
             return instance.terrainRenderImage.material;
+        }
+
+        public static PlanetGenerator[] GetAllPlanets()
+        {
+            if (_allPlanets is { Length: > 0 })
+            {
+                return _allPlanets;
+            }
+
+            _allPlanets = FindObjectsOfType<PlanetGenerator>();
+            return _allPlanets;
         }
     }
 }

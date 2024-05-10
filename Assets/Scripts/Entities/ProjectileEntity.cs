@@ -113,13 +113,13 @@ namespace Entities
             }
         }
 
-        protected override void OnTriggerEnter2D(Collider2D col)
+        protected void OnTriggerEnter2D(Collider2D col)
         {
-            base.OnTriggerEnter2D(col);
+            // base.OnTriggerEnter2D(col);
             ProjectileHit(col);
         }
 
-        protected override void OnTriggerExit2D(Collider2D other)
+        protected void OnTriggerExit2D(Collider2D other)
         {
             // base.OnTriggerExit2D(other);
         }

@@ -356,9 +356,9 @@ namespace Entities.Enemies
             _canMove = true;
         }
 
-        protected override void OnTriggerEnter2D(Collider2D col)
+        private void OnTriggerEnter2D(Collider2D col)
         {
-            base.OnTriggerEnter2D(col);
+            // base.OnTriggerEnter2D(col);
 
             // Damage player on contact
             if (col.TryGetComponent<PlayerController>(out var player))

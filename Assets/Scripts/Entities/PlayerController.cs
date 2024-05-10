@@ -208,10 +208,8 @@ namespace Entities
             }
         }
 
-        protected override void OnTriggerEnter2D(Collider2D col)
+        protected void OnTriggerEnter2D(Collider2D col)
         {
-            base.OnTriggerEnter2D(col);
-        
             if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
             {
                 _interactablesInRange.Add(interactable);
@@ -223,16 +221,14 @@ namespace Entities
             }
         }
 
-        protected override void OnTriggerExit2D(Collider2D other)
+        protected void OnTriggerExit2D(Collider2D other)
         {
-            base.OnTriggerEnter2D(other);
-        
             if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
             {
                 interactable.DisablePrompt();
-
+                
                 if (interactable == _closestInteractable) _closestInteractable = null;
-            
+                
                 _interactablesInRange.Remove(interactable);
             }
         }

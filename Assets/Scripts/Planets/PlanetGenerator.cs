@@ -43,7 +43,7 @@ namespace Planets
         [Header("Planet Properties")]
         public float diameter;
         public int resolution;
-        [SerializeField] private float atmosphereRadius;
+        public float atmosphereRadius;
         
         // TODO: Implement max gravity radius...
         // and separate it from drag so there's a layer of gravity
@@ -478,30 +478,29 @@ namespace Planets
         }
         
         /// <summary>
-        /// Get the distance of the given position from the center of the planet. 1 = core, 0 = edge of atmosphere
+        /// Normalize given distance from planet. 1 = core, 0 = edge of atmosphere
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public float GetDistancePercentage(Vector3 position)
+        public float NormalizeDistanceFromPlanet(float distanceFromPlanet)
         {
-            var distanceFromCore = (position - transform.position).magnitude;
-            var perc = distanceFromCore / atmosphereRadius;
+            var perc = distanceFromPlanet / atmosphereRadius;
             var rev = 1 - perc;
             // var limited = rev / threshold;
             
             return Mathf.Clamp01(rev);
         }
         
-        public float GetDrag(Vector3 position)
+        public float GetDrag(float distanceFromPlanet)
         {
-            var perc = GetDistancePercentage(position);
+            var perc = NormalizeDistanceFromPlanet(distanceFromPlanet);
             var limitedPerc = GameUtilities.InverseLerp(0f, maxPhysicsThreshold, perc);
             return maxDrag * limitedPerc;
         }
 
-        public float GetGravity(Vector3 position)
+        public float GetGravity(float distanceFromPlanet)
         {
-            var perc = GetDistancePercentage(position);
+            var perc = NormalizeDistanceFromPlanet(distanceFromPlanet);
             var limitedPerc = GameUtilities.InverseLerp(0f, maxPhysicsThreshold, perc);
             return maxGravityMultiplier * limitedPerc;
         }
