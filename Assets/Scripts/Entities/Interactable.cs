@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Utilities;
 
 namespace Entities
 {
@@ -7,21 +9,40 @@ namespace Entities
     {
         [SerializeField] protected float interactRange;
         [SerializeField] private GameObject promptPrefab;
+        [SerializeField] private GameObject holdIndicatorPrefab;
         [SerializeField] private Vector2 promptOffset;
+        [SerializeField] private Vector2 holdIndicatorOffset;
 
-        public bool hasToggleInteraction;
+        public bool canHoldInteract;
+        public Transform IndicatorParent;
 
         private GameObject _promptObject;
+        private GameObject _holdIndicatorObject;
         private PlayerController _player;
         private float _distanceToPlayer;
         private bool _inRange;
+        private float _interactHoldTimer;
+        private bool _interacted;
 
         public delegate void OnInteractEventHandler(GameObject sourceObject);
-        public event OnInteractEventHandler Interacted;
+        public event OnInteractEventHandler InteractedImmediate;
+        public event OnInteractEventHandler InteractedHold;
     
         private void Start()
         {
             _player = FindObjectOfType<PlayerController>();
+            
+            IndicatorParent = new GameObject("IndicatorParent").transform;
+            IndicatorParent.SetParent(transform);
+            IndicatorParent.localPosition = Vector3.zero;
+            
+            _promptObject = Instantiate(promptPrefab, IndicatorParent);
+            _promptObject.transform.localPosition = promptOffset;
+            _promptObject.SetActive(false);
+            
+            _holdIndicatorObject = Instantiate(holdIndicatorPrefab, IndicatorParent);
+            _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
+            _holdIndicatorObject.SetActive(false);
         }
 
         // This system is not using trigger collider events because they seem to be VERY unreliable.
@@ -41,17 +62,12 @@ namespace Entities
                 _inRange = false;
                 _player.RemoveInteractableInRange(this);
                 DisablePrompt();
+                ResetInteracted();
             }
         }
 
         public virtual void EnablePrompt()
         {
-            if (!_promptObject)
-            {
-                _promptObject = Instantiate(promptPrefab, transform);
-                _promptObject.transform.localPosition = promptOffset;
-            }
-        
             _promptObject.SetActive(true);
         }
 
@@ -63,15 +79,53 @@ namespace Entities
             }
         }
 
-        public virtual void Interact(GameObject sourceObject)
+        public virtual void InteractImmediate(GameObject sourceObject)
         {
             // Debug.Log($"{sourceObject.name} interacted with {gameObject.name}.");
-            OnInteracted(sourceObject);
+            OnInteractedImmediate(sourceObject);
+        }
+        
+        public virtual void InteractHolding(GameObject sourceObject)
+        {
+            if (!canHoldInteract) return;
+            if (_interacted) return;
+
+            if (_interactHoldTimer == 0)
+            {
+                _holdIndicatorObject.SetActive(true);
+            }
+
+            if (_interactHoldTimer < 1f)
+            {
+                _interactHoldTimer += Time.deltaTime;
+            }
+            else
+            {
+                _interacted = true;
+                _interactHoldTimer = 0f;
+                OnInteractedHold(sourceObject);
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    _holdIndicatorObject.SetActive(false);
+                }, 0.2f);
+            }
+        }
+        
+        public virtual void ResetInteracted()
+        {
+            _interactHoldTimer = 0f;
+            _interacted = false;
+            _holdIndicatorObject.SetActive(false);
         }
 
-        protected virtual void OnInteracted(GameObject sourceObject)
+        protected virtual void OnInteractedImmediate(GameObject sourceObject)
         {
-            Interacted?.Invoke(sourceObject);
+            InteractedImmediate?.Invoke(sourceObject);
+        }
+        
+        protected virtual void OnInteractedHold(GameObject sourceObject)
+        {
+            InteractedHold?.Invoke(sourceObject);
         }
     }
 }

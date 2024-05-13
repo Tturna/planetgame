@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Entities
+namespace Cameras
 {
     [RequireComponent(typeof(Camera))]
     public class TerrainCameraController : MonoBehaviour

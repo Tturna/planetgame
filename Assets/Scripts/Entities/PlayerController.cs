@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cameras;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
@@ -44,6 +45,8 @@ namespace Entities
             private Interactable _closestInteractable;
             private Interactable _newClosestInteractable;
             private readonly List<Interactable> _interactablesInRange = new();
+            private float _interactHoldTimer;
+            private bool _interacted;
             
         #endregion
 
@@ -315,23 +318,40 @@ namespace Entities
         {
             if (_interactablesInRange.Count <= 0) return;
         
-            if (_inputVector.magnitude > 0)
+            if (_inputVector.magnitude > 0 || Rigidbody.velocity.magnitude > 0.05f)
             {
                 _newClosestInteractable = GetClosestInteractable();
 
                 if (_newClosestInteractable != _closestInteractable)
                 {
-                    if (_closestInteractable) _closestInteractable.DisablePrompt();
+                    if (_closestInteractable)
+                    {
+                        _closestInteractable.DisablePrompt();
+                        _closestInteractable.ResetInteracted();
+                    }
                     
                     _closestInteractable = _newClosestInteractable;
                     _closestInteractable.EnablePrompt();
                 }
             }
 
-            if (!Input.GetKeyDown(KeyCode.F)) return;
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                _closestInteractable.DisablePrompt();
+                _closestInteractable.InteractImmediate(gameObject);
+            }
+
+            if (!_closestInteractable.canHoldInteract) return;
             
-            _closestInteractable.DisablePrompt();
-            _closestInteractable.Interact(gameObject);
+            if (Input.GetKey(KeyCode.F))
+            {
+                _closestInteractable.InteractHolding(gameObject);
+            }
+            
+            if (Input.GetKeyUp(KeyCode.F))
+            {
+                _closestInteractable.ResetInteracted();
+            }
         }
 
         private void HandlePlayerFlipping(float cursorAngle)
@@ -499,7 +519,10 @@ namespace Entities
         public void RemoveInteractableInRange(Interactable interactable)
         {
             _interactablesInRange.Remove(interactable);
-            if (interactable == _closestInteractable) _closestInteractable = null;
+            if (interactable == _closestInteractable)
+            {
+                _closestInteractable = null;
+            }
         }
     }
 }

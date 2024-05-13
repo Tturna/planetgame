@@ -1,9 +1,9 @@
-using System;
 using System.Collections;
+using Entities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Entities
+namespace Cameras
 {
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
@@ -11,6 +11,7 @@ namespace Entities
         [SerializeField] private Transform bgImagesParent;
     
         public static CameraController instance;
+        public static float zoomMultiplier = 1f;
         private Camera mainCam;
         private TerrainCameraController[] _terrainCameraControllers;
         private Transform _planetTransform;
@@ -18,6 +19,7 @@ namespace Entities
         private Vector3 _usedDefaultCamPosition;
         private float _defaultMainCamZoom;
         private float _defaultTerrainCamZoom;
+        private Coroutine _currentZoomCoroutine;
 
         private void Awake()
         {
@@ -80,16 +82,20 @@ namespace Entities
             instance.transform.localPosition = instance._defaultCamPosition;
         }
         
-        public static void SetZoomMultiplierSmooth(float zoomMultiplier, float smoothTime)
+        public static void SetZoomMultiplierSmooth(float targetZoomMultiplier, float smoothTime)
         {
-            instance.StartCoroutine(_SetZoomMultiplierSmooth(zoomMultiplier, smoothTime));
+            if (instance._currentZoomCoroutine != null)
+            {
+                instance.StopCoroutine(instance._currentZoomCoroutine);
+            }
+            
+            instance._currentZoomCoroutine = instance.StartCoroutine(_SetZoomMultiplierSmooth(targetZoomMultiplier, smoothTime));
         }
         
         private static IEnumerator _SetZoomMultiplierSmooth(float targetZoomMultiplier, float lerpTime)
         {
             var timer = 0f;
-            var currentZoomMultiplier = instance.mainCam.orthographicSize / instance._defaultMainCamZoom;
-            // x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2
+            var startZoomMultiplier = zoomMultiplier;
 
             while (timer < lerpTime)
             {
@@ -99,8 +105,8 @@ namespace Entities
                 var easeValue = normalTime < 0.5f
                     ? 4 * normalTime * normalTime * normalTime
                     : 1 - Mathf.Pow(-2 * normalTime + 2, 3) / 2;
-                var zoomMultiplier = Mathf.Lerp(currentZoomMultiplier, targetZoomMultiplier, easeValue);
-                SetZoomMultiplier(zoomMultiplier);
+                var newZoomMultiplier = Mathf.Lerp(startZoomMultiplier, targetZoomMultiplier, easeValue);
+                SetZoomMultiplier(newZoomMultiplier);
                 
                 yield return new WaitForEndOfFrame();
             }
@@ -108,16 +114,17 @@ namespace Entities
             SetZoomMultiplier(targetZoomMultiplier);
         }
 
-        private static void SetZoomMultiplier(float zoomMultiplier)
+        private static void SetZoomMultiplier(float targetZoomMultiplier)
         {
-            instance.mainCam.orthographicSize = instance._defaultMainCamZoom * zoomMultiplier;
+            zoomMultiplier = targetZoomMultiplier;
+            instance.mainCam.orthographicSize = instance._defaultMainCamZoom * targetZoomMultiplier;
             
             foreach (var tcc in instance._terrainCameraControllers)
             {
-                tcc.Camera.orthographicSize = instance._defaultTerrainCamZoom * zoomMultiplier;
+                tcc.Camera.orthographicSize = instance._defaultTerrainCamZoom * targetZoomMultiplier;
             }
             
-            instance.bgImagesParent.localScale = Vector3.one * zoomMultiplier;
+            instance.bgImagesParent.localScale = Vector3.one * targetZoomMultiplier;
         }
 
         private static IEnumerator _CameraShake(float time, float strength)
