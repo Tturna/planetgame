@@ -9,6 +9,7 @@ namespace Entities
     [RequireComponent(typeof(Animator))]
     public class SpaceShipEntity : EntityController
     {
+        [Header("Settings")]
         [FormerlySerializedAs("normalSpeed")] [SerializeField] private float normalMaxSpeed;
         [FormerlySerializedAs("cruiseSpeed")] [SerializeField] private float cruiseMaxSpeed;
         [FormerlySerializedAs("warpSpeed")] [SerializeField] private float warpMaxSpeed;
@@ -17,6 +18,12 @@ namespace Entities
         [SerializeField] private bool horizontalThruster;
         [SerializeField] private float boostInterval;
         [SerializeField] private float boostPower;
+        [SerializeField] private float hullHealth;
+        [SerializeField] private float maxHullHealth;
+        [SerializeField] private float fuelLevel;
+        [SerializeField] private float maxFuelLevel;
+        
+        [Header("References/Components")]
         [SerializeField] private ParticleSystem thrusterParticles1;
         [SerializeField] private ParticleSystem thrusterParticles2;
         [SerializeField] private ParticleSystem takeOffParticles;
@@ -39,6 +46,7 @@ namespace Entities
         private float _maxSpeed;
         private int _speedLevel;
         private float _initialLandingDistance;
+        private int _terrainLayer;
 
         private Vector2 _inputVector;
         private float _smoothRotationInput;
@@ -47,6 +55,7 @@ namespace Entities
         {
             base.Start();
         
+            _terrainLayer = LayerMask.GetMask("Terrain");
             ToggleAutoRotation(false);
             _interactable = GetComponent<Interactable>();
             _interactable.InteractedImmediate += InteractionImmediate;
@@ -84,19 +93,12 @@ namespace Entities
             }
             
             var castDir = _flipped ? transform.up : -transform.up;
-            var hit = Physics2D.Raycast(transform.position, castDir, 1.25f, LayerMask.GetMask("Terrain"));
-            _grounded = hit.collider;
+            var hitCollider = Physics2D.OverlapCircle(transform.position + castDir * 0.5f, 0.7f, _terrainLayer);
+            _grounded = hitCollider;
             
-            if (_grounded && _landingMode)
+            if (_canFly && _grounded && _landingMode)
             {
-                Rigidbody.velocity = Vector2.Lerp(Rigidbody.velocity, Vector2.zero, Time.deltaTime);
-                _initialLandingDistance = 0;
-                _canFly = false;
-                landingParticles.Stop();
-            }
-            else
-            {
-                _canFly = true;
+                Touchdown();
             }
         }
 
@@ -109,9 +111,8 @@ namespace Entities
             
             if (_landingMode && !_grounded)
             {
-                var terrainLayer = LayerMask.GetMask("Terrain");
                 var dirToPlanet = (ClosestPlanetObject!.transform.position - transform.position).normalized;
-                var hit = Physics2D.Raycast(transform.position, dirToPlanet, 100f, terrainLayer);
+                var hit = Physics2D.Raycast(transform.position, dirToPlanet, 100f, _terrainLayer);
 
                 if (!hit)
                 {
@@ -119,8 +120,8 @@ namespace Entities
                     return;
                 }
 
-                var leftHit = Physics2D.Raycast(transform.position, dirToPlanet - transform.right * 0.1f, 100f, terrainLayer);
-                var rightHit = Physics2D.Raycast(transform.position, dirToPlanet + transform.right * 0.1f, 100f, terrainLayer);
+                var leftHit = Physics2D.Raycast(transform.position, dirToPlanet - transform.right * 0.1f, 100f, _terrainLayer);
+                var rightHit = Physics2D.Raycast(transform.position, dirToPlanet + transform.right * 0.1f, 100f, _terrainLayer);
                 
                 var leftRightDiff = rightHit.point - leftHit.point;
                 var terrainAngle = Mathf.Atan2(leftRightDiff.y, leftRightDiff.x) * Mathf.Rad2Deg;
@@ -224,28 +225,7 @@ namespace Entities
 
             if (Input.GetKeyDown(KeyCode.L))
             {
-                _landingMode = !_landingMode;
-                _shipAnimator.SetBool("landed", _landingMode);
-                // TogglePhysics(_landingMode);
-                // Toggle landing lights?
-
-                if (_landingMode)
-                {
-                    movementParticles.Stop();
-                    CameraController.SetZoomMultiplierSmooth(1f, _grounded ? 1f : 3f);
-                }
-                else
-                {
-                    var dir = _flipped ? Vector2.down : Vector2.up;
-                    Rigidbody.AddRelativeForce(dir * 8, ForceMode2D.Impulse);
-                    movementParticles.Play();
-                    CameraController.SetZoomMultiplierSmooth(1.8f, 1f);
-
-                    if (_grounded)
-                    {
-                        takeOffParticles.Play();
-                    }
-                }
+                ToggleLandingMode();
             }
 
             if (_boostTimer > 0)
@@ -254,21 +234,7 @@ namespace Entities
             }
             else if (!_landingMode && _speedLevel < 2 && Input.GetKeyDown(KeyCode.Space))
             {
-                _speedLevel++;
-                
-                var dir = horizontalThruster ? transform.right : transform.up;
-                Rigidbody.velocity = Vector2.zero;
-                Rigidbody.AddForce(dir * boostPower, ForceMode2D.Impulse);
-                _boostTimer = boostInterval;
-                boostParticles.Play();
-                CameraController.CameraShake(0.3f, 0.5f);
-                
-                var zoomMultiplier = CameraController.zoomMultiplier;
-                CameraController.SetZoomMultiplierSmooth(zoomMultiplier * 1.5f, 0.075f);
-                GameUtilities.instance.DelayExecute(() =>
-                {
-                    CameraController.SetZoomMultiplierSmooth(zoomMultiplier, 1.25f);
-                }, 0.3f);
+                Boost();
             }
 
             if (horizontalThruster)
@@ -348,6 +314,77 @@ namespace Entities
             TogglePassenger(sourceObject);
         }
 
+        private void Boost()
+        {
+            _speedLevel++;
+            
+            var dir = horizontalThruster ? transform.right : transform.up;
+            Rigidbody.velocity = Vector2.zero;
+            Rigidbody.AddForce(dir * boostPower, ForceMode2D.Impulse);
+            _boostTimer = boostInterval;
+            boostParticles.Play();
+            CameraController.CameraShake(0.2f, 0.8f);
+            
+            var zoomMultiplier = CameraController.zoomMultiplier;
+            CameraController.SetZoomMultiplierSmooth(zoomMultiplier * 1.5f, 0.075f);
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                CameraController.SetZoomMultiplierSmooth(zoomMultiplier, 1.25f);
+            }, 0.3f);
+        }
+
+        private void ToggleLandingMode()
+        {
+            // Prevent landing when taking off
+            if (!_landingMode && !_canFly) return;
+            
+            _landingMode = !_landingMode;
+            // TogglePhysics(_landingMode);
+            // Toggle landing lights?
+
+            if (_landingMode)
+            {
+                _shipAnimator.SetBool("landing_gear", true);
+                movementParticles.Stop();
+                CameraController.SetZoomMultiplierSmooth(1f, _grounded ? 1f : 3f);
+            }
+            else
+            {
+                var dir = _flipped ? Vector2.down : Vector2.up;
+                Rigidbody.AddRelativeForce(dir * 15, ForceMode2D.Impulse);
+                CameraController.SetZoomMultiplierSmooth(1.8f, 1f);
+
+                if (_grounded)
+                {
+                    takeOffParticles.Play();
+                    CameraController.CameraShake(0.125f, 0.35f);
+                }
+                
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    _shipAnimator.SetBool("landing_gear", false);
+                    dir = horizontalThruster ? Vector2.right : Vector2.up;
+                    Rigidbody.AddRelativeForce(dir * 20, ForceMode2D.Impulse);
+                    CameraController.CameraShake(0.125f, 0.35f);
+                    movementParticles.Play();
+                    _canFly = true;
+                }, 1f);
+            }
+        }
+
+        private void Touchdown()
+        {
+            Rigidbody.velocity = Vector2.Lerp(Rigidbody.velocity, Vector2.zero, Time.deltaTime);
+            _initialLandingDistance = 0;
+            _canFly = false;
+            landingParticles.Stop();
+            
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                _shipAnimator.SetTrigger("landed");
+            }, 0.25f);
+        }
+
         private void TogglePassenger(GameObject sourceObject)
         {
             if (!sourceObject.TryGetComponent<EntityController>(out var sourceEntity)) return;
@@ -367,6 +404,8 @@ namespace Entities
                 _oldPassengerParent = passengerTransform.parent;
                 
                 passengerTransform.SetParent(transform);
+                
+                StatsUIManager.instance.ShowShipHUD(hullHealth, fuelLevel, maxHullHealth, maxFuelLevel);
             }
             else
             {
@@ -384,6 +423,8 @@ namespace Entities
                 _oldPassengerParent = null;
                 
                 _passenger = null;
+                
+                StatsUIManager.instance.HideShipHUD();
             }
         }
     }

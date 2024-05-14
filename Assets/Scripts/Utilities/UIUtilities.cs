@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -118,5 +119,5 @@ namespace Utilities
             _instance.deathOverlayBg.color = bgColor;
             _instance.deathOverlayText.color = textColor;
         }
-    }
+   }
 }

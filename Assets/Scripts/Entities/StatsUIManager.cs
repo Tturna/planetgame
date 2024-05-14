@@ -12,6 +12,8 @@ namespace Entities
         // [SerializeField] private Image energyIcon;
         // [SerializeField] private Image energyRing;
 
+        [SerializeField] private Animator uiAnimator;
+        
         [SerializeField] private Image hpBar;
         [SerializeField] private Image hpBarBg;
         [SerializeField] private Image hpBarIcon;
@@ -24,6 +26,13 @@ namespace Entities
         [SerializeField] private float hurtVignetteFlashTime;
         [SerializeField, Range(0f, 1f)] private float vignetteHealthThreshold;
         [SerializeField] private Material flashMaterial;
+        
+        [SerializeField] private GameObject shipHud;
+        [SerializeField] private Image shipHullBar;
+        [SerializeField] private Image shipFuelBar;
+        [SerializeField] private GameObject shipHullBarParent;
+        [SerializeField] private GameObject shipFuelBarParent;
+        [SerializeField] private GameObject starmapParent;
     
         public static StatsUIManager instance;
         private Material _defaultMaterial;
@@ -33,6 +42,7 @@ namespace Entities
         {
             instance = this;
             _defaultMaterial = hpBar.material;
+            shipHud.SetActive(false);
         }
 
         private void Update()
@@ -99,5 +109,37 @@ namespace Entities
             var val = energy / maxEnergy;
             energyBar.fillAmount = val;
         }
+        
+        public void ShowShipHUD(float hull, float fuel, float maxHull, float maxFuel)
+        {
+            shipHud.SetActive(true);
+            uiAnimator.SetTrigger("ShowShipHUD");
+            instance.StartCoroutine(FillShipStatBars(hull, fuel, maxHull, maxFuel));
+        }
+
+        private IEnumerator FillShipStatBars(float hull, float fuel, float maxHull, float maxFuel)
+        {
+            var timer = 2f;
+
+            while (timer > 0f)
+            {
+                timer -= Time.deltaTime;
+                var normalTimer = 1f - timer / 2f;
+                
+                shipHullBar.fillAmount = Mathf.Lerp(shipHullBar.fillAmount, hull / maxHull, normalTimer);
+                shipFuelBar.fillAmount = Mathf.Lerp(shipFuelBar.fillAmount, fuel / maxFuel, normalTimer);
+                
+                yield return new WaitForEndOfFrame();
+            }
+            
+            shipHullBar.fillAmount = hull / maxHull;
+            shipFuelBar.fillAmount = fuel / maxFuel;
+        }
+
+        public void HideShipHUD()
+        {
+            shipHud.SetActive(false);
+        }
+ 
     }
 }
