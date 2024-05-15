@@ -37,6 +37,7 @@ namespace Entities
         private bool _landingMode = true, _canFly;
         private bool _grounded;
         private float _boostTimer;
+        private bool _boostReady = true;
         private EntityController _passenger;
         private Transform _oldPassengerParent;
         private Animator _shipAnimator;
@@ -44,7 +45,7 @@ namespace Entities
         private Interactable _interactable;
         private bool _flipped;
         private float _maxSpeed;
-        private int _speedLevel;
+        private int _speedLevel = -1;
         private float _initialLandingDistance;
         private int _terrainLayer;
 
@@ -100,6 +101,10 @@ namespace Entities
             {
                 Touchdown();
             }
+            
+            StatsUIManager.instance.UpdateShipLocationUI(transform.position);
+            StatsUIManager.instance.UpdateShipAngleUI(transform.eulerAngles.z);
+            StatsUIManager.instance.UpdateShipVelocityUI(Rigidbody.velocity.magnitude);
         }
 
         protected override void FixedUpdate()
@@ -179,6 +184,7 @@ namespace Entities
                 var multiplier = 1f + Mathf.Abs(_inputVector.y) * 4;
                 Rigidbody.velocity = Vector2.Lerp(Rigidbody.velocity, Vector2.zero, Time.fixedDeltaTime * multiplier);
                 _speedLevel = 0;
+                StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
                 return;
             }
             
@@ -186,10 +192,12 @@ namespace Entities
             if (_speedLevel == 1 && Rigidbody.velocity.magnitude < normalMaxSpeed)
             {
                 _speedLevel = 0;
+                StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
             }
             else if (_speedLevel == 2 && Rigidbody.velocity.magnitude < cruiseMaxSpeed)
             {
                 _speedLevel = 1;
+                StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
             }
 
             var direction = horizontalThruster ? transform.right : transform.up;
@@ -232,10 +240,20 @@ namespace Entities
             {
                 _boostTimer -= Time.deltaTime;
             }
-            else if (!_landingMode && _speedLevel < 2 && Input.GetKeyDown(KeyCode.Space))
+            else
             {
-                Boost();
+                if (!_boostReady)
+                {
+                    StatsUIManager.instance.UpdateShipBoostStatusUI(true);
+                    _boostReady = true;
+                }
+
+                if (!_landingMode && _speedLevel < 2 && Input.GetKeyDown(KeyCode.Space))
+                {
+                    Boost();
+                }
             }
+            
 
             if (horizontalThruster)
             {
@@ -317,16 +335,20 @@ namespace Entities
         private void Boost()
         {
             _speedLevel++;
+            StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
+            StatsUIManager.instance.UpdateShipBoostStatusUI(false);
+            _boostReady = false;
             
             var dir = horizontalThruster ? transform.right : transform.up;
             Rigidbody.velocity = Vector2.zero;
             Rigidbody.AddForce(dir * boostPower, ForceMode2D.Impulse);
             _boostTimer = boostInterval;
             boostParticles.Play();
-            CameraController.CameraShake(0.2f, 0.8f);
+            CameraController.CameraShake(0.2f, 0.6f + _speedLevel * 0.2f);
+            UIUtilities.UIShake(0.2f, 2.25f + _speedLevel * 0.75f);
             
             var zoomMultiplier = CameraController.zoomMultiplier;
-            CameraController.SetZoomMultiplierSmooth(zoomMultiplier * 1.5f, 0.075f);
+            CameraController.SetZoomMultiplierSmooth(zoomMultiplier * (1.25f + _speedLevel * 0.25f), 0.075f);
             GameUtilities.instance.DelayExecute(() =>
             {
                 CameraController.SetZoomMultiplierSmooth(zoomMultiplier, 1.25f);
@@ -364,10 +386,11 @@ namespace Entities
                 {
                     _shipAnimator.SetBool("landing_gear", false);
                     dir = horizontalThruster ? Vector2.right : Vector2.up;
-                    Rigidbody.AddRelativeForce(dir * 20, ForceMode2D.Impulse);
-                    CameraController.CameraShake(0.125f, 0.35f);
                     movementParticles.Play();
                     _canFly = true;
+                    Boost();
+                    // Rigidbody.AddRelativeForce(dir * 20, ForceMode2D.Impulse);
+                    // CameraController.CameraShake(0.125f, 0.35f);
                 }, 1f);
             }
         }
@@ -378,6 +401,7 @@ namespace Entities
             _initialLandingDistance = 0;
             _canFly = false;
             landingParticles.Stop();
+            StatsUIManager.instance.UpdateShipGearUI(-1);
             
             GameUtilities.instance.DelayExecute(() =>
             {

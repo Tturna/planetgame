@@ -5,11 +5,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Utilities
 {
     public class UIUtilities : MonoBehaviour
     {
+        [SerializeField] private RectTransform playerHud;
+        [SerializeField] private RectTransform shipHud;
         [SerializeField] private Image deathOverlayBg;
         [SerializeField] private TextMeshProUGUI deathOverlayText;
         private static UIUtilities _instance;
@@ -118,6 +121,26 @@ namespace Utilities
             textColor.a = 1f;
             _instance.deathOverlayBg.color = bgColor;
             _instance.deathOverlayText.color = textColor;
+        }
+
+        public static void UIShake(float time, float strength)
+        {
+            _instance.StartCoroutine(_instance._UIShake(time, strength));
+        }
+
+        private IEnumerator _UIShake(float time, float strength)
+        {
+            while (time > 0f)
+            {
+                var rnd = Random.insideUnitCircle * strength;
+                playerHud.anchoredPosition = rnd;
+                shipHud.anchoredPosition = rnd;
+                time -= Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+            
+            playerHud.anchoredPosition = Vector2.zero;
+            shipHud.anchoredPosition = Vector2.zero;
         }
    }
 }
