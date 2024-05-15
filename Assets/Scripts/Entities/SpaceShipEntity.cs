@@ -1,3 +1,4 @@
+using System;
 using Cameras;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -48,6 +49,7 @@ namespace Entities
         private int _speedLevel = -1;
         private float _initialLandingDistance;
         private int _terrainLayer;
+        private float _invincibilityTimer;
 
         private Vector2 _inputVector;
         private float _smoothRotationInput;
@@ -63,6 +65,8 @@ namespace Entities
             _interactable.InteractedHold += InteractionHold;
             _shipAnimator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
+
+            _invincibilityTimer = 2f;
             
             thrusterParticles1.transform.localPosition = thrusterParticleOffset;
             thrusterParticles2.transform.localPosition = thrusterParticleOffset;
@@ -81,6 +85,7 @@ namespace Entities
         private void Update()
         {
             _interactable.IndicatorParent.rotation = Camera.main!.transform.rotation;
+            _invincibilityTimer -= Time.deltaTime;
             
             if (!_passenger) return;
 
@@ -105,6 +110,12 @@ namespace Entities
             StatsUIManager.instance.UpdateShipLocationUI(transform.position);
             StatsUIManager.instance.UpdateShipAngleUI(transform.eulerAngles.z);
             StatsUIManager.instance.UpdateShipVelocityUI(Rigidbody.velocity.magnitude);
+
+            if (fuelLevel > 0)
+            {
+                fuelLevel -= _inputVector.normalized.magnitude * Time.deltaTime;
+                StatsUIManager.instance.UpdateShipFuelUI(fuelLevel, maxFuelLevel);
+            }
         }
 
         protected override void FixedUpdate()
@@ -158,6 +169,7 @@ namespace Entities
             }
             
             if (!_canFly) return;
+            if (fuelLevel <= 0) return;
             
             _smoothRotationInput = Mathf.Lerp(_smoothRotationInput, -_inputVector.x, Time.fixedDeltaTime * 4.5f);
             
@@ -334,7 +346,10 @@ namespace Entities
 
         private void Boost()
         {
+            if (fuelLevel < 5f) return;
+            
             _speedLevel++;
+            fuelLevel -= 5f;
             StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
             StatsUIManager.instance.UpdateShipBoostStatusUI(false);
             _boostReady = false;
@@ -359,6 +374,8 @@ namespace Entities
         {
             // Prevent landing when taking off
             if (!_landingMode && !_canFly) return;
+            
+            if ((_landingMode || _grounded) && fuelLevel <= 0) return;
             
             _landingMode = !_landingMode;
             // TogglePhysics(_landingMode);
@@ -449,6 +466,36 @@ namespace Entities
                 _passenger = null;
                 
                 StatsUIManager.instance.HideShipHUD();
+            }
+        }
+
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (hullHealth <= 0) return;
+            if (_invincibilityTimer > 0) return;
+            
+            var contact = other.GetContact(0);
+            var hitVelocityDir = other.relativeVelocity.normalized;
+            
+            var dot = Vector2.Dot(contact.normal, hitVelocityDir);
+            var correctedHitVelocity = other.relativeVelocity.magnitude * dot;
+            
+            if (correctedHitVelocity < 9f) return;
+
+            _invincibilityTimer = 0.2f;
+
+            var damage = (correctedHitVelocity - 9f) * 3f;
+            hullHealth = Mathf.Clamp(hullHealth - damage, 0, maxHullHealth);
+            StatsUIManager.instance.UpdateShipHullUI(hullHealth, maxHullHealth, true);
+
+            if (hullHealth <= 0)
+            {
+                Debug.Log("Ship blew up");
+                CameraController.CameraShake(0.75f, 1f);
+            }
+            else
+            {
+                CameraController.CameraShake(0.2f, 0.7f);
             }
         }
     }

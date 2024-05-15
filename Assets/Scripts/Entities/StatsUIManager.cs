@@ -48,12 +48,15 @@ namespace Entities
         public static StatsUIManager instance;
         private Material _defaultMaterial;
         private bool _vignetteFlashing;
+        
+        private Color _defaultShipUIColor;
 
         private void Start()
         {
             instance = this;
             _defaultMaterial = hpBar.material;
             shipHud.SetActive(false);
+            _defaultShipUIColor = shipHullBar.color;
         }
 
         private void Update()
@@ -121,11 +124,26 @@ namespace Entities
             energyBar.fillAmount = val;
         }
         
-        public void UpdateShipHullUI(float hull, float maxHull)
+        public void UpdateShipHullUI(float hull, float maxHull, bool flash = false)
         {
+            var currentFillAmount = shipHullBar.fillAmount;
             var val = hull / maxHull;
-            shipHullBar.fillAmount = val;
-            shipHullText.text = $"{Mathf.RoundToInt(val * 100)}%";
+            
+            if (flash && currentFillAmount > val)
+            {
+                shipHullBar.color = Color.red;
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    shipHullBar.fillAmount = val;
+                    shipHullText.text = $"{Mathf.RoundToInt(val * 100)}%";
+                    shipHullBar.color = _defaultShipUIColor;
+                }, 0.2f);
+            }
+            else
+            {
+                shipHullBar.fillAmount = val;
+                shipHullText.text = $"{Mathf.RoundToInt(val * 100)}%";
+            }
         }
         
         public void UpdateShipFuelUI(float fuel, float maxFuel)

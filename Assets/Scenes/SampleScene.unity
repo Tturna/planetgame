@@ -97497,8 +97497,8 @@ MonoBehaviour:
   boostPower: 25
   hullHealth: 100
   maxHullHealth: 100
-  fuelLevel: 100
-  maxFuelLevel: 100
+  fuelLevel: 300
+  maxFuelLevel: 300
   thrusterParticles1: {fileID: 980171107}
   thrusterParticles2: {fileID: 268798908}
   takeOffParticles: {fileID: 1585697276}
@@ -97607,7 +97607,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1429146338}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -243, y: 143, z: 0}
+  m_LocalPosition: {x: -243.48, y: 140.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
