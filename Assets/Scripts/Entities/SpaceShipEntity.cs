@@ -17,6 +17,7 @@ namespace Entities
         [SerializeField] private float accelerationSpeed;
         [SerializeField] private float rotationSpeed;
         [SerializeField] private bool horizontalThruster;
+        [SerializeField] private Vector2 thrusterParticleOffset;
         [SerializeField] private float boostInterval;
         [SerializeField] private float boostPower;
         [SerializeField] private float hullHealth;
@@ -30,9 +31,9 @@ namespace Entities
         [SerializeField] private ParticleSystem takeOffParticles;
         [SerializeField] private ParticleSystem boostParticles;
         [SerializeField] private ParticleSystem landingParticles;
+        [SerializeField] private ParticleSystem lowHealthParticles;
         [SerializeField] private ParticleSystem movementParticles;
         [SerializeField] private GameObject movementParticleAnchor;
-        [SerializeField] private Vector2 thrusterParticleOffset;
         [SerializeField] private Transform starMapMarker;
     
         private bool _landingMode = true, _canFly;
@@ -121,6 +122,8 @@ namespace Entities
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            
+            lowHealthParticles.transform.localRotation = Quaternion.Euler(0, 0, _flipped ? 180 : 0);
             
             if (!_passenger) return;
             _passenger.transform.position = transform.position;
@@ -496,6 +499,11 @@ namespace Entities
             else
             {
                 CameraController.CameraShake(0.2f, 0.7f);
+
+                if (!lowHealthParticles.isEmitting && hullHealth / maxHullHealth < 0.15f)
+                {
+                    lowHealthParticles.Play();
+                }
             }
         }
     }

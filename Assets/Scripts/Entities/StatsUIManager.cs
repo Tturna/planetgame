@@ -136,13 +136,22 @@ namespace Entities
                 {
                     shipHullBar.fillAmount = val;
                     shipHullText.text = $"{Mathf.RoundToInt(val * 100)}%";
-                    shipHullBar.color = _defaultShipUIColor;
+
+                    if (shipHullBar.fillAmount > 0.15f)
+                    {
+                        shipHullBar.color = _defaultShipUIColor;
+                    }
                 }, 0.2f);
             }
             else
             {
                 shipHullBar.fillAmount = val;
                 shipHullText.text = $"{Mathf.RoundToInt(val * 100)}%";
+                
+                if (shipHullBar.fillAmount > 0.15f)
+                {
+                    shipHullBar.color = _defaultShipUIColor;
+                }
             }
         }
         
