@@ -132,6 +132,7 @@ namespace Entities
             if (flash && currentFillAmount > val)
             {
                 shipHullBar.color = Color.red;
+                uiAnimator.SetTrigger("UIFlicker");
                 GameUtilities.instance.DelayExecute(() =>
                 {
                     shipHullBar.fillAmount = val;

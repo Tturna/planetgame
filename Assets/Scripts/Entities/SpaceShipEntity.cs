@@ -490,6 +490,7 @@ namespace Entities
             var damage = (correctedHitVelocity - 9f) * 3f;
             hullHealth = Mathf.Clamp(hullHealth - damage, 0, maxHullHealth);
             StatsUIManager.instance.UpdateShipHullUI(hullHealth, maxHullHealth, true);
+            UIUtilities.UIShake(0.2f, 4f);
 
             if (hullHealth <= 0)
             {
