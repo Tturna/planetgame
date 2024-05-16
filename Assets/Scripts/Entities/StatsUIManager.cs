@@ -1,4 +1,5 @@
 using System.Collections;
+using Cameras;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,6 +45,8 @@ namespace Entities
         [SerializeField] private Image shipGearIndicator3;
         [SerializeField] private Sprite gearIndicatorEmptySprite;
         [SerializeField] private Sprite gearIndicatorFullSprite;
+        [SerializeField] private RectTransform dangerIcon;
+        [SerializeField] private RectTransform dangerPointer;
     
         public static StatsUIManager instance;
         private Material _defaultMaterial;
@@ -282,6 +285,28 @@ namespace Entities
         public void HideShipHUD()
         {
             shipHud.SetActive(false);
+        }
+        
+        public void ShowDangerIcon()
+        {
+            dangerIcon.gameObject.SetActive(true);
+            dangerPointer.gameObject.SetActive(true);
+        }
+        
+        public void HideDangerIcon()
+        {
+            dangerIcon.gameObject.SetActive(false);
+            dangerPointer.gameObject.SetActive(false);
+        }
+
+        public void UpdateDangerIcon(Vector2 worldPosition)
+        {
+            var screenPos = CameraController.instance.mainCam.WorldToScreenPoint(worldPosition);
+            var screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f);
+            var dir = screenPos - screenCenter;
+            dangerIcon.position = screenPos;
+            dangerPointer.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
+            dangerPointer.position = screenPos + dir.normalized * 75f;
         }
     }
 }

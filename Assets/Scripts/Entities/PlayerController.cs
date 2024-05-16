@@ -239,7 +239,7 @@ namespace Entities
 
         private void OnDrawGizmos()
         {
-            var mousePos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            var mousePos = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0;
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(mousePos, 0.5f);

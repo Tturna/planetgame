@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cameras;
 using Entities;
 using Inventory.Entities;
 using Inventory.Item_SOs;
@@ -635,7 +636,7 @@ namespace Inventory
             {
                 // TODO: Make it so you can drop stacks of the same item.
                 // This would reduce the amount of items required to instantiate
-                var pos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+                var pos = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
                 pos.z = 0;
                 SpawnItem(droppedItem, pos);
             }

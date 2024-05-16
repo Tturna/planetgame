@@ -12,7 +12,7 @@ namespace Cameras
     
         public static CameraController instance;
         public static float zoomMultiplier = 1f;
-        private Camera mainCam;
+        public Camera mainCam;
         private TerrainCameraController[] _terrainCameraControllers;
         private Transform _planetTransform;
         private Vector3 _defaultCamPosition;
@@ -32,8 +32,6 @@ namespace Cameras
 
         private void Start()
         {
-            instance = this;
-            mainCam = Camera.main!;
             _terrainCameraControllers = FindObjectsOfType<TerrainCameraController>();
             _defaultTerrainCamZoom = _terrainCameraControllers[0].Camera.orthographicSize;
             

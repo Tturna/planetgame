@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cameras;
 using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
@@ -55,7 +56,7 @@ namespace Inventory.Item_Logic
             var tool = (ToolSo)useParameters.attackItem.itemSo;
             var useArea = tool.toolUseArea;
             var power = tool.toolPower;
-            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
             
             if (Vector3.Distance(useParameters.playerObject.transform.position, mousePoint) > tool.toolRange) return true;

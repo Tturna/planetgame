@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Cameras;
 using TMPro;
 using UnityEngine;
 using Utilities;
@@ -65,7 +66,7 @@ namespace Entities
             tmp.font = flashFont;
             
             var ogLifeTime = lifeTime;
-            var camTr = Camera.main!.transform;
+            var camTr = CameraController.instance.mainCam.transform;
             
             while (lifeTime > 0)
             {

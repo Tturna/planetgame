@@ -85,7 +85,7 @@ namespace Entities
 
         private void Update()
         {
-            _interactable.IndicatorParent.rotation = Camera.main!.transform.rotation;
+            _interactable.IndicatorParent.rotation = CameraController.instance.mainCam.transform.rotation;
             _invincibilityTimer -= Time.deltaTime;
             
             if (!_passenger) return;
@@ -154,7 +154,7 @@ namespace Entities
                 
                 var normalDistToGround = 1f - distToGround / _initialLandingDistance;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0,0,terrainAngle), normalDistToGround * 0.25f);
-                landingParticles.transform.rotation = Camera.main!.transform.rotation;
+                landingParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
 
                 if (distToGround < 8f && !landingParticles.isEmitting)
                 {
@@ -187,6 +187,7 @@ namespace Entities
             _passenger.transform.rotation = passengerRotation;
 
             HandleMovementParticles();
+            HandleCollisionWarning();
 
             if (_inputVector.magnitude < 0.1f)
             {
@@ -202,7 +203,7 @@ namespace Entities
                 StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
                 return;
             }
-            
+
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (_speedLevel == 1 && Rigidbody.velocity.magnitude < normalMaxSpeed)
             {
@@ -470,6 +471,32 @@ namespace Entities
                 
                 StatsUIManager.instance.HideShipHUD();
             }
+        }
+
+        private void HandleCollisionWarning()
+        {
+            var velmag = Rigidbody.velocity.magnitude;
+            if (velmag < 10f)
+            {
+                StatsUIManager.instance.HideDangerIcon();
+                return;
+            }
+            
+            var castDir = Rigidbody.velocity.normalized;
+            var hit = Physics2D.Raycast(transform.position, castDir, velmag * 2.5f, _terrainLayer);
+
+            if (!hit)
+            {
+                hit = Physics2D.CircleCast(transform.position, 0.5f, castDir, velmag * 2.5f, _terrainLayer);
+                if (!hit)
+                {
+                    StatsUIManager.instance.HideDangerIcon();
+                    return;
+                }
+            }
+            
+            StatsUIManager.instance.ShowDangerIcon();
+            StatsUIManager.instance.UpdateDangerIcon(transform.position + (Vector3)castDir * 7f);
         }
 
         private void OnCollisionEnter2D(Collision2D other)

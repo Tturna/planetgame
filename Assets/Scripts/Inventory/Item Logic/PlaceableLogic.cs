@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
+using Cameras;
 using Entities;
 using Inventory.Item_SOs;
 using Planets;
@@ -15,7 +16,7 @@ namespace Inventory.Item_Logic
         public override bool UseOnce(UseParameters useParameters)
         {
             var usableItem = (UsableItemSo)useParameters.attackItem.itemSo;
-            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
 
             if (Vector3.Distance(useParameters.playerObject.transform.position, mousePoint) > usableItem.useRange)
