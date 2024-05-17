@@ -23,6 +23,7 @@ namespace Entities
             [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
             [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
             [SerializeField] private GameObject itemAnchor;
+            [SerializeField] private Transform starmapCamera;
             
             [Header("Other")]
             [SerializeField] private Material flashMaterial;
@@ -122,6 +123,8 @@ namespace Entities
         {
             HandleInteraction();
             HandleGroundCheck();
+            
+            starmapCamera.rotation = Quaternion.identity;
 
             if (!CanControl) return;
             

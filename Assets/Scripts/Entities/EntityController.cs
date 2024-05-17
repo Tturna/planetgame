@@ -15,7 +15,8 @@ namespace Entities
         [CanBeNull] protected PlanetGenerator ClosestPlanetGen { get; set; }
         [CanBeNull] protected PlanetGenerator CurrentPlanetGen { get; set; }
         public bool IsAlive { get; protected set; } = true;
-        public float DistanceFromClosestPlanet { get; private set; } = float.MaxValue;
+        public Vector2 DirectionToClosestPlanet { get; private set; }
+        public float DistanceToClosestPlanet { get; private set; } = float.MaxValue;
         protected Rigidbody2D Rigidbody { get; set; }
         protected bool CalculatePhysics { get; private set; } = true;
         public bool CanControl { get; private set; } = true;
@@ -108,12 +109,12 @@ namespace Entities
 
             var dirToPlanet = posDiff.normalized;
 
-            var planetGravity = CurrentPlanetGen.GetGravity(DistanceFromClosestPlanet);
+            var planetGravity = CurrentPlanetGen.GetGravity(DistanceToClosestPlanet);
             var totalGravity = planetGravity * gravityMultiplier;
                     
             Rigidbody.AddForce(dirToPlanet * totalGravity);
 
-            Rigidbody.drag = CurrentPlanetGen.GetDrag(DistanceFromClosestPlanet);
+            Rigidbody.drag = CurrentPlanetGen.GetDrag(DistanceToClosestPlanet);
 
             if (FollowPlanetRotation)
             {
@@ -124,9 +125,10 @@ namespace Entities
         private Vector2 CalculatePlanetRelations()
         {
             Vector2 posDiff = ClosestPlanetObject!.transform.position - transform.position;
-            DistanceFromClosestPlanet = posDiff.magnitude;
+            DirectionToClosestPlanet = posDiff.normalized;
+            DistanceToClosestPlanet = posDiff.magnitude;
             
-            if (DistanceFromClosestPlanet < ClosestPlanetGen!.atmosphereRadius)
+            if (DistanceToClosestPlanet < ClosestPlanetGen!.atmosphereRadius)
             {
                 if (CurrentPlanetObject == ClosestPlanetObject) return posDiff;
                 // Debug.Log($"{name} is entering atmosphere of {ClosestPlanetObject.name}");

@@ -1,4 +1,3 @@
-using System;
 using Cameras;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -34,6 +33,7 @@ namespace Entities
         [SerializeField] private ParticleSystem lowHealthParticles;
         [SerializeField] private ParticleSystem movementParticles;
         [SerializeField] private GameObject movementParticleAnchor;
+        [SerializeField] private ParticleSystem collisionParticles;
         [SerializeField] private Transform starMapMarker;
     
         private bool _landingMode = true, _canFly;
@@ -127,6 +127,7 @@ namespace Entities
             
             if (!_passenger) return;
             _passenger.transform.position = transform.position;
+            var passengerRotation = _passenger.transform.rotation;
             
             if (_landingMode && !_grounded)
             {
@@ -155,6 +156,7 @@ namespace Entities
                 var normalDistToGround = 1f - distToGround / _initialLandingDistance;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0,0,terrainAngle), normalDistToGround * 0.25f);
                 landingParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
+                _passenger.transform.rotation = passengerRotation;
 
                 if (distToGround < 8f && !landingParticles.isEmitting)
                 {
@@ -176,7 +178,6 @@ namespace Entities
             
             _smoothRotationInput = Mathf.Lerp(_smoothRotationInput, -_inputVector.x, Time.fixedDeltaTime * 4.5f);
             
-            var passengerRotation = _passenger.transform.rotation;
             var velocityV = Mathf.Clamp01(Rigidbody.velocity.magnitude / warpMaxSpeed);
             // TODO: Consider making shared method for these easing functions.
             // return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
@@ -290,7 +291,7 @@ namespace Entities
             var velocityAngle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
             
             var atmosphereRadius = ClosestPlanetGen!.atmosphereRadius;
-            var distFromAtmosphere = DistanceFromClosestPlanet - atmosphereRadius;
+            var distFromAtmosphere = DistanceToClosestPlanet - atmosphereRadius;
             var distV = Mathf.Clamp01(distFromAtmosphere / (atmosphereRadius * 0.5f) * (deciVelMag + 0.25f));
             
             var velocityV = Mathf.Clamp01(velocityMagnitude / warpMaxSpeed);
@@ -518,6 +519,23 @@ namespace Entities
             hullHealth = Mathf.Clamp(hullHealth - damage, 0, maxHullHealth);
             StatsUIManager.instance.UpdateShipHullUI(hullHealth, maxHullHealth, true);
             UIUtilities.UIShake(0.2f, 4f);
+            collisionParticles.transform.position = contact.point;
+            var collisionPfxAngle = Mathf.Atan2(-hitVelocityDir.y, -hitVelocityDir.x) * Mathf.Rad2Deg + 90;
+            collisionParticles.transform.rotation = Quaternion.Euler(0,0,collisionPfxAngle);
+
+            var forceOverLifetimeModule = collisionParticles.forceOverLifetime;
+            if (CurrentPlanetObject != null)
+            {
+                forceOverLifetimeModule.x = DirectionToClosestPlanet.x * 33f;
+                forceOverLifetimeModule.y = DirectionToClosestPlanet.y * 33f;
+            }
+            else
+            {
+                forceOverLifetimeModule.x = 0f;
+                forceOverLifetimeModule.y = 0f;
+            }
+            
+            collisionParticles.Play();
 
             if (hullHealth <= 0)
             {
