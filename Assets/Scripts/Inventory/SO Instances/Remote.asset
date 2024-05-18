@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40fe3dc444f14c11bd56f2ff9736089d, type: 3}
   m_Name: Remote
   m_EditorClassIdentifier: 
+  id: 4c37b44e-86ab-4e36-a6bf-343ed79c33ca
   name: Remote
+  description: 
   maxStack: 1
   sprite: {fileID: 21300000, guid: a2e2a210d7bb6b347a48bfcb66f3ef3e, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  useBothHands: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 0
+  craftingRecipe: []

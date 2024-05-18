@@ -21,6 +21,13 @@ namespace Inventory.Item_SOs
     }
     #endif
     
+    [Serializable]
+    public struct CraftingResource
+    {
+        public ItemSo item;
+        public int amount;
+    }
+    
     [CreateAssetMenu(fileName="Item", menuName="SO/BasicItem")]
     public class ItemSo : ScriptableObject
     {
@@ -34,6 +41,7 @@ namespace Inventory.Item_SOs
         public bool useBothHands;
         public bool altIdleAnimation;
         public SuitableItemType suitableSlotItemType;
+        public CraftingResource[] craftingRecipe;
         
         // TODO: here something to choose which data to show in tooltips
     }

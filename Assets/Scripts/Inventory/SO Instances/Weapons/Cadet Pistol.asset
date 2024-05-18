@@ -20,6 +20,10 @@ MonoBehaviour:
   handPositionOffset: {x: -0.2, y: -0.1}
   useBothHands: 0
   altIdleAnimation: 0
+  suitableSlotItemType: 0
+  craftingRecipe:
+  - item: {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+    amount: 1
   logicCode: 1
   attackCooldown: 0.2
   energyCost: 5
@@ -37,6 +41,7 @@ MonoBehaviour:
     projectileSpeed: 45
     damage: 6
     knockback: 100
+    critChance: 0
     piercing: 0
     useGravity: 0
     gravityMultiplier: 0

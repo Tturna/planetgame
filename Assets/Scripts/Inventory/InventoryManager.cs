@@ -922,5 +922,27 @@ namespace Inventory
             itemEntity.GetComponent<ItemEntity>().item = item;
             itemEntity.transform.position = position;
         }
+
+        // TODO: Consider changing the inventory to use a dictionary instead of an array
+        // to prevent having to loop through the entire inventory to find an item.
+        public static bool CanCraft(ItemSo item)
+        {
+            // This assumes that a craftable with no required items is free to craft.
+            foreach (var craftingResource in item.craftingRecipe)
+            {
+                var requiredItem = craftingResource.item;
+                var requiredAmount = craftingResource.amount;
+                
+                var hasRequiredInHotbar = _hotSlots.ToList().FindAll(s => s.item?.itemSo.id == requiredItem.id).Any(s => s.stack >= requiredAmount);
+                
+                if (hasRequiredInHotbar) continue;
+                
+                var hasRequiredInStash = _stashSlots.ToList().FindAll(s => s.item?.itemSo.id == requiredItem.id).Any(s => s.stack >= requiredAmount);
+                
+                if (!hasRequiredInStash) return false;
+            }
+
+            return true;
+        }
     }
 }

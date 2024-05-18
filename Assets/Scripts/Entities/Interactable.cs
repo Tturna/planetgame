@@ -14,7 +14,8 @@ namespace Entities
         [SerializeField] private Vector2 holdIndicatorOffset;
 
         public bool canHoldInteract;
-        public Transform IndicatorParent;
+        // ReSharper disable once InconsistentNaming
+        [NonSerialized] public Transform IndicatorParent;
 
         private GameObject _promptObject;
         private GameObject _holdIndicatorObject;
@@ -39,10 +40,13 @@ namespace Entities
             _promptObject = Instantiate(promptPrefab, IndicatorParent);
             _promptObject.transform.localPosition = promptOffset;
             _promptObject.SetActive(false);
-            
-            _holdIndicatorObject = Instantiate(holdIndicatorPrefab, IndicatorParent);
-            _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
-            _holdIndicatorObject.SetActive(false);
+
+            if (_holdIndicatorObject)
+            {
+                _holdIndicatorObject = Instantiate(holdIndicatorPrefab, IndicatorParent);
+                _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
+                _holdIndicatorObject.SetActive(false);
+            }
         }
 
         // This system is not using trigger collider events because they seem to be VERY unreliable.
@@ -115,7 +119,10 @@ namespace Entities
         {
             _interactHoldTimer = 0f;
             _interacted = false;
-            _holdIndicatorObject.SetActive(false);
+            if (_holdIndicatorObject)
+            {
+                _holdIndicatorObject.SetActive(false);
+            }
         }
 
         protected virtual void OnInteractedImmediate(GameObject sourceObject)

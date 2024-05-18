@@ -74,6 +74,7 @@ namespace Utilities
             return Results.Count > 0;
         }
 
+        // TODO: Consider moving this death overlay stuff to another class like StatsUIManager. Also consider making StatsUIManager into just UIManager
         public static void ShowDeathOverlay()
         {
             _instance.StartCoroutine(FadeDeathOverlay());
