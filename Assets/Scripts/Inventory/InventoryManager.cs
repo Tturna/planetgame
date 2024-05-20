@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cameras;
 using Entities;
+using Inventory.Crafting;
 using Inventory.Entities;
 using Inventory.Item_SOs;
 using Inventory.Item_SOs.Accessories;
@@ -857,7 +858,7 @@ namespace Inventory
         private static GameObject GetHoveringSlotObject(List<RaycastResult> results = null)
         {
             results ??= UIUtilities.GetMouseRaycast();
-            return results.Find(x => x.gameObject.name.ToLower().Contains("slot")).gameObject;
+            return results.Find(x => x.gameObject.CompareTag("InventorySlot")).gameObject;
         }
 
         private static void GetSlotFromObject(GameObject slotObject, out Slot slot)
@@ -925,10 +926,9 @@ namespace Inventory
 
         // TODO: Consider changing the inventory to use a dictionary instead of an array
         // to prevent having to loop through the entire inventory to find an item.
-        public static bool CanCraft(ItemSo item)
+        public static bool CanCraft(RecipeSo recipe)
         {
-            // This assumes that a craftable with no required items is free to craft.
-            foreach (var craftingResource in item.craftingRecipe)
+            foreach (var craftingResource in recipe.ingredients)
             {
                 var requiredItem = craftingResource.item;
                 var requiredAmount = craftingResource.amount;

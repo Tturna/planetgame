@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 2176727}
   m_Layer: 5
   m_Name: slot (7)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5837,7 +5837,7 @@ GameObject:
   - component: {fileID: 49837750}
   m_Layer: 5
   m_Name: slot (5)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5916,7 +5916,7 @@ GameObject:
   - component: {fileID: 50583182}
   m_Layer: 5
   m_Name: slot (5)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6117,7 +6117,7 @@ GameObject:
   - component: {fileID: 58865191}
   m_Layer: 5
   m_Name: slot (18)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12388,7 +12388,7 @@ GameObject:
   - component: {fileID: 186329007}
   m_Layer: 5
   m_Name: slot (20)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12466,7 +12466,7 @@ GameObject:
   - component: {fileID: 189333295}
   m_Layer: 5
   m_Name: slot (15)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22851,7 +22851,7 @@ GameObject:
   - component: {fileID: 220987273}
   m_Layer: 5
   m_Name: slot (1)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23005,7 +23005,7 @@ GameObject:
   - component: {fileID: 253493687}
   m_Layer: 5
   m_Name: Slot (19)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23051,7 +23051,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28051,7 +28051,7 @@ GameObject:
   - component: {fileID: 273087026}
   m_Layer: 5
   m_Name: slot (14)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28863,7 +28863,7 @@ GameObject:
   - component: {fileID: 308833284}
   m_Layer: 5
   m_Name: slot (4)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -34833,7 +34833,7 @@ GameObject:
   - component: {fileID: 373404922}
   m_Layer: 5
   m_Name: Slot (10)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -34879,7 +34879,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -34944,7 +34944,7 @@ GameObject:
   - component: {fileID: 377232328}
   m_Layer: 5
   m_Name: Slot (12)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -34990,7 +34990,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -35105,7 +35105,7 @@ GameObject:
   - component: {fileID: 388065864}
   m_Layer: 5
   m_Name: slot
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -36194,7 +36194,7 @@ GameObject:
   - component: {fileID: 422340902}
   m_Layer: 5
   m_Name: Slot (14)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -36240,7 +36240,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -37211,7 +37211,7 @@ GameObject:
   - component: {fileID: 471181047}
   m_Layer: 5
   m_Name: Slot (13)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -37257,7 +37257,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -37358,7 +37358,7 @@ GameObject:
   - component: {fileID: 472435779}
   m_Layer: 5
   m_Name: slot (30)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42667,7 +42667,7 @@ GameObject:
   - component: {fileID: 520996953}
   m_Layer: 5
   m_Name: slot (26)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44374,7 +44374,7 @@ GameObject:
   - component: {fileID: 602095228}
   m_Layer: 5
   m_Name: Armor Slot
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44588,7 +44588,7 @@ GameObject:
   - component: {fileID: 610272269}
   m_Layer: 5
   m_Name: slot (28)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49674,7 +49674,6 @@ GameObject:
   - component: {fileID: 623620830}
   - component: {fileID: 623620829}
   - component: {fileID: 623620831}
-  - component: {fileID: 623620832}
   m_Layer: 0
   m_Name: Crafting Station 1
   m_TagString: Untagged
@@ -49723,8 +49722,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.9143301, b: 0.5990566, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 36292b998db52474b9bed40d2e719dea, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -49767,23 +49766,6 @@ MonoBehaviour:
   promptOffset: {x: 0, y: 1}
   holdIndicatorOffset: {x: 0, y: 0}
   canHoldInteract: 0
---- !u!114 &623620832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623620828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c157d983d8a047cf8386d59247fcda89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  craftables:
-  - {fileID: 11400000, guid: a6db3c4fb443b8b43b6389e0345ec0f9, type: 2}
-  - {fileID: 11400000, guid: 528c13e3d1f6ff34db8e0622890de078, type: 2}
-  craftableSlotsParent: {fileID: 765436523}
-  craftingMenu: {fileID: 435953655}
 --- !u!1 &629358338
 GameObject:
   m_ObjectHideFlags: 0
@@ -49797,7 +49779,7 @@ GameObject:
   - component: {fileID: 629358340}
   m_Layer: 5
   m_Name: Helmet Slot
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49960,7 +49942,7 @@ GameObject:
   - component: {fileID: 641276346}
   m_Layer: 5
   m_Name: slot (6)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50394,7 +50376,7 @@ GameObject:
   - component: {fileID: 668113613}
   m_Layer: 5
   m_Name: Slot (4)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50440,7 +50422,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -56429,7 +56411,7 @@ GameObject:
   - component: {fileID: 740503239}
   m_Layer: 5
   m_Name: Jetpack Slot
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56508,7 +56490,7 @@ GameObject:
   - component: {fileID: 742054997}
   m_Layer: 5
   m_Name: Slot (5)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56554,7 +56536,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -56661,7 +56643,7 @@ GameObject:
   - component: {fileID: 760894578}
   m_Layer: 5
   m_Name: slot (3)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57850,7 +57832,7 @@ GameObject:
   - component: {fileID: 780962865}
   m_Layer: 5
   m_Name: Slot (17)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57896,7 +57878,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -58168,7 +58150,7 @@ GameObject:
   - component: {fileID: 794044494}
   m_Layer: 5
   m_Name: slot (8)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63468,7 +63450,7 @@ GameObject:
   - component: {fileID: 813263974}
   m_Layer: 5
   m_Name: slot (29)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63610,7 +63592,7 @@ GameObject:
   - component: {fileID: 824371044}
   m_Layer: 5
   m_Name: slot (4)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80511,7 +80493,7 @@ GameObject:
   - component: {fileID: 993794909}
   m_Layer: 5
   m_Name: slot (8)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80589,7 +80571,7 @@ GameObject:
   - component: {fileID: 996120021}
   m_Layer: 5
   m_Name: Slot (9)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80635,7 +80617,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -80666,7 +80648,7 @@ GameObject:
   - component: {fileID: 1002980336}
   m_Layer: 5
   m_Name: slot (2)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86628,7 +86610,7 @@ GameObject:
   - component: {fileID: 1053287735}
   m_Layer: 5
   m_Name: slot (17)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86790,7 +86772,7 @@ GameObject:
   - component: {fileID: 1054556662}
   m_Layer: 5
   m_Name: slot (31)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87009,7 +86991,7 @@ GameObject:
   - component: {fileID: 1058190426}
   m_Layer: 5
   m_Name: slot (2)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87239,7 +87221,7 @@ GameObject:
   - component: {fileID: 1064761816}
   m_Layer: 5
   m_Name: Slot (15)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87285,7 +87267,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -88045,7 +88027,7 @@ GameObject:
   - component: {fileID: 1092208525}
   m_Layer: 5
   m_Name: slot (9)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -88189,7 +88171,7 @@ GameObject:
   - component: {fileID: 1095341187}
   m_Layer: 5
   m_Name: slot (27)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105101,7 +105083,7 @@ GameObject:
   - component: {fileID: 1231589001}
   m_Layer: 5
   m_Name: Slot (2)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105147,7 +105129,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -105557,7 +105539,7 @@ GameObject:
   - component: {fileID: 1249357268}
   m_Layer: 5
   m_Name: slot (9)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107141,7 +107123,7 @@ GameObject:
   - component: {fileID: 1319409996}
   m_Layer: 5
   m_Name: slot (7)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107471,7 +107453,7 @@ GameObject:
   - component: {fileID: 1339854863}
   m_Layer: 5
   m_Name: slot (16)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107787,7 +107769,7 @@ GameObject:
   - component: {fileID: 1351109597}
   m_Layer: 5
   m_Name: Slot (16)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107833,7 +107815,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -107940,7 +107922,7 @@ GameObject:
   - component: {fileID: 1359349726}
   m_Layer: 5
   m_Name: Slot (3)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107986,7 +107968,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -108093,7 +108075,7 @@ GameObject:
   - component: {fileID: 1362389461}
   m_Layer: 5
   m_Name: slot (9)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109139,7 +109121,7 @@ GameObject:
   - component: {fileID: 1385501992}
   m_Layer: 5
   m_Name: Slot (1)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109185,7 +109167,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -115746,7 +115728,7 @@ GameObject:
   - component: {fileID: 1508045233}
   m_Layer: 5
   m_Name: slot (6)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131702,7 +131684,7 @@ GameObject:
   - component: {fileID: 1601452385}
   m_Layer: 5
   m_Name: slot (11)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132151,7 +132133,7 @@ GameObject:
   - component: {fileID: 1638062463}
   m_Layer: 5
   m_Name: Slot
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132197,7 +132179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -132228,7 +132210,7 @@ GameObject:
   - component: {fileID: 1648285637}
   m_Layer: 5
   m_Name: slot (5)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133167,7 +133149,7 @@ GameObject:
   - component: {fileID: 1673318406}
   m_Layer: 5
   m_Name: Slot (7)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133213,7 +133195,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -133396,7 +133378,7 @@ GameObject:
   - component: {fileID: 1688869080}
   m_Layer: 5
   m_Name: slot (23)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133474,7 +133456,7 @@ GameObject:
   - component: {fileID: 1693860521}
   m_Layer: 5
   m_Name: slot (22)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133552,7 +133534,7 @@ GameObject:
   - component: {fileID: 1700544063}
   m_Layer: 5
   m_Name: Slot (18)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133598,7 +133580,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -133932,7 +133914,7 @@ GameObject:
   - component: {fileID: 1738436291}
   m_Layer: 5
   m_Name: slot
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134064,7 +134046,7 @@ GameObject:
   - component: {fileID: 1744877134}
   m_Layer: 5
   m_Name: slot (6)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134845,7 +134827,7 @@ GameObject:
   - component: {fileID: 1789914335}
   m_Layer: 5
   m_Name: slot (24)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134923,7 +134905,7 @@ GameObject:
   - component: {fileID: 1795964398}
   m_Layer: 5
   m_Name: Slot (6)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134969,7 +134951,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -135069,7 +135051,7 @@ GameObject:
   - component: {fileID: 1816412355}
   m_Layer: 5
   m_Name: slot (13)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135147,7 +135129,7 @@ GameObject:
   - component: {fileID: 1818137888}
   m_Layer: 5
   m_Name: Slot (11)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135193,7 +135175,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -136176,7 +136158,7 @@ GameObject:
   - component: {fileID: 1855329294}
   m_Layer: 5
   m_Name: slot (25)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -137509,7 +137491,7 @@ GameObject:
   - component: {fileID: 1903725413}
   m_Layer: 5
   m_Name: Slot (8)
-  m_TagString: Untagged
+  m_TagString: CraftableSlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -137555,7 +137537,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 972941378, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 733b27498ecca804483eaa9fd3b2ef08, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -138031,7 +138013,7 @@ GameObject:
   - component: {fileID: 1923031992}
   m_Layer: 5
   m_Name: slot (1)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138508,7 +138490,7 @@ GameObject:
   - component: {fileID: 1943536345}
   m_Layer: 5
   m_Name: Pet Slot
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138587,7 +138569,7 @@ GameObject:
   - component: {fileID: 1945871410}
   m_Layer: 5
   m_Name: slot (8)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138882,6 +138864,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1968306434}
   - component: {fileID: 1968306433}
+  - component: {fileID: 1968306440}
   - component: {fileID: 1968306435}
   - component: {fileID: 1968306437}
   - component: {fileID: 1968306436}
@@ -139038,6 +139021,21 @@ MonoBehaviour:
   - 0.35
   - 0.45
   - 0.6
+--- !u!114 &1968306440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968306432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c157d983d8a047cf8386d59247fcda89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  craftables: []
+  craftableSlotsParent: {fileID: 765436523}
+  craftingMenu: {fileID: 435953655}
 --- !u!1 &1969426068
 GameObject:
   m_ObjectHideFlags: 0
@@ -149260,7 +149258,7 @@ GameObject:
   - component: {fileID: 2016134100}
   m_Layer: 5
   m_Name: slot (21)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -149338,7 +149336,7 @@ GameObject:
   - component: {fileID: 2020630642}
   m_Layer: 5
   m_Name: slot (7)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -149686,7 +149684,7 @@ GameObject:
   - component: {fileID: 2036254492}
   m_Layer: 5
   m_Name: slot (19)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -149764,7 +149762,7 @@ GameObject:
   - component: {fileID: 2058946114}
   m_Layer: 5
   m_Name: slot (12)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -155665,7 +155663,7 @@ GameObject:
   - component: {fileID: 2117865127}
   m_Layer: 5
   m_Name: slot (3)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156045,7 +156043,7 @@ GameObject:
   - component: {fileID: 2144567899}
   m_Layer: 5
   m_Name: slot (10)
-  m_TagString: Untagged
+  m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
