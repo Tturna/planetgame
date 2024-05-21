@@ -944,5 +944,10 @@ namespace Inventory
 
             return true;
         }
+
+        public static void Craft(RecipeSo recipe)
+        {
+            
+        }
     }
 }

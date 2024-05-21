@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using System.Linq;
+using Entities;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
@@ -7,12 +8,21 @@ namespace Inventory.Crafting
 {
     public class CraftingManager : MonoBehaviour
     {
+        private struct CraftableRecipe
+        {
+            public RecipeSo recipe;
+            public bool canCraft;
+        }
+        
         [SerializeField] protected GameObject craftingMenu;
+        [SerializeField] protected GameObject recipeSlotParent;
+        [SerializeField] protected Image selectedRecipeOverlayImage;
         
         private Interactable _interactable;
         private Image[] _recipeSlotImages;
         private GameObject _selectedRecipeSlotObject;
         private RecipeSo _selectedRecipe;
+        private CraftableRecipe[] _currentStationRecipes;
         
         private static CraftingManager _instance;
         
@@ -28,6 +38,12 @@ namespace Inventory.Crafting
             }
         }
 
+        private void Start()
+        {
+            _recipeSlotImages = (from Transform slot in recipeSlotParent.transform select
+                slot.GetChild(0).GetComponent<Image>()).ToArray();
+        }
+
         private void Update()
         {
             if (Input.GetMouseButtonDown(0))
@@ -39,38 +55,81 @@ namespace Inventory.Crafting
 
                 if (hoveringCraftableSlotObject.gameObject == _selectedRecipeSlotObject)
                 {
-                    // craft
+                    var index = _selectedRecipeSlotObject.transform.GetSiblingIndex();
+                    var craftableRecipe = _currentStationRecipes[index];
+                    
+                    if (!craftableRecipe.canCraft)
+                    {
+                        Debug.Log($"Cannot craft {craftableRecipe.recipe.name}");
+                        return;
+                    }
+
+                    Debug.Log($"Crafting i: {index}, recipe: {craftableRecipe.recipe.name}");
                 }
                 else
                 {
                     _selectedRecipeSlotObject = hoveringCraftableSlotObject.gameObject;
+                    selectedRecipeOverlayImage.gameObject.SetActive(true);
+                    selectedRecipeOverlayImage.transform.position = _selectedRecipeSlotObject.transform.position;
                 }
+            }
+        }
+
+        private void PopulateCraftingMenu(RecipeSo[] recipes)
+        {
+            _currentStationRecipes = recipes.Select(r => new CraftableRecipe() { recipe = r }).ToArray();
+
+            for (var i = 0; i < _recipeSlotImages.Length; i++)
+            {
+                var sprite = i < recipes.Length ? recipes[i].results[0].item.sprite : null;
+                _recipeSlotImages[i].sprite = sprite;
+                _recipeSlotImages[i].SetNativeSize();
             }
         }
 
         private void ValidateCraftables()
         {
-            // for (var i = 0; i < craftables.Length; i++)
-            // {
-            //     var craftable = craftables[i];
-            //     var canCraft = InventoryManager.CanCraft(craftable);
-            //     Debug.Log($"Can craft {craftable.name}: {canCraft}");
-            //     craftableSlots[i].color = canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
-            // }
+            for (var i = 0; i < _currentStationRecipes.Length; i++)
+            {
+                var craftableRecipe = _currentStationRecipes[i];
+                craftableRecipe.canCraft = InventoryManager.CanCraft(craftableRecipe.recipe);
+                Debug.Log($"Can craft {craftableRecipe.recipe.name}: {craftableRecipe.canCraft}");
+                _recipeSlotImages[i].color = craftableRecipe.canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
+            }
         }    
         
         public static void ToggleCraftingMenu(RecipeSo[] recipes = null)
         {
-            var craftingMenu = _instance.craftingMenu;
-            
-            if (recipes == null)
+            if (recipes?.Length > 0)
             {
-                craftingMenu.SetActive(false);
+                _instance.PopulateCraftingMenu(recipes);
+            }
+            
+            var craftingMenu = _instance.craftingMenu;
+            ToggleCraftingMenu(recipes != null && !craftingMenu.activeSelf);
+        }
+        
+        public static void ToggleCraftingMenu(bool? state)
+        {
+            if (state == null)
+            {
+                _instance.craftingMenu.SetActive(!_instance.craftingMenu.activeSelf);
             }
             else
             {
-                craftingMenu.SetActive(!craftingMenu.activeSelf);
+                _instance.craftingMenu.SetActive((bool)state);
             }
+
+            if (!_instance.craftingMenu.activeSelf || _instance._currentStationRecipes.Length == 0)
+            {
+                _instance._currentStationRecipes = null;
+                _instance.selectedRecipeOverlayImage.gameObject.SetActive(false);
+                _instance._selectedRecipeSlotObject = null;
+                _instance._selectedRecipe = null;
+                return;
+            }
+
+            _instance.ValidateCraftables();
         }
     }
 }
