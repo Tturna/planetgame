@@ -62,8 +62,8 @@ namespace Entities
             _terrainLayer = LayerMask.GetMask("Terrain");
             ToggleAutoRotation(false);
             _interactable = GetComponent<Interactable>();
-            _interactable.InteractedImmediate += InteractionImmediate;
-            _interactable.InteractedHold += InteractionHold;
+            _interactable.OnInteractImmediate += InteractionImmediate;
+            _interactable.OnInteractHold += InteractionHold;
             _shipAnimator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
 

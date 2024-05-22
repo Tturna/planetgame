@@ -26,8 +26,12 @@ namespace Entities
         private bool _interacted;
 
         public delegate void OnInteractEventHandler(GameObject sourceObject);
-        public event OnInteractEventHandler InteractedImmediate;
-        public event OnInteractEventHandler InteractedHold;
+        public delegate void OnWithinRangeEventHandler(GameObject sourceObject);
+        public delegate void OnOutOfRangeEventHandler(GameObject sourceObject);
+        public event OnInteractEventHandler OnInteractImmediate;
+        public event OnInteractEventHandler OnInteractHold;
+        public event OnWithinRangeEventHandler OnWithinRange;
+        public event OnOutOfRangeEventHandler OnOutOfRange;
     
         private void Start()
         {
@@ -60,6 +64,7 @@ namespace Entities
             {
                 _inRange = true;
                 _player.AddInteractableInRange(this);
+                TriggerOnWithinRange(_player.gameObject);
             }
             else if (_inRange && _distanceToPlayer > interactRange)
             {
@@ -67,6 +72,7 @@ namespace Entities
                 _player.RemoveInteractableInRange(this);
                 DisablePrompt();
                 ResetInteracted();
+                TriggerOnOutOfRange(_player.gameObject);
             }
         }
 
@@ -86,7 +92,7 @@ namespace Entities
         public virtual void InteractImmediate(GameObject sourceObject)
         {
             // Debug.Log($"{sourceObject.name} interacted with {gameObject.name}.");
-            OnInteractedImmediate(sourceObject);
+            TriggerOnInteractImmediate(sourceObject);
         }
         
         public virtual void InteractHolding(GameObject sourceObject)
@@ -107,7 +113,7 @@ namespace Entities
             {
                 _interacted = true;
                 _interactHoldTimer = 0f;
-                OnInteractedHold(sourceObject);
+                TriggerOnInteractHold(sourceObject);
                 GameUtilities.instance.DelayExecute(() =>
                 {
                     _holdIndicatorObject.SetActive(false);
@@ -125,14 +131,24 @@ namespace Entities
             }
         }
 
-        protected virtual void OnInteractedImmediate(GameObject sourceObject)
+        protected virtual void TriggerOnInteractImmediate(GameObject sourceObject)
         {
-            InteractedImmediate?.Invoke(sourceObject);
+            OnInteractImmediate?.Invoke(sourceObject);
         }
         
-        protected virtual void OnInteractedHold(GameObject sourceObject)
+        protected virtual void TriggerOnInteractHold(GameObject sourceObject)
         {
-            InteractedHold?.Invoke(sourceObject);
+            OnInteractHold?.Invoke(sourceObject);
+        }
+        
+        protected virtual void TriggerOnWithinRange(GameObject sourceObject)
+        {
+            OnWithinRange?.Invoke(sourceObject);
+        }
+        
+        protected virtual void TriggerOnOutOfRange(GameObject sourceObject)
+        {
+            OnOutOfRange?.Invoke(sourceObject);
         }
     }
 }

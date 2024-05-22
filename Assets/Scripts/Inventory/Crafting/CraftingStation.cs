@@ -13,12 +13,8 @@ namespace Inventory.Crafting
         private void Awake()
         {
             interactable = GetComponent<Interactable>();
-            interactable.InteractedImmediate += ToggleCraftingMenu;
-        }
-        
-        private void ToggleCraftingMenu(GameObject interactSourceObject)
-        {
-            CraftingManager.ToggleCraftingMenu(recipes);
+            interactable.OnInteractImmediate += _ => CraftingManager.ToggleCraftingMenu(recipes);
+            interactable.OnOutOfRange += _ => CraftingManager.ToggleCraftingMenu(false);
         }
     }
 }

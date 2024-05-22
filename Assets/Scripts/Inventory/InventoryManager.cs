@@ -27,7 +27,8 @@ namespace Inventory
     {
         Hotbar,
         Stash,
-        Accessory
+        Accessory,
+        Mouse
     }
 
     public enum SuitableItemType
@@ -48,12 +49,12 @@ namespace Inventory
         internal SuitableItemType suitableItemType; 
         internal int index;
 
-        internal Slot(int index)
+        internal Slot(int index, InventorySegmentType inventorySegmentType, SuitableItemType suitableItemType)
         {
             item = default;
             stack = default;
-            inventorySegmentType = default;
-            suitableItemType = default;
+            this.inventorySegmentType = inventorySegmentType;
+            this.suitableItemType = suitableItemType;
             this.index = index;
         }
     }
@@ -136,7 +137,7 @@ namespace Inventory
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
             _accessorySlots = new Slot[_accessorySlotObjects.Length];
-            _mouseSlot = new Slot(-1);
+            _mouseSlot = new Slot(-1, InventorySegmentType.Mouse, SuitableItemType.Any);
 
             // Initialize values for slots
             for (var i = 0; i < _stashSlots.Length; i++)
@@ -370,7 +371,7 @@ namespace Inventory
 
                     if (_mouseSlot.stack == 0)
                     {
-                        _mouseSlot = new Slot(-1);
+                        _mouseSlot = new Slot(-1, InventorySegmentType.Mouse, SuitableItemType.Any);
                     }
                     
                     UpdateLogicalSlot(clickedSlot);
@@ -394,7 +395,7 @@ namespace Inventory
 
                 if (clickedSlot.stack == 0)
                 {
-                    clickedSlot = new Slot(clickedSlot.index);
+                    clickedSlot = new Slot(clickedSlot.index, clickedSlot.inventorySegmentType, clickedSlot.suitableItemType);
 
                     if (_selectedIndex == clickedSlot.index)
                     {
@@ -627,7 +628,7 @@ namespace Inventory
 
             if (_mouseSlot.stack == 0)
             {
-                _mouseSlot = new Slot(_mouseSlot.index);
+                _mouseSlot = new Slot(_mouseSlot.index, _mouseSlot.inventorySegmentType, _mouseSlot.suitableItemType);
             }
             
             // UpdateLogicalSlot(slot);
@@ -643,23 +644,33 @@ namespace Inventory
             }
         }
         
-        private static void DecrementStack(int index, bool hotbar, int amount = 1)
+        /// <summary>
+        /// Returns how much the given amount was over the stack amount of the slot
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="hotbar"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private static int DecrementStack(int index, bool hotbar, int amount = 1)
         {
             var segmentSlots = hotbar ? _hotSlots : _stashSlots;
             var segmentObjects = hotbar ? _hotSlotObjects : _stashSlotObjects;
             var slot = segmentSlots[index];
+            var excess = Mathf.Clamp(amount - slot.stack, 0, amount);
             
-            if (slot.stack <= 0) return;
+            if (slot.stack <= 0) return excess;
             
-            slot.stack -= amount;
+            slot.stack -= amount - excess;
+            
             if (slot.stack == 0)
             {
-                slot = new Slot(slot.index);
+                slot = new Slot(slot.index, slot.inventorySegmentType, slot.suitableItemType);
                 // segmentObjects[index].gameObject.GetComponent<Image>().sprite = instance.emptySlotSprite;
             }
             
             UpdateSlotGraphics(ref slot, segmentObjects[index]);
             UpdateLogicalSlot(slot);
+            return excess;
         }
         
         private static void DeselectSlot(int slotIndex)
@@ -947,7 +958,94 @@ namespace Inventory
 
         public static void Craft(RecipeSo recipe)
         {
+            Dictionary<CraftingResource, List<Slot>> hotIngredients = new();
+            Dictionary<CraftingResource, List<Slot>> stashIngredients = new();
             
+            foreach (var hotSlot in _hotSlots)
+            {
+                var ingredient = recipe.ingredients.ToList().Find(i => i.item.id == hotSlot.item?.itemSo.id);
+                if (ingredient.amount == 0) continue;
+                
+                if (hotIngredients.ContainsKey(ingredient))
+                {
+                    hotIngredients[ingredient].Add(hotSlot);
+                }
+                else
+                {
+                    hotIngredients.Add(ingredient, new List<Slot> { hotSlot });
+                }
+            }
+            
+            foreach (var stashSlot in _stashSlots)
+            {
+                var ingredient = recipe.ingredients.ToList().Find(i => i.item.id == stashSlot.item?.itemSo.id);
+                if (ingredient.amount == 0) continue;
+                
+                if (stashIngredients.ContainsKey(ingredient))
+                {
+                    stashIngredients[ingredient].Add(stashSlot);
+                }
+                else
+                {
+                    stashIngredients.Add(ingredient, new List<Slot> { stashSlot });
+                }
+            }
+            
+            var foundKeyCount = hotIngredients.Count + stashIngredients.Count;
+            // Check if all ingredients are found
+            if (foundKeyCount != recipe.ingredients.Length) return;
+
+            // Check if enough ingredients are found
+            var combinedIngredientSlots = new Dictionary<CraftingResource, List<Slot>>(hotIngredients);
+            
+            foreach (var (ingredient, slots) in stashIngredients)
+            {
+                if (!combinedIngredientSlots.TryAdd(ingredient, slots))
+                {
+                    combinedIngredientSlots[ingredient].AddRange(slots);
+                }
+            }
+            
+            foreach (var (ingredient, slots) in combinedIngredientSlots)
+            {
+                var requiredAmount = ingredient.amount;
+                var totalAmount = slots.Sum(s => s.stack);
+                
+                if (totalAmount < requiredAmount) return;
+            }
+            // --
+
+            foreach (var ingredient in recipe.ingredients)
+            {
+                var decrementAmount = ingredient.amount;
+                List<Slot> slots;
+                
+                if (hotIngredients.ContainsKey(ingredient))
+                {
+                    slots = hotIngredients[ingredient];
+
+                    foreach (var slot in slots)
+                    {
+                        var excess = DecrementStack(slot.index, true, decrementAmount);
+                        decrementAmount = excess;
+                        if (decrementAmount == 0) break;
+                    }
+                }
+                
+                if (decrementAmount == 0) continue;
+                
+                slots = stashIngredients[ingredient];
+                
+                foreach (var slot in slots)
+                {
+                    var excess = DecrementStack(slot.index, false, decrementAmount);
+                    decrementAmount = excess;
+                    if (decrementAmount == 0) break;
+                }
+            }
+
+            // TODO: Make sure the ingredients aren't decremented if there is no space for the result
+            instance.AddItem(new Item(recipe.results[0].item));
         }
     }
 }

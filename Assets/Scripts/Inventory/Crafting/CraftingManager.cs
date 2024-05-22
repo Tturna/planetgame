@@ -65,6 +65,8 @@ namespace Inventory.Crafting
                     }
 
                     Debug.Log($"Crafting i: {index}, recipe: {craftableRecipe.recipe.name}");
+                    InventoryManager.Craft(craftableRecipe.recipe);
+                    ValidateCraftables();
                 }
                 else
                 {
@@ -91,10 +93,9 @@ namespace Inventory.Crafting
         {
             for (var i = 0; i < _currentStationRecipes.Length; i++)
             {
-                var craftableRecipe = _currentStationRecipes[i];
-                craftableRecipe.canCraft = InventoryManager.CanCraft(craftableRecipe.recipe);
-                Debug.Log($"Can craft {craftableRecipe.recipe.name}: {craftableRecipe.canCraft}");
-                _recipeSlotImages[i].color = craftableRecipe.canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
+                _currentStationRecipes[i].canCraft = InventoryManager.CanCraft(_currentStationRecipes[i].recipe);
+                Debug.Log($"Can craft {_currentStationRecipes[i].recipe.name}: {_currentStationRecipes[i].canCraft}");
+                _recipeSlotImages[i].color = _currentStationRecipes[i].canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
             }
         }    
         

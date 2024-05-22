@@ -12,10 +12,9 @@ namespace Inventory
         
         public Item() {}
 
-        // Clone constructor
-        public Item(Item source)
+        public Item(ItemSo itemSo)
         {
-            itemSo = source.itemSo;
+            this.itemSo = itemSo;
             
             logicScript = null;
             
@@ -24,5 +23,8 @@ namespace Inventory
                 logicScript = ItemLogic.GetScript(so.logicCode);
             }
         }
+
+        // Clone constructor
+        public Item(Item source) : this(source.itemSo) { }
     }
 }
