@@ -607,15 +607,15 @@ namespace Inventory
             if (slotIndex < 0 || slotIndex > _hotSlots.Length - 1) return false;
 
             var nextrow = slotIndex > 4;
-            var x = 16f * (slotIndex % 5);
-            if (nextrow) x += 8f;
-            var y = nextrow ? -14f : 0f;
+            var x = 22f * (slotIndex % 5);
+            if (nextrow) x += 11f;
+            var y = nextrow ? -26f : -7f;
             selectionOverlayRect.anchoredPosition = new Vector2(x, y);
 
-            x += 8.5f;
-            y = nextrow ? -26.5f : -5.5f;
+            x += nextrow ? 9f : 16f;
+            y = nextrow ? -59f : -1f;
             selectionArrowRect.anchoredPosition = new Vector2(x, y);
-            selectionArrowRect.eulerAngles = Vector3.forward * (nextrow ? 180f : 0f);
+            selectionArrowRect.eulerAngles = Vector3.forward * (nextrow ? 90f : -90f);
             
             EquipItem(_hotSlots[slotIndex].item);
             return true;

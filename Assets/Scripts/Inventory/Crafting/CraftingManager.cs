@@ -17,12 +17,17 @@ namespace Inventory.Crafting
         [SerializeField] protected GameObject craftingMenu;
         [SerializeField] protected GameObject recipeSlotParent;
         [SerializeField] protected Image selectedRecipeOverlayImage;
+        [SerializeField] protected Transform ingredientRow1Parent;
+        [SerializeField] protected Transform ingredientRow2Parent;
         
         private Interactable _interactable;
         private Image[] _recipeSlotImages;
         private GameObject _selectedRecipeSlotObject;
         private RecipeSo _selectedRecipe;
         private CraftableRecipe[] _currentStationRecipes;
+        private CraftableRecipe _selectedCraftableRecipe;
+        private Image[] ingredientRow1Images;
+        private Image[] ingredientRow2Images;
         
         private static CraftingManager _instance;
         
@@ -42,6 +47,12 @@ namespace Inventory.Crafting
         {
             _recipeSlotImages = (from Transform slot in recipeSlotParent.transform select
                 slot.GetChild(0).GetComponent<Image>()).ToArray();
+
+            ingredientRow1Images = (from Transform ingredientSlot in ingredientRow1Parent
+                select ingredientSlot.GetChild(0).GetComponent<Image>()).ToArray();
+            
+            ingredientRow2Images = (from Transform ingredientSlot in ingredientRow2Parent
+                select ingredientSlot.GetChild(0).GetComponent<Image>()).ToArray();
         }
 
         private void Update()
@@ -55,17 +66,14 @@ namespace Inventory.Crafting
 
                 if (hoveringCraftableSlotObject.gameObject == _selectedRecipeSlotObject)
                 {
-                    var index = _selectedRecipeSlotObject.transform.GetSiblingIndex();
-                    var craftableRecipe = _currentStationRecipes[index];
-                    
-                    if (!craftableRecipe.canCraft)
+                    if (!_selectedCraftableRecipe.canCraft)
                     {
-                        Debug.Log($"Cannot craft {craftableRecipe.recipe.name}");
+                        Debug.Log($"Cannot craft {_selectedCraftableRecipe.recipe.name}");
                         return;
                     }
 
-                    Debug.Log($"Crafting i: {index}, recipe: {craftableRecipe.recipe.name}");
-                    InventoryManager.Craft(craftableRecipe.recipe);
+                    Debug.Log($"Crafting recipe: {_selectedCraftableRecipe.recipe.name}");
+                    InventoryManager.Craft(_selectedCraftableRecipe.recipe);
                     ValidateCraftables();
                 }
                 else
@@ -73,6 +81,40 @@ namespace Inventory.Crafting
                     _selectedRecipeSlotObject = hoveringCraftableSlotObject.gameObject;
                     selectedRecipeOverlayImage.gameObject.SetActive(true);
                     selectedRecipeOverlayImage.transform.position = _selectedRecipeSlotObject.transform.position;
+                    selectedRecipeOverlayImage.rectTransform.anchoredPosition += Vector2.one;
+                    
+                    var index = _selectedRecipeSlotObject.transform.GetSiblingIndex();
+                    _selectedCraftableRecipe = _currentStationRecipes[index];
+
+                    for (var i = 0; i < 10; i++)
+                    {
+                        if (_selectedCraftableRecipe.recipe.ingredients.Length > i)
+                        {
+                            if (i < 5)
+                            {
+                                ingredientRow1Images[i].transform.parent.gameObject.SetActive(true);
+                                ingredientRow1Images[i].sprite = _selectedCraftableRecipe.recipe.ingredients[i].item.sprite;
+                                ingredientRow1Images[i].SetNativeSize();
+                            }
+                            else
+                            {
+                                ingredientRow2Images[i - 5].transform.parent.gameObject.SetActive(true);
+                                ingredientRow2Images[i - 5].sprite = _selectedCraftableRecipe.recipe.ingredients[i].item.sprite;
+                                ingredientRow2Images[i - 5].SetNativeSize();
+                            }
+                        }
+                        else
+                        {
+                            if (i < 5)
+                            {
+                                ingredientRow1Images[i].transform.parent.gameObject.SetActive(false);
+                            }
+                            else
+                            {
+                                ingredientRow2Images[i - 5].transform.parent.gameObject.SetActive(false);
+                            }
+                        }
+                    }
                 }
             }
         }

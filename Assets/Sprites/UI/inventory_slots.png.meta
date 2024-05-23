@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 539c9b0371caebe48b2e7a63fa182dd3
+guid: 864b3f2ae017d0a459c77a989f07e8d3
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -118,13 +118,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: inventoryslots_bigger_0
+      name: inventory_slots_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 17
-        height: 18
+        width: 23
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 48324a27321601e40a4986a403400a92
-      internalID: -2098564161
+      spriteID: 967d950ed4f345d4098bf38afc83d7d9
+      internalID: -585031737
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_bigger_1
+      name: inventory_slots_1
       rect:
         serializedVersion: 2
-        x: 17
+        x: 23
         y: 0
-        width: 17
-        height: 18
+        width: 23
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,20 +153,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 663e2a330847b29408cd3d3986fc1b75
-      internalID: -1905603530
+      spriteID: c0425cd1a10ac0a46bbde3ab094f91b5
+      internalID: 573209736
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_bigger_2
+      name: inventory_slots_2
       rect:
         serializedVersion: 2
-        x: 34
+        x: 46
         y: 0
-        width: 17
-        height: 18
+        width: 23
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,20 +174,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8f91af77c869daa4a816acba47fc37ac
-      internalID: 972941378
+      spriteID: 8075aba855f6e7949be71d01b1bed978
+      internalID: -1911713093
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: inventoryslots_bigger_3
+      name: inventory_slots_3
       rect:
         serializedVersion: 2
-        x: 51
+        x: 69
         y: 0
-        width: 17
-        height: 18
+        width: 23
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,134 +195,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ab146fe92b20c474c945129513d02fe0
-      internalID: -1241166947
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_bigger_4
-      rect:
-        serializedVersion: 2
-        x: 68
-        y: 0
-        width: 17
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a36db1b4652950d448dfd57d026a986a
-      internalID: 600660656
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_bigger_5
-      rect:
-        serializedVersion: 2
-        x: 85
-        y: 0
-        width: 17
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5698262bd1003c040a1998898919033b
-      internalID: -680513372
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_bigger_6
-      rect:
-        serializedVersion: 2
-        x: 102
-        y: 0
-        width: 17
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 409994b647aa1924e9d705d0a2b6b7f2
-      internalID: 568347244
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_bigger_7
-      rect:
-        serializedVersion: 2
-        x: 119
-        y: 0
-        width: 17
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0a31c3d0d00b8854686a98283d178959
-      internalID: -1900523184
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_bigger_8
-      rect:
-        serializedVersion: 2
-        x: 136
-        y: 0
-        width: 17
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e0e97f2ad4ba28c4da3c754bfd780dfd
-      internalID: -1920292939
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: inventoryslots_bigger_9
-      rect:
-        serializedVersion: 2
-        x: 153
-        y: 0
-        width: 17
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 256155bdade3db74e824e43fc0edfaeb
-      internalID: -931064406
+      spriteID: 01a8a6338fa59434cb4ff3cb9d049bef
+      internalID: 64182781
       vertices: []
       indices: 
       edges: []
@@ -338,16 +212,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      inventoryslots_bigger_4: 600660656
-      inventoryslots_bigger_3: -1241166947
-      inventoryslots_bigger_5: -680513372
-      inventoryslots_bigger_7: -1900523184
-      inventoryslots_bigger_6: 568347244
-      inventoryslots_bigger_2: 972941378
-      inventoryslots_bigger_8: -1920292939
-      inventoryslots_bigger_0: -2098564161
-      inventoryslots_bigger_1: -1905603530
-      inventoryslots_bigger_9: -931064406
+      inventory_slots_0: -585031737
+      inventory_slots_1: 573209736
+      inventory_slots_2: -1911713093
+      inventory_slots_3: 64182781
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
