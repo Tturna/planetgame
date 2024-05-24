@@ -93,8 +93,23 @@ namespace Inventory.Crafting
                     selectedRecipeOverlayImage.rectTransform.anchoredPosition += Vector2.one;
                     
                     var index = _selectedRecipeSlotObject.transform.GetSiblingIndex();
-                    
-                    if (index + 1 > _currentStationRecipes.Length) return;
+
+                    if (index + 1 > _currentStationRecipes.Length)
+                    {
+                        for (var i = 0; i < 10; i++)
+                        {
+                            if (i < 5)
+                            {
+                                ingredientRow1Images[i].transform.parent.gameObject.SetActive(false);
+                            }
+                            else
+                            {
+                                ingredientRow2Images[i - 5].transform.parent.gameObject.SetActive(false);
+                            }
+                        }
+                        
+                        return;
+                    }
                     
                     _selectedCraftableRecipe = _currentStationRecipes[index];
 
@@ -147,11 +162,18 @@ namespace Inventory.Crafting
 
         private void ValidateCraftables()
         {
-            for (var i = 0; i < _currentStationRecipes.Length; i++)
+            for (var i = 0; i < _recipeSlotImages.Length; i++)
             {
-                _currentStationRecipes[i].canCraft = InventoryManager.CanCraft(_currentStationRecipes[i].recipe);
-                Debug.Log($"Can craft {_currentStationRecipes[i].recipe.name}: {_currentStationRecipes[i].canCraft}");
-                _recipeSlotImages[i].color = _currentStationRecipes[i].canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
+                if (i < _currentStationRecipes.Length)
+                {
+                    _currentStationRecipes[i].canCraft = InventoryManager.CanCraft(_currentStationRecipes[i].recipe);
+                    Debug.Log($"Can craft {_currentStationRecipes[i].recipe.name}: {_currentStationRecipes[i].canCraft}");
+                    _recipeSlotImages[i].color = _currentStationRecipes[i].canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
+                }
+                else
+                {
+                    _recipeSlotImages[i].color = Color.clear;
+                }
             }
         }    
         
