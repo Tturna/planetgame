@@ -41,7 +41,7 @@ namespace Inventory
         Pet
     }
     
-    internal struct Slot
+    public struct Slot
     {
         internal Item item;
         internal int stack;
@@ -361,9 +361,10 @@ namespace Inventory
                 else
                 {
                     // if clicked slot has no item, add 1 to the empty slot
-                    var index = clickedSlot.index;
-                    clickedSlot = _mouseSlot;
-                    clickedSlot.index = index;
+                    // var index = clickedSlot.index;
+                    // clickedSlot = _mouseSlot;
+                    // clickedSlot.index = index;
+                    clickedSlot.item = _mouseSlot.item;
                     clickedSlot.stack = 1;
                                 
                     // Reduce 1 from the mouse slot
@@ -743,6 +744,11 @@ namespace Inventory
                     _accessorySlots[slot.index] = slot;
                     break;
                 }
+                case InventorySegmentType.Mouse:
+                {
+                    _mouseSlot = slot;
+                    break;
+                }
                 default:
                 {
                     throw new ArgumentOutOfRangeException();
@@ -937,29 +943,12 @@ namespace Inventory
 
         // TODO: Consider changing the inventory to use a dictionary instead of an array
         // to prevent having to loop through the entire inventory to find an item.
-        public static bool CanCraft(RecipeSo recipe)
+        public static bool TryGetSlotsWithIngredients(RecipeSo recipe,
+            out Dictionary<CraftingResource, List<Slot>> hotIngredients,
+            out Dictionary<CraftingResource, List<Slot>> stashIngredients)
         {
-            foreach (var craftingResource in recipe.ingredients)
-            {
-                var requiredItem = craftingResource.item;
-                var requiredAmount = craftingResource.amount;
-                
-                var hasRequiredInHotbar = _hotSlots.ToList().FindAll(s => s.item?.itemSo.id == requiredItem.id).Any(s => s.stack >= requiredAmount);
-                
-                if (hasRequiredInHotbar) continue;
-                
-                var hasRequiredInStash = _stashSlots.ToList().FindAll(s => s.item?.itemSo.id == requiredItem.id).Any(s => s.stack >= requiredAmount);
-                
-                if (!hasRequiredInStash) return false;
-            }
-
-            return true;
-        }
-
-        public static void Craft(RecipeSo recipe)
-        {
-            Dictionary<CraftingResource, List<Slot>> hotIngredients = new();
-            Dictionary<CraftingResource, List<Slot>> stashIngredients = new();
+            hotIngredients = new Dictionary<CraftingResource, List<Slot>>();
+            stashIngredients = new Dictionary<CraftingResource, List<Slot>>();
             
             foreach (var hotSlot in _hotSlots)
             {
@@ -993,10 +982,16 @@ namespace Inventory
             
             var foundKeyCount = hotIngredients.Count + stashIngredients.Count;
             // Check if all ingredients are found
-            if (foundKeyCount != recipe.ingredients.Length) return;
+            if (foundKeyCount < recipe.ingredients.Length) return false;
 
-            // Check if enough ingredients are found
-            var combinedIngredientSlots = new Dictionary<CraftingResource, List<Slot>>(hotIngredients);
+            // The rest of this checks if enough ingredients are found
+            var combinedIngredientSlots = new Dictionary<CraftingResource, List<Slot>>();
+
+            // deep copy hotIngredients
+            foreach (var (ingredient, slots) in hotIngredients)
+            {
+                combinedIngredientSlots.Add(ingredient, new List<Slot>(slots));
+            }
             
             foreach (var (ingredient, slots) in stashIngredients)
             {
@@ -1011,9 +1006,26 @@ namespace Inventory
                 var requiredAmount = ingredient.amount;
                 var totalAmount = slots.Sum(s => s.stack);
                 
-                if (totalAmount < requiredAmount) return;
+                if (totalAmount < requiredAmount) return false;
             }
-            // --
+
+            return true;
+        }
+
+        public static bool CanCraft(RecipeSo recipe)
+        {
+            return TryGetSlotsWithIngredients(recipe, out _, out _);
+        }
+
+        public static void Craft(RecipeSo recipe)
+        {
+            if (!TryGetSlotsWithIngredients(
+                recipe,
+                out var hotIngredients,
+                out var stashIngredients))
+            {
+                return;
+            }
 
             foreach (var ingredient in recipe.ingredients)
             {

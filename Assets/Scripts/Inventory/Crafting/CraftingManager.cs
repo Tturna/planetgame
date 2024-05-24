@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Entities;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
@@ -28,6 +29,8 @@ namespace Inventory.Crafting
         private CraftableRecipe _selectedCraftableRecipe;
         private Image[] ingredientRow1Images;
         private Image[] ingredientRow2Images;
+        private TextMeshProUGUI[] ingredientRow1AmountTexts;
+        private TextMeshProUGUI[] ingredientRow2AmountTexts;
         
         private static CraftingManager _instance;
         
@@ -53,6 +56,12 @@ namespace Inventory.Crafting
             
             ingredientRow2Images = (from Transform ingredientSlot in ingredientRow2Parent
                 select ingredientSlot.GetChild(0).GetComponent<Image>()).ToArray();
+            
+            ingredientRow1AmountTexts = (from Transform ingredientSlot in ingredientRow1Parent
+                select ingredientSlot.GetChild(1).GetComponent<TextMeshProUGUI>()).ToArray();
+            
+            ingredientRow2AmountTexts = (from Transform ingredientSlot in ingredientRow2Parent
+                select ingredientSlot.GetChild(1).GetComponent<TextMeshProUGUI>()).ToArray();
         }
 
         private void Update()
@@ -84,6 +93,9 @@ namespace Inventory.Crafting
                     selectedRecipeOverlayImage.rectTransform.anchoredPosition += Vector2.one;
                     
                     var index = _selectedRecipeSlotObject.transform.GetSiblingIndex();
+                    
+                    if (index + 1 > _currentStationRecipes.Length) return;
+                    
                     _selectedCraftableRecipe = _currentStationRecipes[index];
 
                     for (var i = 0; i < 10; i++)
@@ -95,12 +107,14 @@ namespace Inventory.Crafting
                                 ingredientRow1Images[i].transform.parent.gameObject.SetActive(true);
                                 ingredientRow1Images[i].sprite = _selectedCraftableRecipe.recipe.ingredients[i].item.sprite;
                                 ingredientRow1Images[i].SetNativeSize();
+                                ingredientRow1AmountTexts[i].text = _selectedCraftableRecipe.recipe.ingredients[i].amount.ToString();
                             }
                             else
                             {
                                 ingredientRow2Images[i - 5].transform.parent.gameObject.SetActive(true);
                                 ingredientRow2Images[i - 5].sprite = _selectedCraftableRecipe.recipe.ingredients[i].item.sprite;
                                 ingredientRow2Images[i - 5].SetNativeSize();
+                                ingredientRow2AmountTexts[i - 5].text = _selectedCraftableRecipe.recipe.ingredients[i].amount.ToString();
                             }
                         }
                         else
