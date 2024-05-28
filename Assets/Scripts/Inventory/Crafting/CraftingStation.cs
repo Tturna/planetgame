@@ -6,8 +6,7 @@ namespace Inventory.Crafting
     [RequireComponent(typeof(Interactable))]
     public class CraftingStation : MonoBehaviour
     {
-        [SerializeField] private RecipeSo[] recipes;
-        
+        private RecipeSo[] recipes;
         private Interactable interactable;
         
         private void Awake()
@@ -15,6 +14,11 @@ namespace Inventory.Crafting
             interactable = GetComponent<Interactable>();
             interactable.OnInteractImmediate += _ => CraftingManager.ToggleCraftingMenu(recipes);
             interactable.OnOutOfRange += _ => CraftingManager.ToggleCraftingMenu(false);
+        }
+
+        public void SetRecipes(RecipeSo[] initialRecipes)
+        {
+            recipes = initialRecipes;
         }
     }
 }

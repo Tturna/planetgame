@@ -2,6 +2,7 @@
 using System.Reflection;
 using Cameras;
 using Entities;
+using Inventory.Crafting;
 using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
@@ -25,29 +26,44 @@ namespace Inventory.Item_Logic
                 return false;
             }
 
-            // _pc ??= useParameters.playerObject.GetComponent<PlayerController>();
             var relativeUp = useParameters.playerObject.transform.up;
 
             const float placementAssistRange = 1f;
-            var layerMask = 1 << LayerMask.NameToLayer("Terrain");
             
-            var assistRayStart = mousePoint + relativeUp * (placementAssistRange * .5f);
-            var hit = Physics2D.Raycast(assistRayStart, -relativeUp, placementAssistRange, layerMask);
+            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, LayerMask.GetMask("Terrain"));
 
-            if (hit.collider == null)
+            if (!circleHit)
             {
-                Debug.Log("Can't place in the air!");
                 return false;
             }
+
+            var rayHit = Physics2D.Raycast(mousePoint, -relativeUp, placementAssistRange, LayerMask.GetMask("Terrain"));
+
+            if (!rayHit) return false;
             
-            if (hit.point == (Vector2)mousePoint)
+            PlaceableSo placeable;
+            GameObject prefab;
+            var isCraftingStation = useParameters.attackItem.itemSo is CraftingStationSo;
+            
+            if (isCraftingStation)
             {
-                Debug.Log("Can't place inside terrain!");
-                return false;
+                var craftingStationSo = (CraftingStationSo)useParameters.attackItem.itemSo;
+                placeable = craftingStationSo;
+                prefab = InventoryManager.instance.craftingStationPrefab;
+            }
+            else
+            {
+                var placeableSo = (PlaceableSo)useParameters.attackItem.itemSo;
+                placeable = placeableSo;
+                prefab = InventoryManager.instance.breakablePrefab;
             }
             
-            var placeable = (PlaceableSo)useParameters.attackItem.itemSo;
-            var placeableObject = Object.Instantiate(InventoryManager.instance.breakablePrefab, hit.point, Quaternion.identity);
+            var placeableObject = Object.Instantiate(prefab);
+
+            if (isCraftingStation)
+            {
+                placeableObject.GetComponent<CraftingStation>().SetRecipes(((CraftingStationSo)placeable).recipes);
+            }
             
             var sr = placeableObject.GetComponent<SpriteRenderer>();
             sr.sprite = placeable.sprite;
@@ -59,8 +75,10 @@ namespace Inventory.Item_Logic
             breakableItemInstance.itemSo = placeable;
             breakableItemInstance.toughness = placeable.toughness;
             
-            placeableObject.transform.Translate(relativeUp * (col.size.y * .5f));
-            placeableObject.transform.rotation = useParameters.playerObject.transform.rotation;
+            placeableObject.transform.position = rayHit.point + rayHit.normal * (sr.bounds.size.y * .5f);
+            placeableObject.transform.up = rayHit.normal;
+            // placeableObject.transform.Translate(relativeUp * (col.size.y * .5f));
+            // placeableObject.transform.rotation = useParameters.playerObject.transform.rotation;
 
             foreach (var light in placeable.lights)
             {

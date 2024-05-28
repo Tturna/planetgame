@@ -93,6 +93,7 @@ namespace Inventory
         [Header("Inventory Prefabs")]
         [SerializeField] private GameObject itemPrefab;
         public GameObject breakablePrefab;
+        public GameObject craftingStationPrefab;
         
         // To be removed probably
         [Header("Inventory Sprites")]

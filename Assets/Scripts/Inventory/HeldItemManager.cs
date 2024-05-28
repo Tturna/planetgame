@@ -22,10 +22,12 @@ namespace Inventory
         [SerializeField] private Animator handsAnimator; // This component is also used by PlayerController
         [SerializeField] private Transform effectParent;
         [SerializeField] private Transform flippingEffectParent;
+        [SerializeField] private GameObject placeableHologram;
         
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
         private SpriteRenderer _equippedSr;
+        private SpriteRenderer _placeableHologramSr;
         private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
         [CanBeNull] private Item _equippedItem;
@@ -48,6 +50,7 @@ namespace Inventory
             _handRight = _handsParent.GetChild(1).GetChild(0);
 
             _equippedSr = equippedItemTransform.GetComponent<SpriteRenderer>();
+            _placeableHologramSr = placeableHologram.GetComponent<SpriteRenderer>();
 
             InventoryManager.ItemEquipped += ItemEquipped;
         }
@@ -59,6 +62,7 @@ namespace Inventory
             var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
             var cursorAngle = GameUtilities.GetCursorAngle(mouseDirection, transform.right);
             HandleItemAiming(mouseDirection, cursorAngle);
+            HandlePlaceableHologram();
             
             if (UIUtilities.IsMouseOverUI()) return;
             
@@ -137,6 +141,34 @@ namespace Inventory
                 _handLeft.localPosition = Vector3.zero;
                 _handRight.localPosition = Vector3.zero;
             }
+        }
+
+        private void HandlePlaceableHologram()
+        {
+            if (!placeableHologram.activeInHierarchy) return;
+            
+            var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
+            mousePoint.z = 0f;
+            
+            placeableHologram.transform.position = mousePoint;
+            
+            const float placementAssistRange = 1f;
+            
+            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, LayerMask.GetMask("Terrain"));
+
+            if (!circleHit)
+            {
+                _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
+                return;
+            }
+
+            _placeableHologramSr.color = new Color(1f, 1f, 1f, 0.5f);
+
+            var rayHit = Physics2D.Raycast(mousePoint, _playerController.DirectionToClosestPlanet, placementAssistRange, LayerMask.GetMask("Terrain"));
+
+            if (!rayHit) return;
+            placeableHologram.transform.position = rayHit.point + rayHit.normal * (_placeableHologramSr.bounds.size.y * 0.5f);
+            placeableHologram.transform.up = rayHit.normal;
         }
         
         private bool UseItem(bool once, bool secondary)
@@ -223,6 +255,16 @@ namespace Inventory
             _equippedItem = item;
             var state = item != null && item.itemSo.altIdleAnimation;
             _recoilAnimator.SetBool("altIdle", state);
+            
+            if (_equippedItem?.itemSo is PlaceableSo placeableSo)
+            {
+                placeableHologram.SetActive(true);
+                placeableHologram.GetComponent<SpriteRenderer>().sprite = placeableSo.sprite;
+            }
+            else
+            {
+                placeableHologram.SetActive(false);
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cameras;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -321,7 +323,9 @@ namespace Entities
         {
             if (_interactablesInRange.Count <= 0) return;
         
-            if (_inputVector.magnitude > 0 || Rigidbody.velocity.magnitude > 0.05f)
+            // This line causes a crash if the player places a placeable interactable item next to them while not moving.
+            // For example, placing a crafting station next to the player while standing still.
+            // if (_inputVector.magnitude > 0 || Rigidbody.velocity.magnitude > 0.05f)
             {
                 _newClosestInteractable = GetClosestInteractable();
 
@@ -337,6 +341,8 @@ namespace Entities
                     _closestInteractable.EnablePrompt();
                 }
             }
+            
+            if (!_closestInteractable) return;
 
             if (Input.GetKeyDown(KeyCode.F))
             {
@@ -377,11 +383,21 @@ namespace Entities
 
         private Interactable GetClosestInteractable()
         {
-            var closest = _interactablesInRange[0];
+            var closest = _interactablesInRange.FirstOrDefault(i => i != null);
+
+            if (!closest)
+            {
+                _interactablesInRange.Clear();
+                _closestInteractable = null;
+                return null;
+            }
+            
             var closestDist = (closest.transform.position - transform.position).magnitude;
 
             foreach (var interactable in _interactablesInRange)
             {
+                if (!interactable) continue;
+                
                 var distToNew = (interactable.transform.position - transform.position).magnitude;
 
                 if (!(distToNew < closestDist)) continue;
