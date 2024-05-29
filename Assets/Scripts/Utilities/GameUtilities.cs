@@ -16,11 +16,14 @@ namespace Utilities
         private static PlanetGenerator[] _allPlanets;
         
         public static GameUtilities instance;
+        public static int BasicMovementCollisionMask { get; private set; }
 
         private void Awake()
         {
             instance = this;
             _mainCam = Camera.main;
+            
+            BasicMovementCollisionMask = LayerMask.GetMask("Terrain", "TerrainBits", "Building");
         }
 
         public void DelayExecute(Action action, float delay)

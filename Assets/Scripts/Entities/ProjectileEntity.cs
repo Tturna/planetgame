@@ -8,9 +8,6 @@ namespace Entities
     {
         private ParticleSystem _breakPs;
         private ProjectileData _data;
-        private int _terrainLayer;
-        private int _terrainBitsLayer;
-        private int _ignorePlayerLayer;
         private Vector3 _lastPos;
         
         protected override void Start()
@@ -19,9 +16,6 @@ namespace Entities
 
             _breakPs = GetComponentInChildren<ParticleSystem>();
             GetComponent<SpriteRenderer>().sprite = _data.sprite;
-            _terrainLayer = LayerMask.NameToLayer("Terrain");
-            _terrainBitsLayer = LayerMask.NameToLayer("TerrainBits");
-            _ignorePlayerLayer = LayerMask.NameToLayer("IgnorePlayer");
             
             _lastPos = transform.position;
         }
@@ -29,7 +23,7 @@ namespace Entities
         private void Update()
         {
             // Raycast to last position to prevent projectiles from going through stuff
-            var mask = 1 << _terrainLayer | 1 << _terrainBitsLayer | 1 << _ignorePlayerLayer;
+            var mask = GameUtilities.BasicMovementCollisionMask;
             var distance = Vector3.Distance(_lastPos, transform.position);
             var direction = (transform.position - _lastPos).normalized;
             var hit = Physics2D.Raycast(_lastPos, direction, distance, mask);
@@ -91,7 +85,7 @@ namespace Entities
 
         private void ProjectileHit(Collider2D col)
         {
-            if (col.gameObject.layer == _terrainLayer || col.gameObject.layer == _terrainBitsLayer)
+            if ((col.gameObject.layer & GameUtilities.BasicMovementCollisionMask) != 0)
             {
                 DestroyProjectile(col.transform.position);
             }

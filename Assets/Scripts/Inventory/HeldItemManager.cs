@@ -28,6 +28,7 @@ namespace Inventory
         private Transform _handsParent, _handLeft, _handRight;
         private SpriteRenderer _equippedSr;
         private SpriteRenderer _placeableHologramSr;
+        private float _placeableRange;
         private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
         [CanBeNull] private Item _equippedItem;
@@ -149,12 +150,20 @@ namespace Inventory
             
             var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
+            var dist = Vector2.Distance(_playerController.transform.position, mousePoint);
             
             placeableHologram.transform.position = mousePoint;
             
-            const float placementAssistRange = 1f;
+            if (dist > _placeableRange)
+            {
+                _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
+                return;
+            }
             
-            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, LayerMask.GetMask("Terrain"));
+            const float placementAssistRange = 1f;
+
+            var mask = GameUtilities.BasicMovementCollisionMask;
+            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, mask);
 
             if (!circleHit)
             {
@@ -164,9 +173,17 @@ namespace Inventory
 
             _placeableHologramSr.color = new Color(1f, 1f, 1f, 0.5f);
 
-            var rayHit = Physics2D.Raycast(mousePoint, _playerController.DirectionToClosestPlanet, placementAssistRange, LayerMask.GetMask("Terrain"));
+            var rayHit = Physics2D.Raycast(mousePoint, _playerController.DirectionToClosestPlanet, placementAssistRange, mask);
 
             if (!rayHit) return;
+            
+            // Prevent placing item inside the terrain
+            if (Vector3.Distance(rayHit.point, mousePoint) < 0.1f)
+            {
+                _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
+                return;
+            }
+            
             placeableHologram.transform.position = rayHit.point + rayHit.normal * (_placeableHologramSr.bounds.size.y * 0.5f);
             placeableHologram.transform.up = rayHit.normal;
         }
@@ -260,6 +277,7 @@ namespace Inventory
             {
                 placeableHologram.SetActive(true);
                 placeableHologram.GetComponent<SpriteRenderer>().sprite = placeableSo.sprite;
+                _placeableRange = placeableSo.useRange;
             }
             else
             {

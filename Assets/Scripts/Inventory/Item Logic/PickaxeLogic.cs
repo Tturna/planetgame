@@ -63,7 +63,7 @@ namespace Inventory.Item_Logic
             
             var useAreaHits = new Collider2D[25];
             var midHits = new Collider2D[10];
-            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            var mask = GameUtilities.BasicMovementCollisionMask;
             
             Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
             Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);

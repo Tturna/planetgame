@@ -49,7 +49,7 @@ namespace Entities
         private float _maxSpeed;
         private int _speedLevel = -1;
         private float _initialLandingDistance;
-        private int _terrainLayer;
+        private int _collisionLayerMask;
         private float _invincibilityTimer;
 
         private Vector2 _inputVector;
@@ -58,8 +58,8 @@ namespace Entities
         protected override void Start()
         {
             base.Start();
-        
-            _terrainLayer = LayerMask.GetMask("Terrain");
+
+            _collisionLayerMask = GameUtilities.BasicMovementCollisionMask;
             ToggleAutoRotation(false);
             _interactable = GetComponent<Interactable>();
             _interactable.OnInteractImmediate += InteractionImmediate;
@@ -100,7 +100,7 @@ namespace Entities
             }
             
             var castDir = _flipped ? transform.up : -transform.up;
-            var hitCollider = Physics2D.OverlapCircle(transform.position + castDir * 0.5f, 0.7f, _terrainLayer);
+            var hitCollider = Physics2D.OverlapCircle(transform.position + castDir * 0.5f, 0.7f, _collisionLayerMask);
             _grounded = hitCollider;
             
             if (_canFly && _grounded && _landingMode)
@@ -132,7 +132,7 @@ namespace Entities
             if (_landingMode && !_grounded)
             {
                 var dirToPlanet = (ClosestPlanetObject!.transform.position - transform.position).normalized;
-                var hit = Physics2D.Raycast(transform.position, dirToPlanet, 100f, _terrainLayer);
+                var hit = Physics2D.Raycast(transform.position, dirToPlanet, 100f, _collisionLayerMask);
 
                 if (!hit)
                 {
@@ -140,8 +140,8 @@ namespace Entities
                     return;
                 }
 
-                var leftHit = Physics2D.Raycast(transform.position, dirToPlanet - transform.right * 0.1f, 100f, _terrainLayer);
-                var rightHit = Physics2D.Raycast(transform.position, dirToPlanet + transform.right * 0.1f, 100f, _terrainLayer);
+                var leftHit = Physics2D.Raycast(transform.position, dirToPlanet - transform.right * 0.1f, 100f, _collisionLayerMask);
+                var rightHit = Physics2D.Raycast(transform.position, dirToPlanet + transform.right * 0.1f, 100f, _collisionLayerMask);
                 
                 var leftRightDiff = rightHit.point - leftHit.point;
                 var terrainAngle = Mathf.Atan2(leftRightDiff.y, leftRightDiff.x) * Mathf.Rad2Deg;
@@ -484,11 +484,11 @@ namespace Entities
             }
             
             var castDir = Rigidbody.velocity.normalized;
-            var hit = Physics2D.Raycast(transform.position, castDir, velmag * 2.5f, _terrainLayer);
+            var hit = Physics2D.Raycast(transform.position, castDir, velmag * 2.5f, _collisionLayerMask);
 
             if (!hit)
             {
-                hit = Physics2D.CircleCast(transform.position, 0.5f, castDir, velmag * 2.5f, _terrainLayer);
+                hit = Physics2D.CircleCast(transform.position, 0.5f, castDir, velmag * 2.5f, _collisionLayerMask);
                 if (!hit)
                 {
                     StatsUIManager.instance.HideDangerIcon();

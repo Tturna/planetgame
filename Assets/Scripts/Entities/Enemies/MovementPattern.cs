@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
+using Utilities;
 
 namespace Entities.Enemies
 {
@@ -42,8 +43,7 @@ namespace Entities.Enemies
             { MovementTypes.RangedFlyer, RangedFlyer }
         };
         
-        private int _terrainLayerMask = -1;
-        private int _terrainBitsLayerMask = -1;
+        private int _collisionLayerMask = -1;
         private bool _jumping;
         private float _jumpCooldown;
         private float _stuckTimer;
@@ -57,8 +57,7 @@ namespace Entities.Enemies
         {
             _lastJumpTime = 0f;
             _jumpCooldown = 0f;
-            _terrainLayerMask = LayerMask.GetMask("Terrain");
-            _terrainBitsLayerMask = LayerMask.GetMask("TerrainBits");
+            _collisionLayerMask = GameUtilities.BasicMovementCollisionMask;
         }
 
         private Vector3 GetWalkForceOnTerrain(Transform entityTr, Vector3 relativeMoveDirection, float accelerationSpeed, float maxSpeed, float maxSlopeMultiplier)
@@ -71,11 +70,11 @@ namespace Entities.Enemies
 
             // Raycast "below". It's actually a bit to the side as well
             var rayBelowDirection = new Vector2(.1f * relativeMoveDirection.x, -.4f).normalized;
-            var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, rayBelowLength, _terrainLayerMask);
+            var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, rayBelowLength, _collisionLayerMask);
             
             // Raycast a bit to the side, depending on movement direction
             var raySideDirection = new Vector2(.1f * relativeMoveDirection.x, -.2f).normalized;
-            var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, raySideLength, _terrainLayerMask);
+            var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, raySideLength, _collisionLayerMask);
             
             var force = relativeMoveDirection.x * entityTr.right * accelerationSpeed;
             
@@ -98,8 +97,7 @@ namespace Entities.Enemies
 
         private void HandleGroundCheck(Transform entityTr, Animator anim)
         {
-            var mask = _terrainLayerMask | _terrainBitsLayerMask;
-            var hit = Physics2D.CircleCast(entityTr.position, 0.2f, -entityTr.up, 0.4f, mask);
+            var hit = Physics2D.CircleCast(entityTr.position, 0.2f, -entityTr.up, 0.4f, _collisionLayerMask);
 
             if (!hit || _jumpCooldown > 0) return;
             _jumping = false;
@@ -125,7 +123,7 @@ namespace Entities.Enemies
                 _stuckTimer = 0.5f;
             }
             
-            var horizontalHit = Physics2D.Raycast(entityTr.position, relativeMoveDirection, 1f, _terrainLayerMask);
+            var horizontalHit = Physics2D.Raycast(entityTr.position, relativeMoveDirection, 1f, _collisionLayerMask);
             if (!horizontalHit && _stuckTimer > 0) return;
             
             rb.AddForce(entityTr.up * jumpForce, ForceMode2D.Impulse);

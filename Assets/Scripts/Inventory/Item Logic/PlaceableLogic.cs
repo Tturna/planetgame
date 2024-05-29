@@ -7,6 +7,7 @@ using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using Utilities;
 
 namespace Inventory.Item_Logic
 {
@@ -29,17 +30,23 @@ namespace Inventory.Item_Logic
             var relativeUp = useParameters.playerObject.transform.up;
 
             const float placementAssistRange = 1f;
-            
-            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, LayerMask.GetMask("Terrain"));
+
+            var mask = GameUtilities.BasicMovementCollisionMask;
+            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, mask);
 
             if (!circleHit)
             {
                 return false;
             }
 
-            var rayHit = Physics2D.Raycast(mousePoint, -relativeUp, placementAssistRange, LayerMask.GetMask("Terrain"));
+            var rayHit = Physics2D.Raycast(mousePoint, -relativeUp, placementAssistRange, mask);
 
             if (!rayHit) return false;
+            
+            if (Vector3.Distance(rayHit.point, mousePoint) < 0.1f)
+            {
+                return false;
+            }
             
             PlaceableSo placeable;
             GameObject prefab;
@@ -97,8 +104,8 @@ namespace Inventory.Item_Logic
                 FieldInfo targetSortingLayersField = typeof(Light2D).GetField("m_ApplyToSortingLayers",
                     BindingFlags.NonPublic | BindingFlags.Instance);
                 var maskLayers = SortingLayer.layers.Where(sl => sl.name != "Background");
-                var mask = maskLayers.Select(ml => ml.id).ToArray();
-                targetSortingLayersField.SetValue(lightComponent, mask);
+                var masks = maskLayers.Select(ml => ml.id).ToArray();
+                targetSortingLayersField.SetValue(lightComponent, masks);
             }
             return true;
         }

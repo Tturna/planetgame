@@ -99,7 +99,7 @@ namespace Entities
         private Vector2 _inputVector;
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
         private Vector3 _mouseDirection;
-        private int _terrainLayerMask;
+        private int _collisionLayerMask;
         private Vector2 _spawnPosition;
 
         // Built-in methods
@@ -107,7 +107,7 @@ namespace Entities
         private void Awake()
         {
             instance = this;
-            _terrainLayerMask = 1 << LayerMask.NameToLayer("Terrain");
+            _collisionLayerMask = GameUtilities.BasicMovementCollisionMask;
         }
 
         protected override void Start()
@@ -170,11 +170,11 @@ namespace Entities
 
                 // Raycast "below". It's actually a bit to the side as well
                 var rayBelowDirection = new Vector2(.1f * _inputVector.x, -.4f).normalized;
-                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, .25f, _terrainLayerMask);
+                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, .25f, _collisionLayerMask);
                 
                 // Raycast a bit to the side, depending on movement direction
                 var raySideDirection = new Vector2(.1f * _inputVector.x, -.2f).normalized;
-                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _terrainLayerMask);
+                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _collisionLayerMask);
                 // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * 1.05f, Color.green);
                 // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * 1.1f, Color.red);
                 
@@ -298,7 +298,7 @@ namespace Entities
         
             // var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
 
-            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            var mask = GameUtilities.BasicMovementCollisionMask;
             var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, mask);
 
             if (!hit) return;
