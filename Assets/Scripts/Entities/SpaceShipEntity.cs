@@ -116,6 +116,13 @@ namespace Entities
             {
                 fuelLevel -= _inputVector.normalized.magnitude * Time.deltaTime;
                 StatsUIManager.instance.UpdateShipFuelUI(fuelLevel, maxFuelLevel);
+
+                if (fuelLevel <= 0)
+                {
+                    StatsUIManager.instance.UpdateShipFuelUI(0, maxFuelLevel);
+                    _speedLevel = 0;
+                    StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
+                }
             }
         }
 
@@ -174,7 +181,7 @@ namespace Entities
             }
             
             if (!_canFly) return;
-            if (fuelLevel <= 0) return;
+            // if (fuelLevel <= 0) return;
             
             _smoothRotationInput = Mathf.Lerp(_smoothRotationInput, -_inputVector.x, Time.fixedDeltaTime * 4.5f);
             
@@ -270,7 +277,6 @@ namespace Entities
                     Boost();
                 }
             }
-            
 
             if (horizontalThruster)
             {
@@ -279,7 +285,6 @@ namespace Entities
                 var dot = Vector3.Dot(camRight, shipRight);
                 _flipped = dot < 0;
                 _spriteRenderer.flipY = _flipped;
-                
             }
         }
 
