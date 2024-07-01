@@ -460,7 +460,7 @@ namespace Entities
             ToggleControl(false);
             TogglePhysics(false);
             
-            var skullObject = _deathManager.Explode(10f);
+            var skullObject = _deathManager.Explode();
             CameraController.SetParent(skullObject.transform);
             CameraController.SetDefaultPosition(Vector2.zero);
             CameraController.CameraShake(0.5f, 0.5f);
@@ -478,7 +478,8 @@ namespace Entities
                 CameraController.SetParent(transform);
                 CameraController.ResetDefaultPosition();
                 UIUtilities.HideDeathOverlay();
-            }, 10f);
+                CameraController.SetZoomMultiplierSmooth(1f, 0f);
+            }, PlayerDeathManager.DefaultRespawnDelay);
         }
 
         /// <summary>

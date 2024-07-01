@@ -14,7 +14,22 @@ namespace Entities
         [SerializeField] private GameObject deathFxObjectPrefab;
         [SerializeField] private ParticleSystem deathParticles;
         
-        public GameObject Explode(float respawnDelay)
+        public static PlayerDeathManager instance;
+        public const int DefaultRespawnDelay = 10;
+        
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+            }
+            else
+            {
+                Destroy(this);
+            }
+        }
+        
+        public GameObject Explode(float respawnDelay = DefaultRespawnDelay)
         {
             deathParticles.Play();
             GameObject skullObject = null;

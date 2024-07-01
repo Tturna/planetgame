@@ -107,9 +107,6 @@ namespace Inventory.Item_Logic
                 return true;
             }
 
-            var sw = new Stopwatch();
-            sw.Start();
-            
             var terrainDug = false;
             foreach (var hit in useAreaHits)
             {
@@ -138,9 +135,6 @@ namespace Inventory.Item_Logic
                     Object.Destroy(hitObject);
                 }
             }
-            
-            sw.Stop();
-            Debug.Log($"Digging took {sw.ElapsedMilliseconds}ms");
             
             return true;
         }

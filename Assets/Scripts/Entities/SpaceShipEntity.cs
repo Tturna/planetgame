@@ -539,8 +539,10 @@ namespace Entities
 
             if (hullHealth <= 0)
             {
-                Debug.Log("Ship blew up");
+                TogglePassenger(_passenger.gameObject);
                 CameraController.CameraShake(0.75f, 1f);
+                PlayerController.instance.Death();
+                Destroy(gameObject);
             }
             else
             {
