@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Cameras;
 using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
 using Utilities;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace Inventory.Item_Logic
@@ -92,7 +94,6 @@ namespace Inventory.Item_Logic
             {
                 if (!hit) continue;
                 var hitObject = hit.gameObject;
-                Debug.Log($"Clicked on {hitObject.name}");
                 
                 if (!hitObject.CompareTag("Breakable")) continue;
                 
@@ -106,6 +107,9 @@ namespace Inventory.Item_Logic
                 return true;
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
+            
             var terrainDug = false;
             foreach (var hit in useAreaHits)
             {
@@ -134,6 +138,10 @@ namespace Inventory.Item_Logic
                     Object.Destroy(hitObject);
                 }
             }
+            
+            sw.Stop();
+            Debug.Log($"Digging took {sw.ElapsedMilliseconds}ms");
+            
             return true;
         }
 
