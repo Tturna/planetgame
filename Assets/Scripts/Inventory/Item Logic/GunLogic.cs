@@ -22,8 +22,19 @@ namespace Inventory.Item_Logic
             var pos = (Vector2)useParameters.equippedItemObject.transform.position;
             var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
-            var projectile = GameUtilities.Spawn(_projectilePrefab, pos, rot, useParameters.equippedItemObject.transform);
+            // object pooler will check if the pool exists so we don't have to.
+            ObjectPooler.CreatePool("Projectile Pool", _projectilePrefab, 10, true);
+            var projectile = ObjectPooler.GetObject("Projectile Pool");
 
+            if (projectile == null)
+            {
+                throw new System.NullReferenceException("Projectile object is null from object pool!");
+            }
+            
+            projectile.transform.SetParent(useParameters.equippedItemObject.transform);
+            projectile.transform.position = pos;
+            projectile.transform.eulerAngles = rot;
+            
             var localPos = weaponSo.muzzlePosition;
             localPos.y = useParameters.flipY ? -localPos.y : localPos.y;
             projectile.transform.localPosition = localPos;
@@ -31,8 +42,6 @@ namespace Inventory.Item_Logic
             
             var entity = projectile.GetComponent<ProjectileEntity>();
             entity.Init(weaponSo.projectile);
-            
-            //TODO: Object pooling
             
             if (weaponSo.muzzleFlashes.Length > 0)
             {
@@ -51,8 +60,6 @@ namespace Inventory.Item_Logic
                 _utilities.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
             }
             
-            //Debug.Log($"Shoot {weaponSo.name} with {weaponSo.projectile?.sprite?.name ?? "null"} @ {Time.time}");
-
             return true;
         }
 

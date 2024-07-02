@@ -12,9 +12,10 @@ namespace Entities
     {
         [SerializeField] private GameObject damageNumberPrefab;
         [SerializeField] private TMP_FontAsset flashFont, normalFont;
-
-        private static Guid _damageNumberPoolId = Guid.Empty;
         
+        private const string DamageNumberPoolName = "Damage Number Pool";
+        private bool objectPoolCreated;
+
         private void Start()
         {
             InitializeDamageNumberObjectPool();
@@ -22,22 +23,20 @@ namespace Entities
         
         private void InitializeDamageNumberObjectPool()
         {
-            if (_damageNumberPoolId != Guid.Empty) return;
-            
-            _damageNumberPoolId = ObjectPooler.CreatePool(damageNumberPrefab, 20);
-            Debug.Log($"Created damage number pool with ID {_damageNumberPoolId}");
+            if (objectPoolCreated) return;
+            ObjectPooler.CreatePool(DamageNumberPoolName, damageNumberPrefab, 20);
+            objectPoolCreated = true;
         }
 
         public void CreateDamageNumber(float amount, float lifeTime = 1f, float startMoveStrength = 1f)
         {
             InitializeDamageNumberObjectPool();
             
-            var damageNumberObject = ObjectPooler.GetObject(_damageNumberPoolId);
+            var damageNumberObject = ObjectPooler.GetObject(DamageNumberPoolName);
             
             if (damageNumberObject == null)
             {
-                Debug.LogError("Damage number object is null!");
-                return;
+                throw new NullReferenceException("Damage number object is null!");
             }
             
             damageNumberObject.transform.position = transform.position;

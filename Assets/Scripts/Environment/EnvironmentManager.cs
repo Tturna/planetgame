@@ -21,6 +21,7 @@ namespace Environment
         [SerializeField, Range(0, 1)] private float brightness;
         
         private Material _terrainMaterial;
+        private static readonly int TerrainShaderBrightness = Shader.PropertyToID("_Brightness");
 
         private void TriggerOnFogStarted()
         {
@@ -39,9 +40,7 @@ namespace Environment
         {
             // brightness -= Time.deltaTime * 0.1f;
             
-            // TODO: Optimize updating brightness.
-            // Doing this every frame, especially with a string based look up is cringe.
-            _terrainMaterial.SetFloat("_Brightness", brightness);
+            _terrainMaterial.SetFloat(TerrainShaderBrightness, brightness);
             BackgroundImageManager.SetBackgroundBrightness(brightness);
             ParallaxManager.SetParallaxTerrainBrightness(brightness);
             GlobalLight.instance.SetIntensity(brightness);

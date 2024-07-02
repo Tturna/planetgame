@@ -16,8 +16,9 @@ namespace Entities.Enemies
     public sealed class EnemyEntity : EntityController, IDamageable
     {
         [SerializeField] private EnemySo enemySo;
+        [SerializeField] private Shader flashShader;
         
-        [HideInInspector] public Vector3 relativeMoveDirection, globalMoveDirection;
+        [HideInInspector] public Vector3 relativeMoveDirection;
         
         private PlayerController _player;
         private Animator _animator;
@@ -26,7 +27,7 @@ namespace Entities.Enemies
         private DamageNumberManager _damageNumberManager;
         private ParticleSystem _deathPs;
         
-        private Shader _defaultShader, _flashShader;
+        private Shader _defaultShader;
         private MovementPattern _movementPattern;
         private Action<MovementPattern.MovementFunctionData> _movementFunction;
         private MovementPattern.MovementFunctionData _movementFunctionData;
@@ -36,6 +37,11 @@ namespace Entities.Enemies
         private float _health, _maxHealth;
         private bool _aggravated, _canMove = true;
         
+        private static readonly int AnimMoving = Animator.StringToHash("moving");
+        private static readonly int AnimJumping = Animator.StringToHash("jumping");
+        private static readonly int AnimAttackIndex = Animator.StringToHash("attackIndex");
+        private static readonly int AnimAttack = Animator.StringToHash("attack");
+
         public delegate void DeathHandler(EnemySo enemySo);
         public event DeathHandler OnDeath;
         
@@ -81,7 +87,6 @@ namespace Entities.Enemies
             hitbox.isTrigger = true;
             
             _defaultShader = _sr.material.shader;
-            _flashShader = Shader.Find("GUI/Text Shader");
         }
 
         private void Update()
@@ -89,8 +94,6 @@ namespace Entities.Enemies
             if (!CalculatePlayerRelation()) return;
 
             CheckAggro();
-            
-            globalMoveDirection = relativeMoveDirection.x > 0 ? transform.right : -transform.right;
         }
 
         protected override void FixedUpdate()
@@ -160,7 +163,7 @@ namespace Entities.Enemies
         private void Deaggro()
         {
             _aggravated = false;
-            _animator.SetBool("moving", false);
+            _animator.SetBool(AnimMoving, false);
         }
 
         private void AggroBehavior()
@@ -169,25 +172,14 @@ namespace Entities.Enemies
             {
                 _attackTimer -= Time.fixedDeltaTime;
             }
-            else if (!_animator.GetBool("jumping") && Attack())
+            else if (!_animator.GetBool(AnimJumping) && Attack())
             {
                 _attackTimer = enemySo.attackInterval;
             }
             
             if (!_canMove) return;
             
-            // Movement
-            _animator.SetBool("moving", true);
-            
-            // var angleDiff = Vector3.SignedAngle(transform.position, _player.transform.position, Vector3.back);
-            // Debug.Log($"Signed angle: {angleDiff}");
-
-            // var posDiff = GetVectorToPlayer();
-            // var dot = Vector3.Dot(posDiff.normalized, transform.right);
-            //
-            // relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
-            // _sr.flipX = relativeMoveDirection == (enemySo.flipSprite ? Vector3.left : Vector3.right);
-            
+            _animator.SetBool(AnimMoving, true);
             Move(GetVectorToPlayer());
         }
 
@@ -197,6 +189,7 @@ namespace Entities.Enemies
             {
                 _idleTimer -= Time.fixedDeltaTime;
 
+                // ReSharper disable once InvertIf
                 if (_idleTimer <= 0)
                 {
                     _idleActionTimer = Random.Range(3f, 6f);
@@ -207,13 +200,13 @@ namespace Entities.Enemies
             {
                 _idleActionTimer -= Time.fixedDeltaTime;
                 
-                _animator.SetBool("moving", true);
+                _animator.SetBool(AnimMoving, true);
                 Move(relativeMoveDirection);
             }
             else
             {
                 _idleTimer = Random.Range(3f, 6f);
-                _animator.SetBool("moving", false);
+                _animator.SetBool(AnimMoving, false);
             }
         }
 
@@ -270,19 +263,17 @@ namespace Entities.Enemies
             
             if (pattern == null) return false;
             
-            // TODO: Consider a system that allows different shot directions
-            pattern.GetAttack().Invoke(this, (transform.right * relativeMoveDirection.x + transform.up * 0.2f).normalized);
-            _animator.SetInteger("attackIndex", pattern.GetIndex());
-            _animator.SetTrigger("attack");
+            var tr = transform;
+            pattern.GetAttack().Invoke(this, (tr.right * relativeMoveDirection.x + tr.up * 0.2f).normalized);
+            _animator.SetInteger(AnimAttackIndex, pattern.GetIndex());
+            _animator.SetTrigger(AnimAttack);
 
-            if (pattern.preventsMovement)
-            {
-                _animator.SetBool("moving", false);
-                _canMove = false;
+            if (!pattern.preventsMovement) return true;
+            _animator.SetBool(AnimMoving, false);
+            _canMove = false;
 
-                StartCoroutine(DelayEnableMovement());
-            }
-            
+            StartCoroutine(DelayEnableMovement());
+
             return true;
         }
 
@@ -295,7 +286,6 @@ namespace Entities.Enemies
             _health = Mathf.Clamp(_health - amount, 0, _maxHealth);
             _healthbarManager.UpdateHealthbar(_health, _maxHealth);
             
-            // Update boss health UI
             if (enemySo.isBoss)
             {
                 _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
@@ -309,12 +299,12 @@ namespace Entities.Enemies
                 return;
             }
 
-            // Flash white
-            // _sr.material.SetFloat("_FlashAmount", .75f);
-            // GameUtilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
-
-            _sr.sharedMaterial.shader = _flashShader;
-            GameUtilities.instance.DelayExecute(() => _sr.sharedMaterial.shader = _defaultShader, 0.1f);
+            _sr.sharedMaterial.shader = flashShader;
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                if (_sr == null) return;
+                _sr.sharedMaterial.shader = _defaultShader;
+            }, 0.1f);
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
@@ -324,7 +314,8 @@ namespace Entities.Enemies
             Rigidbody.velocity = Vector2.zero;
             
             // check if the damage source is on the left or the right in relation to the enemy
-            var dot = Vector3.Dot((damageSourcePosition - transform.position).normalized, transform.right);
+            var tr = transform;
+            var dot = Vector3.Dot((damageSourcePosition - tr.position).normalized, tr.right);
             var knockbackDirection = dot > 0 ? -transform.right : transform.right;
             knockbackDirection = (knockbackDirection + transform.up * 0.6f).normalized;
             
@@ -335,7 +326,6 @@ namespace Entities.Enemies
 
         public void Death()
         {
-            // TODO: object pooling
             _deathPs.transform.SetParent(null);
             _deathPs.Play();
             TriggerOnDeath();

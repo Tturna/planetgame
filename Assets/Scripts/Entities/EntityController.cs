@@ -151,7 +151,7 @@ namespace Entities
         public void TogglePhysics(bool state) => CalculatePhysics = state;
         public void ToggleControl(bool state) => CanControl = state;
         public void ToggleAutoRotation(bool state) => FollowPlanetRotation = state;
-        public virtual void ToggleSpriteRenderer(bool state) => throw new NotImplementedException();
+        public virtual void ToggleSpriteRenderer(bool state) => throw new NotImplementedException("ToggleSpriteRenderer() not implemented. Override this method in a derived class.");
 
         public void ToggleCollision(bool state)
         {

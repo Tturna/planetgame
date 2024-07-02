@@ -12,8 +12,6 @@ namespace Entities
         
         protected override void Start()
         {
-            // base.Start();
-
             _breakPs = GetComponentInChildren<ParticleSystem>();
             GetComponent<SpriteRenderer>().sprite = _data.sprite;
             
@@ -24,8 +22,9 @@ namespace Entities
         {
             // Raycast to last position to prevent projectiles from going through stuff
             var mask = GameUtilities.BasicMovementCollisionMask;
-            var distance = Vector3.Distance(_lastPos, transform.position);
-            var direction = (transform.position - _lastPos).normalized;
+            var position = transform.position;
+            var distance = Vector3.Distance(_lastPos, position);
+            var direction = (position - _lastPos).normalized;
             var hit = Physics2D.Raycast(_lastPos, direction, distance, mask);
             
             if (hit)
@@ -64,12 +63,11 @@ namespace Entities
             trailRenderer.time = _data.trailTime;
         }
 
-        private void DestroyProjectile(Vector3 hitObjectPos)
+        private void DisableProjectile(Vector3 hitObjectPos)
         {
             var colDiff = (hitObjectPos - transform.position).normalized; 
             var angle = Mathf.Atan2(colDiff.y, colDiff.x) * Mathf.Rad2Deg;
             
-            // TODO: object pooling
             var psTr = _breakPs.transform;
             psTr.SetParent(null);
             psTr.localScale = Vector3.one;
@@ -79,15 +77,20 @@ namespace Entities
             main.startColor = _data.breakParticleColor;
             _breakPs.Play();
             
-            GameUtilities.instance.DelayExecute(() => Destroy(_breakPs.gameObject), 1f);
-            Destroy(gameObject);
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                _breakPs.Stop();
+                psTr.SetParent(transform);
+            }, 1f);
+            
+            gameObject.SetActive(false);
         }
 
         private void ProjectileHit(Collider2D col)
         {
-            if ((col.gameObject.layer & GameUtilities.BasicMovementCollisionMask) != 0)
+            if (((1 << col.gameObject.layer) & GameUtilities.BasicMovementCollisionMask) != 0)
             {
-                DestroyProjectile(col.transform.position);
+                DisableProjectile(col.transform.position);
             }
 
             if (!col.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
@@ -103,19 +106,13 @@ namespace Entities
 
             if (!_data.piercing)
             {
-                DestroyProjectile(col.transform.position);
+                DisableProjectile(col.transform.position);
             }
         }
 
         protected void OnTriggerEnter2D(Collider2D col)
         {
-            // base.OnTriggerEnter2D(col);
             ProjectileHit(col);
-        }
-
-        protected void OnTriggerExit2D(Collider2D other)
-        {
-            // base.OnTriggerExit2D(other);
         }
     }
 }

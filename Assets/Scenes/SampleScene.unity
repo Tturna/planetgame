@@ -44460,8 +44460,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: 08646673c9fcbb347854fbd18ffb7be0, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &533967564
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -45610,7 +45610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &586715935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45657,8 +45657,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &586715938
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -58519,8 +58519,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &762272807
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -59305,7 +59305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &777927719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59352,8 +59352,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &777927722
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -90302,8 +90302,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: 08646673c9fcbb347854fbd18ffb7be0, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &1107307659
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -111473,7 +111473,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1379177154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111520,8 +111520,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &1379177157
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -136405,8 +136405,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: 08646673c9fcbb347854fbd18ffb7be0, type: 2}
+  flashShader: {fileID: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &1665619945
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -137851,7 +137851,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1759212758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137898,8 +137898,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &1759212761
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -140371,7 +140371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1867480357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140418,8 +140418,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &1867480360
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -140685,7 +140685,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1879968187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140732,8 +140732,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &1879968190
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -143229,12 +143229,6 @@ MonoBehaviour:
   itemPrefab: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
   breakablePrefab: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
   craftingStationPrefab: {fileID: 449662747586685547, guid: e6e3bf328bbaa504db0ddd4461f44dd0, type: 3}
-  emptySlotSprite: {fileID: -2098564161, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
-  filledSlotSprite: {fileID: -2098564161, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
-  emptySlotSelectedSprite: {fileID: -2098564161, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
-  filledSlotSelectedSprite: {fileID: -2098564161, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
-  emptyStashSprite: {fileID: -2098564161, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
-  filledStashSprite: {fileID: -2098564161, guid: 539c9b0371caebe48b2e7a63fa182dd3, type: 3}
 --- !u!4 &1968306434
 Transform:
   m_ObjectHideFlags: 0
@@ -159915,7 +159909,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2073278738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159962,8 +159956,8 @@ MonoBehaviour:
   gravityMultiplier: 25
   mainCollider: {fileID: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   relativeMoveDirection: {x: 0, y: 0, z: 0}
-  globalMoveDirection: {x: 0, y: 0, z: 0}
 --- !u!61 &2073278741
 BoxCollider2D:
   m_ObjectHideFlags: 0

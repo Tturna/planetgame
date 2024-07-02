@@ -45,9 +45,20 @@ namespace Entities.Enemies
 
         public void Punch(EnemyEntity enemy, Vector3 direction)
         {
+            if (attackDelay > 0)
+            {
+                GameUtilities.instance.DelayExecute(Action, attackDelay);
+            }
+            else
+            {
+                Action();
+            }
+
+            return;
+
             void Action()
             {
-                if (!enemy) return; // Check if enemy is dead
+                if (!enemy) return;
                 
                 var dir = enemy.GetVectorToPlayer().normalized;
 
@@ -57,27 +68,10 @@ namespace Entities.Enemies
                 player.TakeDamage(damage);
                 player.Knockback(enemy.transform.position, knockback);
             }
-
-            if (attackDelay > 0)
-            {
-                // TODO: Consider not having delay here.
-                // Maybe implement attack delay in enemy behavior instead of here.
-                // Delay here means that killing the enemy doesn't stop this attack from happening (error).
-                GameUtilities.instance.DelayExecute(Action, attackDelay);
-            }
-            else
-            {
-                Action();
-            }
         }
         
         public void Dash(EnemyEntity enemy, Vector3 direction)
         {
-            void Action()
-            {
-                enemy.AddRelativeForce(enemy.relativeMoveDirection * attackDistance, ForceMode2D.Impulse);
-            }
-
             if (attackDelay > 0)
             {
                 GameUtilities.instance.DelayExecute(Action, attackDelay);
@@ -85,6 +79,13 @@ namespace Entities.Enemies
             else
             {
                 Action();
+            }
+
+            return;
+
+            void Action()
+            {
+                enemy.AddRelativeForce(enemy.relativeMoveDirection * attackDistance, ForceMode2D.Impulse);
             }
         }
 
@@ -92,15 +93,6 @@ namespace Entities.Enemies
         private GameObject _projectilePrefab;
         public void Shoot(EnemyEntity enemy, Vector3 direction)
         {
-            void Action()
-            {
-                var rot = enemy.transform.eulerAngles;
-                rot.z = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                var projectile = GameUtilities.Spawn(_projectilePrefab, enemy.transform.position + direction, rot, null);
-                var entity = projectile.GetComponent<ProjectileEntity>();
-                entity.Init(projectiles[0]);
-            }
-            
             if (_gameUtilities == null)
             {
                 _gameUtilities = GameUtilities.instance;
@@ -118,6 +110,17 @@ namespace Entities.Enemies
             else
             {
                 Action();
+            }
+
+            return;
+
+            void Action()
+            {
+                var rot = enemy.transform.eulerAngles;
+                rot.z = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                var projectile = GameUtilities.Spawn(_projectilePrefab, enemy.transform.position + direction, rot, null);
+                var entity = projectile.GetComponent<ProjectileEntity>();
+                entity.Init(projectiles[0]);
             }
         }
     }

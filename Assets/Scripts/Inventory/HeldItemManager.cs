@@ -61,7 +61,7 @@ namespace Inventory
             if (!_playerController.CanControl) return;
             
             var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
-            var cursorAngle = GameUtilities.GetCursorAngle(mouseDirection, transform.right);
+            var cursorAngle = GameUtilities.GetCursorAngle();
             HandleItemAiming(mouseDirection, cursorAngle);
             HandlePlaceableHologram();
             

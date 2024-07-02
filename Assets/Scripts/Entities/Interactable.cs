@@ -56,8 +56,8 @@ namespace Entities
         // This system is not using trigger collider events because they seem to be VERY unreliable.
         private void Update()
         { 
-            // TODO: Consider optimizing this so it doesn't run every frame.
-            // Maybe check if this interactable is in the same planet as the player.
+            // If this code is slow, consider implementing a quadtree to reduce the distance checks
+            // to only interactables within a certain range of the player.
             _distanceToPlayer = Vector2.Distance(transform.position, _player.transform.position);
             
             if (!_inRange && _distanceToPlayer <= interactRange)

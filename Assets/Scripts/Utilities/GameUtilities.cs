@@ -31,7 +31,7 @@ namespace Utilities
             StartCoroutine(DelayExec(action, delay));
         }
 
-        private IEnumerator DelayExec(Action action, float delay)
+        private static IEnumerator DelayExec(Action action, float delay)
         {
             yield return new WaitForSeconds(delay);
             action.Invoke();
@@ -72,14 +72,11 @@ namespace Utilities
             return _mainCam.ScreenToWorldPoint(Input.mousePosition) - position;
         }
         
-        // TODO: Maybe this function could be better?
-        // Like maybe require an origin position and find the mouse direction automatically???
-        public static float GetCursorAngle(Vector3 directionToMouse, Vector3 relativeRightDirection)
+        public static float GetCursorAngle()
         {
-            return Vector3.Angle(relativeRightDirection.normalized, directionToMouse);
+            return Vector3.Angle(Vector3.right, _mainCam.ScreenToViewportPoint(Input.mousePosition) - new Vector3(0.5f, 0.5f, 0f));
         }
 
-        // TODO: figure out if this function actually makes any sense to exist
         public GameObject GetProjectilePrefab()
         {
             return projectilePrefab;

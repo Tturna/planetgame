@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Cameras;
 using Entities;
@@ -95,17 +96,9 @@ namespace Inventory
         public GameObject breakablePrefab;
         public GameObject craftingStationPrefab;
         
-        // To be removed probably
-        [Header("Inventory Sprites")]
-        [SerializeField] private Sprite emptySlotSprite;
-        [SerializeField] private Sprite filledSlotSprite;
-        [SerializeField] private Sprite emptySlotSelectedSprite;
-        [SerializeField] private Sprite filledSlotSelectedSprite;
-        [SerializeField] private Sprite emptyStashSprite;
-        [SerializeField] private Sprite filledStashSprite;
-
         public static InventoryManager instance;
 
+        // Consider using a dictionary instead of arrays if the inventory is slow.
         private static Transform[] _hotSlotObjects;
         private static Transform[] _stashSlotObjects;
         private static Transform[] _accessorySlotObjects;
@@ -218,7 +211,6 @@ namespace Inventory
             {
                 if (SelectSlot(_selectedIndex - (int)_scrollDelta))
                 {
-                    DeselectSlot(_selectedIndex);
                     _selectedIndex -= (int)_scrollDelta;
                 }
             }
@@ -228,7 +220,6 @@ namespace Inventory
             {
                 var numkey = i == 10 ? "0" : i.ToString();
                 if (!Input.GetKeyDown(numkey)) continue;
-                DeselectSlot(_selectedIndex);
                 SelectSlot(i - 1);
                 _selectedIndex = i - 1;
             }
@@ -514,7 +505,7 @@ namespace Inventory
             (_mouseSlot.item, slot.item) = (slot.item, _mouseSlot.item);
             (_mouseSlot.stack, slot.stack) = (slot.stack, _mouseSlot.stack);
             
-            if (_selectedIndex == slot.index)
+            if (slot.inventorySegmentType == InventorySegmentType.Hotbar && _selectedIndex == slot.index)
             {
                 EquipItem(slot.item);
             }
@@ -523,7 +514,7 @@ namespace Inventory
             UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
             UpdateMouseSlotGraphics();
             
-            // Activate equipped accessory
+            // ReSharper disable once MergeIntoPattern
             if (slot.stack > 0 && slot.inventorySegmentType == InventorySegmentType.Accessory)
             {
                 var accessorySo = (BasicAccessorySo)slot.item.itemSo;
@@ -531,7 +522,7 @@ namespace Inventory
                 accessorySo.ResetBehavior();
             }
             
-            // Unequip grabbed accessory
+            // ReSharper disable once InvertIf
             if (_mouseSlot.stack > 0 && slot.inventorySegmentType == InventorySegmentType.Accessory)
             {
                 var accessorySo = (BasicAccessorySo)_mouseSlot.item.itemSo;
@@ -675,12 +666,6 @@ namespace Inventory
             return excess;
         }
         
-        private static void DeselectSlot(int slotIndex)
-        {
-            // var img = _hotSlotObjects[slotIndex].GetComponent<Image>();
-            // img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSprite : instance.emptySlotSprite;
-        }
-
         private static void UpdateSlotGraphics(ref Slot slot, Transform slotObject)
         {
             // var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
@@ -826,9 +811,9 @@ namespace Inventory
                     string[] statNames = { "Damage", "Use Time", "Tool Power" };
                     string[] statValues =
                     {
-                        tool.projectile.damage.ToString().ToUpper(),
-                        tool.attackCooldown.ToString().ToUpper(),
-                        tool.toolPower.ToString().ToUpper()
+                        tool.projectile.damage.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        tool.attackCooldown.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        tool.toolPower.ToString(CultureInfo.InvariantCulture).ToUpper()
                     };
 
                     UpdateTooltip(statNames, statValues, 3);
@@ -840,9 +825,9 @@ namespace Inventory
                     statNames = new[] { "Melee Damage", "Knockback", "Use Time" };
                     statValues = new[]
                     {
-                        melee.damage.ToString().ToUpper(),
-                        melee.knockback.ToString().ToUpper(),
-                        melee.attackCooldown.ToString().ToUpper()
+                        melee.damage.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        melee.knockback.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        melee.attackCooldown.ToString(CultureInfo.InvariantCulture).ToUpper()
                     };
                     
                     UpdateTooltip(statNames, statValues, 3);
@@ -854,9 +839,9 @@ namespace Inventory
                     statNames = new[] { "Damage", "Knockback", "Use Time" };
                     statValues = new[]
                     {
-                        weapon.projectile.damage.ToString().ToUpper(),
-                        weapon.projectile.knockback.ToString().ToUpper(),
-                        weapon.attackCooldown.ToString().ToUpper()
+                        weapon.projectile.damage.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        weapon.projectile.knockback.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        weapon.attackCooldown.ToString(CultureInfo.InvariantCulture).ToUpper()
                     };
 
                     UpdateTooltip(statNames, statValues, 3);
@@ -942,27 +927,25 @@ namespace Inventory
             itemEntity.transform.position = position;
         }
 
-        // TODO: Consider changing the inventory to use a dictionary instead of an array
-        // to prevent having to loop through the entire inventory to find an item.
-        public static bool TryGetSlotsWithIngredients(RecipeSo recipe,
-            out Dictionary<CraftingResource, List<Slot>> hotIngredients,
-            out Dictionary<CraftingResource, List<Slot>> stashIngredients)
+        private static bool TryGetSlotsWithIngredients(RecipeSo recipe,
+            out Dictionary<CraftingResource, List<Slot>> hotIngredientsDict,
+            out Dictionary<CraftingResource, List<Slot>> stashIngredientsDict)
         {
-            hotIngredients = new Dictionary<CraftingResource, List<Slot>>();
-            stashIngredients = new Dictionary<CraftingResource, List<Slot>>();
+            hotIngredientsDict = new Dictionary<CraftingResource, List<Slot>>();
+            stashIngredientsDict = new Dictionary<CraftingResource, List<Slot>>();
             
             foreach (var hotSlot in _hotSlots)
             {
                 var ingredient = recipe.ingredients.ToList().Find(i => i.item.id == hotSlot.item?.itemSo.id);
                 if (ingredient.amount == 0) continue;
                 
-                if (hotIngredients.ContainsKey(ingredient))
+                if (hotIngredientsDict.ContainsKey(ingredient))
                 {
-                    hotIngredients[ingredient].Add(hotSlot);
+                    hotIngredientsDict[ingredient].Add(hotSlot);
                 }
                 else
                 {
-                    hotIngredients.Add(ingredient, new List<Slot> { hotSlot });
+                    hotIngredientsDict.Add(ingredient, new List<Slot> { hotSlot });
                 }
             }
             
@@ -971,17 +954,17 @@ namespace Inventory
                 var ingredient = recipe.ingredients.ToList().Find(i => i.item.id == stashSlot.item?.itemSo.id);
                 if (ingredient.amount == 0) continue;
                 
-                if (stashIngredients.ContainsKey(ingredient))
+                if (stashIngredientsDict.ContainsKey(ingredient))
                 {
-                    stashIngredients[ingredient].Add(stashSlot);
+                    stashIngredientsDict[ingredient].Add(stashSlot);
                 }
                 else
                 {
-                    stashIngredients.Add(ingredient, new List<Slot> { stashSlot });
+                    stashIngredientsDict.Add(ingredient, new List<Slot> { stashSlot });
                 }
             }
             
-            var foundKeyCount = hotIngredients.Count + stashIngredients.Count;
+            var foundKeyCount = hotIngredientsDict.Count + stashIngredientsDict.Count;
             // Check if all ingredients are found
             if (foundKeyCount < recipe.ingredients.Length) return false;
 
@@ -989,12 +972,12 @@ namespace Inventory
             var combinedIngredientSlots = new Dictionary<CraftingResource, List<Slot>>();
 
             // deep copy hotIngredients
-            foreach (var (ingredient, slots) in hotIngredients)
+            foreach (var (ingredient, slots) in hotIngredientsDict)
             {
                 combinedIngredientSlots.Add(ingredient, new List<Slot>(slots));
             }
             
-            foreach (var (ingredient, slots) in stashIngredients)
+            foreach (var (ingredient, slots) in stashIngredientsDict)
             {
                 if (!combinedIngredientSlots.TryAdd(ingredient, slots))
                 {
@@ -1022,8 +1005,8 @@ namespace Inventory
         {
             if (!TryGetSlotsWithIngredients(
                 recipe,
-                out var hotIngredients,
-                out var stashIngredients))
+                out var hotIngredientsDict,
+                out var stashIngredientsDict))
             {
                 return;
             }
@@ -1031,13 +1014,14 @@ namespace Inventory
             foreach (var ingredient in recipe.ingredients)
             {
                 var decrementAmount = ingredient.amount;
-                List<Slot> slots;
+                List<Slot> ingredientSlots;
                 
-                if (hotIngredients.ContainsKey(ingredient))
+                if (hotIngredientsDict.TryGetValue(ingredient, out var slots))
                 {
-                    slots = hotIngredients[ingredient];
+                    ingredientSlots = slots;
 
-                    foreach (var slot in slots)
+                    // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+                    foreach (var slot in ingredientSlots)
                     {
                         var excess = DecrementStack(slot.index, true, decrementAmount);
                         decrementAmount = excess;
@@ -1047,9 +1031,10 @@ namespace Inventory
                 
                 if (decrementAmount == 0) continue;
                 
-                slots = stashIngredients[ingredient];
+                ingredientSlots = stashIngredientsDict[ingredient];
                 
-                foreach (var slot in slots)
+                // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+                foreach (var slot in ingredientSlots)
                 {
                     var excess = DecrementStack(slot.index, false, decrementAmount);
                     decrementAmount = excess;

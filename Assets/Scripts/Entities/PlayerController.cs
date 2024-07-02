@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cameras;
@@ -98,7 +97,6 @@ namespace Entities
         
         private Vector2 _inputVector;
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
-        private Vector3 _mouseDirection;
         private int _collisionLayerMask;
         private Vector2 _spawnPosition;
 
@@ -132,8 +130,7 @@ namespace Entities
             
             HandleControls();
 
-            _mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
-            var cursorAngle = GameUtilities.GetCursorAngle(_mouseDirection, transform.right);
+            var cursorAngle = GameUtilities.GetCursorAngle();
             
             // HandleItemAiming(_mouseDirection, cursorAngle);
             HandlePlayerFlipping(cursorAngle);
@@ -508,7 +505,8 @@ namespace Entities
 
         public void AddForceTowardsCursor(float magnitude)
         {
-            Rigidbody.AddForce(_mouseDirection * magnitude);
+            var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
+            Rigidbody.AddForce(mouseDirection * magnitude);
         }
 
         public void SetJetpackSprite(Sprite sprite)
