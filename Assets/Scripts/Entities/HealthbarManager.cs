@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Entities.Enemies;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -39,13 +40,13 @@ namespace Entities
             _fWhiteBar.fillAmount = Mathf.Lerp(_fWhiteBar.fillAmount, _fActualBar.fillAmount, whiteBarSmoothing);
         }
 
-        public void Initialize(float startingHealth, float maxHealth, bool isBoss, float healthbarDistance)
+        public void Initialize(float startingHealth, float maxHealth, EnemySo enemySo)
         {
-            _isBoss = isBoss;
+            _isBoss = enemySo.isBoss;
             
             var healthbar = new GameObject("Health Bar");
             healthbar.transform.SetParent(transform);
-            healthbar.transform.localPosition = Vector3.down * healthbarDistance;
+            healthbar.transform.localPosition = Vector3.down * enemySo.healthbarDistance;
             
             // Create background
             _bgObject = new GameObject("Background");
@@ -80,14 +81,14 @@ namespace Entities
             redSr.sortingOrder = 2;
             
             // If this is a boss, set up the big boss UI health
-            if (!isBoss) return;
+            if (!_isBoss) return;
             _focusedBossHealth = GameObject.Find("HUD").transform.GetChild(0).gameObject;
             _fWhiteBar = _focusedBossHealth.transform.GetChild(1).GetComponent<Image>();
             _fActualBar = _focusedBossHealth.transform.GetChild(2).GetComponent<Image>();
             _fPortrait = _focusedBossHealth.transform.GetChild(3).GetComponent<Image>();
             _fHpPercent = _focusedBossHealth.transform.GetChild(4).GetComponent<TextMeshProUGUI>();
             _fName = _focusedBossHealth.transform.GetChild(5).GetComponent<TextMeshProUGUI>();
-            UpdateBossUIHealth(startingHealth, maxHealth, null);
+            UpdateBossUIHealth(startingHealth, maxHealth, enemySo);
         }
         
         public void UpdateHealthbar(float health, float maxHealth)
@@ -97,11 +98,12 @@ namespace Entities
             _redBarObject.transform.localScale = scalev;
 
             var posv = _redBarObject.transform.localPosition;
-            posv.x = Mathf.Lerp(_isBoss ? -0.594f : -0.3f, 0, scalev.x);
+            // posv.x = Mathf.Lerp(_isBoss ? -0.594f : -0.3f, 0, scalev.x);
+            posv.x = Mathf.Lerp(-0.3f, 0, scalev.x);
             _redBarObject.transform.localPosition = posv;
         }
 
-        public void UpdateBossUIHealth(float health, float maxHealth, Sprite portrait)
+        public void UpdateBossUIHealth(float health, float maxHealth, EnemySo enemySo)
         {
             // We set the white bar fill amount here so that it smoothly goes down
             // the correct amount if for example, there are 2 bosses alive and
@@ -111,9 +113,9 @@ namespace Entities
             
             _fActualBar.fillAmount = health / maxHealth;
             _fHpPercent.text = $"{Mathf.CeilToInt(health / maxHealth * 100)}%";
-            _fName.text = gameObject.name;
+            _fName.text = enemySo.enemyName;
 
-            if (portrait) _fPortrait.sprite = portrait;
+            if (enemySo.bossPortrait) _fPortrait.sprite = enemySo.bossPortrait;
 
             if (health <= 0)
             {
@@ -123,9 +125,9 @@ namespace Entities
             }
         }
 
-        public void EnableBossUIHealth()
+        public void ToggleBossUIHealth(bool state)
         {
-            _focusedBossHealth.SetActive(true);
+            _focusedBossHealth.SetActive(state);
         }
     }
 }

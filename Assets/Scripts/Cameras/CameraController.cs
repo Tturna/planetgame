@@ -54,6 +54,9 @@ namespace Cameras
 
         public static void CameraShake(float time, float strength)
         {
+            if (time <= 0f) return;
+            if (strength <= 0f) return;
+            
             instance.StartCoroutine(_CameraShake(time, strength));
         }
         

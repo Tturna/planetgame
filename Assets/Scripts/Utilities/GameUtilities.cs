@@ -79,6 +79,11 @@ namespace Utilities
 
         public GameObject GetProjectilePrefab()
         {
+            if (projectilePrefab == null)
+            {
+                throw new Exception("Projectile prefab is null");
+            }
+            
             return projectilePrefab;
         }
         

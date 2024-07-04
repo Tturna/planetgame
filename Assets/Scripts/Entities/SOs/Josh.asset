@@ -21,6 +21,7 @@ MonoBehaviour:
   accelerationSpeed: 25
   maxSpeed: 2
   maxSlopeMultiplier: 3
+  canJump: 1
   jumpForce: 8
   movementPattern:
     movementType: 3
@@ -30,6 +31,7 @@ MonoBehaviour:
   hitboxOffset: {x: 0, y: -0.12}
   hitboxSize: {x: 0.65, y: 0.54}
   hitboxEdgeRadius: 0
+  knockbackSourcePointOffset: {x: 0, y: 0}
   healthbarDistance: 0.66
   overrideAnimator: {fileID: 22100000, guid: b234a0b527a18734f810e2ecf9b57a03, type: 2}
   evasionTime: 7
@@ -42,51 +44,64 @@ MonoBehaviour:
     animationIndex: 1
     damage: 0
     knockback: 0
-    attackDistance: 6
+    attackRange: 6
+    attackMagnitude: 6
     attackDelay: 0.5
     preventsMovement: 1
-    projectiles:
-    - sprite: {fileID: 21300000, guid: 3fc1842a72da20d4bbbda5430a64ca84, type: 3}
-      projectileSpeed: 8.5
-      damage: 10
-      knockback: 10
-      piercing: 0
-      useGravity: 1
-      gravityMultiplier: 11
-      faceDirectionOfTravel: 1
-      collideWithWorld: 1
-      canHurtPlayer: 1
-      breakParticleColor: {r: 0.6, g: 0.8980392, b: 0.3137255, a: 1}
-      trailColor:
-        serializedVersion: 2
-        key0: {r: 0.6, g: 0.8980392, b: 0.3137255, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 0}
-        key2: {r: 0, g: 0, b: 0, a: 0}
-        key3: {r: 0, g: 0, b: 0, a: 0}
-        key4: {r: 0, g: 0, b: 0, a: 0}
-        key5: {r: 0, g: 0, b: 0, a: 0}
-        key6: {r: 0, g: 0, b: 0, a: 0}
-        key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 0
-        ctime1: 65535
-        ctime2: 0
-        ctime3: 0
-        ctime4: 0
-        ctime5: 0
-        ctime6: 0
-        ctime7: 0
-        atime0: 0
-        atime1: 65535
-        atime2: 0
-        atime3: 0
-        atime4: 0
-        atime5: 0
-        atime6: 0
-        atime7: 0
-        m_Mode: 0
-        m_NumColorKeys: 2
-        m_NumAlphaKeys: 2
-      trailTime: 0.15
+    cameraShakeTime: 0
+    cameraShakeStrength: 0
+    projectileAttacks:
+    - projectileData:
+        sprite: {fileID: 21300000, guid: 3fc1842a72da20d4bbbda5430a64ca84, type: 3}
+        projectileSpeed: 10
+        damage: 10
+        knockback: 10
+        critChance: 5
+        piercing: 0
+        useGravity: 1
+        gravityMultiplier: 15
+        faceDirectionOfTravel: 1
+        collideWithWorld: 1
+        canHurtPlayer: 1
+        breakParticleColor: {r: 0.49296537, g: 0.9528302, b: 0.4269758, a: 1}
+        trailColor:
+          serializedVersion: 2
+          key0: {r: 0.40700006, g: 0.764151, b: 0.33521715, a: 1}
+          key1: {r: 0.40700006, g: 0.764151, b: 0.33521715, a: 0}
+          key2: {r: 0, g: 0, b: 0, a: 0}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 0
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 2
+        trailTime: 0.2
+      minProjectiles: 1
+      maxProjectiles: 1
+      aimReferencePoint: 1
+      minAimAngleOffset: 20
+      maxAimAngleOffset: 20
+    useRandomProjectileAttack: 0
+    minProjectileAttacks: 1
+    maxProjectileAttacks: 1
   dropMultiple: 1
   lootTable:
   - item:

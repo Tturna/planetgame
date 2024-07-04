@@ -12,35 +12,326 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84b1f98ea4654b84af66154f68a0f981, type: 3}
   m_Name: Swamp Titan
   m_EditorClassIdentifier: 
-  name: 
+  enemyName: Swamp Titan
   maxHealth: 1200
   health: 1200
-  contactDamage: 10
-  knockback: 9
-  aggroRange: 7
-  moveSpeed: 11
-  evasionTime: 7
-  attackInterval: 3.5
-  attackRecoveryTime: 0.66
-  attackRangeThreshold: 3
+  contactDamage: 20
+  isImmuneToKnockback: 1
+  knockback: 10
+  aggroRange: 9
+  accelerationSpeed: 25
+  maxSpeed: 2.5
+  maxSlopeMultiplier: 50
+  canJump: 0
+  jumpForce: 12
+  movementPattern:
+    movementType: 0
   isBoss: 1
   flipSprite: 0
   bossPortrait: {fileID: 1548244688, guid: 654bb0eb8778ce44c9500659f65df6b8, type: 3}
-  hitboxOffset: {x: 0, y: -0.09}
-  hitboxSize: {x: 1.32, y: 1.6}
+  hitboxOffset: {x: 0, y: -0.17}
+  hitboxSize: {x: 0.52, y: 0.85}
+  hitboxEdgeRadius: 0.4
+  knockbackSourcePointOffset: {x: 0, y: -0.55}
   healthbarDistance: 1.4
   overrideAnimator: {fileID: 22100000, guid: b47eda05c83a6ed41b6bfdfc88047489, type: 2}
-  shortAttacks:
-  - attackFunction: 0
+  evasionTime: 3000
+  attackInterval: 3.5
+  attackRecoveryTime: 0.4
+  alwaysAttack: 0
+  useRandomAttack: 1
+  attacks:
+  - attackName: Slam
+    attackFunction: 0
     animationIndex: 1
-    damage: 20
-    knockback: 12
-    attackDistance: 3
-    attackDelay: 0.85
-  longAttacks:
-  - attackFunction: 1
+    damage: 40
+    knockback: 20
+    attackRange: 4
+    attackMagnitude: 1
+    attackTime: 0
+    attackDelay: 0.45
+    preventsMovement: 1
+    cameraShakeTime: 0.69
+    cameraShakeStrength: 0.2
+    projectileAttacks:
+    - projectileData:
+        sprite: {fileID: 1431803324, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
+        minProjectileSpeed: 5
+        maxProjectileSpeed: 9
+        lifetime: 0
+        damage: 0
+        knockback: 0
+        critChance: 0
+        piercing: 0
+        useGravity: 1
+        gravityMultiplier: 25
+        faceDirectionOfTravel: 1
+        collideWithWorld: 1
+        canHurtPlayer: 0
+        canHurtEnemies: 0
+        collisionActivationDelay: 0.2
+        breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+        trailColor:
+          serializedVersion: 2
+          key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 0}
+          key2: {r: 0, g: 0, b: 0, a: 0}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 32768
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 2
+        trailTime: 0.1
+        useLight: 0
+        lightColor: {r: 0, g: 0, b: 0, a: 0}
+      aimReferencePoint: 0
+      spawnReferencePoint: 0
+      minAimAngleOffset: 45
+      maxAimAngleOffset: 135
+      minProjectileSpawnOffset: {x: 0.75, y: -0.6}
+      maxProjectileSpawnOffset: {x: 0.75, y: -0.6}
+    - projectileData:
+        sprite: {fileID: 811201656, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
+        minProjectileSpeed: 10
+        maxProjectileSpeed: 14
+        lifetime: 0
+        damage: 0
+        knockback: 0
+        critChance: 0
+        piercing: 0
+        useGravity: 1
+        gravityMultiplier: 25
+        faceDirectionOfTravel: 1
+        collideWithWorld: 1
+        canHurtPlayer: 0
+        canHurtEnemies: 0
+        collisionActivationDelay: 0.2
+        breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+        trailColor:
+          serializedVersion: 2
+          key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 0}
+          key2: {r: 0, g: 0, b: 0, a: 0}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 32768
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 2
+        trailTime: 0.1
+        useLight: 0
+        lightColor: {r: 0, g: 0, b: 0, a: 0}
+      aimReferencePoint: 0
+      spawnReferencePoint: 0
+      minAimAngleOffset: 45
+      maxAimAngleOffset: 135
+      minProjectileSpawnOffset: {x: 0.75, y: -0.6}
+      maxProjectileSpawnOffset: {x: 0.75, y: -0.6}
+    - projectileData:
+        sprite: {fileID: 968132344, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
+        minProjectileSpeed: 8
+        maxProjectileSpeed: 16
+        lifetime: 0
+        damage: 0
+        knockback: 0
+        critChance: 0
+        piercing: 0
+        useGravity: 1
+        gravityMultiplier: 25
+        faceDirectionOfTravel: 1
+        collideWithWorld: 1
+        canHurtPlayer: 0
+        canHurtEnemies: 0
+        collisionActivationDelay: 0.2
+        breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+        trailColor:
+          serializedVersion: 2
+          key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 0}
+          key2: {r: 0, g: 0, b: 0, a: 0}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 32768
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 2
+        trailTime: 0.1
+        useLight: 0
+        lightColor: {r: 0, g: 0, b: 0, a: 0}
+      aimReferencePoint: 0
+      spawnReferencePoint: 0
+      minAimAngleOffset: 45
+      maxAimAngleOffset: 135
+      minProjectileSpawnOffset: {x: 0.75, y: -0.6}
+      maxProjectileSpawnOffset: {x: 0.75, y: -0.6}
+    useRandomProjectileAttack: 1
+    minProjectileAttacks: 8
+    maxProjectileAttacks: 15
+    attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
+    attackParticleOffset: {x: 0.75, y: -0.6}
+  - attackName: Dash
+    attackFunction: 1
     animationIndex: 4
-    damage: 15
-    knockback: 50
-    attackDistance: 12
+    damage: 25
+    knockback: 25
+    attackRange: 8
+    attackMagnitude: 15
+    attackTime: 0.45
+    attackDelay: 0.45
+    preventsMovement: 1
+    cameraShakeTime: 0.1
+    cameraShakeStrength: 0.1
+    projectileAttacks: []
+    useRandomProjectileAttack: 0
+    minProjectileAttacks: 0
+    maxProjectileAttacks: 0
+    attackParticlePrefab: {fileID: 0}
+    attackParticleOffset: {x: 0, y: 0}
+  - attackName: Teleport
+    attackFunction: 3
+    animationIndex: 5
+    damage: 0
+    knockback: 25
+    attackRange: 10000
+    attackMagnitude: 1
+    attackTime: 0
     attackDelay: 0.5
+    preventsMovement: 1
+    cameraShakeTime: 0
+    cameraShakeStrength: 0
+    projectileAttacks: []
+    useRandomProjectileAttack: 0
+    minProjectileAttacks: 0
+    maxProjectileAttacks: 0
+    attackParticlePrefab: {fileID: 0}
+    attackParticleOffset: {x: 0, y: 0}
+  - attackName: Summon Bubbles
+    attackFunction: 2
+    animationIndex: 1
+    damage: 0
+    knockback: 0
+    attackRange: 9
+    attackMagnitude: 1
+    attackTime: 0
+    attackDelay: 0.5
+    preventsMovement: 1
+    cameraShakeTime: 0.5
+    cameraShakeStrength: 0.2
+    projectileAttacks:
+    - projectileData:
+        sprite: {fileID: 1431803324, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
+        minProjectileSpeed: 0.2
+        maxProjectileSpeed: 0.4
+        lifetime: 10
+        damage: 15
+        knockback: 0
+        critChance: 0
+        piercing: 1
+        useGravity: 0
+        gravityMultiplier: 0
+        faceDirectionOfTravel: 0
+        collideWithWorld: 0
+        canHurtPlayer: 1
+        canHurtEnemies: 0
+        collisionActivationDelay: 0
+        breakParticleColor: {r: 0, g: 0, b: 0, a: 0}
+        trailColor:
+          serializedVersion: 2
+          key0: {r: 0, g: 0, b: 0, a: 0}
+          key1: {r: 0, g: 0, b: 0, a: 0}
+          key2: {r: 0, g: 0, b: 0, a: 0}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 0
+          ctime1: 65535
+          ctime2: 0
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 0
+          atime1: 65535
+          atime2: 0
+          atime3: 0
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_NumColorKeys: 2
+          m_NumAlphaKeys: 2
+        trailTime: 0
+        useLight: 0
+        lightColor: {r: 0, g: 0, b: 0, a: 0}
+      aimReferencePoint: 1
+      spawnReferencePoint: 1
+      minAimAngleOffset: 90
+      maxAimAngleOffset: 90
+      minProjectileSpawnOffset: {x: -9, y: -1}
+      maxProjectileSpawnOffset: {x: 9, y: -0.7}
+    useRandomProjectileAttack: 0
+    minProjectileAttacks: 4
+    maxProjectileAttacks: 8
+    attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
+    attackParticleOffset: {x: 0.75, y: -0.6}
+  dropMultiple: 0
+  lootTable: []

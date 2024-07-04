@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using Entities.Enemies;
+using Planets;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 using Utilities;
 
 namespace Entities
@@ -6,22 +10,41 @@ namespace Entities
     [RequireComponent(typeof(Rigidbody2D))]
     public class ProjectileEntity : EntityController
     {
+        [FormerlySerializedAs("_light")] [SerializeField] private Light2D light2D; 
         private ParticleSystem _breakPs;
         private ProjectileData _data;
         private Vector3 _lastPos;
+        private SpriteRenderer _sr;
+        private TrailRenderer _trailRenderer;
+        private float _lifetimeTimer;
+        private Vector2 _initialVelocity;
         
         protected override void Start()
         {
             _breakPs = GetComponentInChildren<ParticleSystem>();
-            GetComponent<SpriteRenderer>().sprite = _data.sprite;
-            
             _lastPos = transform.position;
+
+            if (_data.lifetime == 0)
+            {
+                Debug.LogWarning($"Projectile with infinite lifetime detected ({gameObject.name}). This can cause performance issues.");
+            }
         }
 
         private void Update()
         {
+            if (_data.lifetime > 0)
+            {
+                _lifetimeTimer += Time.deltaTime;
+                
+                if (_lifetimeTimer >= _data.lifetime)
+                {
+                    DisableProjectile(transform.position);
+                    return;
+                }
+            }
+            
             // Raycast to last position to prevent projectiles from going through stuff
-            var mask = GameUtilities.BasicMovementCollisionMask;
+            var mask = LayerMask.GetMask("Default", "Enemy") & GameUtilities.BasicMovementCollisionMask;
             var position = transform.position;
             var distance = Vector3.Distance(_lastPos, position);
             var direction = (position - _lastPos).normalized;
@@ -29,8 +52,7 @@ namespace Entities
             
             if (hit)
             {
-                transform.position = hit.point;
-                ProjectileHit(hit.collider);
+                ProjectileHit(hit.collider, hit.point);
                 return;
             }
             
@@ -40,27 +62,78 @@ namespace Entities
             {
                 transform.right = Rigidbody.velocity.normalized;
             }
+
+            if (!_data.useGravity)
+            {
+                Rigidbody.velocity = _initialVelocity;
+            }
         }
 
-        public void Init(ProjectileData projectileData)
+        protected override void FixedUpdate()
         {
+            base.FixedUpdate();
+        }
+
+        public void Init(ProjectileData projectileData, PlanetGenerator closestPlanetGen = null)
+        {
+            _lifetimeTimer = 0;
+            _lastPos = transform.position;
             _data = projectileData;
-            Rigidbody = GetComponent<Rigidbody2D>();
+
+            if (!Rigidbody)
+            {
+                Rigidbody = GetComponent<Rigidbody2D>();
+            }
+
+            if (!_sr)
+            {
+                _sr = GetComponent<SpriteRenderer>();
+            }
+
+            if (!_trailRenderer)
+            {
+                _trailRenderer = GetComponent<TrailRenderer>();
+            }
+            
+            _sr.sprite = _data.sprite;
             
             ToggleControl(false);
             ToggleAutoRotation(false);
-            
-            if (!_data.useGravity)
+
+            if (_data.collisionActivationDelay > 0)
             {
-                TogglePhysics(false);
+                ToggleCollision(false);
+                GameUtilities.instance.DelayExecute(() => ToggleCollision(true), _data.collisionActivationDelay);
             }
             
+            TogglePhysics(_data.useGravity);
             gravityMultiplier = _data.gravityMultiplier;
             
-            Rigidbody.AddForce(transform.right * _data.projectileSpeed, ForceMode2D.Impulse);
-            var trailRenderer = GetComponent<TrailRenderer>();
-            trailRenderer.colorGradient = _data.trailColor;
-            trailRenderer.time = _data.trailTime;
+            if (_data.useGravity)
+            {
+                if (closestPlanetGen)
+                {
+                    SetCurrentPlanet(closestPlanetGen);
+                }
+                else
+                {
+                    closestPlanetCheckTimer = ClosestPlanetCheckInterval;
+                }
+            }
+            
+            var speed = Random.Range(_data.minProjectileSpeed, _data.maxProjectileSpeed);
+            Rigidbody.AddForce(transform.right * speed, ForceMode2D.Impulse);
+            _initialVelocity = Rigidbody.velocity;
+            _trailRenderer.Clear();
+            _trailRenderer.colorGradient = _data.trailColor;
+            _trailRenderer.time = _data.trailTime;
+
+            light2D.gameObject.SetActive(_data.useLight);
+            
+            if (_data.useLight)
+            {
+                light2D.color = _data.lightColor;
+            }
         }
 
         private void DisableProjectile(Vector3 hitObjectPos)
@@ -86,14 +159,28 @@ namespace Entities
             gameObject.SetActive(false);
         }
 
-        private void ProjectileHit(Collider2D col)
+        private void ProjectileHit(Collider2D col, Vector3? hitPoint = null)
         {
+            if (!gameObject.activeInHierarchy) return;
+
             if (((1 << col.gameObject.layer) & GameUtilities.BasicMovementCollisionMask) != 0)
             {
-                DisableProjectile(col.transform.position);
+                if (_data.collideWithWorld)
+                {
+                    DisableProjectile(col.transform.position);
+                }
+
+                return;
             }
 
+            if (hitPoint != null)
+            {
+                transform.position = (Vector3)hitPoint;
+            }
+            
+            if (!_data.canHurtPlayer && !_data.canHurtEnemies) return;
             if (!col.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
+            if (!_data.canHurtEnemies && damageable is EnemyEntity) return;
             if (!_data.canHurtPlayer && damageable is PlayerController) return;
             
             // TODO: Implement entity defense and defense penetration

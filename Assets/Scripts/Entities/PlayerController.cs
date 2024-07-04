@@ -215,36 +215,11 @@ namespace Entities
 
         protected void OnTriggerEnter2D(Collider2D col)
         {
-            // if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
-            // {
-            //     _interactablesInRange.Add(interactable);
-            // }
-            
             if (col.gameObject.CompareTag("Item"))
             {
                 OnItemPickedUp(col.transform.parent.gameObject);
                 Destroy(col.transform.parent.gameObject);
             }
-        }
-
-        // protected void OnTriggerExit2D(Collider2D other)
-        // {
-        //     if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
-        //     {
-        //         interactable.DisablePrompt();
-        //         
-        //         if (interactable == _closestInteractable) _closestInteractable = null;
-        //         
-        //         _interactablesInRange.Remove(interactable);
-        //     }
-        // }
-
-        private void OnDrawGizmos()
-        {
-            var mousePos = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(mousePos, 0.5f);
         }
 
         // Private methods
@@ -436,8 +411,6 @@ namespace Entities
             }
             
             CameraController.CameraShake(0.1f, 0.1f);
-            
-            Debug.Log($"Took {amount} damage!");
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)

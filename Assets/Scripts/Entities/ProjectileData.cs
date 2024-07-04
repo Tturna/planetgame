@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Entities
 {
@@ -7,7 +8,9 @@ namespace Entities
     public class ProjectileData
     {
         public Sprite sprite;
-        public float projectileSpeed;
+        [FormerlySerializedAs("projectileSpeed")] public float minProjectileSpeed;
+        public float maxProjectileSpeed;
+        public float lifetime;
         public float damage;
         public float knockback;
         public float critChance;
@@ -17,8 +20,12 @@ namespace Entities
         public bool faceDirectionOfTravel;
         public bool collideWithWorld;
         public bool canHurtPlayer;
+        public bool canHurtEnemies;
+        public float collisionActivationDelay;
         public Color breakParticleColor;
         public Gradient trailColor;
         public float trailTime;
+        public bool useLight;
+        public Color lightColor;
     }
 }

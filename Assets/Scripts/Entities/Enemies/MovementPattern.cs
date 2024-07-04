@@ -60,28 +60,37 @@ namespace Entities.Enemies
             _collisionLayerMask = GameUtilities.BasicMovementCollisionMask;
         }
 
-        private Vector3 GetWalkForceOnTerrain(Transform entityTr, Vector3 relativeMoveDirection, float accelerationSpeed, float maxSpeed, float maxSlopeMultiplier)
+        private Vector3 GetWalkForceOnTerrain(MovementFunctionData data)
         {
-            const float rayBelowLength = .35f;
-            const float raySideLength = .4f;
+            var entityTr = data.rb.transform;
+            var relativeMoveDirection = data.relativeMoveDirection;
+            var accelerationSpeed = data.enemySo.accelerationSpeed;
+            var maxSlopeMultiplier = data.enemySo.maxSlopeMultiplier;
+            var hbVertEdgeDist = data.enemySo.hitboxSize.y / 2f + data.enemySo.hitboxEdgeRadius;
+            var rayBelowLength = hbVertEdgeDist * 1.1f;
+            var raySideLength = hbVertEdgeDist * 1.25f;
             
             // Figure out the slope angle of the terrain
-            var rayStartPoint = entityTr.position - entityTr.up * 0.25f;
+            var rayStartPoint = entityTr.position - entityTr.up * hbVertEdgeDist / 2f;
 
             // Raycast "below". It's actually a bit to the side as well
             var rayBelowDirection = new Vector2(.1f * relativeMoveDirection.x, -.4f).normalized;
             var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, rayBelowLength, _collisionLayerMask);
             
             // Raycast a bit to the side, depending on movement direction
-            var raySideDirection = new Vector2(.1f * relativeMoveDirection.x, -.2f).normalized;
+            var raySideDirection = new Vector2(.1f * relativeMoveDirection.x, -.15f).normalized;
             var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, raySideLength, _collisionLayerMask);
+            
+            // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * rayBelowLength, Color.red);
+            // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * raySideLength, Color.blue);
             
             var force = relativeMoveDirection.x * entityTr.right * accelerationSpeed;
             
             if (hitBelow && hitSide)
             {
                 // Move direction is the vector from the bottom raycast to the side raycast
-                var direction = (hitSide.point - hitBelow.point).normalized;
+                var direction = (Vector3)(hitSide.point - hitBelow.point).normalized;
+                // Debug.DrawLine(entityTr.position, entityTr.position + direction * 3f, Color.green);
                 
                 // Check if the direction is upwards relative to the entity
                 var dot = Vector3.Dot(entityTr.up, direction);
@@ -104,8 +113,16 @@ namespace Entities.Enemies
             anim.SetBool("jumping", false);
         }
 
-        private void HandleWalkerJump(Transform entityTr, Rigidbody2D rb, Animator entityAnim, Vector3 relativeMoveDirection, float jumpForce)
+        private void HandleWalkerJump(MovementFunctionData data)
         {
+            if (!data.enemySo.canJump) return;
+            
+            var rb = data.rb;
+            var entityTr = rb.transform;
+            var entityAnim = data.anim;
+            var relativeMoveDirection = data.relativeMoveDirection;
+            var jumpForce = data.enemySo.jumpForce;
+            
             if (_jumpCooldown > 0)
             {
                 _jumpCooldown -= Time.deltaTime;
@@ -136,9 +153,9 @@ namespace Entities.Enemies
         private void MeleeWalker(MovementFunctionData data)
         {
             HandleGroundCheck(data.rb.transform, data.anim);
-            HandleWalkerJump(data.rb.transform, data.rb, data.anim, data.relativeMoveDirection, data.enemySo.jumpForce);
+            HandleWalkerJump(data);
             
-            var force = GetWalkForceOnTerrain(data.rb.transform, data.relativeMoveDirection, data.enemySo.accelerationSpeed, data.enemySo.maxSpeed, data.enemySo.maxSlopeMultiplier);
+            var force = GetWalkForceOnTerrain(data);
             var localVelocity = data.rb.GetVector(data.rb.velocity);
             
             if ((data.relativeMoveDirection.x > 0 && localVelocity.x < data.enemySo.maxSpeed) ||

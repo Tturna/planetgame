@@ -21,9 +21,6 @@ MonoBehaviour:
   useBothHands: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
-  craftingRecipe:
-  - item: {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
-    amount: 1
   logicCode: 1
   attackCooldown: 0.2
   energyCost: 5
@@ -38,16 +35,20 @@ MonoBehaviour:
   incrementStackOnUse: 0
   projectile:
     sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
-    projectileSpeed: 45
-    damage: 6
+    minProjectileSpeed: 45
+    maxProjectileSpeed: 45
+    lifetime: 3
+    damage: 4
     knockback: 100
     critChance: 0
     piercing: 0
     useGravity: 0
     gravityMultiplier: 0
     faceDirectionOfTravel: 0
-    collideWithWorld: 0
+    collideWithWorld: 1
     canHurtPlayer: 0
+    canHurtEnemies: 1
+    collisionActivationDelay: 0
     breakParticleColor: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
     trailColor:
       serializedVersion: 2
@@ -79,6 +80,8 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     trailTime: 0.05
+    useLight: 1
+    lightColor: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
   muzzlePosition: {x: 0.55, y: 0.125}
   muzzleFlashes:
   - {fileID: 401124699, guid: 5d1f927952885c547a3fcce829665385, type: 3}

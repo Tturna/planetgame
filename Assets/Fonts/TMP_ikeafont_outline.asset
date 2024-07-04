@@ -47,7 +47,7 @@ Material:
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
     m_Colors:
-    - _AccentColor: {r: 0, g: 0, b: 0, a: 1}
+    - _AccentColor: {r: 0.6784314, g: 0.19607843, b: 0.19607843, a: 1}
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
@@ -63,9 +63,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: TMP_ikeafont_outline
   m_EditorClassIdentifier: 
-  hashCode: -1381786774
+  hashCode: -889372484
   material: {fileID: -6140583929723363763}
-  materialHashCode: 676387722
+  materialHashCode: 992201756
   m_Version: 1.1.0
   m_SourceFontFileGUID: 6843d920ef35a2b48b7ba265e890e930
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 6843d920ef35a2b48b7ba265e890e930, type: 3}

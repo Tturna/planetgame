@@ -15,14 +15,14 @@ namespace Entities
     
         #region Base Stats
 
-        private const float BaseMaxHealth = 100f;
-        private const float BaseHealth = 100f;
-        private const float BaseHealthRegenDelay = 2f;
-        private const float BaseHealthRegenRate = 10f;
-        private const float BaseMaxEnergy = 200f;
-        private const float BaseEnergy = 200f;
-        private const float BaseEnergyRegenDelay = 1f;
-        private const float BaseEnergyRegenRate = 30f;
+        private const float BaseMaxHealth = 10000f;
+        private const float BaseHealth = 10000f;
+        private const float BaseHealthRegenDelay = 4f;
+        private const float BaseHealthRegenRate = 3.34f;
+        private const float BaseMaxEnergy = 100f;
+        private const float BaseEnergy = 100f;
+        private const float BaseEnergyRegenDelay = 2f;
+        private const float BaseEnergyRegenRate = 10f;
         private const float BaseMaxJetpackCharge = 100f;
         private const float BaseJetpackCharge = 100f;
         private const float BaseJetpackRechargeDelay = 1f;
@@ -125,7 +125,7 @@ namespace Entities
             }
             else
             {
-                Health = Mathf.Clamp(Health + HealthRegenRate * Time.deltaTime, 0, MaxEnergy);
+                Health = Mathf.Clamp(Health + HealthRegenRate * Time.deltaTime, 0, MaxHealth);
                 StatsUIManager.instance.UpdateHealthUI(Health, MaxHealth);
             }
             

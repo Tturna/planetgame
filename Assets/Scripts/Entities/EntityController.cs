@@ -12,8 +12,8 @@ namespace Entities
         [SerializeField] protected Collider2D mainCollider;
         [CanBeNull] public GameObject ClosestPlanetObject { get; private set; }
         [CanBeNull] public GameObject CurrentPlanetObject { get; private set; }
-        [CanBeNull] protected PlanetGenerator ClosestPlanetGen { get; set; }
-        [CanBeNull] protected PlanetGenerator CurrentPlanetGen { get; set; }
+        [CanBeNull] public PlanetGenerator ClosestPlanetGen { get; private set; }
+        [CanBeNull] protected PlanetGenerator CurrentPlanetGen { get; private set; }
         public bool IsAlive { get; protected set; } = true;
         public Vector2 DirectionToClosestPlanet { get; private set; }
         public float DistanceToClosestPlanet { get; private set; } = float.MaxValue;
@@ -23,8 +23,8 @@ namespace Entities
         protected bool FollowPlanetRotation { get; private set; } = true;
         protected bool CanCollide { get; private set; } = true;
 
-        private float _closestPlanetCheckTimer;
-        private const float ClosestPlanetCheckInterval = 5f;
+        protected float closestPlanetCheckTimer;
+        protected const float ClosestPlanetCheckInterval = 5f;
 
         #region Events
         
@@ -51,10 +51,10 @@ namespace Entities
             if (TryGetComponent<Rigidbody2D>(out var rb))
             {
                 Rigidbody = rb;
-                _closestPlanetCheckTimer = ClosestPlanetCheckInterval;
+                closestPlanetCheckTimer = ClosestPlanetCheckInterval;
                 
                 // Bump entity so it calculates planet relations on start
-                Rigidbody.AddRelativeForce(Vector2.up * 0.11f, ForceMode2D.Impulse);
+                // Rigidbody.AddRelativeForce(Vector2.up * 0.11f, ForceMode2D.Impulse);
             }
             else
             {
@@ -67,6 +67,7 @@ namespace Entities
         protected virtual void FixedUpdate()
         {
             if (!Rigidbody) return;
+            if (!CalculatePhysics && !FollowPlanetRotation) return;
 
             // This is here to prevent useless calculations when an entity is stationary.
             // This also breaks space flight as the player is stationary in relationship to the ship,
@@ -76,13 +77,13 @@ namespace Entities
                 // Prevent useless calculations when the entity is on a planet
                 if (!CurrentPlanetObject || !CurrentPlanetGen)
                 {
-                    if (_closestPlanetCheckTimer < ClosestPlanetCheckInterval)
+                    if (closestPlanetCheckTimer < ClosestPlanetCheckInterval)
                     {
-                        _closestPlanetCheckTimer += Time.fixedDeltaTime;
+                        closestPlanetCheckTimer += Time.fixedDeltaTime;
                     }
                     else
                     {
-                        _closestPlanetCheckTimer = 0f;
+                        closestPlanetCheckTimer = 0f;
                         var closestDist = float.MaxValue;
                         
                         foreach (var planet in GameUtilities.GetAllPlanets())
@@ -100,8 +101,8 @@ namespace Entities
 
             if (!ClosestPlanetGen) return;
             if (!ClosestPlanetObject) return;
-            
-            var posDiff = CalculatePlanetRelations();
+
+            var posDiff = CalculatePlanetRelation();
             
             if (!CalculatePhysics) return;
             if (!CurrentPlanetObject) return;
@@ -121,10 +122,26 @@ namespace Entities
                 transform.LookAt(transform.position + Vector3.forward, -dirToPlanet);
             }
         }
-
-        private Vector2 CalculatePlanetRelations()
+        
+        protected void SetCurrentPlanet([CanBeNull] PlanetGenerator planetGen)
         {
-            Vector2 posDiff = ClosestPlanetObject!.transform.position - transform.position;
+            // ReSharper disable once Unity.NoNullPropagation
+            var planetObject = planetGen?.gameObject;
+            
+            CurrentPlanetGen = planetGen;
+            CurrentPlanetObject = planetObject;
+            ClosestPlanetGen = planetGen;
+            ClosestPlanetObject = planetObject;
+        }
+
+        protected Vector2 CalculatePlanetRelation()
+        {
+            if (!ClosestPlanetObject)
+            {
+                throw new NullReferenceException("Closest planet object is null.");
+            }
+            
+            Vector2 posDiff = ClosestPlanetObject.transform.position - transform.position;
             DirectionToClosestPlanet = posDiff.normalized;
             DistanceToClosestPlanet = posDiff.magnitude;
             
@@ -132,16 +149,14 @@ namespace Entities
             {
                 if (CurrentPlanetObject == ClosestPlanetObject) return posDiff;
                 // Debug.Log($"{name} is entering atmosphere of {ClosestPlanetObject.name}");
-                CurrentPlanetObject = ClosestPlanetObject;
-                CurrentPlanetGen = ClosestPlanetGen;
+                SetCurrentPlanet(ClosestPlanetGen);
                 TriggerOnPlanetEntered(CurrentPlanetObject);
             }
             else
             {
                 if (CurrentPlanetObject != ClosestPlanetObject) return posDiff;
                 // Debug.Log($"{name} is exiting atmosphere of {ClosestPlanetObject.name}");
-                CurrentPlanetObject = null;
-                CurrentPlanetGen = null;
+                SetCurrentPlanet(null);
                 TriggerOnPlanetExited(ClosestPlanetObject);
             }
             

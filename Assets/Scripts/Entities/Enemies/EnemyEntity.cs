@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -15,10 +16,11 @@ namespace Entities.Enemies
     // Sealed - can't be inherited
     public sealed class EnemyEntity : EntityController, IDamageable
     {
-        [SerializeField] private EnemySo enemySo;
         [SerializeField] private Shader flashShader;
         
+        public EnemySo enemySo;
         [HideInInspector] public Vector3 relativeMoveDirection;
+        [HideInInspector] public float currentKnockback; // This exists so that attack patterns can change the contact knockback temporarily.
         
         private PlayerController _player;
         private Animator _animator;
@@ -33,6 +35,7 @@ namespace Entities.Enemies
         private MovementPattern.MovementFunctionData _movementFunctionData;
         
         private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer;
+        private Vector2 _directionToPlayer;
         private float _distanceToPlayer;
         private float _health, _maxHealth;
         private bool _aggravated, _canMove = true;
@@ -73,7 +76,7 @@ namespace Entities.Enemies
             _movementPattern.Init();
             _movementFunctionData = new MovementPattern.MovementFunctionData();
 
-            _healthbarManager.Initialize(_health, _maxHealth, enemySo.isBoss, enemySo.healthbarDistance);
+            _healthbarManager.Initialize(_health, _maxHealth, enemySo);
 
             var hitboxChild = new GameObject("Hitbox");
             hitboxChild.transform.SetParent(transform);
@@ -87,6 +90,8 @@ namespace Entities.Enemies
             hitbox.isTrigger = true;
             
             _defaultShader = _sr.material.shader;
+            
+            currentKnockback = enemySo.knockback;
         }
 
         private void Update()
@@ -118,7 +123,9 @@ namespace Entities.Enemies
             // _calculationTimer = calculationInterval;
             
             // Calculation    
-            _distanceToPlayer = (transform.position - _player.transform.position).magnitude;
+            var diffToPlayer = _player.transform.position - transform.position;
+            _directionToPlayer = diffToPlayer.normalized;
+            _distanceToPlayer = diffToPlayer.magnitude;
             return true;
         }
 
@@ -156,8 +163,8 @@ namespace Entities.Enemies
             _aggravated = true;
 
             if (!enemySo.isBoss) return;
-            _healthbarManager.EnableBossUIHealth();
-            _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
+            _healthbarManager.ToggleBossUIHealth(true);
+            _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo);
         }
 
         private void Deaggro()
@@ -251,7 +258,7 @@ namespace Entities.Enemies
                     ap = enemySo.attacks[rng];
                 }
 
-                if (!enemySo.alwaysAttack && ap.attackDistance < _distanceToPlayer)
+                if (!enemySo.alwaysAttack && ap.attackRange < _distanceToPlayer)
                 {
                     if (enemySo.useRandomAttack) usedIndices[rng] = true;
                     continue;
@@ -263,8 +270,7 @@ namespace Entities.Enemies
             
             if (pattern == null) return false;
             
-            var tr = transform;
-            pattern.GetAttack().Invoke(this, (tr.right * relativeMoveDirection.x + tr.up * 0.2f).normalized);
+            pattern.GetAttack().Invoke(this, _directionToPlayer);
             _animator.SetInteger(AnimAttackIndex, pattern.GetIndex());
             _animator.SetTrigger(AnimAttack);
 
@@ -273,7 +279,6 @@ namespace Entities.Enemies
             _canMove = false;
 
             StartCoroutine(DelayEnableMovement());
-
             return true;
         }
 
@@ -288,7 +293,7 @@ namespace Entities.Enemies
             
             if (enemySo.isBoss)
             {
-                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
+                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo);
             }
             
             _damageNumberManager.CreateDamageNumber(amount);
@@ -309,6 +314,7 @@ namespace Entities.Enemies
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
         {
+            if (enemySo.isImmuneToKnockback) return;
             if (amount == 0) return;
             
             Rigidbody.velocity = Vector2.zero;
@@ -330,6 +336,11 @@ namespace Entities.Enemies
             _deathPs.Play();
             TriggerOnDeath();
             GameUtilities.instance.DelayExecute(() => Destroy(_deathPs.gameObject), 1f);
+
+            if (enemySo.isBoss)
+            {
+                _healthbarManager.ToggleBossUIHealth(false);
+            }
             
             Destroy(gameObject);
         }
@@ -354,13 +365,21 @@ namespace Entities.Enemies
             if (col.TryGetComponent<PlayerController>(out var player))
             {
                 player.TakeDamage(enemySo.contactDamage);
-                player.Knockback(transform.position, enemySo.knockback);
+                player.Knockback(transform.position + (Vector3)enemySo.knockbackSourcePointOffset, currentKnockback);
             }
         }
         
         private void OnDrawGizmos()
         {
             Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
+        }
+        
+        [MenuItem("CONTEXT/EnemyEntity/InitializeForEditor")]
+        static void InitializeForEditor(MenuCommand command)
+        {
+            var enemyEntity = (EnemyEntity)command.context;
+            enemyEntity.gameObject.name = "(Enemy) " + enemyEntity.enemySo.enemyName;
+            enemyEntity.GetComponent<Animator>().runtimeAnimatorController = enemyEntity.enemySo.overrideAnimator;
         }
     }
 }

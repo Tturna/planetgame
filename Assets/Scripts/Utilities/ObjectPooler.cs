@@ -19,6 +19,16 @@ namespace Utilities
 
         public static void CreatePool(string poolName, GameObject stencilObject, int initialPoolSize, bool dynamicSize = false)
         {
+            if (string.IsNullOrEmpty(poolName))
+            {
+                throw new ArgumentException("Pool name cannot be null or empty!");
+            }
+            
+            if (stencilObject == null)
+            {
+                throw new ArgumentException("Stencil object cannot be null!");
+            }
+            
             if (PoolsDict.ContainsKey(poolName))
             {
                 return;
@@ -71,7 +81,6 @@ namespace Utilities
             if (poolData.dynamicSize)
             {
                 var obj = UnityEngine.Object.Instantiate(poolData.stencilObject);
-                obj.SetActive(false);
                 pool.Add(obj);
 
                 return obj;

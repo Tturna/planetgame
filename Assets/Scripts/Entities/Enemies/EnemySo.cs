@@ -12,11 +12,13 @@ namespace Entities.Enemies
         public float maxHealth;
         public float health;
         public float contactDamage;
+        public bool isImmuneToKnockback;
         public float knockback;
         public float aggroRange;
         public float accelerationSpeed;
         public float maxSpeed;
         public float maxSlopeMultiplier;
+        public bool canJump;
         public float jumpForce;
         public MovementPattern movementPattern;
         public bool isBoss;
@@ -25,6 +27,7 @@ namespace Entities.Enemies
         public Vector2 hitboxOffset;
         public Vector2 hitboxSize;
         public float hitboxEdgeRadius;
+        public Vector2 knockbackSourcePointOffset;
         public float healthbarDistance;
         public RuntimeAnimatorController overrideAnimator;
         
