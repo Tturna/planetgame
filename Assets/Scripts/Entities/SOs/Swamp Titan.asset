@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Swamp Titan
   maxHealth: 1200
-  health: 1200
+  health: 200
   deathDelay: 3.5
   contactDamage: 20
   isImmuneToKnockback: 1
@@ -241,7 +241,7 @@ MonoBehaviour:
     useRandomProjectileAttack: 0
     minProjectileAttacks: 0
     maxProjectileAttacks: 0
-    attackParticlePrefab: {fileID: 0}
+    attackParticlePrefab: {fileID: 4828194393695282975, guid: 5fab68f28c706f642817581d226db4ea, type: 3}
     attackParticleOffset: {x: 0, y: 0}
   - attackName: Teleport
     attackFunction: 3
