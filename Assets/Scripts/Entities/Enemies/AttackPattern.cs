@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace Entities.Enemies
             public Vector2 maxProjectileSpawnOffset;
         }
 
-        public Dictionary<AttackFunctions, Action<EnemyEntity, Vector3>> FunctionLookupTable => new()
+        public Dictionary<AttackFunctions, Func<EnemyEntity, Vector3, Action?>> FunctionLookupTable => new()
         {
             { AttackFunctions.Punch, Punch },
             { AttackFunctions.Dash, Dash },
@@ -48,7 +49,7 @@ namespace Entities.Enemies
             { AttackFunctions.Teleport, Teleport }
         };
         
-        [UsedImplicitly] public string attackName;
+        [UsedImplicitly] public string attackName = null!;
         public AttackFunctions attackFunction;
         [FormerlySerializedAs("attackIndex")] public int animationIndex;
         public float damage;
@@ -60,17 +61,17 @@ namespace Entities.Enemies
         public bool preventsMovement;
         public float cameraShakeTime;
         public float cameraShakeStrength;
-        public ProjectileAttackData[] projectileAttacks;
+        public ProjectileAttackData[]? projectileAttacks;
         public bool useRandomProjectileAttack;
         public int minProjectileAttacks;
         public int maxProjectileAttacks;
-        public GameObject attackParticlePrefab;
+        public GameObject? attackParticlePrefab;
         public Vector2 attackParticleOffset;
         
-        private GameObject _projectilePrefab;
+        private GameObject? _projectilePrefab;
         private Dictionary<string, KeyValuePair<GameObject, ParticleSystem>> _attackParticlesDict = new();
 
-        public Action<EnemyEntity, Vector3> GetAttack()
+        public Func<EnemyEntity, Vector3, Action?> GetAttack()
         {
             return FunctionLookupTable[attackFunction];
         }
@@ -87,7 +88,7 @@ namespace Entities.Enemies
             var enemyTransform = enemy.transform;
             if (!_attackParticlesDict.ContainsKey(attackName))
             {
-                var obj = Object.Instantiate(attackParticlePrefab, enemyTransform);
+                var obj = Object.Instantiate(attackParticlePrefab, enemyTransform)!;
                 _attackParticlesDict.Add(attackName, new KeyValuePair<GameObject, ParticleSystem>(obj, obj.GetComponent<ParticleSystem>()));
             }
                 
@@ -103,18 +104,18 @@ namespace Entities.Enemies
             _attackParticlesDict[attackName].Value.Play();
         }
 
-        public void Punch(EnemyEntity enemy, Vector3 directionToPlayer)
+        public Action? Punch(EnemyEntity enemy, Vector3 directionToPlayer)
         {
             if (attackDelay > 0)
             {
-                GameUtilities.instance.DelayExecute(Action, attackDelay);
+                return GameUtilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {
                 Action();
             }
 
-            return;
+            return null;
 
             void Action()
             {
@@ -132,18 +133,18 @@ namespace Entities.Enemies
             }
         }
         
-        public void Dash(EnemyEntity enemy, Vector3 directionToPlayer)
+        public Action? Dash(EnemyEntity enemy, Vector3 directionToPlayer)
         {
             if (attackDelay > 0)
             {
-                GameUtilities.instance.DelayExecute(Action, attackDelay);
+                return GameUtilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {
                 Action();
             }
 
-            return;
+            return null;
 
             void Action()
             {
@@ -174,26 +175,26 @@ namespace Entities.Enemies
             }
         }
 
-        public void Shoot(EnemyEntity enemy, Vector3 directionToPlayer)
+        public Action? Shoot(EnemyEntity enemy, Vector3 directionToPlayer)
         {
             if (attackDelay > 0)
             {
-                GameUtilities.instance.DelayExecute(() =>
+                return GameUtilities.instance.DelayExecute(() =>
                 {
                     ShootAction(enemy, directionToPlayer);
                     PlayAttackParticles(enemy);
                 }, attackDelay);
             }
-            else
-            {
-                ShootAction(enemy, directionToPlayer);
-                PlayAttackParticles(enemy);
-            }
+
+            ShootAction(enemy, directionToPlayer);
+            PlayAttackParticles(enemy);
+            return null;
         }
         
         private void ShootAction(EnemyEntity enemy, Vector3 directionToPlayer)
         {
             if (!enemy) return;
+            if (projectileAttacks is not { Length: > 0 }) return;
             
             if (_projectilePrefab == null)
             {
@@ -282,7 +283,7 @@ namespace Entities.Enemies
             }
         }
 
-        public void Teleport(EnemyEntity enemy, Vector3 directionToPlayer)
+        public Action? Teleport(EnemyEntity enemy, Vector3 directionToPlayer)
         {
             // Save the player position before attack delay to prevent a bullshit tp
             // where the player doesn't have a chance of dodging.
@@ -290,14 +291,14 @@ namespace Entities.Enemies
             
             if (attackDelay > 0)
             {
-                GameUtilities.instance.DelayExecute(Action, attackDelay);
+                return GameUtilities.instance.DelayExecute(Action, attackDelay);
             }
             else
             {
                 Action();
             }
 
-            return;
+            return null;
 
             void Action()
             {

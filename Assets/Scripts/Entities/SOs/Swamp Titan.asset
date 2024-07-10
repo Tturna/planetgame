@@ -15,6 +15,7 @@ MonoBehaviour:
   enemyName: Swamp Titan
   maxHealth: 1200
   health: 1200
+  deathDelay: 3.5
   contactDamage: 20
   isImmuneToKnockback: 1
   knockback: 10

@@ -11,6 +11,7 @@ namespace Entities.Enemies
         public string enemyName;
         public float maxHealth;
         public float health;
+        public float deathDelay;
         public float contactDamage;
         public bool isImmuneToKnockback;
         public float knockback;

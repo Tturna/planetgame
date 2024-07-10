@@ -33,6 +33,7 @@ namespace Entities.Enemies
         private MovementPattern _movementPattern;
         private Action<MovementPattern.MovementFunctionData> _movementFunction;
         private MovementPattern.MovementFunctionData _movementFunctionData;
+        private Action _deathAttackCancelAction;
         
         private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer;
         private Vector2 _directionToPlayer;
@@ -44,6 +45,7 @@ namespace Entities.Enemies
         private static readonly int AnimJumping = Animator.StringToHash("jumping");
         private static readonly int AnimAttackIndex = Animator.StringToHash("attackIndex");
         private static readonly int AnimAttack = Animator.StringToHash("attack");
+        private static readonly int AnimDeath = Animator.StringToHash("death");
 
         public delegate void DeathHandler(EnemySo enemySo);
         public event DeathHandler OnDeath;
@@ -96,6 +98,7 @@ namespace Entities.Enemies
 
         private void Update()
         {
+            if (_health <= 0) return;
             if (!CalculatePlayerRelation()) return;
 
             CheckAggro();
@@ -104,6 +107,8 @@ namespace Entities.Enemies
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            
+            if (_health <= 0) return;
             
             if (_aggravated)
             {
@@ -270,7 +275,7 @@ namespace Entities.Enemies
             
             if (pattern == null) return false;
             
-            pattern.GetAttack().Invoke(this, _directionToPlayer);
+            _deathAttackCancelAction = pattern.GetAttack().Invoke(this, _directionToPlayer);
             _animator.SetInteger(AnimAttackIndex, pattern.GetIndex());
             _animator.SetTrigger(AnimAttack);
 
@@ -332,6 +337,8 @@ namespace Entities.Enemies
 
         public void Death()
         {
+            _deathAttackCancelAction?.Invoke();
+            
             _deathPs.transform.SetParent(null);
             _deathPs.Play();
             TriggerOnDeath();
@@ -341,8 +348,22 @@ namespace Entities.Enemies
             {
                 _healthbarManager.ToggleBossUIHealth(false);
             }
-            
-            Destroy(gameObject);
+
+            transform.localScale = Vector3.one;
+            _sr.flipX = enemySo.flipSprite;
+            _animator.SetTrigger(AnimDeath);
+
+            if (enemySo.deathDelay > 0)
+            {
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    Destroy(gameObject);
+                }, enemySo.deathDelay);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         public Vector3 GetVectorToPlayer()

@@ -26,9 +26,10 @@ namespace Utilities
             BasicMovementCollisionMask = LayerMask.GetMask("Terrain", "TerrainBits", "Building");
         }
 
-        public void DelayExecute(Action action, float delay)
+        public Action DelayExecute(Action action, float delay)
         {
-            StartCoroutine(DelayExec(action, delay));
+            var coroutine = StartCoroutine(DelayExec(action, delay));
+            return () => StopCoroutine(coroutine);
         }
 
         private static IEnumerator DelayExec(Action action, float delay)
