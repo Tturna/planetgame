@@ -12593,6 +12593,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 121234070}
   m_CullTransparentMesh: 1
+--- !u!1001 &142531018
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_Name
+      value: (Enemy) Swamp Thing
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_RootOrder
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -263.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 142.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
 --- !u!1 &148302038
 GameObject:
   m_ObjectHideFlags: 0
@@ -92132,6 +92191,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1723596294}
   m_CullTransparentMesh: 1
+--- !u!1001 &1735621809
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_Name
+      value: (Enemy) Swamp Thing (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_RootOrder
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -274.87
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 141.93
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
 --- !u!1 &1737763771
 GameObject:
   m_ObjectHideFlags: 0
@@ -103086,6 +103204,14 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 1.875
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
       value: 2.375
       objectReference: {fileID: 0}
@@ -105263,7 +105389,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 45
+  m_RootOrder: 47
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6899459541835332610
 SpriteRenderer:
@@ -105414,7 +105540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_RootOrder
@@ -105422,11 +105548,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -259.5
+      value: -287.73
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 143.54
+      value: 135.03
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_LocalPosition.z

@@ -340,4 +340,7 @@ MonoBehaviour:
     attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
     attackParticleOffset: {x: 0.75, y: -0.6}
   dropMultiple: 0
-  lootTable: []
+  lootTable:
+  - item:
+      itemSo: {fileID: 11400000, guid: af6c9a9a8a1469349b548c43b4c7f1c8, type: 2}
+    dropChance: 100

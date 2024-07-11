@@ -183,7 +183,7 @@ namespace Entities
             }
             
             if (!_data.canHurtPlayer && !_data.canHurtEnemies) return;
-            if (!col.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
+            if (!col.transform.TryGetComponent<IDamageable>(out var damageable)) return;
             if (!_data.canHurtEnemies && damageable is EnemyEntity) return;
             if (!_data.canHurtPlayer && damageable is PlayerController) return;
             
