@@ -5047,7 +5047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 25
-  mainCollider: {fileID: 0}
+  mainCollider: {fileID: 9052693212076312620}
   flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
   relativeMoveDirection: {x: 0, y: 0, z: 0}

@@ -24,6 +24,8 @@ namespace Entities
         // private GameObject _child;
 
         private bool _isBoss;
+        private bool _bossIsEnraged;
+        private Vector2 _initialBossHealthBarPosition;
 
         private void Update()
         {
@@ -38,6 +40,12 @@ namespace Entities
             if (!_isBoss || !_focusedBossHealth) return;
 
             _fWhiteBar.fillAmount = Mathf.Lerp(_fWhiteBar.fillAmount, _fActualBar.fillAmount, whiteBarSmoothing);
+
+            if (_bossIsEnraged)
+            {
+                var rngPos = Random.insideUnitCircle * 0.3f;
+                ((RectTransform)_focusedBossHealth.transform).anchoredPosition = _initialBossHealthBarPosition + rngPos;
+            }
         }
 
         public void Initialize(float startingHealth, float maxHealth, EnemySo enemySo)
@@ -47,11 +55,13 @@ namespace Entities
             var healthbar = new GameObject("Health Bar");
             healthbar.transform.SetParent(transform);
             healthbar.transform.localPosition = Vector3.down * enemySo.healthbarDistance;
+            healthbar.transform.localRotation = Quaternion.identity;
             
             // Create background
             _bgObject = new GameObject("Background");
             _bgObject.transform.SetParent(healthbar.transform);
             _bgObject.transform.localPosition = Vector3.zero;
+            _bgObject.transform.localRotation = Quaternion.identity;
             
             var bgSr = _bgObject.AddComponent<SpriteRenderer>();
             bgSr.sprite = bgSprite;
@@ -62,6 +72,7 @@ namespace Entities
             _whiteBarObject = new GameObject("White Bar");
             _whiteBarObject.transform.SetParent(healthbar.transform);
             _whiteBarObject.transform.localPosition = Vector3.zero;
+            _whiteBarObject.transform.localRotation = Quaternion.identity;
             
             var whiteSr = _whiteBarObject.AddComponent<SpriteRenderer>();
             // whiteSr.sprite = _isBoss ? bgBoss : bgNormal;
@@ -73,12 +84,14 @@ namespace Entities
             _redBarObject = new GameObject("Red Bar");
             _redBarObject.transform.SetParent(healthbar.transform);
             _redBarObject.transform.localPosition = Vector3.zero;
+            _redBarObject.transform.localRotation = Quaternion.identity;
 
             var redSr = _redBarObject.AddComponent<SpriteRenderer>();
             // redSr.sprite = _isBoss ? actualBarBoss : actualBarNormal;
             redSr.sprite = redBarSprite;
             redSr.sortingLayerID = SortingLayer.NameToID("Healthbars");
             redSr.sortingOrder = 2;
+            UpdateHealthbar(startingHealth, maxHealth);
             
             // If this is a boss, set up the big boss UI health
             if (!_isBoss) return;
@@ -89,6 +102,8 @@ namespace Entities
             _fHpPercent = _focusedBossHealth.transform.GetChild(4).GetComponent<TextMeshProUGUI>();
             _fName = _focusedBossHealth.transform.GetChild(5).GetComponent<TextMeshProUGUI>();
             UpdateBossUIHealth(startingHealth, maxHealth, enemySo);
+            
+            _initialBossHealthBarPosition = ((RectTransform)_focusedBossHealth.transform).anchoredPosition;
         }
         
         public void UpdateHealthbar(float health, float maxHealth)
@@ -128,6 +143,11 @@ namespace Entities
         public void ToggleBossUIHealth(bool state)
         {
             _focusedBossHealth.SetActive(state);
+        }
+        
+        public void SetBossEnraged(bool state)
+        {
+            _bossIsEnraged = state;
         }
     }
 }

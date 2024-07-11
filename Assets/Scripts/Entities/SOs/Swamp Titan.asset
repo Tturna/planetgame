@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Swamp Titan
   maxHealth: 1200
-  health: 200
+  health: 400
+  wakeupDelay: 2
   deathDelay: 3.5
   contactDamage: 20
   isImmuneToKnockback: 1
@@ -45,30 +46,30 @@ MonoBehaviour:
   - attackName: Slam
     attackFunction: 0
     animationIndex: 1
-    damage: 40
+    damage: 30
     knockback: 20
     attackRange: 4
     attackMagnitude: 1
     attackTime: 0
     attackDelay: 0.45
     preventsMovement: 1
-    cameraShakeTime: 0.69
-    cameraShakeStrength: 0.2
+    cameraShakeTime: 0.33
+    cameraShakeStrength: 0.15
     projectileAttacks:
     - projectileData:
         sprite: {fileID: 1431803324, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
         minProjectileSpeed: 5
         maxProjectileSpeed: 9
         lifetime: 0
-        damage: 0
+        damage: 15
         knockback: 0
         critChance: 0
-        piercing: 0
+        piercing: 1
         useGravity: 1
         gravityMultiplier: 25
         faceDirectionOfTravel: 1
         collideWithWorld: 1
-        canHurtPlayer: 0
+        canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
         breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -110,20 +111,21 @@ MonoBehaviour:
       maxAimAngleOffset: 135
       minProjectileSpawnOffset: {x: 0.75, y: -0.6}
       maxProjectileSpawnOffset: {x: 0.75, y: -0.6}
+      tryStartFromGround: 0
     - projectileData:
         sprite: {fileID: 811201656, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
         minProjectileSpeed: 10
         maxProjectileSpeed: 14
         lifetime: 0
-        damage: 0
+        damage: 15
         knockback: 0
         critChance: 0
-        piercing: 0
+        piercing: 1
         useGravity: 1
         gravityMultiplier: 25
         faceDirectionOfTravel: 1
         collideWithWorld: 1
-        canHurtPlayer: 0
+        canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
         breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -165,20 +167,21 @@ MonoBehaviour:
       maxAimAngleOffset: 135
       minProjectileSpawnOffset: {x: 0.75, y: -0.6}
       maxProjectileSpawnOffset: {x: 0.75, y: -0.6}
+      tryStartFromGround: 0
     - projectileData:
         sprite: {fileID: 968132344, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
         minProjectileSpeed: 8
         maxProjectileSpeed: 16
         lifetime: 0
-        damage: 0
+        damage: 15
         knockback: 0
         critChance: 0
-        piercing: 0
+        piercing: 1
         useGravity: 1
         gravityMultiplier: 25
         faceDirectionOfTravel: 1
         collideWithWorld: 1
-        canHurtPlayer: 0
+        canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
         breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -220,6 +223,7 @@ MonoBehaviour:
       maxAimAngleOffset: 135
       minProjectileSpawnOffset: {x: 0.75, y: -0.6}
       maxProjectileSpawnOffset: {x: 0.75, y: -0.6}
+      tryStartFromGround: 0
     useRandomProjectileAttack: 1
     minProjectileAttacks: 8
     maxProjectileAttacks: 15
@@ -231,7 +235,7 @@ MonoBehaviour:
     damage: 25
     knockback: 25
     attackRange: 8
-    attackMagnitude: 15
+    attackMagnitude: 12
     attackTime: 0.45
     attackDelay: 0.45
     preventsMovement: 1
@@ -271,13 +275,13 @@ MonoBehaviour:
     attackTime: 0
     attackDelay: 0.5
     preventsMovement: 1
-    cameraShakeTime: 0.5
-    cameraShakeStrength: 0.2
+    cameraShakeTime: 0.33
+    cameraShakeStrength: 0.15
     projectileAttacks:
     - projectileData:
         sprite: {fileID: 1431803324, guid: 5f2ccbe9a2ae35545836b6e8d9719d17, type: 3}
-        minProjectileSpeed: 0.2
-        maxProjectileSpeed: 0.4
+        minProjectileSpeed: 0
+        maxProjectileSpeed: 0
         lifetime: 10
         damage: 15
         knockback: 0
@@ -327,11 +331,12 @@ MonoBehaviour:
       spawnReferencePoint: 1
       minAimAngleOffset: 90
       maxAimAngleOffset: 90
-      minProjectileSpawnOffset: {x: -9, y: -1}
-      maxProjectileSpawnOffset: {x: 9, y: -0.7}
+      minProjectileSpawnOffset: {x: -9, y: 1}
+      maxProjectileSpawnOffset: {x: 9, y: 1}
+      tryStartFromGround: 1
     useRandomProjectileAttack: 0
-    minProjectileAttacks: 4
-    maxProjectileAttacks: 8
+    minProjectileAttacks: 3
+    maxProjectileAttacks: 6
     attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
     attackParticleOffset: {x: 0.75, y: -0.6}
   dropMultiple: 0

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Cameras;
 using UnityEditor;
 using UnityEngine;
 using Utilities;
@@ -35,17 +36,24 @@ namespace Entities.Enemies
         private MovementPattern.MovementFunctionData _movementFunctionData;
         private Action _deathAttackCancelAction;
         
-        private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer;
+        private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer, _wakeupTimer;
         private Vector2 _directionToPlayer;
         private float _distanceToPlayer;
         private float _health, _maxHealth;
-        private bool _aggravated, _canMove = true;
-        
+        private bool _aggravated, _canMove = true, _initialized;
+        private float _attackRecoveryTime;
+
+        private static readonly int AnimWakeup = Animator.StringToHash("wakeup");
         private static readonly int AnimMoving = Animator.StringToHash("moving");
         private static readonly int AnimJumping = Animator.StringToHash("jumping");
         private static readonly int AnimAttackIndex = Animator.StringToHash("attackIndex");
         private static readonly int AnimAttack = Animator.StringToHash("attack");
         private static readonly int AnimDeath = Animator.StringToHash("death");
+        
+        // hacky shit to implement enrage for swamp titan. to be reworked.
+        private bool _swampTitanEnraged;
+        private bool _swampTitanDoubleAttack;
+        private bool _swampTitanDoubleAttackDone;
 
         public delegate void DeathHandler(EnemySo enemySo);
         public event DeathHandler OnDeath;
@@ -58,48 +66,39 @@ namespace Entities.Enemies
         protected override void Start()
         {
             base.Start();
-            
-            _player = PlayerController.instance;
-            _animator = GetComponent<Animator>();
-            _sr = GetComponent<SpriteRenderer>();
-            _healthbarManager = GetComponent<HealthbarManager>();
-            _damageNumberManager = GetComponent<DamageNumberManager>();
-            _deathPs = GetComponentInChildren<ParticleSystem>();
-            
-            _animator.runtimeAnimatorController = enemySo.overrideAnimator;
 
-            _evasionTimer = enemySo.evasionTime;
-            _attackTimer = enemySo.attackInterval;
-            _health = enemySo.health;
-            _maxHealth = enemySo.maxHealth;
-            
-            _movementPattern = enemySo.movementPattern;
-            _movementFunction = _movementPattern.GetMovement();
-            _movementPattern.Init();
-            _movementFunctionData = new MovementPattern.MovementFunctionData();
-
-            _healthbarManager.Initialize(_health, _maxHealth, enemySo);
-
-            var hitboxChild = new GameObject("Hitbox");
-            hitboxChild.transform.SetParent(transform);
-            hitboxChild.transform.localPosition = Vector3.zero;
-            hitboxChild.layer = 8;
-
-            var hitbox = hitboxChild.AddComponent<BoxCollider2D>();
-            hitbox.offset = enemySo.hitboxOffset;
-            hitbox.size = enemySo.hitboxSize;
-            hitbox.edgeRadius = enemySo.hitboxEdgeRadius;
-            hitbox.isTrigger = true;
-            
-            _defaultShader = _sr.material.shader;
-            
-            currentKnockback = enemySo.knockback;
+            Init(enemySo);
         }
 
         private void Update()
         {
+            if (_wakeupTimer < enemySo.wakeupDelay)
+            {
+                _wakeupTimer += Time.deltaTime;
+                return;
+            }
+            
             if (_health <= 0) return;
             if (!CalculatePlayerRelation()) return;
+            
+            // to be reworked.
+            if (enemySo.isBoss && !_swampTitanEnraged && _health <= _maxHealth * 0.25f)
+            {
+                _swampTitanEnraged = true;
+                _swampTitanDoubleAttack = true;
+                _attackTimer = enemySo.attackInterval;
+                _canMove = false;
+                _attackRecoveryTime = 0f;
+                _animator.SetTrigger("enrage");
+                CameraController.CameraShake(1f, 0.1f);
+                _healthbarManager.SetBossEnraged(true);
+                
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    var delay = _animator.GetCurrentAnimatorStateInfo(0).length + _attackRecoveryTime;
+                    StartCoroutine(DelayEnableMovement(delay));
+                }, 1f);
+            }
 
             CheckAggro();
         }
@@ -108,6 +107,7 @@ namespace Entities.Enemies
         {
             base.FixedUpdate();
             
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
             if (_health <= 0) return;
             
             if (_aggravated)
@@ -183,9 +183,34 @@ namespace Entities.Enemies
             if (_attackTimer > 0)
             {
                 _attackTimer -= Time.fixedDeltaTime;
+                
+                // to be reworked.
+                if (_swampTitanEnraged && !_swampTitanDoubleAttackDone && _attackTimer <= 0)
+                {
+                    var rng = Random.Range(0, 2);
+
+                    if (rng == 0)
+                    {
+                        _swampTitanDoubleAttack = true;
+                    }
+                }
             }
             else if (!_animator.GetBool(AnimJumping) && Attack())
             {
+                // to be reworked.
+                if (_swampTitanEnraged && _swampTitanDoubleAttack)
+                {
+                    _swampTitanDoubleAttack = false;
+                    _swampTitanDoubleAttackDone = true;
+                    _attackTimer = enemySo.attackInterval * 0.5f;
+                    return;
+                }
+
+                if (_swampTitanEnraged)
+                {
+                    _swampTitanDoubleAttackDone = false;
+                }
+
                 _attackTimer = enemySo.attackInterval;
             }
             
@@ -283,12 +308,66 @@ namespace Entities.Enemies
             _animator.SetBool(AnimMoving, false);
             _canMove = false;
 
-            StartCoroutine(DelayEnableMovement());
+            var delay = _animator.GetCurrentAnimatorStateInfo(0).length + _attackRecoveryTime;
+            StartCoroutine(DelayEnableMovement(delay));
             return true;
+        }
+
+        public void Init(EnemySo sourceSo)
+        {
+            if (_initialized) return;
+            if (!sourceSo) return;
+
+            enemySo = sourceSo;
+            _initialized = true;
+            
+            _player = PlayerController.instance;
+            _animator = GetComponent<Animator>();
+            _sr = GetComponent<SpriteRenderer>();
+            _healthbarManager = GetComponent<HealthbarManager>();
+            _damageNumberManager = GetComponent<DamageNumberManager>();
+            _deathPs = GetComponentInChildren<ParticleSystem>();
+            
+            _animator.runtimeAnimatorController = enemySo.overrideAnimator;
+            _animator.SetTrigger(AnimWakeup);
+
+            _evasionTimer = enemySo.evasionTime;
+            _attackTimer = enemySo.attackInterval;
+            _health = enemySo.health;
+            _maxHealth = enemySo.maxHealth;
+            
+            _movementPattern = enemySo.movementPattern;
+            _movementFunction = _movementPattern.GetMovement();
+            _movementPattern.Init();
+            _movementFunctionData = new MovementPattern.MovementFunctionData();
+
+            _healthbarManager.Initialize(_health, _maxHealth, enemySo);
+
+            var mainCol = (BoxCollider2D)mainCollider;
+            mainCol.offset = enemySo.hitboxOffset;
+            mainCol.size = enemySo.hitboxSize;
+            mainCol.edgeRadius = enemySo.hitboxEdgeRadius;
+
+            var hitboxChild = new GameObject("Hitbox");
+            hitboxChild.transform.SetParent(transform);
+            hitboxChild.transform.localPosition = Vector3.zero;
+            hitboxChild.layer = 8;
+
+            var hitbox = hitboxChild.AddComponent<BoxCollider2D>();
+            hitbox.offset = enemySo.hitboxOffset;
+            hitbox.size = enemySo.hitboxSize;
+            hitbox.edgeRadius = enemySo.hitboxEdgeRadius;
+            hitbox.isTrigger = true;
+            
+            _defaultShader = _sr.material.shader;
+            
+            currentKnockback = enemySo.knockback;
+            _attackRecoveryTime = enemySo.attackRecoveryTime;
         }
 
         public void TakeDamage(float amount)
         {
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
             if (_health <= 0) return;
 
             amount = Mathf.Round(Random.Range(amount * 0.8f, amount * 1.2f));
@@ -319,6 +398,7 @@ namespace Entities.Enemies
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
         {
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
             if (enemySo.isImmuneToKnockback) return;
             if (amount == 0) return;
             
@@ -346,7 +426,9 @@ namespace Entities.Enemies
 
             if (enemySo.isBoss)
             {
+                _healthbarManager.SetBossEnraged(false);
                 _healthbarManager.ToggleBossUIHealth(false);
+                CameraController.CameraShake(1f, 0.1f);
             }
 
             transform.localScale = Vector3.one;
@@ -371,10 +453,10 @@ namespace Entities.Enemies
             return _player.transform.position - transform.position;
         }
 
-        private IEnumerator DelayEnableMovement()
+        private IEnumerator DelayEnableMovement(float delay)
         {
             yield return new WaitForEndOfFrame();
-            yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length + enemySo.attackRecoveryTime);
+            yield return new WaitForSeconds(delay);
             _canMove = true;
         }
 

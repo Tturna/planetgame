@@ -39,6 +39,7 @@ namespace Entities.Enemies
             public float maxAimAngleOffset;
             [FormerlySerializedAs("projectileSpawnOffset")] public Vector2 minProjectileSpawnOffset;
             public Vector2 maxProjectileSpawnOffset;
+            public bool tryStartFromGround;
         }
 
         public Dictionary<AttackFunctions, Func<EnemyEntity, Vector3, Action?>> FunctionLookupTable => new()
@@ -275,6 +276,20 @@ namespace Entities.Enemies
                         nameof(projectileAttackData.spawnReferencePoint),
                         "Spawn reference point is not implemented.")
                 };
+
+                if (projectileAttackData.tryStartFromGround)
+                {
+                    var dir = projectileAttackData.spawnReferencePoint == ReferencePoints.Player
+                        ? -PlayerController.instance.transform.up
+                        : -tr.up;
+                    
+                    var hit = Physics2D.Raycast(spawnPoint, dir, 10f, GameUtilities.BasicMovementCollisionMask);
+                    
+                    if (hit)
+                    {
+                        spawnPoint = hit.point;
+                    }
+                }
                 
                 projectile.transform.position = spawnPoint;
                 projectile.transform.eulerAngles = rot;

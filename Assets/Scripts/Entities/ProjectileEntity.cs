@@ -97,6 +97,10 @@ namespace Entities
             
             _sr.sprite = _data.sprite;
             
+            // make collider size match sprite size
+            var col = (CapsuleCollider2D)mainCollider;
+            col.size = _sr.sprite.bounds.size;
+            
             ToggleControl(false);
             ToggleAutoRotation(false);
 
