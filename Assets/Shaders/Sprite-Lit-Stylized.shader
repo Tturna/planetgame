@@ -20,6 +20,8 @@ Shader "Custom/Sprite-Lit-Stylized"
         
         Cull Off
         ZWrite Off
+        
+        // traditional transparency blending
         Blend SrcAlpha OneMinusSrcAlpha
         
         Pass {
@@ -28,21 +30,15 @@ Shader "Custom/Sprite-Lit-Stylized"
         
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            // #pragma vertex vert
-            // #pragma fragment frag
             
             #pragma vertex CombinedShapeLightVertex
             #pragma fragment CombinedShapeLightFragment
             
-            // #include "UnityCG.cginc"
-            // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            // #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/D3D11.hlsl"
-            
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
-            #pragma multi_compile _ DEBUG_DISPLAY
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
+            // #pragma multi_compile _ DEBUG_DISPLAY
             
             float3 rgb_to_hsv_no_clip(float3 RGB)
             {
@@ -142,9 +138,11 @@ Shader "Custom/Sprite-Lit-Stylized"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 o.positionCS = TransformObjectToHClip(v.positionOS);
-                #if defined(DEBUG_DISPLAY)
-                o.positionWS = TransformObjectToWorld(v.positionOS);
-                #endif
+                
+                // #if defined(DEBUG_DISPLAY)
+                // o.positionWS = TransformObjectToWorld(v.positionOS);
+                // #endif
+                
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.lightingUV = half2(ComputeScreenPos(o.positionCS / o.positionCS.w).xy);
 

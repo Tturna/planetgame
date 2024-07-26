@@ -263,31 +263,6 @@ Shader "Custom/StylizedTerrainCone"
                 const float2 sunDir = float2(cos(sunRad), sin(sunRad));
                 float alphaSum = 0;
                 
-                // for (int x = -_BlurSize; x < _BlurSize; x += _BlurSkip)
-                // {
-                //     for (int y = -_BlurSize; y < _BlurSize; y += _BlurSkip)
-                //     {
-                //         const float2 blurOffset = float2(x, y) * _MainTex_TexelSize.x * _BlurOffset;
-                //
-                //         for (int n = 1; n <= 20; n++)
-                //         {
-                //             const float dist = n * _MainTex_TexelSize.x * 5;
-                //             const float2 offsetUv = i.uv + sunDir * dist + blurOffset;
-                //
-                //             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
-                //             // have to be determined in the loop (which causes a warning about using a
-                //             // gradient instruction in a loop with variable size).
-                //             float4 sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offsetUv, 0);
-                //
-                //             if (sample.a > 0)
-                //             {
-                //                 alphaSum += sample.a;
-                //                 break;
-                //             }
-                //         }
-                //     }
-                // }
-
                 const float coneRad = radians(45);
                 const float coneRayCount = 8;
                 const float coneRadStep = coneRad / coneRayCount;
