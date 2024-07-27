@@ -8,6 +8,7 @@ Shader "Custom/Sprite-Lit-Stylized"
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
         _RedTint ("Red Tint", Range(0, 1)) = 0
+        [Toggle] _IGNORE_SUNLIGHT ("Ignore Sunlight", Float) = 0
     }
     
     SubShader
@@ -40,6 +41,8 @@ Shader "Custom/Sprite-Lit-Stylized"
             // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
             // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
             // #pragma multi_compile _ DEBUG_DISPLAY
+
+            #pragma shader_feature _IGNORE_SUNLIGHT_ON
             
             float3 rgb_to_hsv_no_clip(float3 RGB)
             {
@@ -168,10 +171,22 @@ Shader "Custom/Sprite-Lit-Stylized"
                     return half4(main.rgb * result_alpha, main.a);
                 }
 
-                const float final_light = max(_Brightness, result_alpha);
-                const float3 final_main = main.rgb * final_light;
-                const float3 red_tint_color = float3(1.0, 0.3, 0.0);
-                const float3 final_color = max(final_main, main.rgb * red_tint_color * _RedTint);
+                half final_light;
+                half3 final_main;
+                half3 final_color;
+
+                #if _IGNORE_SUNLIGHT_ON
+                    final_light = result_alpha;
+                    final_main = main.rgb * final_light;
+                    final_color = final_main;
+                #else
+                    final_light = max(_Brightness, result_alpha);
+                    final_main = main.rgb * final_light;
+                    
+                    const half3 red_tint_color = half3(1.0, 0.3, 0.0);
+                    final_color = max(final_main, main.rgb * red_tint_color * _RedTint);
+                #endif
+                
 
                 return half4(final_color, main.a);
             }

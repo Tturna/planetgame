@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sprite-Lit-Stylized
+  m_Name: Sprite-Lit-Custom
   m_Shader: {fileID: 4800000, guid: b90406285a6d43c5902aac22e4e95aed, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -41,7 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Brightness: 1
+    - _Brightness: 0.003
     - _EnableExternalAlpha: 0
     - _RedTint: 0
     - _StyleBands: 4
