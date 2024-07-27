@@ -66,5 +66,14 @@ namespace VFX
             c.a *= brightness;
             instance.bg2.color = c;
         }
+        
+        public static void SetBackgroundRedTint(float redTint)
+        {
+            var normalColor = instance.bg2Color;
+            var redColor = new Color(normalColor.r, normalColor.g * 0.3f, 0f, 1f);
+            var c = Color.Lerp(normalColor, redColor, redTint);
+            
+            instance.bg2.color = c;
+        }
     }
 }

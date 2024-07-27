@@ -7,6 +7,7 @@ Shader "Custom/Sprite-Lit-Stylized"
         _Brightness ("Brightness", Range(0, 1)) = 1
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
+        _RedTint ("Red Tint", Range(0, 1)) = 0
     }
     
     SubShader
@@ -128,6 +129,7 @@ Shader "Custom/Sprite-Lit-Stylized"
             float _Brightness;
             float _Stylize;
             float _StyleBands;
+            float _RedTint;
 
             SHAPE_LIGHT(0)
             
@@ -154,37 +156,24 @@ Shader "Custom/Sprite-Lit-Stylized"
             
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
-                half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
+                half4 shape_light0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
 
-                float resultAlpha = shapeLight0.r;
+                float result_alpha = shape_light0.r;
                 if (_Stylize)
                 {
-                    const float celSize = 1 / _StyleBands;
-                    resultAlpha = round(resultAlpha * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
+                    const float cel_size = 1 / _StyleBands;
+                    result_alpha = round(result_alpha * _StyleBands + 1 / (2 * _StyleBands)) * cel_size;
                     
-                    // float3 hsvColor = rgb_to_hsv_no_clip(resultColor);
-                    // const float ialpha = 1 - resultAlpha;
-                    // const float ia01 = ialpha/0.75;
-
-                    // Different easing functions for hue.
-                    // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
-                    // const float t = pow(ia01, 3);
-                    // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
-                    // const float t = -(cos(PI * ia01) - 1) / 2;
-
-                    // hue 240 = blue
-                    // hsvColor.r = angleLerp(hsvColor.r * 360.0, 240.0, t) / 360.0;
-                    // hsvColor.g = lerp(hsvColor.g, hsvColor.g * 0.675, ia01);
-                    // hsvColor.b = lerp(hsvColor.b, hsvColor.b * 0.125, 1 - pow(1 - ia01, 2));
-                    //
-                    // resultColor = hsv_to_rgb(hsvColor);
-                    
-                    // const float bitMask = resultAlpha > 0 ? 1 : 0;
-                    return half4(main.rgb * resultAlpha, main.a);
+                    return half4(main.rgb * result_alpha, main.a);
                 }
-                
-                return half4(main.rgb * _Brightness, main.a);
+
+                const float final_light = max(_Brightness, result_alpha);
+                const float3 final_main = main.rgb * final_light;
+                const float3 red_tint_color = float3(1.0, 0.3, 0.0);
+                const float3 final_color = max(final_main, main.rgb * red_tint_color * _RedTint);
+
+                return half4(final_color, main.a);
             }
             ENDHLSL
         }

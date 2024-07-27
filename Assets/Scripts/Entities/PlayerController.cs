@@ -26,8 +26,8 @@ namespace Entities
             [SerializeField] private GameObject itemAnchor;
             [SerializeField] private Transform starmapCamera;
             
-            [Header("Other")]
-            [SerializeField] private Material flashMaterial;
+            // [Header("Other")]
+            // [SerializeField] private Material flashMaterial;
         
             [Header("Movement Settings")]
             [SerializeField] private float maxSlopeMultiplier;
@@ -61,11 +61,7 @@ namespace Entities
             
         #endregion
         
-        #region Other
-
-            private Material _defaultMaterial;
-        
-        #endregion
+        // private Material _defaultMaterial;
 
         public delegate void ItemPickedUpHandler(GameObject itemObject);
         public ItemPickedUpHandler itemPickedUp;
@@ -115,7 +111,7 @@ namespace Entities
             _collider = GetComponent<CapsuleCollider2D>();
             _deathManager = GetComponent<PlayerDeathManager>();
             
-            _defaultMaterial = torsoSr.material;
+            // _defaultMaterial = torsoSr.material;
             _spawnPosition = transform.position;
         }
 
@@ -396,19 +392,24 @@ namespace Entities
             var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
             //TODO: damage numbers
-
+            
+            // TODO: Figure out player hurt flash
+            // The old system below doesn't actually work because it requires saving the default material,
+            // which makes it an instance. This is a problem because lighting needs to change the brightness
+            // of the material, which is a global change and doesn't affect the instance.
+            
             // Make the player flash red unless the game is run in the editor.
             // For some reason the editor lags like a motherfucker because of this.
-            if (!Application.isEditor)
-            {
-                torsoSr.material = flashMaterial;
-                headSr.material = flashMaterial;
-                GameUtilities.instance.DelayExecute(() =>
-                {
-                    torsoSr.material = _defaultMaterial;
-                    headSr.material = _defaultMaterial;
-                }, 0.1f);
-            }
+            // if (!Application.isEditor)
+            // {
+            //     torsoSr.material = flashMaterial;
+            //     headSr.material = flashMaterial;
+            //     GameUtilities.instance.DelayExecute(() =>
+            //     {
+            //         torsoSr.material = _defaultMaterial;
+            //         headSr.material = _defaultMaterial;
+            //     }, 0.1f);
+            // }
             
             CameraController.CameraShake(0.1f, 0.1f);
         }

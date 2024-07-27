@@ -17,6 +17,7 @@ Shader "Custom/StylizedTerrainCone"
         _GrassThickness ("Grass Thickness", Range(1, 10)) = 3
         _ShadeDistortionStrength ("Shade Distortion Strength", Range(0, 5)) = 0
         _ShadeDistortionFidelity ("Shade Distortion Fidelity", Range(1, 100)) = 15
+        _RedTint ("Red Tint", Range(0, 1)) = 0
     }
     
     SubShader
@@ -48,11 +49,11 @@ Shader "Custom/StylizedTerrainCone"
             // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             // #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/D3D11.hlsl"
             
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
-            #pragma multi_compile _ DEBUG_DISPLAY
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
+            // #pragma multi_compile _ DEBUG_DISPLAY
 
             inline float unity_noise_randomValue (float2 uv)
             {
@@ -204,6 +205,7 @@ Shader "Custom/StylizedTerrainCone"
             float4 _GrassColor;
             float _ShadeDistortionStrength;
             float _ShadeDistortionFidelity;
+            float _RedTint;
 
             // #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
