@@ -11,7 +11,7 @@ namespace Entities
     public class DamageNumberManager : MonoBehaviour
     {
         [SerializeField] private GameObject damageNumberPrefab;
-        [SerializeField] private TMP_FontAsset flashFont, normalFont;
+        [SerializeField] private Material flashMaterial, normalMaterial;
         
         private const string DamageNumberPoolName = "Damage Number Pool";
         private bool objectPoolCreated;
@@ -62,7 +62,7 @@ namespace Entities
         {
             var tr = damageNumberObject.transform;
             tr.Translate(Random.insideUnitCircle * .5f);
-            tmp.font = flashFont;
+            tmp.fontSharedMaterial = flashMaterial;
             
             var ogLifeTime = lifeTime;
             var camTr = CameraController.instance.mainCam.transform;
@@ -83,7 +83,7 @@ namespace Entities
                 
                 if (nLifeTime < .9f)
                 {
-                    tmp.font = normalFont;
+                    tmp.fontSharedMaterial = normalMaterial;
                 }
                 
                 lifeTime -= Time.deltaTime;

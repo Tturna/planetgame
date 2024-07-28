@@ -5081,8 +5081,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
-  flashFont: {fileID: 11400000, guid: e00da9dd7bc7fbd459789820de29301a, type: 2}
-  normalFont: {fileID: 11400000, guid: 5c051580152f7b64da41178790b9120f, type: 2}
+  flashMaterial: {fileID: 2100000, guid: 8bc53b51fc8d45c489bc38dc9576e80a, type: 2}
+  normalMaterial: {fileID: 2100000, guid: 27a7f911ac07cfc4b978cef7f708bbdb, type: 2}
 --- !u!114 &9052693212076312616
 MonoBehaviour:
   m_ObjectHideFlags: 0

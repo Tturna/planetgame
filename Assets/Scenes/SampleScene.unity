@@ -35154,7 +35154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &325571205
 RectTransform:
   m_ObjectHideFlags: 0
@@ -44343,6 +44343,7 @@ GameObject:
   - component: {fileID: 791690819}
   - component: {fileID: 791690821}
   - component: {fileID: 791690820}
+  - component: {fileID: 791690822}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -44399,8 +44400,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479853
-  m_fontColor: {r: 0.68, g: 0.19720002, b: 0.19720002, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -44467,6 +44468,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 791690818}
   m_CullTransparentMesh: 1
+--- !u!114 &791690822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791690818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 240483360e11963488bbe0adb0d3e023, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 8bc53b51fc8d45c489bc38dc9576e80a, type: 2}
 --- !u!1 &794044492
 GameObject:
   m_ObjectHideFlags: 0
