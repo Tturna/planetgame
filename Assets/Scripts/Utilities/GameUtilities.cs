@@ -12,6 +12,7 @@ namespace Utilities
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
         [SerializeField] private Material spriteMaterial;
+        [SerializeField] private Material caveBgRenderMaterial;
         
         private static Camera _mainCam;
         private static PlanetGenerator[] _allPlanets;
@@ -92,6 +93,11 @@ namespace Utilities
         public static Material GetTerrainMaterial()
         {
             return instance.terrainRenderImage.material;
+        }
+
+        public static Material GetCaveBackgroundMaterial()
+        {
+            return instance.caveBgRenderMaterial;
         }
 
         public static Material GetSpriteMaterial()

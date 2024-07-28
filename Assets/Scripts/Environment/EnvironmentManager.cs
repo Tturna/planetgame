@@ -24,7 +24,7 @@ namespace Environment
         [SerializeField] private float maxWindStrength;
         [SerializeField, Range(0, 1)] private float brightness;
         
-        private Material _terrainMaterial, _spriteMaterial;
+        private Material _terrainRenderMaterial, _caveBgRenderMaterial, _spriteMaterial;
         private static readonly int ShaderBrightness = Shader.PropertyToID("_Brightness");
         private static readonly int SunLightAngle = Shader.PropertyToID("_SunLightAngle");
         private static readonly int RedTint = Shader.PropertyToID("_RedTint");
@@ -36,7 +36,8 @@ namespace Environment
 
         private void Start()
         {
-            _terrainMaterial = GameUtilities.GetTerrainMaterial();
+            _terrainRenderMaterial = GameUtilities.GetTerrainMaterial();
+            _caveBgRenderMaterial = GameUtilities.GetCaveBackgroundMaterial();
             _spriteMaterial = GameUtilities.GetSpriteMaterial();
             // TriggerOnFogStarted();
 
@@ -116,8 +117,10 @@ namespace Environment
                 BackgroundImageManager.SetBackgroundRedTint(0f);
             }
             
-            _terrainMaterial.SetFloat(SunLightAngle, sunLightAngle);
-            _terrainMaterial.SetFloat(ShaderBrightness, brightness);
+            _terrainRenderMaterial.SetFloat(SunLightAngle, sunLightAngle);
+            _terrainRenderMaterial.SetFloat(ShaderBrightness, brightness);
+            _caveBgRenderMaterial.SetFloat(SunLightAngle, sunLightAngle);
+            _caveBgRenderMaterial.SetFloat(ShaderBrightness, brightness);
             _spriteMaterial.SetFloat(ShaderBrightness, brightness);
             BackgroundImageManager.SetBackgroundBrightness(brightness);
             ParallaxManager.SetParallaxTerrainBrightness(brightness);
