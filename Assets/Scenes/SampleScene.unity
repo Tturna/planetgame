@@ -12433,7 +12433,7 @@ MonoBehaviour:
   m_NormalMapDistance: 3
   m_NormalMapQuality: 2
   m_UseNormalMap: 0
-  m_ShadowIntensityEnabled: 0
+  m_ShadowIntensityEnabled: 1
   m_ShadowIntensity: 0.75
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
@@ -37188,6 +37188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  freezeTime: 0
+  planetTime: 0
   planetDaySeconds: 0
   windChangeIntervalGap: {x: 5, y: 10}
   maxWindStrength: 10
@@ -43500,7 +43502,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -93440,6 +93442,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  freezeTime: 0
+  planetTime: 0
   planetDaySeconds: 60
   windChangeIntervalGap: {x: 5, y: 10}
   maxWindStrength: 10
@@ -97321,6 +97325,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 5772806534296229048, guid: 6bf260eada9d3604ea407bfcd443e046, type: 3}
   terrainRenderImage: {fileID: 1297968441}
   spriteMaterial: {fileID: 2100000, guid: 9a35ebc22acfb3d40863c9a0bcb5e67d, type: 2}
+  caveBgRenderMaterial: {fileID: 2100000, guid: c3c21c1b70c54f04ca606c6fe16e8c9b, type: 2}
 --- !u!114 &1968306436
 MonoBehaviour:
   m_ObjectHideFlags: 0

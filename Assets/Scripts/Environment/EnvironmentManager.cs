@@ -14,7 +14,8 @@ namespace Environment
         public event OnFogStartedHandler OnFogStarted;
 
         public float WindStrength { get; private set; }
-        public float PlanetTime { get; private set; }
+        [SerializeField] private bool freezeTime;
+        public float planetTime;
 
         public int planetDaySeconds;
 
@@ -52,11 +53,14 @@ namespace Environment
             // 0.5 -> noon
             // 0.75 -> dusk
             
-            PlanetTime += Time.deltaTime;
-            
-            if (PlanetTime >= planetDaySeconds)
+            if (!freezeTime)
             {
-                PlanetTime = 0;
+                planetTime += Time.deltaTime;
+
+                if (planetTime >= planetDaySeconds)
+                {
+                    planetTime = 0;
+                }
             }
             
             // sun light angle -> 0 to 360
@@ -72,7 +76,7 @@ namespace Environment
             
             // use offset time to sync the sun to the planet time.
             // this is required because time = 0 is midnight, but sun angle = 0 is dawn.
-            var offsetTime = (PlanetTime - planetDaySeconds / 4f) % planetDaySeconds;
+            var offsetTime = (planetTime - planetDaySeconds / 4f) % planetDaySeconds;
             
             // ReSharper disable once PossibleLossOfFraction
             var sunLightAngle = offsetTime / planetDaySeconds * 360f;

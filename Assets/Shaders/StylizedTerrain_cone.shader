@@ -8,15 +8,19 @@ Shader "Custom/StylizedTerrainCone"
         _CaveBgTerrainTex ("Cave Background Terrain Texture", 2D) = "white" {}
         _SunLightAngle ("Sun Light Angle", Range(0, 360)) = 0
         _Brightness ("Brightness", Range(0, 1)) = 1
-        _BlurSize ("Blur Size", Range(0, 20)) = 8
-        _BlurSkip ("Blur Skip", Range(1, 20)) = 2
+        _BlurConeArc ("Blur Cone Arc", Range(1, 90)) = 45
+        _BlurConeRayLength ("Blur Cone Ray Length", Range(0, 20)) = 8
+        _BlurConeResolution ("Blur Cone Ray Resolution", Range(1, 20)) = 8
+        _BlurConeSkip ("Blur Cone Skip", Range(1, 20)) = 2
+        _SunRayLength ("Sun Ray Length", Range(0, 80)) = 20
+        _SunRaySkip ("Sun Ray Skip", Range(1, 20)) = 5
 //        _BlurOffset ("Blur Offset", Range(0, 10)) = 1
         [MaterialToggle] _SquareBlur ("Blur Squared", int) = 0
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
         _GrassColor ("Grass Color", Color) = (1,1,1,1)
         _GrassThickness ("Grass Thickness", Range(1, 10)) = 3
-        _ShadeDistortionStrength ("Shade Distortion Strength", Range(0, 5)) = 0
+        _ShadeDistortionStrength ("Shade Distortion Strength", Range(0, 1)) = 0
         _ShadeDistortionFidelity ("Shade Distortion Fidelity", Range(1, 100)) = 15
         _RedTint ("Red Tint", Range(0, 1)) = 0
         [Toggle] _IS_CAVE_BG ("Is Cave Background", Float) = 0
@@ -57,73 +61,73 @@ Shader "Custom/StylizedTerrainCone"
 
             #pragma shader_feature _IS_CAVE_BG_ON
 
-            inline float unity_noise_random_value (const float2 uv)
+            inline half unity_noise_random_value (const half2 uv)
             {
-                return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
+                return frac(sin(dot(uv, half2(12.9898, 78.233))) * 43758.5453);
             }
             
-            inline float unity_noise_interpolate (const float a, const float b, const float t)
+            inline half unity_noise_interpolate (const half a, const half b, const half t)
             {
                 return (1.0 - t) * a + t * b;
             }
             
-            inline float unity_value_noise (const float2 uv)
+            inline half unity_value_noise (const half2 uv)
             {
-                const float2 i = floor(uv);
-                float2 f = frac(uv);
+                const half2 i = floor(uv);
+                half2 f = frac(uv);
                 f = f * f * (3.0 - 2.0 * f);
             
-                const float2 c0 = i + float2(0.0, 0.0);
-                const float2 c1 = i + float2(1.0, 0.0);
-                const float2 c2 = i + float2(0.0, 1.0);
-                const float2 c3 = i + float2(1.0, 1.0);
-                const float r0 = unity_noise_random_value(c0);
-                const float r1 = unity_noise_random_value(c1);
-                const float r2 = unity_noise_random_value(c2);
-                const float r3 = unity_noise_random_value(c3);
+                const half2 c0 = i + half2(0.0, 0.0);
+                const half2 c1 = i + half2(1.0, 0.0);
+                const half2 c2 = i + half2(0.0, 1.0);
+                const half2 c3 = i + half2(1.0, 1.0);
+                const half r0 = unity_noise_random_value(c0);
+                const half r1 = unity_noise_random_value(c1);
+                const half r2 = unity_noise_random_value(c2);
+                const half r3 = unity_noise_random_value(c3);
 
-                const float bottom_of_grid = unity_noise_interpolate(r0, r1, f.x);
-                const float top_of_grid = unity_noise_interpolate(r2, r3, f.x);
-                const float t = unity_noise_interpolate(bottom_of_grid, top_of_grid, f.y);
+                const half bottom_of_grid = unity_noise_interpolate(r0, r1, f.x);
+                const half top_of_grid = unity_noise_interpolate(r2, r3, f.x);
+                const half t = unity_noise_interpolate(bottom_of_grid, top_of_grid, f.y);
                 return t;
             }
             
-            float unity_simple_noise_float(float2 uv, const float scale)
+            half unity_simple_noise_float(half2 uv, const half scale)
             {
-                float t = 0.0;
+                half t = 0.0;
             
-                float freq = pow(2.0, float(0));
-                float amp = pow(0.5, float(3 - 0));
-                t += unity_value_noise(float2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
+                half freq = pow(2.0, half(0));
+                half amp = pow(0.5, half(3 - 0));
+                t += unity_value_noise(half2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
             
-                freq = pow(2.0, float(1));
-                amp = pow(0.5, float(3 - 1));
-                t += unity_value_noise(float2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
+                freq = pow(2.0, half(1));
+                amp = pow(0.5, half(3 - 1));
+                t += unity_value_noise(half2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
             
-                freq = pow(2.0, float(2));
-                amp = pow(0.5, float(3 - 2));
+                freq = pow(2.0, half(2));
+                amp = pow(0.5, half(3 - 2));
                 t += unity_value_noise(float2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
             
                 return t;
             }
             
-            float3 rgb_to_hsv_no_clip(float3 rgb)
+            half3 rgb_to_hsv_no_clip(half3 rgb)
             {
-                float3 hsv;
+                half3 hsv;
                
-                float max_channel = max(rgb.x, rgb.y);
-                float min_channel = min(rgb.x, rgb.y);
+                half max_channel = max(rgb.x, rgb.y);
+                half min_channel = min(rgb.x, rgb.y);
                 
                 if (rgb.z > max_channel) max_channel = rgb.z;
                 if (rgb.z < min_channel) min_channel = rgb.z;
                 
                 hsv.xy = 0;
                 hsv.z = max_channel;
-                const float delta = max_channel - min_channel;             //Delta RGB value
+                const half delta = max_channel - min_channel;             //Delta RGB value
                 
                 if (delta != 0) {                    // If gray, leave H  S at zero
                    hsv.y = delta / hsv.z;
-                   float3 del_rgb = (hsv.zzz - rgb + 3 * delta) / (6.0 * delta);
+                   half3 del_rgb = (hsv.zzz - rgb + 3 * delta) / (6.0 * delta);
                    if      ( rgb.x == hsv.z ) hsv.x = del_rgb.z - del_rgb.y;
                    else if ( rgb.y == hsv.z ) hsv.x = 1.0 / 3.0 + del_rgb.x - del_rgb.z;
                    else if ( rgb.z == hsv.z ) hsv.x = 2.0 / 3.0 + del_rgb.y - del_rgb.x;
@@ -131,15 +135,15 @@ Shader "Custom/StylizedTerrainCone"
                 return hsv;
             }
      
-            float3 hsv_to_rgb(float3 hsv)
+            half3 hsv_to_rgb(half3 hsv)
             {
-                // float3 RGB = HSV.z;
-                float3 rgb;
-                const float var_h = hsv.x * 6;
-                const float var_i = floor(var_h);   // Or ... var_i = floor( var_h )
-                float var_1 = hsv.z * (1.0 - hsv.y);
-                float var_2 = hsv.z * (1.0 - hsv.y * (var_h - var_i));
-                float var_3 = hsv.z * (1.0 - hsv.y * (1 - (var_h - var_i)));
+                // half3 RGB = HSV.z;
+                half3 rgb;
+                const half var_h = hsv.x * 6;
+                const half var_i = floor(var_h);   // Or ... var_i = floor( var_h )
+                half var_1 = hsv.z * (1.0 - hsv.y);
+                half var_2 = hsv.z * (1.0 - hsv.y * (var_h - var_i));
+                half var_3 = hsv.z * (1.0 - hsv.y * (1 - (var_h - var_i)));
                 if      (var_i == 0) { rgb = float3(hsv.z, var_3, var_1); }
                 else if (var_i == 1) { rgb = float3(var_2, hsv.z, var_1); }
                 else if (var_i == 2) { rgb = float3(var_1, hsv.z, var_3); }
@@ -150,38 +154,38 @@ Shader "Custom/StylizedTerrainCone"
                 return rgb;
             }
 
-            float shortest_relative_angle(const float from, const float to)
+            half shortest_relative_angle(const half from, const half to)
             {
                 return ((to - from) % 360.0 + 540.0) % 360.0 - 180.0;
             }
             
-            float angle_lerp(const float from, const float to, const float t)
+            half angle_lerp(const half from, const half to, const half t)
             {
                 return (360.0 + from + shortest_relative_angle(from, to) * t) % 360;
             }
             
-            float custom_hue_shift(const float x)
+            float custom_hue_shift(const half x)
             {
-                const float y = 0.99 - pow(x - .18, 2) * 0.92;
+                const half y = 0.99 - pow(x - .18, 2) * 0.92;
                 return x < 0.5 ? 1 - y : y;
             }
 
             struct attributes
             {
-                float3 position_os   : POSITION;
-                float4 color        : COLOR;
-                float2  uv          : TEXCOORD0;
+                half3 position_os   : POSITION;
+                half4 color        : COLOR;
+                half2  uv          : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
             
             struct varyings
             {
-                float4  position_cs  : SV_POSITION;
+                half4  position_cs  : SV_POSITION;
                 half4   color        : COLOR;
-                float2  uv           : TEXCOORD0;
+                half2  uv           : TEXCOORD0;
                 half2   lighting_uv  : TEXCOORD1;
                 // #if defined(DEBUG_DISPLAY)
-                float3  position_ws  : TEXCOORD2;
+                half3  position_ws  : TEXCOORD2;
                 // #endif
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -197,20 +201,24 @@ Shader "Custom/StylizedTerrainCone"
             half4 _CaveBgTerrainTex_TexelSize;
             // TEXTURE2D(_MaskTex);
             // SAMPLER(sampler_MaskTex);
-            float4 _Color;
-            float _SunLightAngle;
-            float _Brightness;
-            float _BlurSize;
-            float _BlurSkip;
-            // float _BlurOffset;
-            float _SquareBlur;
-            float _Stylize;
-            float _StyleBands;
-            float _GrassThickness;
-            float4 _GrassColor;
-            float _ShadeDistortionStrength;
-            float _ShadeDistortionFidelity;
-            float _RedTint;
+            half4 _Color;
+            half _SunLightAngle;
+            half _Brightness;
+            half _BlurConeArc;
+            half _BlurConeRayLength;
+            half _BlurConeResolution;
+            half _BlurConeSkip;
+            half _SunRayLength;
+            half _SunRaySkip;
+            // half _BlurOffset;
+            half _SquareBlur;
+            half _Stylize;
+            half _StyleBands;
+            half _GrassThickness;
+            half4 _GrassColor;
+            half _ShadeDistortionStrength;
+            half _ShadeDistortionFidelity;
+            half _RedTint;
 
             SHAPE_LIGHT(0)
             
@@ -235,7 +243,7 @@ Shader "Custom/StylizedTerrainCone"
             
             half4 combined_shape_light_fragment(const varyings i) : SV_Target
             {
-                const float noise = unity_simple_noise_float(i.position_ws.xy, _ShadeDistortionFidelity);
+                const half noise = unity_simple_noise_float(i.position_ws.xy, _ShadeDistortionFidelity);
                 
                 half4 shape_light0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lighting_uv);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
@@ -248,36 +256,41 @@ Shader "Custom/StylizedTerrainCone"
 
                 if (main.a == 0) discard;
                 
-                const float sun_rad = radians(_SunLightAngle);
-                const float2 sun_dir = float2(cos(sun_rad), sin(sun_rad));
-                float alpha_sum = 0;
+                const half sun_rad = radians(_SunLightAngle);
+                const half2 sun_dir = float2(cos(sun_rad), sin(sun_rad));
+                half alpha_sum = 0;
                 
-                const float cone_rad = radians(45);
-                const float cone_ray_count = 8;
-                const float cone_rad_step = cone_rad / cone_ray_count;
-                const float cone_ray_samples = _BlurSize;
+                const half cone_rad = radians(_BlurConeArc);
+                const half cone_ray_count = _BlurConeResolution;
+                const half cone_rad_step = cone_rad / cone_ray_count;
+                const half cone_ray_samples = _BlurConeRayLength;
+                
                 for (int r = 0; r < cone_ray_count; r++)
                 {
-                    const float off_r = r - cone_ray_count / 2;
-                    const float ray_rad = sun_rad + off_r * cone_rad_step;
-                    const float2 ray_dir = float2(cos(ray_rad), sin(ray_rad));
+                    const half off_r = r - cone_ray_count / 2;
+                    const half ray_rad = sun_rad + off_r * cone_rad_step;
+                    const half2 ray_dir = float2(cos(ray_rad), sin(ray_rad));
 
                     for (int n = 1; n <= cone_ray_samples; n++)
                     {
-                        const float sun_ray_samples = 20;
-                        const float2 cone_ray_sample_offset = ray_dir * n * _MainTex_TexelSize.x * _BlurSkip;
+                        const half sun_ray_samples = _SunRayLength;
+                        const half2 cone_ray_sample_offset = ray_dir * n * _MainTex_TexelSize.x * _BlurConeSkip;
 
                         for (int m = 1; m <= sun_ray_samples; m++)
                         {
-                            const float2 sun_ray_sample_offset = cone_ray_sample_offset + sun_dir * m * _MainTex_TexelSize.x * 5;
-                            const float2 offset_uv = i.uv + sun_ray_sample_offset;
-                            // float noise = Unity_SimpleNoise_float(i.uv, 1);
-                            // offsetUv += float2(noise, noise) * _TempNoiseOffset;
+                            // start with a smaller sun ray skip to avoid skipping nearby terrain
+                            const half t = m / sun_ray_samples;
+                            const half sun_ray_skip = lerp(1, _SunRaySkip, sqrt(t));
+                        
+                            const half2 sun_ray_sample_offset = cone_ray_sample_offset + sun_dir * m * _MainTex_TexelSize.x * sun_ray_skip;
+                            const half2 offset_uv = i.uv + sun_ray_sample_offset;
+
+                            if (offset_uv.x < 0 || offset_uv.x > 1 || offset_uv.y < 0 || offset_uv.y > 1) break;
                             
                             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
                             // have to be determined in the loop (which causes a warning about using a
                             // gradient instruction in a loop with variable size).
-                            float4 sample;
+                            half4 sample;
 
                             #if _IS_CAVE_BG_ON
                                 sample = SAMPLE_TEXTURE2D_LOD(_CaveBgTerrainTex, sampler_CaveBgTerrainTex, offset_uv, 0);
@@ -309,56 +322,58 @@ Shader "Custom/StylizedTerrainCone"
                 // raised to a power to limit the light reach in terrain
                 // alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
                 
-                alpha_sum = clamp(alpha_sum + shape_light0.r, 0, 1);
+                alpha_sum = saturate(max(alpha_sum, shape_light0.r));
 
                 // alphaSum = smoothstep(0, 1, alphaSum);
 
-                float result_alpha = alpha_sum;
-                float3 result_color = main.rgb;
+                half result_alpha = alpha_sum;
+                half3 result_color = main.rgb;
                 
-                if (_Stylize)
+                if (!_Stylize)
                 {
-                    const float cel_size = 1 / _StyleBands;
-                    // Stepped shading. Addition is to center the bands so that the surface
-                    // is not thinner than the other bands.
-                    // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
-
-                    const float limited_noise = 1 - (1 - saturate(noise + 1 - _ShadeDistortionStrength)) * saturate(1 - alpha_sum / _Brightness);
-                    alpha_sum *= limited_noise;
-                    result_alpha = round(alpha_sum * _StyleBands + 1 / (2 * _StyleBands)) * cel_size;
-                    // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
-
-                    #if !_IS_CAVE_BG_ON
-                        const half4 grass_check_sample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
-                        
-                        if (grass_check_sample.a == 0)
-                        {
-                            return half4(_GrassColor.rgb * result_alpha, main.a);
-                        }
-                    #endif
-                    
-                    float3 hsv_color = rgb_to_hsv_no_clip(result_color);
-                    const float ialpha = 1 - result_alpha;
-                    const float ia01 = ialpha/0.75;
-
-                    // Different easing functions for hue.
-                    // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
-                    const float t = pow(ia01, 3);
-                    // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
-                    // const float t = -(cos(PI * ia01) - 1) / 2;
-
-                    // hue 240 = blue
-                    hsv_color.r = angle_lerp(hsv_color.r * 360.0, 240.0, t) / 360.0;
-                    hsv_color.g = lerp(hsv_color.g, hsv_color.g * 0.675, ia01);
-                    hsv_color.b = lerp(hsv_color.b, hsv_color.b * 0.125, 1 - pow(1 - ia01, 2));
-                    
-                    result_color = hsv_to_rgb(hsv_color);
-                    
-                    const float bit_mask = result_alpha > 0 ? 1 : 0;
-                    return half4(result_color * bit_mask, main.a);
+                    return half4(result_color * result_alpha, main.a);
                 }
 
-                return half4(result_color * result_alpha, main.a);
+                const half distortion_noise = noise * _ShadeDistortionStrength;
+                // darker = noisier. multiply by alpha_sum to limit noise to lit areas.
+                // sqrt to amplify noise in darker areas.
+                alpha_sum = lerp(alpha_sum, distortion_noise * sqrt(alpha_sum), 1 - alpha_sum);
+                
+                // Stepped shading. Addition is to center the bands so that the surface
+                // is not thinner than the other bands.
+                // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
+                const half cel_size = 1 / _StyleBands;
+                result_alpha = round(alpha_sum * _StyleBands + 1 / (2 * _StyleBands)) * cel_size;
+                // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
+
+                #if !_IS_CAVE_BG_ON
+                    const half4 grass_check_sample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
+                    
+                    if (grass_check_sample.a == 0)
+                    {
+                        return half4(_GrassColor.rgb * result_alpha, main.a);
+                    }
+                #endif
+                
+                float3 hsv_color = rgb_to_hsv_no_clip(result_color);
+                const half ialpha = 1 - result_alpha;
+                const half ia01 = ialpha/0.75;
+
+                // Different easing functions for hue.
+                // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
+                const half t = pow(ia01, 3);
+                // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
+                // const float t = -(cos(PI * ia01) - 1) / 2;
+
+                // hue 240 = blue
+                hsv_color.r = angle_lerp(hsv_color.r * 360.0, 240.0, t) / 360.0;
+                hsv_color.g = lerp(hsv_color.g, hsv_color.g * 0.675, ia01);
+                hsv_color.b = lerp(hsv_color.b, hsv_color.b * 0.125, 1 - pow(1 - ia01, 2));
+                
+                result_color = hsv_to_rgb(hsv_color);
+                const half bit_mask = result_alpha > 0 ? 1 : 0;
+                
+                return half4(result_color * bit_mask, main.a);
             }
             ENDHLSL
         }

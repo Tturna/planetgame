@@ -34,7 +34,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CaveBgTerrainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8400000, guid: e2cba095e13a8ae4c8365f13edcf6f5e, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GhettoBlurSubGraph_69f2edd46eff4d14884898fbfaa89056_InputTexture_3466051240:
@@ -91,10 +91,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BlurConeArc: 45
+    - _BlurConeRayLength: 8
+    - _BlurConeResolution: 4
+    - _BlurConeSkip: 2
     - _BlurOffset: 2
     - _BlurSize: 8
     - _BlurSkip: 3.7
-    - _Brightness: 1
+    - _Brightness: 0.003
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5
     - _GrassThickness: 3
@@ -105,14 +109,16 @@ Material:
     - _RayReach: 30
     - _RedTint: 0
     - _ShadeBlurSize: 10
-    - _ShadeDistortionFidelity: 16.3
+    - _ShadeDistortionFidelity: 20
     - _ShadeDistortionSize: 21.2
     - _ShadeDistortionStrength: 1.02
     - _SquareBlur: 0
     - _StyleBands: 4.25
     - _Stylize: 1
     - _SunLightAndle: 173
-    - _SunLightAngle: 113.37286
+    - _SunLightAngle: -66.228874
+    - _SunRayLength: 30
+    - _SunRaySkip: 10
     - _SunlightAngle: 91.1
     - _TempNoiseOffset: 0
     m_Colors:
