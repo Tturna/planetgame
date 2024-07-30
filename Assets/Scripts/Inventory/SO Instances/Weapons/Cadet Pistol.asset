@@ -35,6 +35,8 @@ MonoBehaviour:
   incrementStackOnUse: 0
   projectile:
     sprite: {fileID: 21300000, guid: e60911c3041ef324b8a6ab5e47ea8345, type: 3}
+    sortingLayerName: 
+    sortingOrder: 0
     minProjectileSpeed: 45
     maxProjectileSpeed: 45
     lifetime: 3
@@ -80,8 +82,11 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     trailTime: 0.05
+    trailStartEndWidth: {x: 0.1, y: 0}
     useLight: 1
     lightColor: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
+    spawnAnimation: {fileID: 0}
+    updateAnimation: {fileID: 0}
   muzzlePosition: {x: 0.55, y: 0.125}
   muzzleFlashes:
   - {fileID: 401124699, guid: 5d1f927952885c547a3fcce829665385, type: 3}

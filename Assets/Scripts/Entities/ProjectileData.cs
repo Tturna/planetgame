@@ -27,6 +27,7 @@ namespace Entities
         public Color breakParticleColor;
         public Gradient trailColor;
         public float trailTime;
+        public Vector2 trailStartEndWidth;
         public bool useLight;
         public Color lightColor;
         [Tooltip("Animation to play when the projectile spawns. Leave empty for no animation.")]

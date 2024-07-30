@@ -42,6 +42,14 @@ namespace Entities.Enemies
             public bool tryStartFromGround;
             public bool tryOrientToGround;
         }
+        
+        [Serializable]
+        public struct AttackParticleData
+        {
+            public GameObject attackParticlePrefab;
+            public Vector2 attackParticleOffset;
+            public bool alignAttackParticleToHorizontalDirection;
+        }
 
         public Dictionary<AttackFunctions, Func<EnemyEntity, Vector3, Action?>> FunctionLookupTable => new()
         {
@@ -67,9 +75,7 @@ namespace Entities.Enemies
         public bool useRandomProjectileAttack;
         public int minProjectileAttacks;
         public int maxProjectileAttacks;
-        public GameObject? attackParticlePrefab;
-        public Vector2 attackParticleOffset;
-        public bool alignAttackParticleToHorizontalDirection;
+        public AttackParticleData[]? attackParticles;
         public Vector2 colliderSizeMultiplier = Vector2.one;
         public float colliderEdgeRadiusMultiplier = 1f;
         public Vector2 colliderOffset = Vector2.one;
@@ -89,34 +95,44 @@ namespace Entities.Enemies
 
         private void PlayAttackParticles(EnemyEntity enemy)
         {
-            if (!attackParticlePrefab) return;
+            if (attackParticles == null || attackParticles.Length == 0) return;
             
             var enemyTransform = enemy.transform;
-            if (!_attackParticlesDict.ContainsKey(attackName))
-            {
-                var obj = Object.Instantiate(attackParticlePrefab, enemyTransform)!;
-                _attackParticlesDict.Add(attackName, new KeyValuePair<GameObject, ParticleSystem>(obj, obj.GetComponent<ParticleSystem>()));
-            }
-                
-            var offsetX = enemyTransform.right * attackParticleOffset.x;
-            var offsetY = enemyTransform.up * attackParticleOffset.y;
 
-            if (enemy.relativeMoveDirection.x < 0)
+            foreach (var attackParticleData in attackParticles)
             {
-                offsetX = -offsetX;
-            }
-            
-            _attackParticlesDict[attackName].Key.transform.position = enemyTransform.position + offsetX + offsetY;
-
-            if (alignAttackParticleToHorizontalDirection)
-            {
-                // access the renderer module of the particle system
-                var pfxRenderer = _attackParticlesDict[attackName].Key.GetComponent<ParticleSystemRenderer>();
-                var flip = pfxRenderer.flip;
-                flip.x = enemy.relativeMoveDirection.x > 0 ? 1 : 0;
-                pfxRenderer.flip = flip;
+                var attackParticlePrefab = attackParticleData.attackParticlePrefab;
+                var attackParticleOffset = attackParticleData.attackParticleOffset;
+                var alignAttackParticleToHorizontalDirection = attackParticleData.alignAttackParticleToHorizontalDirection;
                 
-                _attackParticlesDict[attackName].Value.Play();
+                var key = $"{attackName}.{attackParticlePrefab.name}"; 
+                
+                if (!_attackParticlesDict.ContainsKey(key))
+                {
+                    var obj = Object.Instantiate(attackParticlePrefab, enemyTransform)!;
+                    _attackParticlesDict.Add(key, new KeyValuePair<GameObject, ParticleSystem>(obj, obj.GetComponent<ParticleSystem>()));
+                }
+                    
+                var offsetX = enemyTransform.right * attackParticleOffset.x;
+                var offsetY = enemyTransform.up * attackParticleOffset.y;
+
+                if (enemy.relativeMoveDirection.x < 0)
+                {
+                    offsetX = -offsetX;
+                }
+                
+                _attackParticlesDict[key].Key.transform.position = enemyTransform.position + offsetX + offsetY;
+
+                if (alignAttackParticleToHorizontalDirection)
+                {
+                    // access the renderer module of the particle system
+                    var pfxRenderer = _attackParticlesDict[key].Key.GetComponent<ParticleSystemRenderer>();
+                    var flip = pfxRenderer.flip;
+                    flip.x = enemy.relativeMoveDirection.x > 0 ? 1 : 0;
+                    pfxRenderer.flip = flip;
+                }
+                
+                _attackParticlesDict[key].Value.Play();
             }
         }
 

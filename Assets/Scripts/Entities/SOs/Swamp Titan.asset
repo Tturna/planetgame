@@ -48,10 +48,10 @@ MonoBehaviour:
     animationIndex: 1
     damage: 30
     knockback: 20
-    attackRange: 4
+    attackRange: 5
     attackMagnitude: 1
     attackTime: 0
-    attackDelay: 0.45
+    attackDelay: 0.55
     preventsMovement: 1
     cameraShakeTime: 0.33
     cameraShakeStrength: 0.15
@@ -78,7 +78,7 @@ MonoBehaviour:
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
-          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 0}
+          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 0}
           key3: {r: 0, g: 0, b: 0, a: 0}
           key4: {r: 0, g: 0, b: 0, a: 0}
@@ -93,7 +93,7 @@ MonoBehaviour:
           ctime5: 0
           ctime6: 0
           ctime7: 0
-          atime0: 32768
+          atime0: 0
           atime1: 65535
           atime2: 0
           atime3: 0
@@ -104,7 +104,8 @@ MonoBehaviour:
           m_Mode: 0
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
-        trailTime: 0.1
+        trailTime: 0.2
+        trailStartEndWidth: {x: 0.5, y: 0.1}
         useLight: 0
         lightColor: {r: 0, g: 0, b: 0, a: 0}
         spawnAnimation: {fileID: 0}
@@ -139,7 +140,7 @@ MonoBehaviour:
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
-          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 0}
+          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 0}
           key3: {r: 0, g: 0, b: 0, a: 0}
           key4: {r: 0, g: 0, b: 0, a: 0}
@@ -154,7 +155,7 @@ MonoBehaviour:
           ctime5: 0
           ctime6: 0
           ctime7: 0
-          atime0: 32768
+          atime0: 0
           atime1: 65535
           atime2: 0
           atime3: 0
@@ -165,7 +166,8 @@ MonoBehaviour:
           m_Mode: 0
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
-        trailTime: 0.1
+        trailTime: 0.2
+        trailStartEndWidth: {x: 0.5, y: 0.1}
         useLight: 0
         lightColor: {r: 0, g: 0, b: 0, a: 0}
         spawnAnimation: {fileID: 0}
@@ -200,7 +202,7 @@ MonoBehaviour:
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
-          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 0}
+          key1: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 0}
           key3: {r: 0, g: 0, b: 0, a: 0}
           key4: {r: 0, g: 0, b: 0, a: 0}
@@ -215,7 +217,7 @@ MonoBehaviour:
           ctime5: 0
           ctime6: 0
           ctime7: 0
-          atime0: 32768
+          atime0: 0
           atime1: 65535
           atime2: 0
           atime3: 0
@@ -226,7 +228,8 @@ MonoBehaviour:
           m_Mode: 0
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
-        trailTime: 0.1
+        trailTime: 0.2
+        trailStartEndWidth: {x: 0.5, y: 0.1}
         useLight: 0
         lightColor: {r: 0, g: 0, b: 0, a: 0}
         spawnAnimation: {fileID: 0}
@@ -242,9 +245,10 @@ MonoBehaviour:
     useRandomProjectileAttack: 1
     minProjectileAttacks: 4
     maxProjectileAttacks: 8
-    attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
-    attackParticleOffset: {x: 0.75, y: -0.6}
-    alignAttackParticleToHorizontalDirection: 0
+    attackParticles:
+    - attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
+      attackParticleOffset: {x: 0.5, y: -1.3}
+      alignAttackParticleToHorizontalDirection: 0
     colliderSizeMultiplier: {x: 1, y: 1}
     colliderEdgeRadiusMultiplier: 1
     colliderOffset: {x: 0, y: 0}
@@ -264,9 +268,13 @@ MonoBehaviour:
     useRandomProjectileAttack: 0
     minProjectileAttacks: 0
     maxProjectileAttacks: 0
-    attackParticlePrefab: {fileID: 4828194393695282975, guid: 5fab68f28c706f642817581d226db4ea, type: 3}
-    attackParticleOffset: {x: 0, y: -0.2}
-    alignAttackParticleToHorizontalDirection: 1
+    attackParticles:
+    - attackParticlePrefab: {fileID: 4828194393695282975, guid: 5fab68f28c706f642817581d226db4ea, type: 3}
+      attackParticleOffset: {x: 0, y: 0}
+      alignAttackParticleToHorizontalDirection: 1
+    - attackParticlePrefab: {fileID: 4481794776419611209, guid: b8859719f845eeb4fbe172bbd97cc088, type: 3}
+      attackParticleOffset: {x: 0, y: -1}
+      alignAttackParticleToHorizontalDirection: 0
     colliderSizeMultiplier: {x: 4.65, y: 1}
     colliderEdgeRadiusMultiplier: 0.5
     colliderOffset: {x: -0.4, y: -0.47}
@@ -286,9 +294,7 @@ MonoBehaviour:
     useRandomProjectileAttack: 0
     minProjectileAttacks: 0
     maxProjectileAttacks: 0
-    attackParticlePrefab: {fileID: 0}
-    attackParticleOffset: {x: 0, y: 0}
-    alignAttackParticleToHorizontalDirection: 0
+    attackParticles: []
     colliderSizeMultiplier: {x: 1, y: 1}
     colliderEdgeRadiusMultiplier: 1
     colliderOffset: {x: 0, y: 0}
@@ -300,7 +306,7 @@ MonoBehaviour:
     attackRange: 9
     attackMagnitude: 1
     attackTime: 0
-    attackDelay: 0.5
+    attackDelay: 0.55
     preventsMovement: 1
     cameraShakeTime: 0.33
     cameraShakeStrength: 0.15
@@ -354,6 +360,7 @@ MonoBehaviour:
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
         trailTime: 0
+        trailStartEndWidth: {x: 0, y: 0}
         useLight: 0
         lightColor: {r: 0, g: 0, b: 0, a: 0}
         spawnAnimation: {fileID: 7400000, guid: 5283e8ab28ba6d14e860fb2164c467ae, type: 2}
@@ -369,9 +376,10 @@ MonoBehaviour:
     useRandomProjectileAttack: 0
     minProjectileAttacks: 3
     maxProjectileAttacks: 6
-    attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
-    attackParticleOffset: {x: 0.75, y: -0.6}
-    alignAttackParticleToHorizontalDirection: 0
+    attackParticles:
+    - attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
+      attackParticleOffset: {x: 0.5, y: -1.3}
+      alignAttackParticleToHorizontalDirection: 0
     colliderSizeMultiplier: {x: 1, y: 1}
     colliderEdgeRadiusMultiplier: 1
     colliderOffset: {x: 0, y: 0}

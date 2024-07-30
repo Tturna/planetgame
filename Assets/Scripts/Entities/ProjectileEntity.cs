@@ -105,6 +105,8 @@ namespace Entities
             {
                 _sr.sortingLayerName = _data.sortingLayerName;
                 _sr.sortingOrder = _data.sortingOrder;
+                _trailRenderer.sortingLayerName = _data.sortingLayerName;
+                _trailRenderer.sortingOrder = _data.sortingOrder - 1;
             }
 
             if (!MainCollider)
@@ -146,6 +148,8 @@ namespace Entities
             _trailRenderer.Clear();
             _trailRenderer.colorGradient = _data.trailColor;
             _trailRenderer.time = _data.trailTime;
+            _trailRenderer.startWidth = _data.trailStartEndWidth.x;
+            _trailRenderer.endWidth = _data.trailStartEndWidth.y;
 
             light2D.gameObject.SetActive(_data.useLight);
             
@@ -197,6 +201,7 @@ namespace Entities
             var colDiff = (hitObjectPos - transform.position).normalized; 
             var angle = Mathf.Atan2(colDiff.y, colDiff.x) * Mathf.Rad2Deg;
             
+            // TODO: Make it so the break particles are pulled from projectile data
             var psTr = _breakPs.transform;
             psTr.SetParent(null);
             psTr.localScale = Vector3.one;
