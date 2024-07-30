@@ -11926,11 +11926,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.4375
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.625
+      value: 0.4375
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -42931,7 +42931,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 30
-  mainCollider: {fileID: 733822064}
   handsAnimator: {fileID: 1739784015}
   handsParent: {fileID: 1739784014}
   extraSpritesParent: {fileID: 1513816884}
@@ -72090,7 +72089,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 20
-  mainCollider: {fileID: 0}
   normalMaxSpeed: 13
   cruiseMaxSpeed: 25
   warpMaxSpeed: 45
@@ -91326,11 +91324,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.625
+      value: 0.9375
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.4375
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -95047,11 +95045,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.4375
+      value: 0.625
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.625
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -102987,11 +102985,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.4375
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.625
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -103218,7 +103216,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: e21bdd85e632aae4aa7a0994002ea745, type: 2}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Size.x
-      value: 0.43
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Size.y
@@ -103226,15 +103224,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Offset.x
-      value: -0.12
+      value: -0.51
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Offset.y
-      value: -0.1
+      value: -0.58
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_EdgeRadius
-      value: 1
+      value: 0.49
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
@@ -103246,7 +103244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 3.125
+      value: 4.25
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
@@ -104782,11 +104780,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.4375
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816819, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.625
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -105556,7 +105554,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 100
-  mainCollider: {fileID: 6899459541835332611}
   enemyPrefab: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
   swampTitanSo: {fileID: 11400000, guid: e21bdd85e632aae4aa7a0994002ea745, type: 2}
 --- !u!1001 &9052693212031469192

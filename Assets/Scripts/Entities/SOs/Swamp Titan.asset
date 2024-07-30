@@ -240,10 +240,14 @@ MonoBehaviour:
       tryStartFromGround: 0
       tryOrientToGround: 0
     useRandomProjectileAttack: 1
-    minProjectileAttacks: 8
-    maxProjectileAttacks: 15
+    minProjectileAttacks: 4
+    maxProjectileAttacks: 8
     attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
     attackParticleOffset: {x: 0.75, y: -0.6}
+    alignAttackParticleToHorizontalDirection: 0
+    colliderSizeMultiplier: {x: 1, y: 1}
+    colliderEdgeRadiusMultiplier: 1
+    colliderOffset: {x: 0, y: 0}
   - attackName: Dash
     attackFunction: 1
     animationIndex: 4
@@ -261,7 +265,11 @@ MonoBehaviour:
     minProjectileAttacks: 0
     maxProjectileAttacks: 0
     attackParticlePrefab: {fileID: 4828194393695282975, guid: 5fab68f28c706f642817581d226db4ea, type: 3}
-    attackParticleOffset: {x: 0, y: 0}
+    attackParticleOffset: {x: 0, y: -0.2}
+    alignAttackParticleToHorizontalDirection: 1
+    colliderSizeMultiplier: {x: 4.65, y: 1}
+    colliderEdgeRadiusMultiplier: 0.5
+    colliderOffset: {x: -0.4, y: -0.47}
   - attackName: Teleport
     attackFunction: 3
     animationIndex: 5
@@ -280,6 +288,10 @@ MonoBehaviour:
     maxProjectileAttacks: 0
     attackParticlePrefab: {fileID: 0}
     attackParticleOffset: {x: 0, y: 0}
+    alignAttackParticleToHorizontalDirection: 0
+    colliderSizeMultiplier: {x: 1, y: 1}
+    colliderEdgeRadiusMultiplier: 1
+    colliderOffset: {x: 0, y: 0}
   - attackName: Summon Bubbles
     attackFunction: 2
     animationIndex: 1
@@ -359,6 +371,10 @@ MonoBehaviour:
     maxProjectileAttacks: 6
     attackParticlePrefab: {fileID: 2510826240649429122, guid: 97a04ac6e3f0fa245a3da6e2e9292929, type: 3}
     attackParticleOffset: {x: 0.75, y: -0.6}
+    alignAttackParticleToHorizontalDirection: 0
+    colliderSizeMultiplier: {x: 1, y: 1}
+    colliderEdgeRadiusMultiplier: 1
+    colliderOffset: {x: 0, y: 0}
   dropMultiple: 0
   lootTable:
   - item:

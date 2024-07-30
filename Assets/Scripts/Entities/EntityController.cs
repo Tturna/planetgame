@@ -9,7 +9,7 @@ namespace Entities
     public class EntityController : MonoBehaviour
     {
         [SerializeField] protected float gravityMultiplier;
-        [SerializeField] protected Collider2D mainCollider;
+        [SerializeField] public Collider2D MainCollider { get; protected set; }
         [CanBeNull] public GameObject ClosestPlanetObject { get; private set; }
         [CanBeNull] public GameObject CurrentPlanetObject { get; private set; }
         [CanBeNull] public PlanetGenerator ClosestPlanetGen { get; private set; }
@@ -48,6 +48,8 @@ namespace Entities
 
         protected virtual void Start()
         {
+            MainCollider = GetComponent<Collider2D>();
+            
             if (TryGetComponent<Rigidbody2D>(out var rb))
             {
                 Rigidbody = rb;
@@ -171,7 +173,7 @@ namespace Entities
         public void ToggleCollision(bool state)
         {
             CanCollide = state;
-            mainCollider.enabled = state;
+            MainCollider.enabled = state;
         }
 
         public void AddRelativeForce(Vector3 force, ForceMode2D forceMode)

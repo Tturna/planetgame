@@ -343,7 +343,7 @@ namespace Entities.Enemies
 
             _healthbarManager.Initialize(_health, _maxHealth, enemySo);
 
-            var mainCol = (BoxCollider2D)mainCollider;
+            var mainCol = (BoxCollider2D)MainCollider;
             mainCol.offset = enemySo.hitboxOffset;
             mainCol.size = enemySo.hitboxSize;
             mainCol.edgeRadius = enemySo.hitboxEdgeRadius;

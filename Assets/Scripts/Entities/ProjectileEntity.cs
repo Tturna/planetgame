@@ -106,9 +106,14 @@ namespace Entities
                 _sr.sortingLayerName = _data.sortingLayerName;
                 _sr.sortingOrder = _data.sortingOrder;
             }
+
+            if (!MainCollider)
+            {
+                MainCollider = GetComponent<Collider2D>();
+            }
             
             // make collider size match sprite size
-            var col = (CapsuleCollider2D)mainCollider;
+            var col = (CapsuleCollider2D)MainCollider;
             col.size = _sr.sprite.bounds.size;
             
             ToggleControl(false);

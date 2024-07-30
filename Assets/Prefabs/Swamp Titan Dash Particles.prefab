@@ -31,7 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &4828194393695282962
 ParticleSystem:
@@ -285,7 +285,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 4
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1483,7 +1483,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 21300000, guid: 9e77bd41c4c16cc48b9df7471ac9bd10, type: 3}
+    - sprite: {fileID: 1959837717, guid: ebddaf2b3757d42469ccd731f8b7ef2f, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:

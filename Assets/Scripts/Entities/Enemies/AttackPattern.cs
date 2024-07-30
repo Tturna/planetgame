@@ -69,7 +69,10 @@ namespace Entities.Enemies
         public int maxProjectileAttacks;
         public GameObject? attackParticlePrefab;
         public Vector2 attackParticleOffset;
-        // TODO: Allow an attack to temporarily change the enemy collider
+        public bool alignAttackParticleToHorizontalDirection;
+        public Vector2 colliderSizeMultiplier = Vector2.one;
+        public float colliderEdgeRadiusMultiplier = 1f;
+        public Vector2 colliderOffset = Vector2.one;
         
         private GameObject? _projectilePrefab;
         private Dictionary<string, KeyValuePair<GameObject, ParticleSystem>> _attackParticlesDict = new();
@@ -104,7 +107,46 @@ namespace Entities.Enemies
             }
             
             _attackParticlesDict[attackName].Key.transform.position = enemyTransform.position + offsetX + offsetY;
-            _attackParticlesDict[attackName].Value.Play();
+
+            if (alignAttackParticleToHorizontalDirection)
+            {
+                // access the renderer module of the particle system
+                var pfxRenderer = _attackParticlesDict[attackName].Key.GetComponent<ParticleSystemRenderer>();
+                var flip = pfxRenderer.flip;
+                flip.x = enemy.relativeMoveDirection.x > 0 ? 1 : 0;
+                pfxRenderer.flip = flip;
+                
+                _attackParticlesDict[attackName].Value.Play();
+            }
+        }
+
+        private void UpdateCollider(EnemyEntity enemy)
+        {
+            if (colliderSizeMultiplier == Vector2.one &&
+                colliderEdgeRadiusMultiplier == 1f &&
+                colliderOffset == Vector2.zero)
+            {
+                return;
+            }
+            
+            if (colliderSizeMultiplier == Vector2.zero &&
+                colliderEdgeRadiusMultiplier == 0f &&
+                colliderOffset == Vector2.zero)
+            {
+                return;
+            }
+
+            var enemyCollider = (BoxCollider2D)enemy.MainCollider;
+            enemyCollider.size = enemy.enemySo.hitboxSize * colliderSizeMultiplier;
+            enemyCollider.edgeRadius = enemy.enemySo.hitboxEdgeRadius * colliderEdgeRadiusMultiplier;
+            enemyCollider.offset = enemy.enemySo.hitboxOffset + colliderOffset;
+
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                enemyCollider.size = enemy.enemySo.hitboxSize;
+                enemyCollider.edgeRadius = enemy.enemySo.hitboxEdgeRadius;
+                enemyCollider.offset = enemy.enemySo.hitboxOffset;
+            }, attackTime);
         }
 
         public Action? Punch(EnemyEntity enemy, Vector3 directionToPlayer)
@@ -126,6 +168,7 @@ namespace Entities.Enemies
                 
                 ShootAction(enemy, directionToPlayer);
                 PlayAttackParticles(enemy);
+                UpdateCollider(enemy);
 
                 var hit = Physics2D.Raycast(enemy.transform.position, directionToPlayer, attackRange, 1);
                 CameraController.CameraShake(cameraShakeTime, cameraShakeStrength);
@@ -154,6 +197,7 @@ namespace Entities.Enemies
                 if (!enemy) return;
                 ShootAction(enemy, directionToPlayer);
                 PlayAttackParticles(enemy);
+                UpdateCollider(enemy);
                 
                 var oldKnockback = enemy.currentKnockback;
                 enemy.currentKnockback = knockback;
@@ -186,11 +230,13 @@ namespace Entities.Enemies
                 {
                     ShootAction(enemy, directionToPlayer);
                     PlayAttackParticles(enemy);
+                    UpdateCollider(enemy);
                 }, attackDelay);
             }
 
             ShootAction(enemy, directionToPlayer);
             PlayAttackParticles(enemy);
+            UpdateCollider(enemy);
             return null;
         }
         
