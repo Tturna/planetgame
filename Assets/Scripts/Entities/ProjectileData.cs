@@ -8,6 +8,8 @@ namespace Entities
     public class ProjectileData
     {
         public Sprite sprite;
+        public string sortingLayerName;
+        public int sortingOrder;
         [FormerlySerializedAs("projectileSpeed")] public float minProjectileSpeed;
         public float maxProjectileSpeed;
         public float lifetime;
@@ -27,5 +29,9 @@ namespace Entities
         public float trailTime;
         public bool useLight;
         public Color lightColor;
+        [Tooltip("Animation to play when the projectile spawns. Leave empty for no animation.")]
+        public AnimationClip spawnAnimation;
+        [Tooltip("Animation to play after spawn animation while the projectile exists. Leave empty for no animation.")]
+        public AnimationClip updateAnimation;
     }
 }

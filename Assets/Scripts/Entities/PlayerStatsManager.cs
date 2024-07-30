@@ -15,8 +15,8 @@ namespace Entities
     
         #region Base Stats
 
-        private const float BaseMaxHealth = 100f;
-        private const float BaseHealth = 100f;
+        private const float BaseMaxHealth = 1000f;
+        private const float BaseHealth = 1000f;
         private const float BaseHealthRegenDelay = 4f;
         private const float BaseHealthRegenRate = 3.34f;
         private const float BaseMaxEnergy = 100f;

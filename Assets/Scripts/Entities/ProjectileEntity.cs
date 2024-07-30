@@ -11,6 +11,7 @@ namespace Entities
     public class ProjectileEntity : EntityController
     {
         [FormerlySerializedAs("_light")] [SerializeField] private Light2D light2D; 
+        [SerializeField] private RuntimeAnimatorController animatorController;
         private ParticleSystem _breakPs;
         private ProjectileData _data;
         private Vector3 _lastPos;
@@ -18,7 +19,10 @@ namespace Entities
         private TrailRenderer _trailRenderer;
         private float _lifetimeTimer;
         private Vector2 _initialVelocity;
-        
+        private Animator _animator;
+        private static readonly int AnimTransitionToUpdateBool = Animator.StringToHash("transitionToUpdate");
+        private bool animatorCreated;
+
         protected override void Start()
         {
             _breakPs = GetComponentInChildren<ParticleSystem>();
@@ -96,6 +100,12 @@ namespace Entities
             }
             
             _sr.sprite = _data.sprite;
+
+            if (!string.IsNullOrEmpty(_data.sortingLayerName))
+            {
+                _sr.sortingLayerName = _data.sortingLayerName;
+                _sr.sortingOrder = _data.sortingOrder;
+            }
             
             // make collider size match sprite size
             var col = (CapsuleCollider2D)mainCollider;
@@ -137,6 +147,43 @@ namespace Entities
             if (_data.useLight)
             {
                 light2D.color = _data.lightColor;
+            }
+
+            if (_data.spawnAnimation || _data.updateAnimation)
+            {
+                // Apparently using this[string] for AnimatorOverrideController is not recommended
+                // if you need to do it multiple times. We only do it twice and not every frame so it's fine.
+                // Allegedly it's better to use ApplyOverrides():
+                // https://docs.unity3d.com/ScriptReference/AnimatorOverrideController.ApplyOverrides.html
+
+                if (!animatorCreated)
+                {
+                    _animator = gameObject.AddComponent<Animator>();
+                    animatorCreated = true;
+                }
+                
+                var orAnim = new AnimatorOverrideController(animatorController);
+                _animator.runtimeAnimatorController = orAnim;
+                
+                if (_data.updateAnimation)
+                {
+                    orAnim["d_move"] = _data.updateAnimation;
+
+                    if (_data.spawnAnimation)
+                    {
+                        _animator.SetBool(AnimTransitionToUpdateBool, true);
+                    }
+                    else
+                    {
+                        _animator.Play("Base Layer.Update");
+                    }
+                }
+                
+                if (_data.spawnAnimation)
+                {
+                    orAnim["d_wakeup"] = _data.spawnAnimation;
+                    _animator.Play("Base Layer.Spawn");
+                }
             }
         }
 

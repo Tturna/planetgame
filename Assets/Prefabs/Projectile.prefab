@@ -368,6 +368,7 @@ MonoBehaviour:
   gravityMultiplier: 0
   mainCollider: {fileID: 5772806534296229052}
   light2D: {fileID: 8662380257561544109}
+  animatorController: {fileID: 9100000, guid: 61ea8cd17f0ad884e83fad4fb6889bd9, type: 2}
 --- !u!1 &7558109462923003348
 GameObject:
   m_ObjectHideFlags: 0

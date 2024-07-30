@@ -40,6 +40,7 @@ namespace Entities.Enemies
             [FormerlySerializedAs("projectileSpawnOffset")] public Vector2 minProjectileSpawnOffset;
             public Vector2 maxProjectileSpawnOffset;
             public bool tryStartFromGround;
+            public bool tryOrientToGround;
         }
 
         public Dictionary<AttackFunctions, Func<EnemyEntity, Vector3, Action?>> FunctionLookupTable => new()
@@ -68,6 +69,7 @@ namespace Entities.Enemies
         public int maxProjectileAttacks;
         public GameObject? attackParticlePrefab;
         public Vector2 attackParticleOffset;
+        // TODO: Allow an attack to temporarily change the enemy collider
         
         private GameObject? _projectilePrefab;
         private Dictionary<string, KeyValuePair<GameObject, ParticleSystem>> _attackParticlesDict = new();
@@ -287,7 +289,24 @@ namespace Entities.Enemies
                     
                     if (hit)
                     {
-                        spawnPoint = hit.point;
+                        var groundDir = (hit.point - (Vector2)spawnPoint).normalized;
+                        spawnPoint = hit.point - groundDir * (projectileAttackData.projectileData.sprite.bounds.size.y * 0.4f);
+                    }
+                }
+
+                if (projectileAttackData.tryOrientToGround)
+                {
+                    var spawnToPlayer = projectileAttackData.spawnReferencePoint == ReferencePoints.Player;
+                    
+                    var dir = spawnToPlayer
+                        ? -PlayerController.instance.transform.up
+                        : -tr.up;
+                    
+                    var hit = Physics2D.Raycast(spawnPoint, dir, 10f, GameUtilities.BasicMovementCollisionMask);
+
+                    if (hit)
+                    {
+                        rot.z = Mathf.Atan2(hit.normal.y, hit.normal.x) * Mathf.Rad2Deg - 90;
                     }
                 }
                 

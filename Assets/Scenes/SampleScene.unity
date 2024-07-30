@@ -93456,8 +93456,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeTime: 0
-  planetTime: 0
+  freezeTime: 1
+  planetTime: 30
   planetDaySeconds: 60
   windChangeIntervalGap: {x: 5, y: 10}
   maxWindStrength: 10
@@ -103166,7 +103166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312608, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_RootOrder
@@ -103218,35 +103218,39 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: e21bdd85e632aae4aa7a0994002ea745, type: 2}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Size.x
-      value: 0.52
+      value: 0.43
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Size.y
-      value: 0.85
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.12
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Offset.y
-      value: -0.17
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_EdgeRadius
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
-      propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1.875
-      objectReference: {fileID: 0}
-    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
       value: 2.375
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.y
+      propertyPath: m_SpriteTilingProperty.newSize.y
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 3.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 9052693212076312620, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 2.6875
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312622, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Controller
@@ -103254,16 +103258,16 @@ PrefabInstance:
       objectReference: {fileID: 22100000, guid: b47eda05c83a6ed41b6bfdfc88047489, type: 2}
     - target: {fileID: 9052693212076312623, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Size.x
-      value: 2
+      value: 2.375
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312623, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Size.y
-      value: 1.875
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312623, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1037171232, guid: 8ebad7faecadde84fab5be1a41b83397, type: 3}
+      objectReference: {fileID: 468801021, guid: 693b4f2e3238b50439b1632e62834d11, type: 3}
     - target: {fileID: 9052693212076312623, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -105538,7 +105542,7 @@ GameObject:
   m_Icon: {fileID: 2800000, guid: 43cd5acb6378e7243bb7c91dead40533, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &6899459541835332861
 MonoBehaviour:
   m_ObjectHideFlags: 0
