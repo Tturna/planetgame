@@ -1,4 +1,5 @@
-﻿using Entities.Enemies;
+﻿#nullable enable
+using Entities.Enemies;
 using Planets;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -12,7 +13,7 @@ namespace Entities
     {
         [FormerlySerializedAs("_light")] [SerializeField] private Light2D light2D; 
         [SerializeField] private RuntimeAnimatorController animatorController;
-        private ParticleSystem _breakPs;
+        private ParticleSystem _defaultBreakPfx;
         private ProjectileData _data;
         private Vector3 _lastPos;
         private SpriteRenderer _sr;
@@ -25,8 +26,8 @@ namespace Entities
 
         protected override void Start()
         {
-            _breakPs = GetComponentInChildren<ParticleSystem>();
             _lastPos = transform.position;
+            _defaultBreakPfx = GetComponentInChildren<ParticleSystem>();
 
             if (_data.lifetime == 0)
             {
@@ -101,7 +102,14 @@ namespace Entities
             
             _sr.sprite = _data.sprite;
 
-            if (!string.IsNullOrEmpty(_data.sortingLayerName))
+            if (string.IsNullOrEmpty(_data.sortingLayerName))
+            {
+                _sr.sortingLayerName = "Default";
+                _sr.sortingOrder = 1;
+                _trailRenderer.sortingLayerName = "Effects";
+                _trailRenderer.sortingOrder = 0;
+            }
+            else
             {
                 _sr.sortingLayerName = _data.sortingLayerName;
                 _sr.sortingOrder = _data.sortingOrder;
@@ -171,6 +179,8 @@ namespace Entities
                     animatorCreated = true;
                 }
                 
+                _animator.enabled = true;
+                
                 var orAnim = new AnimatorOverrideController(animatorController);
                 _animator.runtimeAnimatorController = orAnim;
                 
@@ -200,22 +210,57 @@ namespace Entities
         {
             var colDiff = (hitObjectPos - transform.position).normalized; 
             var angle = Mathf.Atan2(colDiff.y, colDiff.x) * Mathf.Rad2Deg;
+
+            GameObject? clone = null;
+            ParticleSystem breakPfx;
             
-            // TODO: Make it so the break particles are pulled from projectile data
-            var psTr = _breakPs.transform;
-            psTr.SetParent(null);
-            psTr.localScale = Vector3.one;
-            psTr.eulerAngles = Vector3.forward * angle;
+            if (_data.breakParticlePrefab)
+            {
+                // TODO: object pooling
+                clone = Instantiate(_data.breakParticlePrefab, transform.position, Quaternion.identity, transform);
+                breakPfx = clone.GetComponent<ParticleSystem>();
+            }
+            else
+            {
+                breakPfx = _defaultBreakPfx;
+            }
             
-            var main = _breakPs.main;
+            var pfxTr = breakPfx.transform;
+            pfxTr.localPosition = Vector3.zero;
+            pfxTr.SetParent(null);
+            pfxTr.localScale = Vector3.one;
+            pfxTr.eulerAngles = Vector3.forward * angle;
+            
+            var main = breakPfx.main;
             main.startColor = _data.breakParticleColor;
-            _breakPs.Play();
+            breakPfx.Play();
             
             GameUtilities.instance.DelayExecute(() =>
             {
-                _breakPs.Stop();
-                psTr.SetParent(transform);
+                if (_data.breakParticlePrefab)
+                {
+                    if (clone != null)
+                    {
+                        Destroy(clone);
+                    }
+                }
+                else
+                {
+                    breakPfx.Stop();
+                    pfxTr.SetParent(transform);
+                    
+                    // I guess Unity disables a gameobject added to a disabled gameobject
+                    pfxTr.gameObject.SetActive(true);
+                }
             }, 1f);
+            
+            if (animatorCreated)
+            {
+                _animator.StopPlayback();
+                _animator.Rebind();
+                _animator.Update(0f);
+                _animator.enabled = false;
+            }
             
             gameObject.SetActive(false);
         }

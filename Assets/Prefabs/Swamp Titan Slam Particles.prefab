@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2510826240649429127}
   - component: {fileID: 2510826240649429120}
   m_Layer: 3
-  m_Name: Swamp Titan Mud Slam Particles
+  m_Name: Swamp Titan Slam Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

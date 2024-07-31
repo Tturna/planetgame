@@ -57,7 +57,7 @@ MonoBehaviour:
     cameraShakeStrength: 0.15
     projectileAttacks:
     - projectileData:
-        sprite: {fileID: -152440396, guid: 50679314d2e334a44b55d0ce6ee85f25, type: 3}
+        sprite: {fileID: -1074814300, guid: f20ccce6211c4d048ad2467cc5fcb1c5, type: 3}
         sortingLayerName: 
         sortingOrder: 0
         minProjectileSpeed: 5
@@ -74,6 +74,7 @@ MonoBehaviour:
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
+        breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
         breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
         trailColor:
           serializedVersion: 2
@@ -119,7 +120,7 @@ MonoBehaviour:
       tryStartFromGround: 0
       tryOrientToGround: 0
     - projectileData:
-        sprite: {fileID: -152440396, guid: 50679314d2e334a44b55d0ce6ee85f25, type: 3}
+        sprite: {fileID: -1074814300, guid: f20ccce6211c4d048ad2467cc5fcb1c5, type: 3}
         sortingLayerName: 
         sortingOrder: 0
         minProjectileSpeed: 10
@@ -136,6 +137,7 @@ MonoBehaviour:
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
+        breakParticlePrefab: {fileID: 0}
         breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
         trailColor:
           serializedVersion: 2
@@ -181,7 +183,7 @@ MonoBehaviour:
       tryStartFromGround: 0
       tryOrientToGround: 0
     - projectileData:
-        sprite: {fileID: -152440396, guid: 50679314d2e334a44b55d0ce6ee85f25, type: 3}
+        sprite: {fileID: -1074814300, guid: f20ccce6211c4d048ad2467cc5fcb1c5, type: 3}
         sortingLayerName: 
         sortingOrder: 0
         minProjectileSpeed: 8
@@ -198,6 +200,7 @@ MonoBehaviour:
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
+        breakParticlePrefab: {fileID: 0}
         breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
         trailColor:
           serializedVersion: 2
@@ -329,6 +332,7 @@ MonoBehaviour:
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0
+        breakParticlePrefab: {fileID: 0}
         breakParticleColor: {r: 0, g: 0, b: 0, a: 0}
         trailColor:
           serializedVersion: 2

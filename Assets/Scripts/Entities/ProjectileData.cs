@@ -24,6 +24,8 @@ namespace Entities
         public bool canHurtPlayer;
         public bool canHurtEnemies;
         public float collisionActivationDelay;
+        [Tooltip("Particles to spawn when the projectile breaks. Leave empty for default pfx.")]
+        public GameObject breakParticlePrefab;
         public Color breakParticleColor;
         public Gradient trailColor;
         public float trailTime;
