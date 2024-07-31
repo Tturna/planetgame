@@ -208,8 +208,9 @@ namespace Entities
 
         private void DisableProjectile(Vector3 hitObjectPos)
         {
-            var colDiff = (hitObjectPos - transform.position).normalized; 
-            var angle = Mathf.Atan2(colDiff.y, colDiff.x) * Mathf.Rad2Deg;
+            var hitObjectDirection = (hitObjectPos - transform.position).normalized; 
+            
+            var hit = Physics2D.Raycast(transform.position, hitObjectDirection, 1f, GameUtilities.BasicMovementCollisionMask);
 
             GameObject? clone = null;
             ParticleSystem breakPfx;
@@ -229,7 +230,11 @@ namespace Entities
             pfxTr.localPosition = Vector3.zero;
             pfxTr.SetParent(null);
             pfxTr.localScale = Vector3.one;
-            pfxTr.eulerAngles = Vector3.forward * angle;
+
+            if (hit)
+            {
+                pfxTr.transform.up = hit.normal;
+            }
             
             var main = breakPfx.main;
             main.startColor = _data.breakParticleColor;

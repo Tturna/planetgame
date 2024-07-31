@@ -170,7 +170,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 10
+      scalar: 8
       minScalar: 4
       maxCurve:
         serializedVersion: 2
@@ -670,7 +670,7 @@ ParticleSystem:
     radiusThickness: 1
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: 0, y: 0, z: 55}
+    m_Rotation: {x: 0, y: 0, z: 65}
     m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -807,7 +807,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
     arc:
-      value: 70
+      value: 50
       mode: 0
       spread: 0
       speed:
@@ -3874,7 +3874,7 @@ ParticleSystem:
     - serializedVersion: 3
       emitter: {fileID: 2411808216478565629}
       type: 2
-      properties: 2
+      properties: 6
       emitProbability: 1
   LightsModule:
     enabled: 0

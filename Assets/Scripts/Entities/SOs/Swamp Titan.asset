@@ -69,13 +69,13 @@ MonoBehaviour:
         piercing: 1
         useGravity: 1
         gravityMultiplier: 25
-        faceDirectionOfTravel: 1
+        faceDirectionOfTravel: 0
         collideWithWorld: 1
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
         breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
-        breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+        breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -132,13 +132,13 @@ MonoBehaviour:
         piercing: 1
         useGravity: 1
         gravityMultiplier: 25
-        faceDirectionOfTravel: 1
+        faceDirectionOfTravel: 0
         collideWithWorld: 1
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
-        breakParticlePrefab: {fileID: 0}
-        breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+        breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
+        breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -195,13 +195,13 @@ MonoBehaviour:
         piercing: 1
         useGravity: 1
         gravityMultiplier: 25
-        faceDirectionOfTravel: 1
+        faceDirectionOfTravel: 0
         collideWithWorld: 1
         canHurtPlayer: 1
         canHurtEnemies: 0
         collisionActivationDelay: 0.2
-        breakParticlePrefab: {fileID: 0}
-        breakParticleColor: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
+        breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
+        breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -297,7 +297,10 @@ MonoBehaviour:
     useRandomProjectileAttack: 0
     minProjectileAttacks: 0
     maxProjectileAttacks: 0
-    attackParticles: []
+    attackParticles:
+    - attackParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
+      attackParticleOffset: {x: 0, y: 0}
+      alignAttackParticleToHorizontalDirection: 0
     colliderSizeMultiplier: {x: 1, y: 1}
     colliderEdgeRadiusMultiplier: 1
     colliderOffset: {x: 0, y: 0}
