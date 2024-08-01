@@ -201,6 +201,13 @@ namespace Inventory
             HeldItemManager.ItemUsed += TryDecrementSelectedStack;
         }
 
+        private void OnDestroy()
+        {
+            PlayerController.instance.itemPickedUp -= io => AddItem(io.GetComponent<ItemEntity>().item);
+            UIUtilities.OnMouseRaycast -= UpdateItemTooltip;
+            HeldItemManager.ItemUsed -= TryDecrementSelectedStack;
+        }
+
         private float _scrollDelta;
         private void Update()
         {

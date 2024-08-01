@@ -16,7 +16,6 @@ namespace Inventory.Item_Logic
         private static float _soil;
         private PlanetGenerator _planetGen;
         private float _mineTimer;
-        private ItemAnimationManager _itemAnimationManager;
 
         public override bool UseOnce(UseParameters useParameters)
         {
@@ -53,8 +52,6 @@ namespace Inventory.Item_Logic
 
         public override bool UseContinuous(UseParameters useParameters)
         {
-            _itemAnimationManager ??= useParameters.itemAnimationManager;
-            
             var tool = (ToolSo)useParameters.attackItem.itemSo;
             var useArea = tool.toolUseArea;
             var power = tool.toolPower;
@@ -74,7 +71,7 @@ namespace Inventory.Item_Logic
             if (_mineTimer == 0)
             {
                 // canMineOre = true;
-                _itemAnimationManager.AttackMelee("attackPickaxe");
+                useParameters.itemAnimationManager.AttackMelee("attackPickaxe");
                 _mineTimer = tool.attackCooldown;
                 GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
             }
@@ -141,7 +138,11 @@ namespace Inventory.Item_Logic
 
         private void DigTerrain(GameObject hitObject, Vector3 mousePoint, float power, float useArea)
         {
-            _planetGen ??= hitObject.transform.root.GetComponent<PlanetGenerator>();
+            // use this instead of ??= because ??= bypasses the unity object lifetime check
+            if (!_planetGen)
+            {
+                _planetGen = hitObject.transform.root.GetComponent<PlanetGenerator>();
+            }
 
             // Get cell data
             var idx = int.Parse(hitObject.name[5..]);

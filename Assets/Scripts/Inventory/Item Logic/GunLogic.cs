@@ -7,8 +7,6 @@ namespace Inventory.Item_Logic
 {
     public class GunLogic : ItemLogicBase
     {
-        private GameUtilities _utilities;
-        private GameObject _projectilePrefab;
         private GameObject _muzzleFlashObject;
         private SpriteRenderer _muzzleFlashSr;
         
@@ -16,14 +14,11 @@ namespace Inventory.Item_Logic
         {
             var weaponSo = (WeaponSo)useParameters.attackItem.itemSo;
             
-            _utilities ??= GameUtilities.instance;
-            _projectilePrefab ??= _utilities.GetProjectilePrefab();
-            
             var pos = (Vector2)useParameters.equippedItemObject.transform.position;
             var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
             // object pooler will check if the pool exists so we don't have to.
-            ObjectPooler.CreatePool("Projectile Pool", _projectilePrefab, 10, true);
+            ObjectPooler.CreatePool("Projectile Pool", GameUtilities.instance.GetProjectilePrefab(), 10, true);
             var projectile = ObjectPooler.GetObject("Projectile Pool");
 
             if (projectile == null)
@@ -57,7 +52,7 @@ namespace Inventory.Item_Logic
                 _muzzleFlashSr.sprite = weaponSo.muzzleFlashes[Random.Range(0, weaponSo.muzzleFlashes.Length)];
                 _muzzleFlashSr.color = weaponSo.muzzleFlashColor;
                 
-                _utilities.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
+                GameUtilities.instance.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
             }
             
             return true;

@@ -28,6 +28,15 @@ namespace Utilities
             BasicMovementCollisionMask = LayerMask.GetMask("Terrain", "TerrainBits", "Building");
         }
 
+        private void OnDestroy()
+        {
+            ObjectPooler.RemovePools();
+            
+            instance = default;
+            _mainCam = default;
+            _allPlanets = default;
+        }
+
         public Action DelayExecute(Action action, float delay)
         {
             var coroutine = StartCoroutine(DelayExec(action, delay));

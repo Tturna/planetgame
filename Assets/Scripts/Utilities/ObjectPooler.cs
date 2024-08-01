@@ -95,5 +95,19 @@ namespace Utilities
             
             return backupObject;
         }
+
+        public static void RemovePools()
+        {
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var poolData in PoolsDict.Values)
+            {
+                foreach (var obj in poolData.pool)
+                {
+                    UnityEngine.Object.Destroy(obj);
+                }
+            }
+            
+            PoolsDict.Clear();
+        }
     }
 }

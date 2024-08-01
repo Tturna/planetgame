@@ -2,6 +2,7 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
+using System;
 using Entities;
 using Entities.Enemies;
 using Inventory.Item_Logic;
@@ -27,6 +28,11 @@ namespace Inventory
             itemAnimationManager.SwingCompleted += () => ToggleSwing(false, false);
 
             InventoryManager.ItemEquipped += OnItemEquipped;
+        }
+
+        private void OnDestroy()
+        {
+            InventoryManager.ItemEquipped -= OnItemEquipped;
         }
 
         private void OnItemEquipped(Item item)

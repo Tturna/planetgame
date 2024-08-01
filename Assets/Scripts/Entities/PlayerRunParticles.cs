@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Entities
@@ -25,7 +26,14 @@ namespace Entities
             _canEmit = true;
             _runPs.Play();
         }
-        
+
+        private void OnDestroy()
+        {
+            var player = PlayerController.instance;
+            player.Jumped -= OnJump;
+            player.Grounded -= OnGrounded;
+        }
+
         private const float MaxVelocity = 4f;
         private void Update()
         {

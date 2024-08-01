@@ -25,6 +25,7 @@ namespace Inventory
                 GetComponent<BoxCollider2D>().size = item.itemSo.sprite.bounds.size;
             }
 
+#if UNITY_EDITOR
             [MenuItem("CONTEXT/ItemEntity/InitializeForEditor")]
             static void InitializeForEditor(MenuCommand command)
             {
@@ -32,6 +33,7 @@ namespace Inventory
                 itemEntity.gameObject.name = "(item) " + itemEntity.item.itemSo.name;
                 itemEntity.GetComponent<SpriteRenderer>().sprite = itemEntity.item.itemSo.sprite;
             }
+#endif
         }
     }
 }

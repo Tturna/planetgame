@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Entities;
 using UnityEngine;
@@ -36,6 +37,11 @@ namespace Cameras
             _defaultTerrainCamZoom = _terrainCameraControllers[0].Camera.orthographicSize;
             
             PlayerController.instance.OnEnteredPlanet += SetTargetPlanet;
+        }
+
+        private void OnDestroy()
+        {
+            PlayerController.instance.OnEnteredPlanet -= SetTargetPlanet;
         }
 
         private void LateUpdate()

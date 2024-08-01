@@ -227,17 +227,22 @@ namespace Entities
             }
             
             var pfxTr = breakPfx.transform;
-            pfxTr.localPosition = Vector3.zero;
             pfxTr.SetParent(null);
             pfxTr.localScale = Vector3.one;
 
             if (hit)
             {
                 pfxTr.transform.up = hit.normal;
+                pfxTr.position = hit.point;
+            }
+            else
+            {
+                pfxTr.position = transform.position;
             }
             
             var main = breakPfx.main;
             main.startColor = _data.breakParticleColor;
+            breakPfx.gameObject.SetActive(true);
             breakPfx.Play();
             
             GameUtilities.instance.DelayExecute(() =>
@@ -255,7 +260,7 @@ namespace Entities
                     pfxTr.SetParent(transform);
                     
                     // I guess Unity disables a gameobject added to a disabled gameobject
-                    pfxTr.gameObject.SetActive(true);
+                    breakPfx.gameObject.SetActive(true);
                 }
             }, 1f);
             

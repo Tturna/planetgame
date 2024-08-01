@@ -343,6 +343,11 @@ namespace Entities.Enemies
 
             _healthbarManager.Initialize(_health, _maxHealth, enemySo);
 
+            if (!MainCollider)
+            {
+                MainCollider = GetComponent<Collider2D>();
+            }
+            
             var mainCol = (BoxCollider2D)MainCollider;
             mainCol.offset = enemySo.hitboxOffset;
             mainCol.size = enemySo.hitboxSize;
@@ -477,6 +482,7 @@ namespace Entities.Enemies
             Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
         }
         
+#if UNITY_EDITOR
         [MenuItem("CONTEXT/EnemyEntity/InitializeForEditor")]
         static void InitializeForEditor(MenuCommand command)
         {
@@ -484,5 +490,6 @@ namespace Entities.Enemies
             enemyEntity.gameObject.name = "(Enemy) " + enemyEntity.enemySo.enemyName;
             enemyEntity.GetComponent<Animator>().runtimeAnimatorController = enemyEntity.enemySo.overrideAnimator;
         }
+#endif
     }
 }

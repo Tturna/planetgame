@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Entities;
 using Planets;
@@ -31,6 +32,11 @@ namespace VFX
             instance = this;
             _player = PlayerController.instance;
             _player.OnEnteredPlanet += OnPlanetEntered;
+        }
+
+        private void OnDestroy()
+        {
+            _player.OnEnteredPlanet -= OnPlanetEntered;
         }
 
         private void Update()
@@ -111,6 +117,10 @@ namespace VFX
         
         public static void SetParallaxTerrainBrightness(float brightness)
         {
+            if (instance == null ||
+                !instance.bgTerrainFgRenderer ||
+                !instance.bgTerrainMgRenderer) return;
+            
             instance.bgTerrainFgRenderer.material.SetFloat(MatPropBrightness, brightness);
             instance.bgTerrainMgRenderer.material.SetFloat(MatPropBrightness, brightness);
         }

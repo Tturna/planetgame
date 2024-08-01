@@ -56,6 +56,11 @@ namespace Inventory
             InventoryManager.ItemEquipped += ItemEquipped;
         }
 
+        private void OnDestroy()
+        {
+            InventoryManager.ItemEquipped -= ItemEquipped;
+        }
+
         private void Update()
         {
             if (!_playerController.CanControl) return;

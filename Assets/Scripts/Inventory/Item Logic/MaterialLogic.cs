@@ -16,7 +16,12 @@ namespace Inventory.Item_Logic
 
         public override bool UseContinuous(UseParameters useParameters)
         {
-            _player ??= PlayerController.instance;
+            // use this instead of ??= because ??= bypasses the unity object lifetime check
+            if (!_player)
+            {
+                _player = PlayerController.instance;
+            }
+            
             var usePlanet = _player.CurrentPlanetObject.GetComponent<PlanetGenerator>();
             if (!usePlanet) return false;
 

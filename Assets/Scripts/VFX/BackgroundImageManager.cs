@@ -1,3 +1,4 @@
+using System;
 using Entities;
 using Planets;
 using UnityEngine;
@@ -25,6 +26,12 @@ namespace VFX
 
             bg1.sprite = defaultSprite;
             bg1.color = Color.black;
+        }
+
+        private void OnDestroy()
+        {
+            _player.OnEnteredPlanet -= OnEnteredPlanet;
+            _player.OnExitPlanet -= OnExitedPlanet;
         }
 
         private void Update()
