@@ -51,12 +51,19 @@ namespace Inventory.Item_Logic
             PlaceableSo placeable;
             GameObject prefab;
             var isCraftingStation = useParameters.attackItem.itemSo is CraftingStationSo;
+            var isRoomModule = useParameters.attackItem.itemSo is RoomModuleSo;
             
             if (isCraftingStation)
             {
                 var craftingStationSo = (CraftingStationSo)useParameters.attackItem.itemSo;
                 placeable = craftingStationSo;
                 prefab = InventoryManager.instance.craftingStationPrefab;
+            }
+            else if (isRoomModule)
+            {
+                var roomSo = (RoomModuleSo)useParameters.attackItem.itemSo;
+                placeable = roomSo;
+                prefab = InventoryManager.instance.roomModulePrefabs[roomSo.prefabIndex];
             }
             else
             {
@@ -70,6 +77,12 @@ namespace Inventory.Item_Logic
             if (isCraftingStation)
             {
                 placeableObject.GetComponent<CraftingStation>().SetRecipes(((CraftingStationSo)placeable).recipes);
+            }
+
+            if (isRoomModule)
+            {
+                placeableObject.transform.position = rayHit.point + rayHit.normal * ((RoomModuleSo)placeable).verticalSpawnOffset;
+                return true;
             }
             
             var sr = placeableObject.GetComponent<SpriteRenderer>();

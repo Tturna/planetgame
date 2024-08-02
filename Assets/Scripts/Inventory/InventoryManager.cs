@@ -95,6 +95,7 @@ namespace Inventory
         [SerializeField] private GameObject itemPrefab;
         public GameObject breakablePrefab;
         public GameObject craftingStationPrefab;
+        public GameObject[] roomModulePrefabs;
         
         public static InventoryManager instance;
 
