@@ -23,30 +23,19 @@ namespace Inventory.Item_Logic
 
             if (Vector3.Distance(useParameters.playerObject.transform.position, mousePoint) > usableItem.useRange)
             {
-                Debug.Log("Can't place that far away!");
                 return false;
             }
 
-            var relativeUp = useParameters.playerObject.transform.up;
+            var canPlace = PlaceableUtility.TryGetPlaceablePosition(mousePoint, usableItem,
+                out var placeablePosition, out var placeableNormal);
 
-            const float placementAssistRange = 1f;
-
-            var mask = GameUtilities.BasicMovementCollisionMask;
-            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, mask);
-
-            if (!circleHit)
+            if (!canPlace)
             {
                 return false;
             }
 
-            var rayHit = Physics2D.Raycast(mousePoint, -relativeUp, placementAssistRange, mask);
-
-            if (!rayHit) return false;
-            
-            if (Vector3.Distance(rayHit.point, mousePoint) < 0.1f)
-            {
-                return false;
-            }
+            var position = (Vector3)placeablePosition!;
+            var normal = (Vector3)placeableNormal!;
             
             PlaceableSo placeable;
             GameObject prefab;
@@ -81,7 +70,7 @@ namespace Inventory.Item_Logic
 
             if (isRoomModule)
             {
-                placeableObject.transform.position = rayHit.point + rayHit.normal * ((RoomModuleSo)placeable).verticalSpawnOffset;
+                placeableObject.transform.position = position + normal * (((RoomModuleSo)placeable).boundsSize.y * .5f);
                 return true;
             }
             
@@ -95,8 +84,8 @@ namespace Inventory.Item_Logic
             breakableItemInstance.itemSo = placeable;
             breakableItemInstance.toughness = placeable.toughness;
             
-            placeableObject.transform.position = rayHit.point + rayHit.normal * (sr.bounds.size.y * .5f);
-            placeableObject.transform.up = rayHit.normal;
+            placeableObject.transform.position = position + normal * (sr.bounds.size.y * .5f);
+            placeableObject.transform.up = normal;
             // placeableObject.transform.Translate(relativeUp * (col.size.y * .5f));
             // placeableObject.transform.rotation = useParameters.playerObject.transform.rotation;
 

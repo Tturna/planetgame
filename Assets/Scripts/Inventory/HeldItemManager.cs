@@ -23,6 +23,7 @@ namespace Inventory
         [SerializeField] private Transform effectParent;
         [SerializeField] private Transform flippingEffectParent;
         [SerializeField] private GameObject placeableHologram;
+        [SerializeField] private Sprite roomModuleHologramSprite;
         
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
@@ -34,7 +35,7 @@ namespace Inventory
         [CanBeNull] private Item _equippedItem;
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
         private PlayerController _playerController;
-        
+
         public delegate void ItemUsedHandler(Item item);
         public static event ItemUsedHandler ItemUsed;
             
@@ -164,33 +165,22 @@ namespace Inventory
                 _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
                 return;
             }
-            
-            const float placementAssistRange = 1f;
 
-            var mask = GameUtilities.BasicMovementCollisionMask;
-            var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, mask);
+            var canPlace = PlaceableUtility.TryGetPlaceablePosition(mousePoint, _equippedItem?.itemSo,
+                out var placeablePosition, out var placeableNormal);
 
-            if (!circleHit)
+            if (!canPlace)
             {
                 _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
                 return;
             }
+
+            var position = (Vector3)placeablePosition!;
+            var normal = (Vector3)placeableNormal!;
 
             _placeableHologramSr.color = new Color(1f, 1f, 1f, 0.5f);
-
-            var rayHit = Physics2D.Raycast(mousePoint, _playerController.DirectionToClosestPlanet, placementAssistRange, mask);
-
-            if (!rayHit) return;
-            
-            // Prevent placing item inside the terrain
-            if (Vector3.Distance(rayHit.point, mousePoint) < 0.1f)
-            {
-                _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
-                return;
-            }
-            
-            placeableHologram.transform.position = rayHit.point + rayHit.normal * (_placeableHologramSr.bounds.size.y * 0.5f);
-            placeableHologram.transform.up = rayHit.normal;
+            placeableHologram.transform.position = position + normal * (_placeableHologramSr.bounds.size.y * 0.5f);
+            placeableHologram.transform.up = normal;
         }
         
         private bool UseItem(bool once, bool secondary)
@@ -281,8 +271,19 @@ namespace Inventory
             if (_equippedItem?.itemSo is PlaceableSo placeableSo)
             {
                 placeableHologram.SetActive(true);
-                placeableHologram.GetComponent<SpriteRenderer>().sprite = placeableSo.sprite;
+                var sr = placeableHologram.GetComponent<SpriteRenderer>();
                 _placeableRange = placeableSo.useRange;
+
+                if (placeableSo is RoomModuleSo roomModuleSo)
+                {
+                    sr.sprite = roomModuleHologramSprite;
+                    sr.size = roomModuleSo.boundsSize;
+                }
+                else
+                {
+                    sr.sprite = placeableSo.sprite;
+                    sr.size = placeableSo.sprite.bounds.size;
+                }
             }
             else
             {

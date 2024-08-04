@@ -37,3 +37,4 @@ MonoBehaviour:
   lights: []
   prefabIndex: 1
   verticalSpawnOffset: 5
+  boundsSize: {x: 3, y: 2.4}

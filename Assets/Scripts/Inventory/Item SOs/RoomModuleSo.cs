@@ -7,5 +7,6 @@ namespace Inventory.Item_SOs
     {
         public int prefabIndex;
         public float verticalSpawnOffset;
+        public Vector2 boundsSize;
     }
 }
