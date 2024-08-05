@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e9f5b3d522a61148a2aedfba835d7fd, type: 3}
+  m_Name: Blue Battery
+  m_EditorClassIdentifier: 
+  id: 75987701-d8ad-4e14-a49e-1cf2efe14edf
+  name: Blue Battery
+  description: put it in a microwave
+  maxStack: 1
+  sprite: {fileID: 21300000, guid: f88fd66302cd4364b808c50834a4e9da, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  useBothHands: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 1
+  <MaxHealthIncrease>k__BackingField: 0
+  <MaxHealthMultiplier>k__BackingField: 1
+  <MaxEnergyIncrease>k__BackingField: 0
+  <MaxEnergyMultiplier>k__BackingField: 1
+  <DefenseIncrease>k__BackingField: 0
+  <DefenseMultiplier>k__BackingField: 1
+  <DamageReductionMultiplier>k__BackingField: 1
+  <DamageIncrease>k__BackingField: 0
+  <DamageMultiplier>k__BackingField: 1
+  <DefensePenetrationIncrease>k__BackingField: 0
+  <DefensePenetrationMultiplier>k__BackingField: 1
+  <CritChanceMultiplier>k__BackingField: 1
+  <KnockbackMultiplier>k__BackingField: 1
+  <MoveSpeedMultiplier>k__BackingField: 1
+  <JumpHeightMultiplier>k__BackingField: 1
+  <AttackSpeedMultiplier>k__BackingField: 1
+  <MiningSpeedMultiplier>k__BackingField: 1
+  <MiningPowerMultiplier>k__BackingField: 1
+  <BuildingSpeedMultiplier>k__BackingField: 1
+  <JetpackRechargeMultiplier>k__BackingField: 1
+  <JetpackChargeIncrease>k__BackingField: 0

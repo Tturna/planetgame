@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58bd68a7daa24318840e7b8ed7e13442, type: 3}
+  m_Name: Bronze Jetpack
+  m_EditorClassIdentifier: 
+  id: b5f344c8-196a-429a-9bf8-52ef32037226
+  name: Bronze Jetpack
+  description: Allows dashing and space flight
+  maxStack: 1
+  sprite: {fileID: 21300000, guid: 3cfa902c822ea0944a3938a97d1ea90d, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  useBothHands: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 4
+  <MaxHealthIncrease>k__BackingField: 0
+  <MaxHealthMultiplier>k__BackingField: 1
+  <MaxEnergyIncrease>k__BackingField: 0
+  <MaxEnergyMultiplier>k__BackingField: 1
+  <DefenseIncrease>k__BackingField: 0
+  <DefenseMultiplier>k__BackingField: 1
+  <DamageReductionMultiplier>k__BackingField: 1
+  <DamageIncrease>k__BackingField: 0
+  <DamageMultiplier>k__BackingField: 1
+  <DefensePenetrationIncrease>k__BackingField: 0
+  <DefensePenetrationMultiplier>k__BackingField: 1
+  <CritChanceMultiplier>k__BackingField: 1
+  <KnockbackMultiplier>k__BackingField: 1
+  <MoveSpeedMultiplier>k__BackingField: 1
+  <JumpHeightMultiplier>k__BackingField: 1
+  <AttackSpeedMultiplier>k__BackingField: 1
+  <MiningSpeedMultiplier>k__BackingField: 1
+  <MiningPowerMultiplier>k__BackingField: 1
+  <BuildingSpeedMultiplier>k__BackingField: 1
+  <JetpackRechargeMultiplier>k__BackingField: 1
+  <JetpackChargeIncrease>k__BackingField: 0

@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace ProcGen
+namespace Planets
 {
     // [RequireComponent(typeof(Planet))]
     public class PlanetGenGPU : MonoBehaviour

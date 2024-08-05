@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
+using Planets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,23 +11,39 @@ namespace Utilities
     {
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
+        [SerializeField] private Material spriteMaterial;
+        [SerializeField] private Material caveBgRenderMaterial;
         
         private static Camera _mainCam;
+        private static PlanetGenerator[] _allPlanets;
         
         public static GameUtilities instance;
+        public static int BasicMovementCollisionMask { get; private set; }
 
         private void Awake()
         {
             instance = this;
             _mainCam = Camera.main;
+            
+            BasicMovementCollisionMask = LayerMask.GetMask("Terrain", "TerrainBits", "Building");
         }
 
-        public void DelayExecute(Action action, float delay)
+        private void OnDestroy()
         {
-            StartCoroutine(DelayExec(action, delay));
+            ObjectPooler.RemovePools();
+            
+            instance = default;
+            _mainCam = default;
+            _allPlanets = default;
         }
 
-        private IEnumerator DelayExec(Action action, float delay)
+        public Action DelayExecute(Action action, float delay)
+        {
+            var coroutine = StartCoroutine(DelayExec(action, delay));
+            return () => StopCoroutine(coroutine);
+        }
+
+        private static IEnumerator DelayExec(Action action, float delay)
         {
             yield return new WaitForSeconds(delay);
             action.Invoke();
@@ -38,6 +56,11 @@ namespace Utilities
             thing.transform.eulerAngles = eulerAngles;
 
             return thing;
+        }
+        
+        public static float Lerp(float a, float b, float v)
+        {
+            return a + (b - a) * v;
         }
         
         public static float InverseLerp(float a, float b, float v)
@@ -61,22 +84,45 @@ namespace Utilities
             return _mainCam.ScreenToWorldPoint(Input.mousePosition) - position;
         }
         
-        // TODO: Maybe this function could be better?
-        // Like maybe require an origin position and find the mouse direction automatically???
-        public static float GetCursorAngle(Vector3 directionToMouse, Vector3 relativeRightDirection)
+        public static float GetCursorAngle()
         {
-            return Vector3.Angle(relativeRightDirection.normalized, directionToMouse);
+            return Vector3.Angle(Vector3.right, _mainCam.ScreenToViewportPoint(Input.mousePosition) - new Vector3(0.5f, 0.5f, 0f));
         }
 
-        // TODO: figure out if this function actually makes any sense to exist
         public GameObject GetProjectilePrefab()
         {
+            if (projectilePrefab == null)
+            {
+                throw new Exception("Projectile prefab is null");
+            }
+            
             return projectilePrefab;
         }
         
         public static Material GetTerrainMaterial()
         {
             return instance.terrainRenderImage.material;
+        }
+
+        public static Material GetCaveBackgroundMaterial()
+        {
+            return instance.caveBgRenderMaterial;
+        }
+
+        public static Material GetSpriteMaterial()
+        {
+            return instance.spriteMaterial;
+        }
+
+        public static PlanetGenerator[] GetAllPlanets()
+        {
+            if (_allPlanets is { Length: > 0 })
+            {
+                return _allPlanets;
+            }
+
+            _allPlanets = FindObjectsOfType<PlanetGenerator>();
+            return _allPlanets;
         }
     }
 }

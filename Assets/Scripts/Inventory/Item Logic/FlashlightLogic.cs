@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class FlashlightLogic : ItemLogicBase
     {
@@ -8,6 +8,7 @@ namespace Inventory.Inventory.Item_Logic
         
         public override bool UseOnce(UseParameters useParameters)
         {
+            // use this instead of ??= because ??= bypasses the unity object lifetime check
             if (!_flashlightObject)
             {
                 _flashlightObject = useParameters.equippedItemObject.transform.GetChild(1).GetChild(0).gameObject;

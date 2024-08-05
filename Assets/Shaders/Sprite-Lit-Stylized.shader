@@ -7,6 +7,8 @@ Shader "Custom/Sprite-Lit-Stylized"
         _Brightness ("Brightness", Range(0, 1)) = 1
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
+        _RedTint ("Red Tint", Range(0, 1)) = 0
+        [Toggle] _IGNORE_SUNLIGHT ("Ignore Sunlight", Float) = 0
     }
     
     SubShader
@@ -20,6 +22,8 @@ Shader "Custom/Sprite-Lit-Stylized"
         
         Cull Off
         ZWrite Off
+        
+        // traditional transparency blending
         Blend SrcAlpha OneMinusSrcAlpha
         
         Pass {
@@ -28,21 +32,17 @@ Shader "Custom/Sprite-Lit-Stylized"
         
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            // #pragma vertex vert
-            // #pragma fragment frag
             
             #pragma vertex CombinedShapeLightVertex
             #pragma fragment CombinedShapeLightFragment
             
-            // #include "UnityCG.cginc"
-            // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            // #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/D3D11.hlsl"
-            
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
-            #pragma multi_compile _ DEBUG_DISPLAY
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
+            // #pragma multi_compile _ DEBUG_DISPLAY
+
+            #pragma shader_feature _IGNORE_SUNLIGHT_ON
             
             float3 rgb_to_hsv_no_clip(float3 RGB)
             {
@@ -132,6 +132,7 @@ Shader "Custom/Sprite-Lit-Stylized"
             float _Brightness;
             float _Stylize;
             float _StyleBands;
+            float _RedTint;
 
             SHAPE_LIGHT(0)
             
@@ -142,9 +143,11 @@ Shader "Custom/Sprite-Lit-Stylized"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 o.positionCS = TransformObjectToHClip(v.positionOS);
-                #if defined(DEBUG_DISPLAY)
-                o.positionWS = TransformObjectToWorld(v.positionOS);
-                #endif
+                
+                // #if defined(DEBUG_DISPLAY)
+                // o.positionWS = TransformObjectToWorld(v.positionOS);
+                // #endif
+                
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.lightingUV = half2(ComputeScreenPos(o.positionCS / o.positionCS.w).xy);
 
@@ -156,37 +159,36 @@ Shader "Custom/Sprite-Lit-Stylized"
             
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
-                half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
+                half4 shape_light0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
 
-                float resultAlpha = shapeLight0.r;
+                float result_alpha = shape_light0.r;
                 if (_Stylize)
                 {
-                    const float celSize = 1 / _StyleBands;
-                    resultAlpha = round(resultAlpha * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
+                    const float cel_size = 1 / _StyleBands;
+                    result_alpha = round(result_alpha * _StyleBands + 1 / (2 * _StyleBands)) * cel_size;
                     
-                    // float3 hsvColor = rgb_to_hsv_no_clip(resultColor);
-                    // const float ialpha = 1 - resultAlpha;
-                    // const float ia01 = ialpha/0.75;
-
-                    // Different easing functions for hue.
-                    // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
-                    // const float t = pow(ia01, 3);
-                    // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
-                    // const float t = -(cos(PI * ia01) - 1) / 2;
-
-                    // hue 240 = blue
-                    // hsvColor.r = angleLerp(hsvColor.r * 360.0, 240.0, t) / 360.0;
-                    // hsvColor.g = lerp(hsvColor.g, hsvColor.g * 0.675, ia01);
-                    // hsvColor.b = lerp(hsvColor.b, hsvColor.b * 0.125, 1 - pow(1 - ia01, 2));
-                    //
-                    // resultColor = hsv_to_rgb(hsvColor);
-                    
-                    // const float bitMask = resultAlpha > 0 ? 1 : 0;
-                    return half4(main.rgb * resultAlpha, main.a);
+                    return half4(main.rgb * result_alpha, main.a);
                 }
+
+                half final_light;
+                half3 final_main;
+                half3 final_color;
+
+                #if _IGNORE_SUNLIGHT_ON
+                    final_light = result_alpha;
+                    final_main = main.rgb * final_light;
+                    final_color = final_main;
+                #else
+                    final_light = max(_Brightness, result_alpha);
+                    final_main = main.rgb * final_light;
+                    
+                    const half3 red_tint_color = half3(1.0, 0.3, 0.0);
+                    final_color = max(final_main, main.rgb * red_tint_color * _RedTint);
+                #endif
                 
-                return half4(main.rgb * _Brightness, main.a);
+
+                return half4(final_color, main.a);
             }
             ENDHLSL
         }

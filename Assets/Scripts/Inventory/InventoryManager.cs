@@ -1,33 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using Entities.Entities;
-using Inventory.Inventory.Entities;
-using Inventory.Inventory.Item_Types;
+using Cameras;
+using Entities;
+using Inventory.Crafting;
+using Inventory.Entities;
+using Inventory.Item_SOs;
+using Inventory.Item_SOs.Accessories;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
-    internal struct Slot
-    {
-        internal Item item;
-        internal int stack;
-        internal bool isInStash;
-        internal int index;
-
-        internal Slot(int index)
-        {
-            item = default;
-            stack = default;
-            isInStash = default;
-            this.index = index;
-        }
-    }
-    
     [Serializable]
     public struct TooltipStatIcon
     {
@@ -35,12 +24,48 @@ namespace Inventory.Inventory
         public Sprite sprite;
     }
 
+    internal enum InventorySegmentType
+    {
+        Hotbar,
+        Stash,
+        Accessory,
+        Mouse
+    }
+
+    public enum SuitableItemType
+    {
+        Any,
+        Trinket,
+        Helmet,
+        Armor,
+        Jetpack,
+        Pet
+    }
+    
+    public struct Slot
+    {
+        internal Item item;
+        internal int stack;
+        internal InventorySegmentType inventorySegmentType;
+        internal SuitableItemType suitableItemType; 
+        internal int index;
+
+        internal Slot(int index, InventorySegmentType inventorySegmentType, SuitableItemType suitableItemType)
+        {
+            item = default;
+            stack = default;
+            this.inventorySegmentType = inventorySegmentType;
+            this.suitableItemType = suitableItemType;
+            this.index = index;
+        }
+    }
+
     public class InventoryManager : MonoBehaviour
     {
         [Header("Inventory Objects")]
-        [SerializeField] private GameObject stashObject;
+        [FormerlySerializedAs("stashObject")] [SerializeField] private GameObject stashParent;
         [SerializeField] private GameObject hotslotsParent;
-        [SerializeField] private GameObject accessoryObject;
+        [FormerlySerializedAs("accessoryObject")] [SerializeField] private GameObject accessoryParent;
         [SerializeField] private GameObject mouseSlotObject;
         [SerializeField] private RectTransform selectionOverlayRect;
         [SerializeField] private RectTransform selectionArrowRect;
@@ -69,22 +94,18 @@ namespace Inventory.Inventory
         [Header("Inventory Prefabs")]
         [SerializeField] private GameObject itemPrefab;
         public GameObject breakablePrefab;
+        public GameObject craftingStationPrefab;
+        public GameObject[] roomModulePrefabs;
         
-        // To be removed probably
-        [Header("Inventory Sprites")]
-        [SerializeField] private Sprite emptySlotSprite;
-        [SerializeField] private Sprite filledSlotSprite;
-        [SerializeField] private Sprite emptySlotSelectedSprite;
-        [SerializeField] private Sprite filledSlotSelectedSprite;
-        [SerializeField] private Sprite emptyStashSprite;
-        [SerializeField] private Sprite filledStashSprite;
-
         public static InventoryManager instance;
 
+        // Consider using a dictionary instead of arrays if the inventory is slow.
         private static Transform[] _hotSlotObjects;
         private static Transform[] _stashSlotObjects;
+        private static Transform[] _accessorySlotObjects;
         private static Slot[] _hotSlots;
         private static Slot[] _stashSlots;
+        private static Slot[] _accessorySlots;
         private static Slot _mouseSlot;
         private static int _selectedIndex;
         
@@ -106,10 +127,12 @@ namespace Inventory.Inventory
 
             // Reverse the order of graphical slots because they're in reverse order in the hierarchy
             _hotSlotObjects = hotslotsParent.transform.Cast<Transform>().Reverse().ToArray();
-            _stashSlotObjects = stashObject.transform.Cast<Transform>().Reverse().ToArray();
+            _stashSlotObjects = stashParent.transform.Cast<Transform>().Reverse().ToArray();
+            _accessorySlotObjects = accessoryParent.transform.Cast<Transform>().Reverse().ToArray();
             _hotSlots = new Slot[_hotSlotObjects.Length];
             _stashSlots = new Slot[_stashSlotObjects.Length];
-            _mouseSlot = new Slot(-1);
+            _accessorySlots = new Slot[_accessorySlotObjects.Length];
+            _mouseSlot = new Slot(-1, InventorySegmentType.Mouse, SuitableItemType.Any);
 
             // Initialize values for slots
             for (var i = 0; i < _stashSlots.Length; i++)
@@ -117,15 +140,33 @@ namespace Inventory.Inventory
                 if (i < _hotSlots.Length)
                 {
                     _hotSlots[i].index = i;
+                    _hotSlots[i].inventorySegmentType = InventorySegmentType.Hotbar;
+                    _hotSlots[i].suitableItemType = SuitableItemType.Any;
+                }
+                
+                if (i < _accessorySlots.Length)
+                {
+                    _accessorySlots[i].index = i;
+                    _accessorySlots[i].inventorySegmentType = InventorySegmentType.Accessory;
+                    
+                    _accessorySlots[i].suitableItemType = i switch
+                    {
+                        5 => SuitableItemType.Helmet,
+                        6 => SuitableItemType.Armor,
+                        7 => SuitableItemType.Jetpack,
+                        8 => SuitableItemType.Pet,
+                        _ => SuitableItemType.Trinket
+                    };
                 }
 
                 _stashSlots[i].index = i;
-                _stashSlots[i].isInStash = true;
+                _stashSlots[i].inventorySegmentType = InventorySegmentType.Stash;
+                _stashSlots[i].suitableItemType = SuitableItemType.Any;
             }
 
             SelectSlot(_selectedIndex);
-            stashObject.SetActive(false);
-            accessoryObject.SetActive(false);
+            stashParent.SetActive(false);
+            accessoryParent.SetActive(false);
             pauseMenuButtonObject.SetActive(false);
             
             #endregion
@@ -156,9 +197,16 @@ namespace Inventory.Inventory
             _itemTooltipObject.SetActive(false);
             
 
-            PlayerController.instance.ItemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
+            PlayerController.instance.itemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
             HeldItemManager.ItemUsed += TryDecrementSelectedStack;
+        }
+
+        private void OnDestroy()
+        {
+            PlayerController.instance.itemPickedUp -= io => AddItem(io.GetComponent<ItemEntity>().item);
+            UIUtilities.OnMouseRaycast -= UpdateItemTooltip;
+            HeldItemManager.ItemUsed -= TryDecrementSelectedStack;
         }
 
         private float _scrollDelta;
@@ -171,7 +219,6 @@ namespace Inventory.Inventory
             {
                 if (SelectSlot(_selectedIndex - (int)_scrollDelta))
                 {
-                    DeselectSlot(_selectedIndex);
                     _selectedIndex -= (int)_scrollDelta;
                 }
             }
@@ -181,7 +228,6 @@ namespace Inventory.Inventory
             {
                 var numkey = i == 10 ? "0" : i.ToString();
                 if (!Input.GetKeyDown(numkey)) continue;
-                DeselectSlot(_selectedIndex);
                 SelectSlot(i - 1);
                 _selectedIndex = i - 1;
             }
@@ -189,8 +235,8 @@ namespace Inventory.Inventory
             // Check for inventory switch
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                stashObject.SetActive(!stashObject.activeInHierarchy);
-                accessoryObject.SetActive(!accessoryObject.activeInHierarchy);
+                stashParent.SetActive(!stashParent.activeInHierarchy);
+                accessoryParent.SetActive(!accessoryParent.activeInHierarchy);
                 pauseMenuButtonObject.SetActive(!pauseMenuButtonObject.activeInHierarchy);
             }
             
@@ -213,6 +259,14 @@ namespace Inventory.Inventory
                 
                 HandleMouseTwo(ref slot, clickedSlotObject);
             }
+            
+            // Update accessory behavior
+            for (var i = 0; i < _accessorySlots.Length; i++)
+            {
+                if (_accessorySlots[i].stack <= 0) continue;
+                var accessorySo = (BasicAccessorySo)_accessorySlots[i].item.itemSo;
+                accessorySo.UpdateProcess();
+            }
         }
 
         private void LateUpdate()
@@ -230,6 +284,8 @@ namespace Inventory.Inventory
                 DropItems(_mouseSlot.stack);
                 return;
             }
+            
+            if (!stashParent.activeInHierarchy) return;
 
             // Check if both mouse slot and clicked slot have an item
             // check if they're the same
@@ -305,9 +361,10 @@ namespace Inventory.Inventory
                 else
                 {
                     // if clicked slot has no item, add 1 to the empty slot
-                    var index = clickedSlot.index;
-                    clickedSlot = _mouseSlot;
-                    clickedSlot.index = index;
+                    // var index = clickedSlot.index;
+                    // clickedSlot = _mouseSlot;
+                    // clickedSlot.index = index;
+                    clickedSlot.item = _mouseSlot.item;
                     clickedSlot.stack = 1;
                                 
                     // Reduce 1 from the mouse slot
@@ -315,7 +372,7 @@ namespace Inventory.Inventory
 
                     if (_mouseSlot.stack == 0)
                     {
-                        _mouseSlot = new Slot(-1);
+                        _mouseSlot = new Slot(-1, InventorySegmentType.Mouse, SuitableItemType.Any);
                     }
                     
                     UpdateLogicalSlot(clickedSlot);
@@ -339,7 +396,7 @@ namespace Inventory.Inventory
 
                 if (clickedSlot.stack == 0)
                 {
-                    clickedSlot = new Slot(clickedSlot.index);
+                    clickedSlot = new Slot(clickedSlot.index, clickedSlot.inventorySegmentType, clickedSlot.suitableItemType);
 
                     if (_selectedIndex == clickedSlot.index)
                     {
@@ -352,6 +409,66 @@ namespace Inventory.Inventory
                 UpdateMouseSlotGraphics();
             }
         }
+        
+        private static Slot[] GetInventorySegment(InventorySegmentType inventorySegmentType)
+        {
+            return inventorySegmentType switch
+            {
+                InventorySegmentType.Hotbar => _hotSlots,
+                InventorySegmentType.Stash => _stashSlots,
+                InventorySegmentType.Accessory => _accessorySlots,
+                _ => throw new ArgumentOutOfRangeException(nameof(inventorySegmentType), inventorySegmentType, null)
+            };
+        }
+        
+        private static Transform[] GetInventorySegmentObjects(InventorySegmentType inventorySegmentType)
+        {
+            return inventorySegmentType switch
+            {
+                InventorySegmentType.Hotbar => _hotSlotObjects,
+                InventorySegmentType.Stash => _stashSlotObjects,
+                InventorySegmentType.Accessory => _accessorySlotObjects,
+                _ => throw new ArgumentOutOfRangeException(nameof(inventorySegmentType), inventorySegmentType, null)
+            };
+        }
+        
+        private static void UpdateInventorySegment(Slot[] segmentData, InventorySegmentType segmentType)
+        {
+            switch (segmentType)
+            {
+                case InventorySegmentType.Hotbar:
+                    _hotSlots = segmentData;
+                    break;
+                case InventorySegmentType.Stash:
+                    _stashSlots = segmentData;
+                    break;
+                case InventorySegmentType.Accessory:
+                    _accessorySlots = segmentData;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(segmentType), segmentType, null);
+            }
+        }
+
+        private static void EquipAccessory(BasicAccessorySo accessorySo)
+        {
+            PlayerStatsManager.AddAccessoryModifiers(accessorySo.statModifiers, accessorySo.id);
+            
+            if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
+            {
+                PlayerController.instance.SetJetpackSprite(accessorySo.sprite);
+            }
+        }
+        
+        private static void UnequipAccessory(BasicAccessorySo accessorySo)
+        {
+            PlayerStatsManager.RemoveAccessoryModifiers(accessorySo.id);
+            
+            if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
+            {
+                PlayerController.instance.SetJetpackSprite(null);
+            }
+        }
 
         private void AddItem(Item item)
         {
@@ -359,11 +476,11 @@ namespace Inventory.Inventory
             var copy = new Item(item);
             
             // Check if inventory has space
-            if (!HasSpaceForItem(copy, out var index, out var isStash)) return;
+            if (!HasSpaceForItem(copy, out var index, out var availableSlotType)) return;
 
             // Create temporary variables to make inventory management easier with the separate hotbar and stash
-            var segmentSlots = isStash ? _stashSlots : _hotSlots;
-            var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
+            var segmentSlots = GetInventorySegment(availableSlotType);
+            var segmentObjects = GetInventorySegmentObjects(availableSlotType);
             
             // If slot was empty, change the sprite
             if (segmentSlots[index].stack == 0)
@@ -375,15 +492,7 @@ namespace Inventory.Inventory
             segmentSlots = AddToStack(segmentSlots, index, copy);
             UpdateSlotGraphics(ref segmentSlots[index], segmentObjects[index]);
             
-            // Update the inventory variables using the temporary variables. Required because structs are value types.
-            if (isStash)
-            {
-                _stashSlots = segmentSlots;
-            }
-            else
-            {
-                _hotSlots = segmentSlots;
-            }
+            UpdateInventorySegment(segmentSlots, availableSlotType);
             
             // Update selected slot
             if (index == _selectedIndex) SelectSlot(_selectedIndex);
@@ -391,12 +500,20 @@ namespace Inventory.Inventory
 
         private void SwapMouseSlot(ref Slot slot, GameObject clickedSlotObject)
         {
+            if (_mouseSlot.stack > 0)
+            {
+                if (slot.suitableItemType != SuitableItemType.Any)
+                {
+                    if (slot.suitableItemType != _mouseSlot.item.itemSo.suitableSlotItemType) return;
+                }
+            }
+
             // (_mouseSlot, slot) = (slot, _mouseSlot);
             // (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
             (_mouseSlot.item, slot.item) = (slot.item, _mouseSlot.item);
             (_mouseSlot.stack, slot.stack) = (slot.stack, _mouseSlot.stack);
             
-            if (_selectedIndex == slot.index)
+            if (slot.inventorySegmentType == InventorySegmentType.Hotbar && _selectedIndex == slot.index)
             {
                 EquipItem(slot.item);
             }
@@ -405,18 +522,42 @@ namespace Inventory.Inventory
             UpdateSlotGraphics(ref slot, clickedSlotObject.transform);
             UpdateMouseSlotGraphics();
             
-            // TODO: If swapping an item into a selected slot, equip it
+            // ReSharper disable once MergeIntoPattern
+            if (slot.stack > 0 && slot.inventorySegmentType == InventorySegmentType.Accessory)
+            {
+                var accessorySo = (BasicAccessorySo)slot.item.itemSo;
+                EquipAccessory(accessorySo);
+                accessorySo.ResetBehavior();
+            }
+            
+            // ReSharper disable once InvertIf
+            if (_mouseSlot.stack > 0 && slot.inventorySegmentType == InventorySegmentType.Accessory)
+            {
+                var accessorySo = (BasicAccessorySo)_mouseSlot.item.itemSo;
+                UnequipAccessory(accessorySo);
+                accessorySo.ResetBehavior();
+            }
         }
 
-        private static bool HasSpaceForItem(Item item, out int availableIndex, out bool isStash)
+        private static bool HasSpaceForItem(Item item, out int availableIndex, out InventorySegmentType availableInventorySegmentType)
         {
+            bool IsEmptySlotSuitable(int availableIndex, Slot slot)
+            {
+                if (availableIndex != -1) return false;
+                if (slot.stack != 0) return false;
+                
+                if (slot.suitableItemType == SuitableItemType.Any) return true;
+                
+                return slot.suitableItemType == item.itemSo.suitableSlotItemType;
+            }
+            
             int FindIndex(Slot[] slotSegment)
             {
                 var availableIndex = -1;
                 for (var i = 0; i < slotSegment.Length; i++)
                 {
-                    // This will find the first empty slot in the slot segment (hotbar or stash)
-                    if (availableIndex == -1 && slotSegment[i].stack == 0)
+                    // This will find the first empty slot in the slot segment
+                    if (IsEmptySlotSuitable(availableIndex, slotSegment[i]))
                     {
                         availableIndex = i;
                     }
@@ -433,16 +574,20 @@ namespace Inventory.Inventory
                 return availableIndex;
             }
 
-            isStash = false;
+            availableInventorySegmentType = InventorySegmentType.Hotbar;
             availableIndex = FindIndex(_hotSlots);
 
-            if (availableIndex >= -1) return true;
+            if (availableIndex > -1) return true;
             
+            availableInventorySegmentType = InventorySegmentType.Stash;
             availableIndex = FindIndex(_stashSlots);
 
-            if (availableIndex == -1) return false;
-            isStash = true;
-            return true;
+            if (availableIndex > -1) return true;
+            
+            availableInventorySegmentType = InventorySegmentType.Accessory;
+            availableIndex = FindIndex(_accessorySlots);
+            
+            return availableIndex != -1;
         }
 
         private static Slot[] AddToStack(Slot[] segment, int index, Item item)
@@ -463,15 +608,15 @@ namespace Inventory.Inventory
             if (slotIndex < 0 || slotIndex > _hotSlots.Length - 1) return false;
 
             var nextrow = slotIndex > 4;
-            var x = 16f * (slotIndex % 5);
-            if (nextrow) x += 8f;
-            var y = nextrow ? -14f : 0f;
+            var x = 22f * (slotIndex % 5);
+            if (nextrow) x += 11f;
+            var y = nextrow ? -26f : -7f;
             selectionOverlayRect.anchoredPosition = new Vector2(x, y);
 
-            x += 8.5f;
-            y = nextrow ? -26.5f : -5.5f;
+            x += nextrow ? 9f : 16f;
+            y = nextrow ? -59f : -1f;
             selectionArrowRect.anchoredPosition = new Vector2(x, y);
-            selectionArrowRect.eulerAngles = Vector3.forward * (nextrow ? 180f : 0f);
+            selectionArrowRect.eulerAngles = Vector3.forward * (nextrow ? 90f : -90f);
             
             EquipItem(_hotSlots[slotIndex].item);
             return true;
@@ -484,7 +629,7 @@ namespace Inventory.Inventory
 
             if (_mouseSlot.stack == 0)
             {
-                _mouseSlot = new Slot(_mouseSlot.index);
+                _mouseSlot = new Slot(_mouseSlot.index, _mouseSlot.inventorySegmentType, _mouseSlot.suitableItemType);
             }
             
             // UpdateLogicalSlot(slot);
@@ -494,43 +639,46 @@ namespace Inventory.Inventory
             {
                 // TODO: Make it so you can drop stacks of the same item.
                 // This would reduce the amount of items required to instantiate
-                var pos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+                var pos = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
                 pos.z = 0;
                 SpawnItem(droppedItem, pos);
             }
         }
         
-        private static void DecrementStack(int index, bool hotbar, int amount = 1)
+        /// <summary>
+        /// Returns how much the given amount was over the stack amount of the slot
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="hotbar"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private static int DecrementStack(int index, bool hotbar, int amount = 1)
         {
             var segmentSlots = hotbar ? _hotSlots : _stashSlots;
             var segmentObjects = hotbar ? _hotSlotObjects : _stashSlotObjects;
             var slot = segmentSlots[index];
+            var excess = Mathf.Clamp(amount - slot.stack, 0, amount);
             
-            if (slot.stack <= 0) return;
+            if (slot.stack <= 0) return excess;
             
-            slot.stack -= amount;
+            slot.stack -= amount - excess;
+            
             if (slot.stack == 0)
             {
-                slot = new Slot(slot.index);
+                slot = new Slot(slot.index, slot.inventorySegmentType, slot.suitableItemType);
                 // segmentObjects[index].gameObject.GetComponent<Image>().sprite = instance.emptySlotSprite;
             }
             
             UpdateSlotGraphics(ref slot, segmentObjects[index]);
             UpdateLogicalSlot(slot);
+            return excess;
         }
         
-        private static void DeselectSlot(int slotIndex)
-        {
-            // var img = _hotSlotObjects[slotIndex].GetComponent<Image>();
-            // img.sprite = _hotSlots[slotIndex].stack > 0 ? instance.filledSlotSprite : instance.emptySlotSprite;
-        }
-
         private static void UpdateSlotGraphics(ref Slot slot, Transform slotObject)
         {
             // var segmentObjects = isStash ? _stashSlotObjects : _hotSlotObjects;
             // var segmentSlots = isStash ? _stashSlots : _hotSlots;
             
-            // Slot item
             var itemImg = slotObject.GetChild(0).GetComponent<Image>();
             itemImg.sprite = slot.item?.itemSo.sprite;
             itemImg.color = itemImg.sprite ? Color.white : Color.clear;
@@ -547,38 +695,10 @@ namespace Inventory.Inventory
             var stack = slot.stack;
             itemStack.text = stack > 1 ? stack.ToString() : "";
             
-            // Update slot graphics
-            // var slotImg = slotObject.GetComponent<Image>();
-            // if (stack > 0)
-            // {
-            //     if (_selectedIndex == slot.index && !slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.filledSlotSelectedSprite;
-            //     }
-            //     else if (slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.filledStashSprite;
-            //     }
-            //     else
-            //     {
-            //         slotImg.sprite = instance.filledSlotSprite;
-            //     }
-            // }
-            // else
-            // {
-            //     if (_selectedIndex == slot.index && !slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.emptySlotSelectedSprite;
-            //     }
-            //     else if (slot.isInStash)
-            //     {
-            //         slotImg.sprite = instance.emptyStashSprite;
-            //     }
-            //     else
-            //     {
-            //         slotImg.sprite = instance.emptySlotSprite;
-            //     }
-            // }
+            // Disable accessory slot icons if there's an item in the slot
+            if (slot.inventorySegmentType != InventorySegmentType.Accessory) return;
+            var accessoryTypeIcon = slotObject.GetChild(2).gameObject;
+            accessoryTypeIcon.SetActive(slot.item == null);
         }
 
         private static void UpdateMouseSlotGraphics()
@@ -596,17 +716,36 @@ namespace Inventory.Inventory
         private static void UpdateLogicalSlot(Slot slot)
         {
             // Update inventory
-            if (slot.isInStash)
+            switch (slot.inventorySegmentType)
             {
-                _stashSlots[slot.index] = slot;
-            }
-            else
-            {
-                _hotSlots[slot.index] = slot;
-
-                if (slot.index == _selectedIndex)
+                case InventorySegmentType.Stash:
                 {
-                    instance.EquipItem(slot.item);
+                    _stashSlots[slot.index] = slot;
+                    break;
+                }
+                case InventorySegmentType.Hotbar:
+                {
+                    _hotSlots[slot.index] = slot;
+
+                    if (slot.index == _selectedIndex)
+                    {
+                        instance.EquipItem(slot.item);
+                    }
+                    break;
+                }
+                case InventorySegmentType.Accessory:
+                {
+                    _accessorySlots[slot.index] = slot;
+                    break;
+                }
+                case InventorySegmentType.Mouse:
+                {
+                    _mouseSlot = slot;
+                    break;
+                }
+                default:
+                {
+                    throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -618,7 +757,7 @@ namespace Inventory.Inventory
             var slotObjectUnderMouse = GetHoveringSlotObject(elementsUnderMouse);
             GetSlotFromObject(slotObjectUnderMouse, out var slot);
             
-            if (!slotObjectUnderMouse || slot.stack == 0 || !stashObject.activeInHierarchy)
+            if (!slotObjectUnderMouse || slot.stack == 0 || !stashParent.activeInHierarchy)
             {
                 _itemTooltipObject.SetActive(false);
                 return;
@@ -680,9 +819,9 @@ namespace Inventory.Inventory
                     string[] statNames = { "Damage", "Use Time", "Tool Power" };
                     string[] statValues =
                     {
-                        tool.projectile.damage.ToString().ToUpper(),
-                        tool.attackCooldown.ToString().ToUpper(),
-                        tool.toolPower.ToString().ToUpper()
+                        tool.projectile.damage.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        tool.attackCooldown.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        tool.toolPower.ToString(CultureInfo.InvariantCulture).ToUpper()
                     };
 
                     UpdateTooltip(statNames, statValues, 3);
@@ -694,9 +833,9 @@ namespace Inventory.Inventory
                     statNames = new[] { "Melee Damage", "Knockback", "Use Time" };
                     statValues = new[]
                     {
-                        melee.damage.ToString().ToUpper(),
-                        melee.knockback.ToString().ToUpper(),
-                        melee.attackCooldown.ToString().ToUpper()
+                        melee.damage.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        melee.knockback.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        melee.attackCooldown.ToString(CultureInfo.InvariantCulture).ToUpper()
                     };
                     
                     UpdateTooltip(statNames, statValues, 3);
@@ -708,9 +847,9 @@ namespace Inventory.Inventory
                     statNames = new[] { "Damage", "Knockback", "Use Time" };
                     statValues = new[]
                     {
-                        weapon.projectile.damage.ToString().ToUpper(),
-                        weapon.projectile.knockback.ToString().ToUpper(),
-                        weapon.attackCooldown.ToString().ToUpper()
+                        weapon.projectile.damage.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        weapon.projectile.knockback.ToString(CultureInfo.InvariantCulture).ToUpper(),
+                        weapon.attackCooldown.ToString(CultureInfo.InvariantCulture).ToUpper()
                     };
 
                     UpdateTooltip(statNames, statValues, 3);
@@ -730,7 +869,7 @@ namespace Inventory.Inventory
         private static GameObject GetHoveringSlotObject(List<RaycastResult> results = null)
         {
             results ??= UIUtilities.GetMouseRaycast();
-            return results.Find(x => x.gameObject.name.ToLower().Contains("slot")).gameObject;
+            return results.Find(x => x.gameObject.CompareTag("InventorySlot")).gameObject;
         }
 
         private static void GetSlotFromObject(GameObject slotObject, out Slot slot)
@@ -741,12 +880,23 @@ namespace Inventory.Inventory
                 return;
             }
 
-            var isStash = slotObject.transform.parent.gameObject == instance.stashObject;
-            var segment = isStash ? _stashSlots : _hotSlots;
-                
-            var slotIndex = isStash
-                ? Array.FindIndex(_stashSlotObjects, x => x == slotObject.transform)
-                : Array.FindIndex(_hotSlotObjects, x => x == slotObject.transform);
+            var slotParent = slotObject.transform.parent.gameObject;
+            var objectSlotType = slotParent switch
+            {
+                _ when slotParent == instance.stashParent => InventorySegmentType.Stash,
+                _ when slotParent == instance.accessoryParent => InventorySegmentType.Accessory,
+                _ => InventorySegmentType.Hotbar
+            };
+
+            var segment = GetInventorySegment(objectSlotType);
+            
+            var slotIndex = objectSlotType switch
+            {
+                InventorySegmentType.Hotbar => Array.FindIndex(_hotSlotObjects, x => x == slotObject.transform),
+                InventorySegmentType.Stash => Array.FindIndex(_stashSlotObjects, x => x == slotObject.transform),
+                InventorySegmentType.Accessory => Array.FindIndex(_accessorySlotObjects, x => x == slotObject.transform),
+                _ => throw new ArgumentOutOfRangeException(nameof(objectSlotType), objectSlotType, null)
+            };
 
             slot = segment[slotIndex];
         }
@@ -783,6 +933,125 @@ namespace Inventory.Inventory
             var itemEntity = Instantiate(instance.itemPrefab);
             itemEntity.GetComponent<ItemEntity>().item = item;
             itemEntity.transform.position = position;
+        }
+
+        private static bool TryGetSlotsWithIngredients(RecipeSo recipe,
+            out Dictionary<CraftingResource, List<Slot>> hotIngredientsDict,
+            out Dictionary<CraftingResource, List<Slot>> stashIngredientsDict)
+        {
+            hotIngredientsDict = new Dictionary<CraftingResource, List<Slot>>();
+            stashIngredientsDict = new Dictionary<CraftingResource, List<Slot>>();
+            
+            foreach (var hotSlot in _hotSlots)
+            {
+                var ingredient = recipe.ingredients.ToList().Find(i => i.item.id == hotSlot.item?.itemSo.id);
+                if (ingredient.amount == 0) continue;
+                
+                if (hotIngredientsDict.ContainsKey(ingredient))
+                {
+                    hotIngredientsDict[ingredient].Add(hotSlot);
+                }
+                else
+                {
+                    hotIngredientsDict.Add(ingredient, new List<Slot> { hotSlot });
+                }
+            }
+            
+            foreach (var stashSlot in _stashSlots)
+            {
+                var ingredient = recipe.ingredients.ToList().Find(i => i.item.id == stashSlot.item?.itemSo.id);
+                if (ingredient.amount == 0) continue;
+                
+                if (stashIngredientsDict.ContainsKey(ingredient))
+                {
+                    stashIngredientsDict[ingredient].Add(stashSlot);
+                }
+                else
+                {
+                    stashIngredientsDict.Add(ingredient, new List<Slot> { stashSlot });
+                }
+            }
+            
+            var foundKeyCount = hotIngredientsDict.Count + stashIngredientsDict.Count;
+            // Check if all ingredients are found
+            if (foundKeyCount < recipe.ingredients.Length) return false;
+
+            // The rest of this checks if enough ingredients are found
+            var combinedIngredientSlots = new Dictionary<CraftingResource, List<Slot>>();
+
+            // deep copy hotIngredients
+            foreach (var (ingredient, slots) in hotIngredientsDict)
+            {
+                combinedIngredientSlots.Add(ingredient, new List<Slot>(slots));
+            }
+            
+            foreach (var (ingredient, slots) in stashIngredientsDict)
+            {
+                if (!combinedIngredientSlots.TryAdd(ingredient, slots))
+                {
+                    combinedIngredientSlots[ingredient].AddRange(slots);
+                }
+            }
+            
+            foreach (var (ingredient, slots) in combinedIngredientSlots)
+            {
+                var requiredAmount = ingredient.amount;
+                var totalAmount = slots.Sum(s => s.stack);
+                
+                if (totalAmount < requiredAmount) return false;
+            }
+
+            return true;
+        }
+
+        public static bool CanCraft(RecipeSo recipe)
+        {
+            return TryGetSlotsWithIngredients(recipe, out _, out _);
+        }
+
+        public static void Craft(RecipeSo recipe)
+        {
+            if (!TryGetSlotsWithIngredients(
+                recipe,
+                out var hotIngredientsDict,
+                out var stashIngredientsDict))
+            {
+                return;
+            }
+
+            foreach (var ingredient in recipe.ingredients)
+            {
+                var decrementAmount = ingredient.amount;
+                List<Slot> ingredientSlots;
+                
+                if (hotIngredientsDict.TryGetValue(ingredient, out var slots))
+                {
+                    ingredientSlots = slots;
+
+                    // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+                    foreach (var slot in ingredientSlots)
+                    {
+                        var excess = DecrementStack(slot.index, true, decrementAmount);
+                        decrementAmount = excess;
+                        if (decrementAmount == 0) break;
+                    }
+                }
+                
+                if (decrementAmount == 0) continue;
+                
+                ingredientSlots = stashIngredientsDict[ingredient];
+                
+                // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+                foreach (var slot in ingredientSlots)
+                {
+                    var excess = DecrementStack(slot.index, false, decrementAmount);
+                    decrementAmount = excess;
+                    if (decrementAmount == 0) break;
+                }
+            }
+
+            // TODO: Make sure the ingredients aren't decremented if there is no space for the result
+            instance.AddItem(new Item(recipe.results[0].item));
         }
     }
 }

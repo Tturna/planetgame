@@ -1,8 +1,8 @@
 ﻿using System;
-using Inventory.Inventory.Item_Logic;
-using Inventory.Inventory.Item_Types;
+using Inventory.Item_Logic;
+using Inventory.Item_SOs;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
     [Serializable]
     public class Item
@@ -12,10 +12,9 @@ namespace Inventory.Inventory
         
         public Item() {}
 
-        // Clone constructor
-        public Item(Item source)
+        public Item(ItemSo itemSo)
         {
-            itemSo = source.itemSo;
+            this.itemSo = itemSo;
             
             logicScript = null;
             
@@ -24,5 +23,8 @@ namespace Inventory.Inventory
                 logicScript = ItemLogic.GetScript(so.logicCode);
             }
         }
+
+        // Clone constructor
+        public Item(Item source) : this(source.itemSo) { }
     }
 }

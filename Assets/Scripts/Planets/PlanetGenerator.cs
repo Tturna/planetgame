@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using Utilities;
@@ -43,7 +44,7 @@ namespace Planets
         [Header("Planet Properties")]
         public float diameter;
         public int resolution;
-        [SerializeField] private float atmosphereRadius;
+        public float atmosphereRadius;
         
         // TODO: Implement max gravity radius...
         // and separate it from drag so there's a layer of gravity
@@ -105,8 +106,6 @@ namespace Planets
 
         private void Start()
         {
-            var startTime = Time.realtimeSinceStartupAsDouble;
-
             _pointField = new Point[resolution * resolution];
             _cellField = new GameObject[(resolution - 1) * (resolution - 1)];
             GeneratePlanet();
@@ -118,8 +117,6 @@ namespace Planets
 
             _orePopulator = GetComponent<PlanetOrePopulator>();
             _orePopulator.GenerateVeins(_terrainParentTransform);
-            
-            print($"Planet generated in: {Time.realtimeSinceStartupAsDouble - startTime} s");
             
             var atmosphereCollider = gameObject.AddComponent<CircleCollider2D>();
             atmosphereCollider.radius = atmosphereRadius;
@@ -323,20 +320,19 @@ namespace Planets
         {
             var mesh = new Mesh();
             mesh.name = idx.ToString();
-
+            
             var cell = MakeCellObject(idx, mesh);
-            // var polyCollider = cell.AddComponent<PolygonCollider2D>();
             var polyCollider = cell.GetComponent<PolygonCollider2D>();
-
+            
             // Convert vertices to vector2[] for the collider
             var vertices2 = Array.ConvertAll(vertices, v3 => new Vector2(v3.x, v3.y));
-
+            
             // Use vertices that were calculated above
             // Use preset triangles using the cell pattern
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.RecalculateBounds();
-
+            
             polyCollider.points = triangles.Select(trindex => vertices2[trindex]).ToArray();
 
             return cell;
@@ -478,37 +474,36 @@ namespace Planets
         }
         
         /// <summary>
-        /// Get the distance of the given position from the center of the planet. 1 = core, 0 = edge of atmosphere
+        /// Normalize given distance from planet. 1 = core, 0 = edge of atmosphere
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public float GetDistancePercentage(Vector3 position)
+        public float NormalizeDistanceFromPlanet(float distanceFromPlanet)
         {
-            var distanceFromCore = (position - transform.position).magnitude;
-            var perc = distanceFromCore / atmosphereRadius;
+            var perc = distanceFromPlanet / atmosphereRadius;
             var rev = 1 - perc;
             // var limited = rev / threshold;
             
             return Mathf.Clamp01(rev);
         }
         
-        public float GetDrag(Vector3 position)
+        public float GetDrag(float distanceFromPlanet)
         {
-            var perc = GetDistancePercentage(position);
+            var perc = NormalizeDistanceFromPlanet(distanceFromPlanet);
             var limitedPerc = GameUtilities.InverseLerp(0f, maxPhysicsThreshold, perc);
             return maxDrag * limitedPerc;
         }
 
-        public float GetGravity(Vector3 position)
+        public float GetGravity(float distanceFromPlanet)
         {
-            var perc = GetDistancePercentage(position);
+            var perc = NormalizeDistanceFromPlanet(distanceFromPlanet);
             var limitedPerc = GameUtilities.InverseLerp(0f, maxPhysicsThreshold, perc);
             return maxGravityMultiplier * limitedPerc;
         }
         
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawWireSphere(transform.position, diameter * 0.5f);
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     Gizmos.DrawWireSphere(transform.position, diameter * 0.5f);
+        // }
     }
 }

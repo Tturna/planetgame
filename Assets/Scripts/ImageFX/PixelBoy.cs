@@ -1,5 +1,6 @@
 //PIXELBOY BY @WTFMIG EAT A BUTT WORLD BAHAHAHAHA POOP MY PANTS
 
+using Cameras;
 using UnityEngine;
 
 namespace ImageFX
@@ -14,7 +15,7 @@ namespace ImageFX
 
         private void Update()
         {
-            mainCam ??= Camera.main!;
+            mainCam ??= CameraController.instance.mainCam;
             var ratio = (float)mainCam.pixelHeight / mainCam.pixelWidth;
             h = Mathf.RoundToInt(w * ratio);
         

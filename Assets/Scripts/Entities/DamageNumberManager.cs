@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
+using Cameras;
 using TMPro;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
 
-namespace Entities.Entities
+namespace Entities
 {
     public class DamageNumberManager : MonoBehaviour
     {
         [SerializeField] private GameObject damageNumberPrefab;
-        [SerializeField] private TMP_FontAsset flashFont, normalFont;
-
-        private static Guid _damageNumberPoolId = Guid.Empty;
+        [SerializeField] private Material flashMaterial, normalMaterial;
         
+        private const string DamageNumberPoolName = "Damage Number Pool";
+        private bool objectPoolCreated;
+
         private void Start()
         {
             InitializeDamageNumberObjectPool();
@@ -21,22 +23,20 @@ namespace Entities.Entities
         
         private void InitializeDamageNumberObjectPool()
         {
-            if (_damageNumberPoolId != Guid.Empty) return;
-            
-            _damageNumberPoolId = ObjectPooler.CreatePool(damageNumberPrefab, 20);
-            Debug.Log($"Created damage number pool with ID {_damageNumberPoolId}");
+            if (objectPoolCreated) return;
+            ObjectPooler.CreatePool(DamageNumberPoolName, damageNumberPrefab, 20);
+            objectPoolCreated = true;
         }
 
         public void CreateDamageNumber(float amount, float lifeTime = 1f, float startMoveStrength = 1f)
         {
             InitializeDamageNumberObjectPool();
             
-            var damageNumberObject = ObjectPooler.GetObject(_damageNumberPoolId);
+            var damageNumberObject = ObjectPooler.GetObject(DamageNumberPoolName);
             
             if (damageNumberObject == null)
             {
-                Debug.LogError("Damage number object is null!");
-                return;
+                throw new NullReferenceException("Damage number object is null!");
             }
             
             damageNumberObject.transform.position = transform.position;
@@ -50,6 +50,9 @@ namespace Entities.Entities
             else
             {
                 tmp.text = amount.ToString();
+                // Every time a damage number is created, it will get an equal or higher sorting order than the previous one
+                // 10 is min, 30 is max, 2 is time multiplier that can be increased to make the numbers change sorting order faster
+                tmp.sortingOrder = 10 + (int)(Time.time * 2) % 20;
             }
             
             GameUtilities.instance.StartCoroutine(HandleDamageNumberLifeTime(damageNumberObject, tmp, lifeTime, startMoveStrength));
@@ -59,10 +62,10 @@ namespace Entities.Entities
         {
             var tr = damageNumberObject.transform;
             tr.Translate(Random.insideUnitCircle * .5f);
-            tmp.font = flashFont;
+            tmp.fontSharedMaterial = flashMaterial;
             
             var ogLifeTime = lifeTime;
-            var camTr = Camera.main!.transform;
+            var camTr = CameraController.instance.mainCam.transform;
             
             while (lifeTime > 0)
             {
@@ -80,7 +83,7 @@ namespace Entities.Entities
                 
                 if (nLifeTime < .9f)
                 {
-                    tmp.font = normalFont;
+                    tmp.fontSharedMaterial = normalMaterial;
                 }
                 
                 lifeTime -= Time.deltaTime;

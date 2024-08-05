@@ -21,6 +21,7 @@ MonoBehaviour:
   accelerationSpeed: 25
   maxSpeed: 2
   maxSlopeMultiplier: 3
+  canJump: 1
   jumpForce: 12
   movementPattern:
     movementType: 0
@@ -30,6 +31,7 @@ MonoBehaviour:
   hitboxOffset: {x: 0, y: 0}
   hitboxSize: {x: 0.25, y: 0.5}
   hitboxEdgeRadius: 0
+  knockbackSourcePointOffset: {x: 0, y: 0}
   healthbarDistance: 0.66
   overrideAnimator: {fileID: 22100000, guid: e7e7777931ce10d489565a67e3591277, type: 2}
   evasionTime: 7
@@ -42,7 +44,21 @@ MonoBehaviour:
     animationIndex: 1
     damage: 10
     knockback: 5
-    attackDistance: 1.5
+    attackRange: 1.5
+    attackMagnitude: 1
     attackDelay: 0.4
     preventsMovement: 1
-    projectiles: []
+    cameraShakeTime: 0
+    cameraShakeStrength: 0
+    projectileAttacks: []
+    useRandomProjectileAttack: 0
+    minProjectileAttacks: 0
+    maxProjectileAttacks: 0
+  dropMultiple: 1
+  lootTable:
+  - item:
+      itemSo: {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+    dropChance: 75
+  - item:
+      itemSo: {fileID: 11400000, guid: aca811514951fa546a33ba3262f46cdf, type: 2}
+    dropChance: 25

@@ -1,19 +1,21 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
-using Inventory.Inventory.Item_Types;
+using Cameras;
+using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
 using Utilities;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class PickaxeLogic : ItemLogicBase
     {
         private static float _soil;
         private PlanetGenerator _planetGen;
         private float _mineTimer;
-        private ItemAnimationManager _itemAnimationManager;
 
         public override bool UseOnce(UseParameters useParameters)
         {
@@ -50,19 +52,17 @@ namespace Inventory.Inventory.Item_Logic
 
         public override bool UseContinuous(UseParameters useParameters)
         {
-            _itemAnimationManager ??= useParameters.itemAnimationManager;
-            
             var tool = (ToolSo)useParameters.attackItem.itemSo;
             var useArea = tool.toolUseArea;
             var power = tool.toolPower;
-            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
             
             if (Vector3.Distance(useParameters.playerObject.transform.position, mousePoint) > tool.toolRange) return true;
             
             var useAreaHits = new Collider2D[25];
             var midHits = new Collider2D[10];
-            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            var mask = GameUtilities.BasicMovementCollisionMask;
             
             Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
             Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
@@ -71,7 +71,7 @@ namespace Inventory.Inventory.Item_Logic
             if (_mineTimer == 0)
             {
                 // canMineOre = true;
-                _itemAnimationManager.AttackMelee("attackPickaxe");
+                useParameters.itemAnimationManager.AttackMelee("attackPickaxe");
                 _mineTimer = tool.attackCooldown;
                 GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
             }
@@ -91,7 +91,6 @@ namespace Inventory.Inventory.Item_Logic
             {
                 if (!hit) continue;
                 var hitObject = hit.gameObject;
-                Debug.Log($"Clicked on {hitObject.name}");
                 
                 if (!hitObject.CompareTag("Breakable")) continue;
                 
@@ -133,12 +132,17 @@ namespace Inventory.Inventory.Item_Logic
                     Object.Destroy(hitObject);
                 }
             }
+            
             return true;
         }
 
         private void DigTerrain(GameObject hitObject, Vector3 mousePoint, float power, float useArea)
         {
-            _planetGen ??= hitObject.transform.root.GetComponent<PlanetGenerator>();
+            // use this instead of ??= because ??= bypasses the unity object lifetime check
+            if (!_planetGen)
+            {
+                _planetGen = hitObject.transform.root.GetComponent<PlanetGenerator>();
+            }
 
             // Get cell data
             var idx = int.Parse(hitObject.name[5..]);

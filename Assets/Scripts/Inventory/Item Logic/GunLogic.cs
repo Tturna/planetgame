@@ -1,14 +1,12 @@
-﻿using Entities.Entities;
-using Inventory.Inventory.Item_Types;
+﻿using Entities;
+using Inventory.Item_SOs;
 using UnityEngine;
 using Utilities;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class GunLogic : ItemLogicBase
     {
-        private GameUtilities _utilities;
-        private GameObject _projectilePrefab;
         private GameObject _muzzleFlashObject;
         private SpriteRenderer _muzzleFlashSr;
         
@@ -16,28 +14,30 @@ namespace Inventory.Inventory.Item_Logic
         {
             var weaponSo = (WeaponSo)useParameters.attackItem.itemSo;
             
-            _utilities ??= GameUtilities.instance;
-            _projectilePrefab ??= _utilities.GetProjectilePrefab();
-            
-            // Spawn projectile
             var pos = (Vector2)useParameters.equippedItemObject.transform.position;
             var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
-            var projectile = GameUtilities.Spawn(_projectilePrefab, pos, rot, useParameters.equippedItemObject.transform);
+            // object pooler will check if the pool exists so we don't have to.
+            ObjectPooler.CreatePool("Projectile Pool", GameUtilities.instance.GetProjectilePrefab(), 10, true);
+            var projectile = ObjectPooler.GetObject("Projectile Pool");
 
-            // Set projectile position to muzzle position
+            if (projectile == null)
+            {
+                throw new System.NullReferenceException("Projectile object is null from object pool!");
+            }
+            
+            projectile.transform.SetParent(useParameters.equippedItemObject.transform);
+            projectile.transform.position = pos;
+            projectile.transform.eulerAngles = rot;
+            
             var localPos = weaponSo.muzzlePosition;
             localPos.y = useParameters.flipY ? -localPos.y : localPos.y;
             projectile.transform.localPosition = localPos;
             projectile.transform.SetParent(null);
             
-            // Initialize projectile
             var entity = projectile.GetComponent<ProjectileEntity>();
             entity.Init(weaponSo.projectile);
             
-            //TODO: Object pooling
-            
-            // Choose random muzzle flash
             if (weaponSo.muzzleFlashes.Length > 0)
             {
                 if (!_muzzleFlashObject)
@@ -52,11 +52,9 @@ namespace Inventory.Inventory.Item_Logic
                 _muzzleFlashSr.sprite = weaponSo.muzzleFlashes[Random.Range(0, weaponSo.muzzleFlashes.Length)];
                 _muzzleFlashSr.color = weaponSo.muzzleFlashColor;
                 
-                _utilities.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
+                GameUtilities.instance.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
             }
             
-            //Debug.Log($"Shoot {weaponSo.name} with {weaponSo.projectile?.sprite?.name ?? "null"} @ {Time.time}");
-
             return true;
         }
 

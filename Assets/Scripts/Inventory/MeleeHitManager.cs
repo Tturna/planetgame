@@ -2,12 +2,14 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
-using Entities.Entities.Enemies;
-using Inventory.Inventory.Item_Logic;
-using Inventory.Inventory.Item_Types;
+using System;
+using Entities;
+using Entities.Enemies;
+using Inventory.Item_Logic;
+using Inventory.Item_SOs;
 using UnityEngine;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
     public class MeleeHitManager : MonoBehaviour
     {
@@ -26,6 +28,11 @@ namespace Inventory.Inventory
             itemAnimationManager.SwingCompleted += () => ToggleSwing(false, false);
 
             InventoryManager.ItemEquipped += OnItemEquipped;
+        }
+
+        private void OnDestroy()
+        {
+            InventoryManager.ItemEquipped -= OnItemEquipped;
         }
 
         private void OnItemEquipped(Item item)
@@ -66,8 +73,13 @@ namespace Inventory.Inventory
             if (col.gameObject.CompareTag("Enemy"))
             {
                 var enemy = col.gameObject.GetComponent<EnemyEntity>();
-                enemy.TakeDamage(_meleeSo.damage);
-                enemy.Knockback(transform.position, _meleeSo.knockback);
+                
+                // TODO: Implement entity defense and defense penetration
+                var damage = PlayerStatsManager.CalculateMeleeDamage(_meleeSo.damage, _meleeSo.critChance);
+                var knockback = _meleeSo.knockback * PlayerStatsManager.KnockbackMultiplier;
+                
+                enemy.TakeDamage(damage);
+                enemy.Knockback(transform.position, knockback);
             }
         }
     }

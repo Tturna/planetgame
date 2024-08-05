@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Utilities
@@ -8,72 +9,105 @@ namespace Utilities
     {
         private struct PoolData
         {
-            public GameObject[] pool;
+            public List<GameObject> pool;
+            public GameObject stencilObject;
             public int backupObjectIndex;
+            public bool dynamicSize;
         }
         
-        private static readonly Dictionary<Guid, PoolData> PoolsDict = new();
+        private static readonly Dictionary<string, PoolData> PoolsDict = new();
 
-        /// <summary>
-        /// Create a new object pool for the given object and return the pool's unique ID
-        /// </summary>
-        /// <param name="stencilObject"></param>
-        /// <param name="poolSize"></param>
-        /// <returns></returns>
-        public static Guid CreatePool(GameObject stencilObject, int poolSize)
+        public static void CreatePool(string poolName, GameObject stencilObject, int initialPoolSize, bool dynamicSize = false)
         {
-            var pool = new GameObject[poolSize];
-            var id = Guid.NewGuid();
-            
-            for (var i = 0; i < poolSize; i++)
+            if (string.IsNullOrEmpty(poolName))
             {
-                pool[i] = UnityEngine.Object.Instantiate(stencilObject);
-                pool[i].SetActive(false);
+                throw new ArgumentException("Pool name cannot be null or empty!");
+            }
+            
+            if (stencilObject == null)
+            {
+                throw new ArgumentException("Stencil object cannot be null!");
+            }
+            
+            if (PoolsDict.ContainsKey(poolName))
+            {
+                return;
+            }
+            
+            if (initialPoolSize < 1)
+            {
+                throw new ArgumentException("Initial pool size must be at least 1!");
+            }
+
+            var pool = new List<GameObject>();
+            
+            for (var i = 0; i < initialPoolSize; i++)
+            {
+                var obj = UnityEngine.Object.Instantiate(stencilObject);
+                obj.SetActive(false);
+                pool.Add(obj);
             }
             
             var poolData = new PoolData()
             {
                 pool = pool,
-                backupObjectIndex = 0
+                stencilObject = stencilObject,
+                backupObjectIndex = 0,
+                dynamicSize = dynamicSize
             };
             
-            PoolsDict.Add(id, poolData);
-            
-            return id;
+            PoolsDict.Add(poolName, poolData);
         }
         
-        /// <summary>
-        /// Return an available object from the pool with the given ID, or loop through the pool if none are available
-        /// </summary>
-        /// <param name="poolId"></param>
-        /// <returns></returns>
-        public static GameObject GetObject(Guid poolId)
+        [CanBeNull]
+        public static GameObject GetObject(string poolName)
         {
-            if (!PoolsDict.ContainsKey(poolId))
+            if (!PoolsDict.ContainsKey(poolName))
             {
-                Debug.LogError($"Pool with ID {poolId} does not exist!");
+                Debug.LogError($"Pool with name '{poolName}' does not exist!");
                 return null;
             }
             
-            var poolData = PoolsDict[poolId];
+            var poolData = PoolsDict[poolName];
             var pool = poolData.pool;
 
             foreach (var obj in pool)
             {
-                if (obj == null || obj.activeSelf) continue;
-                
+                if (obj.activeSelf) continue;
                 obj.SetActive(true);
+                return obj;
+            }
+
+            if (poolData.dynamicSize)
+            {
+                var obj = UnityEngine.Object.Instantiate(poolData.stencilObject);
+                pool.Add(obj);
+
                 return obj;
             }
             
             var backupObject = pool[poolData.backupObjectIndex];
             poolData.backupObjectIndex++;
-            if (poolData.backupObjectIndex >= pool.Length) poolData.backupObjectIndex = 0;
+            if (poolData.backupObjectIndex >= pool.Count) poolData.backupObjectIndex = 0;
             
             // This is required because structs are value types, not reference types
-            PoolsDict[poolId] = poolData;
+            PoolsDict[poolName] = poolData;
             
             return backupObject;
+        }
+
+        public static void RemovePools()
+        {
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var poolData in PoolsDict.Values)
+            {
+                foreach (var obj in poolData.pool)
+                {
+                    UnityEngine.Object.Destroy(obj);
+                }
+            }
+            
+            PoolsDict.Clear();
         }
     }
 }

@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
-using Entities.Entities;
+using Cameras;
+using Entities;
 using Planets;
 using UnityEngine;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class MaterialLogic : ItemLogicBase
     {
@@ -15,11 +16,16 @@ namespace Inventory.Inventory.Item_Logic
 
         public override bool UseContinuous(UseParameters useParameters)
         {
-            _player ??= PlayerController.instance;
+            // use this instead of ??= because ??= bypasses the unity object lifetime check
+            if (!_player)
+            {
+                _player = PlayerController.instance;
+            }
+            
             var usePlanet = _player.CurrentPlanetObject.GetComponent<PlanetGenerator>();
             if (!usePlanet) return false;
 
-            if (!_camera) _camera = Camera.main!;
+            if (!_camera) _camera = CameraController.instance.mainCam;
             
             // TODO: Set this up as a player "statistic parameter/attribute"
             const float useArea = 0.5f;

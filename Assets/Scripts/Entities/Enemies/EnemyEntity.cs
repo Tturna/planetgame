@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using Cameras;
+using UnityEditor;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [RequireComponent(typeof(HealthbarManager))]
     [RequireComponent(typeof(DamageNumberManager))]
@@ -15,9 +17,11 @@ namespace Entities.Entities.Enemies
     // Sealed - can't be inherited
     public sealed class EnemyEntity : EntityController, IDamageable
     {
-        [SerializeField] private EnemySo enemySo;
+        [SerializeField] private Shader flashShader;
         
-        [HideInInspector] public Vector3 relativeMoveDirection, globalMoveDirection;
+        public EnemySo enemySo;
+        [HideInInspector] public Vector3 relativeMoveDirection;
+        [HideInInspector] public float currentKnockback; // This exists so that attack patterns can change the contact knockback temporarily.
         
         private PlayerController _player;
         private Animator _animator;
@@ -26,68 +30,85 @@ namespace Entities.Entities.Enemies
         private DamageNumberManager _damageNumberManager;
         private ParticleSystem _deathPs;
         
-        private Shader _defaultShader, _flashShader;
+        private Shader _defaultShader;
         private MovementPattern _movementPattern;
         private Action<MovementPattern.MovementFunctionData> _movementFunction;
         private MovementPattern.MovementFunctionData _movementFunctionData;
+        private Action _deathAttackCancelAction;
         
-        private float _calculationTimer, _evasionTimer, _attackTimer;
+        private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer, _wakeupTimer;
+        private Vector2 _directionToPlayer;
         private float _distanceToPlayer;
         private float _health, _maxHealth;
-        private bool _aggravated, _canMove = true;
+        private bool _aggravated, _canMove = true, _initialized;
+        private float _attackRecoveryTime;
+
+        private static readonly int AnimWakeup = Animator.StringToHash("wakeup");
+        private static readonly int AnimMoving = Animator.StringToHash("moving");
+        private static readonly int AnimJumping = Animator.StringToHash("jumping");
+        private static readonly int AnimAttackIndex = Animator.StringToHash("attackIndex");
+        private static readonly int AnimAttack = Animator.StringToHash("attack");
+        private static readonly int AnimDeath = Animator.StringToHash("death");
+        
+        // hacky shit to implement enrage for swamp titan. to be reworked.
+        private bool _swampTitanEnraged;
+        private bool _swampTitanDoubleAttack;
+        private bool _swampTitanDoubleAttackDone;
+
+        public delegate void DeathHandler(EnemySo enemySo);
+        public event DeathHandler OnDeath;
+        
+        private void TriggerOnDeath()
+        {
+            OnDeath?.Invoke(enemySo);
+        }
 
         protected override void Start()
         {
             base.Start();
-            
-            _player = PlayerController.instance;
-            _animator = GetComponent<Animator>();
-            _sr = GetComponent<SpriteRenderer>();
-            _healthbarManager = GetComponent<HealthbarManager>();
-            _damageNumberManager = GetComponent<DamageNumberManager>();
-            _deathPs = GetComponentInChildren<ParticleSystem>();
-            
-            _animator.runtimeAnimatorController = enemySo.overrideAnimator;
 
-            _evasionTimer = enemySo.evasionTime;
-            _attackTimer = enemySo.attackInterval;
-            _health = enemySo.health;
-            _maxHealth = enemySo.maxHealth;
-            
-            _movementPattern = enemySo.movementPattern;
-            _movementFunction = _movementPattern.GetMovement();
-            _movementPattern.Init();
-            _movementFunctionData = new MovementPattern.MovementFunctionData();
-
-            _healthbarManager.Initialize(_health, _maxHealth, enemySo.isBoss, enemySo.healthbarDistance);
-
-            var hitboxChild = new GameObject("Hitbox");
-            hitboxChild.transform.SetParent(transform);
-            hitboxChild.transform.localPosition = Vector3.zero;
-            hitboxChild.layer = 8;
-
-            var hitbox = hitboxChild.AddComponent<BoxCollider2D>();
-            hitbox.offset = enemySo.hitboxOffset;
-            hitbox.size = enemySo.hitboxSize;
-            hitbox.edgeRadius = enemySo.hitboxEdgeRadius;
-            hitbox.isTrigger = true;
-            
-            _defaultShader = _sr.material.shader;
-            _flashShader = Shader.Find("GUI/Text Shader");
+            Init(enemySo);
         }
 
         private void Update()
         {
+            if (_wakeupTimer < enemySo.wakeupDelay)
+            {
+                _wakeupTimer += Time.deltaTime;
+                return;
+            }
+            
+            if (_health <= 0) return;
             if (!CalculatePlayerRelation()) return;
+            
+            // to be reworked.
+            if (enemySo.isBoss && !_swampTitanEnraged && _health <= _maxHealth * 0.25f)
+            {
+                _swampTitanEnraged = true;
+                _swampTitanDoubleAttack = true;
+                _attackTimer = enemySo.attackInterval;
+                _canMove = false;
+                _attackRecoveryTime = 0f;
+                _animator.SetTrigger("enrage");
+                CameraController.CameraShake(1f, 0.1f);
+                _healthbarManager.SetBossEnraged(true);
+                
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    var delay = _animator.GetCurrentAnimatorStateInfo(0).length + _attackRecoveryTime;
+                    StartCoroutine(DelayEnableMovement(delay));
+                }, 1f);
+            }
 
             CheckAggro();
-            
-            globalMoveDirection = relativeMoveDirection.x > 0 ? transform.right : -transform.right;
         }
 
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
+            if (_health <= 0) return;
             
             if (_aggravated)
             {
@@ -95,7 +116,7 @@ namespace Entities.Entities.Enemies
             }
             else
             {
-                // TODO: Idle behavior
+                IdleBehavior();
             }
         }
 
@@ -107,7 +128,9 @@ namespace Entities.Entities.Enemies
             // _calculationTimer = calculationInterval;
             
             // Calculation    
-            _distanceToPlayer = (transform.position - _player.transform.position).magnitude;
+            var diffToPlayer = _player.transform.position - transform.position;
+            _directionToPlayer = diffToPlayer.normalized;
+            _distanceToPlayer = diffToPlayer.magnitude;
             return true;
         }
 
@@ -115,6 +138,11 @@ namespace Entities.Entities.Enemies
         {
             if (_aggravated)
             {
+                if (!_player.IsAlive)
+                {
+                    Deaggro();
+                    _evasionTimer = 0f;
+                }
                 if (_distanceToPlayer > enemySo.aggroRange)
                 {
                     _evasionTimer -= Time.deltaTime;
@@ -140,14 +168,14 @@ namespace Entities.Entities.Enemies
             _aggravated = true;
 
             if (!enemySo.isBoss) return;
-            _healthbarManager.EnableBossUIHealth();
-            _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
+            _healthbarManager.ToggleBossUIHealth(true);
+            _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo);
         }
 
         private void Deaggro()
         {
             _aggravated = false;
-            _animator.SetBool("moving", false);
+            _animator.SetBool(AnimMoving, false);
         }
 
         private void AggroBehavior()
@@ -155,21 +183,73 @@ namespace Entities.Entities.Enemies
             if (_attackTimer > 0)
             {
                 _attackTimer -= Time.fixedDeltaTime;
+                
+                // to be reworked.
+                if (_swampTitanEnraged && !_swampTitanDoubleAttackDone && _attackTimer <= 0)
+                {
+                    var rng = Random.Range(0, 2);
+
+                    if (rng == 0)
+                    {
+                        _swampTitanDoubleAttack = true;
+                    }
+                }
             }
-            else if (!_animator.GetBool("jumping") && Attack())
+            else if (!_animator.GetBool(AnimJumping) && Attack())
             {
+                // to be reworked.
+                if (_swampTitanEnraged && _swampTitanDoubleAttack)
+                {
+                    _swampTitanDoubleAttack = false;
+                    _swampTitanDoubleAttackDone = true;
+                    _attackTimer = enemySo.attackInterval * 0.5f;
+                    return;
+                }
+
+                if (_swampTitanEnraged)
+                {
+                    _swampTitanDoubleAttackDone = false;
+                }
+
                 _attackTimer = enemySo.attackInterval;
             }
             
             if (!_canMove) return;
             
-            // Movement
-            _animator.SetBool("moving", true);
-            
-            // var angleDiff = Vector3.SignedAngle(transform.position, _player.transform.position, Vector3.back);
-            // Debug.Log($"Signed angle: {angleDiff}");
+            _animator.SetBool(AnimMoving, true);
+            Move(GetVectorToPlayer());
+        }
 
-            var posDiff = GetVectorToPlayer();
+        private void IdleBehavior()
+        {
+            if (_idleTimer > 0)
+            {
+                _idleTimer -= Time.fixedDeltaTime;
+
+                // ReSharper disable once InvertIf
+                if (_idleTimer <= 0)
+                {
+                    _idleActionTimer = Random.Range(3f, 6f);
+                    relativeMoveDirection = Random.Range(0, 2) == 0 ? Vector3.right : Vector3.left;
+                }
+            }
+            else if (_idleActionTimer > 0)
+            {
+                _idleActionTimer -= Time.fixedDeltaTime;
+                
+                _animator.SetBool(AnimMoving, true);
+                Move(relativeMoveDirection);
+            }
+            else
+            {
+                _idleTimer = Random.Range(3f, 6f);
+                _animator.SetBool(AnimMoving, false);
+            }
+        }
+
+        private void Move(Vector3 positionDifferenceToTarget)
+        {
+            var posDiff = positionDifferenceToTarget;
             var dot = Vector3.Dot(posDiff.normalized, transform.right);
             
             relativeMoveDirection = dot > 0 ? Vector3.right : Vector3.left;
@@ -208,7 +288,7 @@ namespace Entities.Entities.Enemies
                     ap = enemySo.attacks[rng];
                 }
 
-                if (!enemySo.alwaysAttack && ap.attackDistance < _distanceToPlayer)
+                if (!enemySo.alwaysAttack && ap.attackRange < _distanceToPlayer)
                 {
                     if (enemySo.useRandomAttack) usedIndices[rng] = true;
                     continue;
@@ -220,36 +300,89 @@ namespace Entities.Entities.Enemies
             
             if (pattern == null) return false;
             
-            // TODO: Consider a system that allows different shot directions
-            pattern.GetAttack().Invoke(this, (transform.right * relativeMoveDirection.x + transform.up * 0.2f).normalized);
-            _animator.SetInteger("attackIndex", pattern.GetIndex());
-            _animator.SetTrigger("attack");
+            _deathAttackCancelAction = pattern.GetAttack().Invoke(this, _directionToPlayer);
+            _animator.SetInteger(AnimAttackIndex, pattern.GetIndex());
+            _animator.SetTrigger(AnimAttack);
 
-            if (pattern.preventsMovement)
+            if (!pattern.preventsMovement) return true;
+            _animator.SetBool(AnimMoving, false);
+            _canMove = false;
+
+            var delay = _animator.GetCurrentAnimatorStateInfo(0).length + _attackRecoveryTime;
+            StartCoroutine(DelayEnableMovement(delay));
+            return true;
+        }
+
+        public void Init(EnemySo sourceSo)
+        {
+            if (_initialized) return;
+            if (!sourceSo) return;
+
+            enemySo = sourceSo;
+            _initialized = true;
+            
+            _player = PlayerController.instance;
+            _animator = GetComponent<Animator>();
+            _sr = GetComponent<SpriteRenderer>();
+            _healthbarManager = GetComponent<HealthbarManager>();
+            _damageNumberManager = GetComponent<DamageNumberManager>();
+            _deathPs = GetComponentInChildren<ParticleSystem>();
+            
+            _animator.runtimeAnimatorController = enemySo.overrideAnimator;
+            _animator.SetTrigger(AnimWakeup);
+
+            _evasionTimer = enemySo.evasionTime;
+            _attackTimer = enemySo.attackInterval;
+            _health = enemySo.health;
+            _maxHealth = enemySo.maxHealth;
+            
+            _movementPattern = enemySo.movementPattern;
+            _movementFunction = _movementPattern.GetMovement();
+            _movementPattern.Init();
+            _movementFunctionData = new MovementPattern.MovementFunctionData();
+
+            _healthbarManager.Initialize(_health, _maxHealth, enemySo);
+
+            if (!MainCollider)
             {
-                _animator.SetBool("moving", false);
-                _canMove = false;
-
-                StartCoroutine(DelayEnableMovement());
+                MainCollider = GetComponent<Collider2D>();
             }
             
-            return true;
+            var mainCol = (BoxCollider2D)MainCollider;
+            mainCol.offset = enemySo.hitboxOffset;
+            mainCol.size = enemySo.hitboxSize;
+            mainCol.edgeRadius = enemySo.hitboxEdgeRadius;
+
+            var hitboxChild = new GameObject("Hitbox");
+            hitboxChild.transform.SetParent(transform);
+            hitboxChild.transform.localPosition = Vector3.zero;
+            hitboxChild.layer = 8;
+
+            var hitbox = hitboxChild.AddComponent<BoxCollider2D>();
+            hitbox.offset = enemySo.hitboxOffset;
+            hitbox.size = enemySo.hitboxSize;
+            hitbox.edgeRadius = enemySo.hitboxEdgeRadius;
+            hitbox.isTrigger = true;
+            
+            _defaultShader = _sr.material.shader;
+            
+            currentKnockback = enemySo.knockback;
+            _attackRecoveryTime = enemySo.attackRecoveryTime;
         }
 
         public void TakeDamage(float amount)
         {
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
             if (_health <= 0) return;
 
-            // TODO: Figure out critical hits
             amount = Mathf.Round(Random.Range(amount * 0.8f, amount * 1.2f));
 
             _health = Mathf.Clamp(_health - amount, 0, _maxHealth);
             _healthbarManager.UpdateHealthbar(_health, _maxHealth);
             
-            // Update boss health UI
             if (enemySo.isBoss)
             {
-                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo.bossPortrait);
+                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo);
             }
             
             _damageNumberManager.CreateDamageNumber(amount);
@@ -260,22 +393,25 @@ namespace Entities.Entities.Enemies
                 return;
             }
 
-            // Flash white
-            // _sr.material.SetFloat("_FlashAmount", .75f);
-            // GameUtilities.instance.DelayExecute(() => _sr.material.SetFloat("_FlashAmount", 0), 0.1f);
-
-            _sr.sharedMaterial.shader = _flashShader;
-            GameUtilities.instance.DelayExecute(() => _sr.sharedMaterial.shader = _defaultShader, 0.1f);
+            _sr.sharedMaterial.shader = flashShader;
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                if (_sr == null) return;
+                _sr.sharedMaterial.shader = _defaultShader;
+            }, 0.1f);
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
         {
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
+            if (enemySo.isImmuneToKnockback) return;
             if (amount == 0) return;
             
             Rigidbody.velocity = Vector2.zero;
             
             // check if the damage source is on the left or the right in relation to the enemy
-            var dot = Vector3.Dot((damageSourcePosition - transform.position).normalized, transform.right);
+            var tr = transform;
+            var dot = Vector3.Dot((damageSourcePosition - tr.position).normalized, tr.right);
             var knockbackDirection = dot > 0 ? -transform.right : transform.right;
             knockbackDirection = (knockbackDirection + transform.up * 0.6f).normalized;
             
@@ -286,11 +422,35 @@ namespace Entities.Entities.Enemies
 
         public void Death()
         {
-            // TODO: object pooling
+            _deathAttackCancelAction?.Invoke();
+            
             _deathPs.transform.SetParent(null);
             _deathPs.Play();
+            TriggerOnDeath();
             GameUtilities.instance.DelayExecute(() => Destroy(_deathPs.gameObject), 1f);
-            Destroy(gameObject);
+
+            if (enemySo.isBoss)
+            {
+                _healthbarManager.SetBossEnraged(false);
+                _healthbarManager.ToggleBossUIHealth(false);
+                CameraController.CameraShake(1f, 0.1f);
+            }
+
+            transform.localScale = Vector3.one;
+            _sr.flipX = enemySo.flipSprite;
+            _animator.SetTrigger(AnimDeath);
+
+            if (enemySo.deathDelay > 0)
+            {
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    Destroy(gameObject);
+                }, enemySo.deathDelay);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         public Vector3 GetVectorToPlayer()
@@ -298,28 +458,38 @@ namespace Entities.Entities.Enemies
             return _player.transform.position - transform.position;
         }
 
-        private IEnumerator DelayEnableMovement()
+        private IEnumerator DelayEnableMovement(float delay)
         {
             yield return new WaitForEndOfFrame();
-            yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length + enemySo.attackRecoveryTime);
+            yield return new WaitForSeconds(delay);
             _canMove = true;
         }
 
-        private void OnDrawGizmos()
+        private void OnTriggerEnter2D(Collider2D col)
         {
-            Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
-        }
-
-        protected override void OnTriggerEnter2D(Collider2D col)
-        {
-            base.OnTriggerEnter2D(col);
+            // base.OnTriggerEnter2D(col);
 
             // Damage player on contact
             if (col.TryGetComponent<PlayerController>(out var player))
             {
                 player.TakeDamage(enemySo.contactDamage);
-                player.Knockback(transform.position, enemySo.knockback);
+                player.Knockback(transform.position + (Vector3)enemySo.knockbackSourcePointOffset, currentKnockback);
             }
         }
+        
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
+        }
+        
+#if UNITY_EDITOR
+        [MenuItem("CONTEXT/EnemyEntity/InitializeForEditor")]
+        static void InitializeForEditor(MenuCommand command)
+        {
+            var enemyEntity = (EnemyEntity)command.context;
+            enemyEntity.gameObject.name = "(Enemy) " + enemyEntity.enemySo.enemyName;
+            enemyEntity.GetComponent<Animator>().runtimeAnimatorController = enemyEntity.enemySo.overrideAnimator;
+        }
+#endif
     }
 }

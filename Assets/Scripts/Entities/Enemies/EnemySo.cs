@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using Inventory;
+using UnityEngine;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [CreateAssetMenu(fileName = "Enemy", menuName = "SO/Enemy")]
     public class EnemySo : ScriptableObject
@@ -9,12 +11,16 @@ namespace Entities.Entities.Enemies
         public string enemyName;
         public float maxHealth;
         public float health;
+        public float wakeupDelay;
+        public float deathDelay;
         public float contactDamage;
+        public bool isImmuneToKnockback;
         public float knockback;
         public float aggroRange;
         public float accelerationSpeed;
         public float maxSpeed;
         public float maxSlopeMultiplier;
+        public bool canJump;
         public float jumpForce;
         public MovementPattern movementPattern;
         public bool isBoss;
@@ -23,6 +29,7 @@ namespace Entities.Entities.Enemies
         public Vector2 hitboxOffset;
         public Vector2 hitboxSize;
         public float hitboxEdgeRadius;
+        public Vector2 knockbackSourcePointOffset;
         public float healthbarDistance;
         public RuntimeAnimatorController overrideAnimator;
         
@@ -37,5 +44,16 @@ namespace Entities.Entities.Enemies
         public bool alwaysAttack;
         public bool useRandomAttack;
         public AttackPattern[] attacks;
+        
+        [Serializable]
+        public struct LootDrop
+        {
+            public Item item;
+            [Range(0f, 100f)] public float dropChance;
+        }
+
+        [Header("Loot")]
+        public bool dropMultiple;
+        public LootDrop[] lootTable;
     }
 }

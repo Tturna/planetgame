@@ -5,18 +5,25 @@ Shader "Custom/StylizedTerrainCone"
         [HideInInspector] _MaskTex("Mask", 2D) = "white" {}
         [HideInInspector] _Color ("Color", Color) = (1,1,1,1)
         [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
+        _CaveBgTerrainTex ("Cave Background Terrain Texture", 2D) = "white" {}
         _SunLightAngle ("Sun Light Angle", Range(0, 360)) = 0
         _Brightness ("Brightness", Range(0, 1)) = 1
-        _BlurSize ("Blur Size", Range(0, 20)) = 8
-        _BlurSkip ("Blur Skip", Range(1, 20)) = 2
+        _BlurConeArc ("Blur Cone Arc", Range(1, 90)) = 45
+        _BlurConeRayLength ("Blur Cone Ray Length", Range(0, 20)) = 8
+        _BlurConeResolution ("Blur Cone Ray Resolution", Range(1, 20)) = 8
+        _BlurConeSkip ("Blur Cone Skip", Range(1, 20)) = 2
+        _SunRayLength ("Sun Ray Length", Range(0, 80)) = 20
+        _SunRaySkip ("Sun Ray Skip", Range(1, 20)) = 5
 //        _BlurOffset ("Blur Offset", Range(0, 10)) = 1
         [MaterialToggle] _SquareBlur ("Blur Squared", int) = 0
         [MaterialToggle] _Stylize ("Stylize", int) = 0
         _StyleBands ("Style Bands", Range(1, 8)) = 4
         _GrassColor ("Grass Color", Color) = (1,1,1,1)
         _GrassThickness ("Grass Thickness", Range(1, 10)) = 3
-        _ShadeDistortionStrength ("Shade Distortion Strength", Range(0, 5)) = 0
+        _ShadeDistortionStrength ("Shade Distortion Strength", Range(0, 1)) = 0
         _ShadeDistortionFidelity ("Shade Distortion Fidelity", Range(1, 100)) = 15
+        _RedTint ("Red Tint", Range(0, 1)) = 0
+        [Toggle] _IS_CAVE_BG ("Is Cave Background", Float) = 0
     }
     
     SubShader
@@ -38,147 +45,147 @@ Shader "Custom/StylizedTerrainCone"
         
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            // #pragma vertex vert
-            // #pragma fragment frag
             
-            #pragma vertex CombinedShapeLightVertex
-            #pragma fragment CombinedShapeLightFragment
+            #pragma vertex combined_shape_light_vertex
+            #pragma fragment combined_shape_light_fragment
             
             // #include "UnityCG.cginc"
             // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             // #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/API/D3D11.hlsl"
             
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
-            #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
-            #pragma multi_compile _ DEBUG_DISPLAY
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
+            // #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
+            // #pragma multi_compile _ DEBUG_DISPLAY
 
-            inline float unity_noise_randomValue (float2 uv)
+            #pragma shader_feature _IS_CAVE_BG_ON
+
+            inline half unity_noise_random_value (const half2 uv)
             {
-                return frac(sin(dot(uv, float2(12.9898, 78.233)))*43758.5453);
+                return frac(sin(dot(uv, half2(12.9898, 78.233))) * 43758.5453);
             }
             
-            inline float unity_noise_interpolate (float a, float b, float t)
+            inline half unity_noise_interpolate (const half a, const half b, const half t)
             {
-                return (1.0-t)*a + (t*b);
+                return (1.0 - t) * a + t * b;
             }
             
-            inline float unity_valueNoise (float2 uv)
+            inline half unity_value_noise (const half2 uv)
             {
-                float2 i = floor(uv);
-                float2 f = frac(uv);
+                const half2 i = floor(uv);
+                half2 f = frac(uv);
                 f = f * f * (3.0 - 2.0 * f);
             
-                uv = abs(frac(uv) - 0.5);
-                float2 c0 = i + float2(0.0, 0.0);
-                float2 c1 = i + float2(1.0, 0.0);
-                float2 c2 = i + float2(0.0, 1.0);
-                float2 c3 = i + float2(1.0, 1.0);
-                float r0 = unity_noise_randomValue(c0);
-                float r1 = unity_noise_randomValue(c1);
-                float r2 = unity_noise_randomValue(c2);
-                float r3 = unity_noise_randomValue(c3);
-            
-                float bottomOfGrid = unity_noise_interpolate(r0, r1, f.x);
-                float topOfGrid = unity_noise_interpolate(r2, r3, f.x);
-                float t = unity_noise_interpolate(bottomOfGrid, topOfGrid, f.y);
+                const half2 c0 = i + half2(0.0, 0.0);
+                const half2 c1 = i + half2(1.0, 0.0);
+                const half2 c2 = i + half2(0.0, 1.0);
+                const half2 c3 = i + half2(1.0, 1.0);
+                const half r0 = unity_noise_random_value(c0);
+                const half r1 = unity_noise_random_value(c1);
+                const half r2 = unity_noise_random_value(c2);
+                const half r3 = unity_noise_random_value(c3);
+
+                const half bottom_of_grid = unity_noise_interpolate(r0, r1, f.x);
+                const half top_of_grid = unity_noise_interpolate(r2, r3, f.x);
+                const half t = unity_noise_interpolate(bottom_of_grid, top_of_grid, f.y);
                 return t;
             }
             
-            float Unity_SimpleNoise_float(float2 UV, float Scale)
+            half unity_simple_noise_float(half2 uv, const half scale)
             {
-                float t = 0.0;
+                half t = 0.0;
             
-                float freq = pow(2.0, float(0));
-                float amp = pow(0.5, float(3-0));
-                t += unity_valueNoise(float2(UV.x*Scale/freq, UV.y*Scale/freq))*amp;
+                half freq = pow(2.0, half(0));
+                half amp = pow(0.5, half(3 - 0));
+                t += unity_value_noise(half2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
             
-                freq = pow(2.0, float(1));
-                amp = pow(0.5, float(3-1));
-                t += unity_valueNoise(float2(UV.x*Scale/freq, UV.y*Scale/freq))*amp;
+                freq = pow(2.0, half(1));
+                amp = pow(0.5, half(3 - 1));
+                t += unity_value_noise(half2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
             
-                freq = pow(2.0, float(2));
-                amp = pow(0.5, float(3-2));
-                t += unity_valueNoise(float2(UV.x*Scale/freq, UV.y*Scale/freq))*amp;
+                freq = pow(2.0, half(2));
+                amp = pow(0.5, half(3 - 2));
+                t += unity_value_noise(float2(uv.x * scale / freq, uv.y * scale / freq)) * amp;
             
                 return t;
             }
             
-            float3 rgb_to_hsv_no_clip(float3 RGB)
+            half3 rgb_to_hsv_no_clip(half3 rgb)
             {
-                float3 HSV;
+                half3 hsv;
                
-                float maxChannel = max(RGB.x, RGB.y);
-                float minChannel = min(RGB.x, RGB.y);
+                half max_channel = max(rgb.x, rgb.y);
+                half min_channel = min(rgb.x, rgb.y);
                 
-                if (RGB.z > maxChannel) maxChannel = RGB.z;
-                if (RGB.z < minChannel) minChannel = RGB.z;
+                if (rgb.z > max_channel) max_channel = rgb.z;
+                if (rgb.z < min_channel) min_channel = rgb.z;
                 
-                HSV.xy = 0;
-                HSV.z = maxChannel;
-                const float delta = maxChannel - minChannel;             //Delta RGB value
+                hsv.xy = 0;
+                hsv.z = max_channel;
+                const half delta = max_channel - min_channel;             //Delta RGB value
+                
                 if (delta != 0) {                    // If gray, leave H  S at zero
-                   HSV.y = delta / HSV.z;
-                   float3 delRGB = (HSV.zzz - RGB + 3 * delta) / (6.0 * delta);
-                   if      ( RGB.x == HSV.z ) HSV.x = delRGB.z - delRGB.y;
-                   else if ( RGB.y == HSV.z ) HSV.x = 1.0/3.0 + delRGB.x - delRGB.z;
-                   else if ( RGB.z == HSV.z ) HSV.x = 2.0/3.0 + delRGB.y - delRGB.x;
+                   hsv.y = delta / hsv.z;
+                   half3 del_rgb = (hsv.zzz - rgb + 3 * delta) / (6.0 * delta);
+                   if      ( rgb.x == hsv.z ) hsv.x = del_rgb.z - del_rgb.y;
+                   else if ( rgb.y == hsv.z ) hsv.x = 1.0 / 3.0 + del_rgb.x - del_rgb.z;
+                   else if ( rgb.z == hsv.z ) hsv.x = 2.0 / 3.0 + del_rgb.y - del_rgb.x;
                 }
-                return HSV;
+                return hsv;
             }
      
-            float3 hsv_to_rgb(float3 HSV)
+            half3 hsv_to_rgb(half3 hsv)
             {
-                // float3 RGB = HSV.z;
-                float3 RGB;
-                const float var_h = HSV.x * 6;
-                const float var_i = floor(var_h);   // Or ... var_i = floor( var_h )
-                float var_1 = HSV.z * (1.0 - HSV.y);
-                float var_2 = HSV.z * (1.0 - HSV.y * (var_h-var_i));
-                float var_3 = HSV.z * (1.0 - HSV.y * (1-(var_h-var_i)));
-                if      (var_i == 0) { RGB = float3(HSV.z, var_3, var_1); }
-                else if (var_i == 1) { RGB = float3(var_2, HSV.z, var_1); }
-                else if (var_i == 2) { RGB = float3(var_1, HSV.z, var_3); }
-                else if (var_i == 3) { RGB = float3(var_1, var_2, HSV.z); }
-                else if (var_i == 4) { RGB = float3(var_3, var_1, HSV.z); }
-                else                 { RGB = float3(HSV.z, var_1, var_2); }
+                // half3 RGB = HSV.z;
+                half3 rgb;
+                const half var_h = hsv.x * 6;
+                const half var_i = floor(var_h);   // Or ... var_i = floor( var_h )
+                half var_1 = hsv.z * (1.0 - hsv.y);
+                half var_2 = hsv.z * (1.0 - hsv.y * (var_h - var_i));
+                half var_3 = hsv.z * (1.0 - hsv.y * (1 - (var_h - var_i)));
+                if      (var_i == 0) { rgb = float3(hsv.z, var_3, var_1); }
+                else if (var_i == 1) { rgb = float3(var_2, hsv.z, var_1); }
+                else if (var_i == 2) { rgb = float3(var_1, hsv.z, var_3); }
+                else if (var_i == 3) { rgb = float3(var_1, var_2, hsv.z); }
+                else if (var_i == 4) { rgb = float3(var_3, var_1, hsv.z); }
+                else                 { rgb = float3(hsv.z, var_1, var_2); }
                
-                return RGB;
+                return rgb;
             }
 
-            float shortestRelativeAngle(float from, float to)
+            half shortest_relative_angle(const half from, const half to)
             {
                 return ((to - from) % 360.0 + 540.0) % 360.0 - 180.0;
             }
             
-            float angleLerp(float from, float to, float t)
+            half angle_lerp(const half from, const half to, const half t)
             {
-                return (360.0 + from + shortestRelativeAngle(from, to) * t) % 360;
+                return (360.0 + from + shortest_relative_angle(from, to) * t) % 360;
             }
             
-            float customHueShift(float x)
+            float custom_hue_shift(const half x)
             {
-                const float y = 0.99 - pow(x - .18, 2) * 0.92;
+                const half y = 0.99 - pow(x - .18, 2) * 0.92;
                 return x < 0.5 ? 1 - y : y;
             }
 
-            struct Attributes
+            struct attributes
             {
-                float3 positionOS   : POSITION;
-                float4 color        : COLOR;
-                float2  uv          : TEXCOORD0;
+                half3 position_os   : POSITION;
+                half4 color        : COLOR;
+                half2  uv          : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
             
-            struct Varyings
+            struct varyings
             {
-                float4  positionCS  : SV_POSITION;
-                half4   color       : COLOR;
-                float2  uv          : TEXCOORD0;
-                half2   lightingUV  : TEXCOORD1;
+                half4  position_cs  : SV_POSITION;
+                half4   color        : COLOR;
+                half2  uv           : TEXCOORD0;
+                half2   lighting_uv  : TEXCOORD1;
                 // #if defined(DEBUG_DISPLAY)
-                float3  positionWS  : TEXCOORD2;
+                half3  position_ws  : TEXCOORD2;
                 // #endif
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -186,138 +193,114 @@ Shader "Custom/StylizedTerrainCone"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/LightingUtility.hlsl"
 
             TEXTURE2D(_MainTex);
+            TEXTURE2D(_CaveBgTerrainTex);
             SAMPLER(sampler_MainTex);
-            float4 _MainTex_TexelSize;
+            SAMPLER(sampler_CaveBgTerrainTex);
+            half4 _MainTex_TexelSize;
             half4 _MainTex_ST;
+            half4 _CaveBgTerrainTex_TexelSize;
             // TEXTURE2D(_MaskTex);
             // SAMPLER(sampler_MaskTex);
-            float4 _Color;
-            float _SunLightAngle;
-            float _Brightness;
-            float _BlurSize;
-            float _BlurSkip;
-            // float _BlurOffset;
-            float _SquareBlur;
-            float _Stylize;
-            float _StyleBands;
-            float _GrassThickness;
-            float4 _GrassColor;
-            float _ShadeDistortionStrength;
-            float _ShadeDistortionFidelity;
+            half4 _Color;
+            half _SunLightAngle;
+            half _Brightness;
+            half _BlurConeArc;
+            half _BlurConeRayLength;
+            half _BlurConeResolution;
+            half _BlurConeSkip;
+            half _SunRayLength;
+            half _SunRaySkip;
+            // half _BlurOffset;
+            half _SquareBlur;
+            half _Stylize;
+            half _StyleBands;
+            half _GrassThickness;
+            half4 _GrassColor;
+            half _ShadeDistortionStrength;
+            half _ShadeDistortionFidelity;
+            half _RedTint;
 
-            // #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
-            // #endif
-
-            // #if USE_SHAPE_LIGHT_TYPE_1
-            // SHAPE_LIGHT(1)
-            // #endif
-            //
-            // #if USE_SHAPE_LIGHT_TYPE_2
-            // SHAPE_LIGHT(2)
-            // #endif
-            //
-            // #if USE_SHAPE_LIGHT_TYPE_3
-            // SHAPE_LIGHT(3)
-            // #endif
             
-            Varyings CombinedShapeLightVertex(Attributes v)
+            varyings combined_shape_light_vertex(attributes v)
             {
-                Varyings o = (Varyings)0;
+                varyings o = (varyings)0;
                 UNITY_SETUP_INSTANCE_ID(v);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-                o.positionCS = TransformObjectToHClip(v.positionOS);
+                o.position_cs = TransformObjectToHClip(v.position_os);
                 // #if defined(DEBUG_DISPLAY)
-                o.positionWS = TransformObjectToWorld(v.positionOS);
+                o.position_ws = TransformObjectToWorld(v.position_os);
                 // #endif
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.lightingUV = half2(ComputeScreenPos(o.positionCS / o.positionCS.w).xy);
+                o.lighting_uv = half2(ComputeScreenPos(o.position_cs / o.position_cs.w).xy);
 
                 o.color = v.color * _Color;
                 return o;
             }
             
-            // v2f vert (appdata_base v) {
-            //     v2f o;
-            //     o.pos = UnityObjectToClipPos(v.vertex);
-            //     o.uv = v.texcoord;
-            //     return o;
-            // }
-
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/CombinedShapeLightShared.hlsl"
             
-            half4 CombinedShapeLightFragment(Varyings i) : SV_Target
+            half4 combined_shape_light_fragment(const varyings i) : SV_Target
             {
-                float noise = Unity_SimpleNoise_float(i.positionWS, _ShadeDistortionFidelity);
-                // return half4(noise, noise, noise, 1);
-                // i.uv += float2(noise, noise) * _TempNoiseOffset;
+                const half noise = unity_simple_noise_float(i.position_ws.xy, _ShadeDistortionFidelity);
                 
-                half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lightingUV);
+                half4 shape_light0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, i.lighting_uv);
                 const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
                 // const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
 
+                #if _IS_CAVE_BG_ON
+                    const half4 terrain = SAMPLE_TEXTURE2D(_CaveBgTerrainTex, sampler_CaveBgTerrainTex, i.uv);
+                    if (terrain.a > 0) return half4(0, 0, 0, 1);
+                #endif
+
                 if (main.a == 0) discard;
                 
-                const float sunRad = radians(_SunLightAngle);
-                const float2 sunDir = float2(cos(sunRad), sin(sunRad));
-                float alphaSum = 0;
+                const half sun_rad = radians(_SunLightAngle);
+                const half2 sun_dir = float2(cos(sun_rad), sin(sun_rad));
+                half alpha_sum = 0;
                 
-                // for (int x = -_BlurSize; x < _BlurSize; x += _BlurSkip)
-                // {
-                //     for (int y = -_BlurSize; y < _BlurSize; y += _BlurSkip)
-                //     {
-                //         const float2 blurOffset = float2(x, y) * _MainTex_TexelSize.x * _BlurOffset;
-                //
-                //         for (int n = 1; n <= 20; n++)
-                //         {
-                //             const float dist = n * _MainTex_TexelSize.x * 5;
-                //             const float2 offsetUv = i.uv + sunDir * dist + blurOffset;
-                //
-                //             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
-                //             // have to be determined in the loop (which causes a warning about using a
-                //             // gradient instruction in a loop with variable size).
-                //             float4 sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offsetUv, 0);
-                //
-                //             if (sample.a > 0)
-                //             {
-                //                 alphaSum += sample.a;
-                //                 break;
-                //             }
-                //         }
-                //     }
-                // }
-
-                const float coneRad = radians(45);
-                const float coneRayCount = 8;
-                const float coneRadStep = coneRad / coneRayCount;
-                const float coneRaySamples = _BlurSize;
-                for (int r = 0; r < coneRayCount; r++)
+                const half cone_rad = radians(_BlurConeArc);
+                const half cone_ray_count = _BlurConeResolution;
+                const half cone_rad_step = cone_rad / cone_ray_count;
+                const half cone_ray_samples = _BlurConeRayLength;
+                
+                for (int r = 0; r < cone_ray_count; r++)
                 {
-                    const float offR = r - coneRayCount / 2;
-                    const float rayRad = sunRad + offR * coneRadStep;
-                    const float2 rayDir = float2(cos(rayRad), sin(rayRad));
+                    const half off_r = r - cone_ray_count / 2;
+                    const half ray_rad = sun_rad + off_r * cone_rad_step;
+                    const half2 ray_dir = float2(cos(ray_rad), sin(ray_rad));
 
-                    for (int n = 1; n <= coneRaySamples; n++)
+                    for (int n = 1; n <= cone_ray_samples; n++)
                     {
-                        const float sunRaySamples = 20;
-                        const float2 coneRaySampleOffset = rayDir * n * _MainTex_TexelSize.x * _BlurSkip;
+                        const half sun_ray_samples = _SunRayLength;
+                        const half2 cone_ray_sample_offset = ray_dir * n * _MainTex_TexelSize.x * _BlurConeSkip;
 
-                        for (int m = 1; m <= sunRaySamples; m++)
+                        for (int m = 1; m <= sun_ray_samples; m++)
                         {
-                            const float2 sunRaySampleOffset = coneRaySampleOffset + sunDir * m * _MainTex_TexelSize.x * 5;
-                            float2 offsetUv = i.uv + sunRaySampleOffset;
-                            // float noise = Unity_SimpleNoise_float(i.uv, 1);
-                            // offsetUv += float2(noise, noise) * _TempNoiseOffset;
+                            // start with a smaller sun ray skip to avoid skipping nearby terrain
+                            const half t = m / sun_ray_samples;
+                            const half sun_ray_skip = lerp(1, _SunRaySkip, sqrt(t));
+                        
+                            const half2 sun_ray_sample_offset = cone_ray_sample_offset + sun_dir * m * _MainTex_TexelSize.x * sun_ray_skip;
+                            const half2 offset_uv = i.uv + sun_ray_sample_offset;
+
+                            if (offset_uv.x < 0 || offset_uv.x > 1 || offset_uv.y < 0 || offset_uv.y > 1) break;
                             
                             // Use SAMPLE_TEXTURE2D_LOD to explicitly specify mipmap LOD, so that it doesn't
                             // have to be determined in the loop (which causes a warning about using a
                             // gradient instruction in a loop with variable size).
-                            float4 sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offsetUv, 0);
+                            half4 sample;
+
+                            #if _IS_CAVE_BG_ON
+                                sample = SAMPLE_TEXTURE2D_LOD(_CaveBgTerrainTex, sampler_CaveBgTerrainTex, offset_uv, 0);
+                            #else
+                                sample = SAMPLE_TEXTURE2D_LOD(_MainTex, sampler_MainTex, offset_uv, 0);
+                            #endif
                             
                             if (sample.a > 0)
                             {
-                                alphaSum += sample.a;
+                                alpha_sum += sample.a;
                                 break;
                             }
                         }
@@ -325,81 +308,72 @@ Shader "Custom/StylizedTerrainCone"
                 }
                 
                 // alphaSum = alphaSum / pow(_BlurSize * 2 / _BlurSkip, 2);
-                alphaSum = alphaSum / (coneRayCount * coneRaySamples);
+                alpha_sum = alpha_sum / (cone_ray_count * cone_ray_samples);
                 
                 // TODO: Consider removing if statements.
                 if (_SquareBlur)
                 {
-                    alphaSum = alphaSum * alphaSum;
+                    alpha_sum = alpha_sum * alpha_sum;
                 }
 
-                alphaSum = 1 - alphaSum;
-                alphaSum *= _Brightness;
+                alpha_sum = 1 - alpha_sum;
+                alpha_sum *= _Brightness;
                 
                 // raised to a power to limit the light reach in terrain
                 // alphaSum = clamp(alphaSum + pow(shapeLight0.r, 2), 0, 1);
-                alphaSum = clamp(alphaSum + shapeLight0.r, 0, 1);
+                
+                alpha_sum = saturate(max(alpha_sum, shape_light0.r));
 
                 // alphaSum = smoothstep(0, 1, alphaSum);
 
-                // return half4(alphaSum, alphaSum, alphaSum, 1);
-
-                float resultAlpha = alphaSum;
-                float3 resultColor = main.rgb;
-                if (_Stylize)
+                half result_alpha = alpha_sum;
+                half3 result_color = main.rgb;
+                
+                if (!_Stylize)
                 {
-                    const float celSize = 1 / _StyleBands;
-                    // Stepped shading. Addition is to center the bands so that the surface
-                    // is not thinner than the other bands.
-                    // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
-
-                    // float coolNoise = saturate(noise + _TempNoiseOffset);
-                    // return half4((1 - alphaSum / _Brightness).xxx, 1);
-                    const float limitedNoise = 1 - (1 - saturate(noise + 1 - _ShadeDistortionStrength)) * saturate(1 - alphaSum / _Brightness);
-                    // return half4(limitedNoise.xxx, 1);
-                    alphaSum *= limitedNoise;
-                    resultAlpha = round(alphaSum * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
-                    // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
-
-                    const half4 grassCheckSample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
-                    
-                    if (grassCheckSample.a == 0)
-                    {
-                        return half4(_GrassColor.rgb * resultAlpha, main.a);
-                    }
-                    
-                    float3 hsvColor = rgb_to_hsv_no_clip(resultColor);
-                    const float ialpha = 1 - resultAlpha;
-                    const float ia01 = ialpha/0.75;
-
-                    // Different easing functions for hue.
-                    // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
-                    const float t = pow(ia01, 3);
-                    // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
-                    // const float t = -(cos(PI * ia01) - 1) / 2;
-
-                    // hue 240 = blue
-                    hsvColor.r = angleLerp(hsvColor.r * 360.0, 240.0, t) / 360.0;
-                    hsvColor.g = lerp(hsvColor.g, hsvColor.g * 0.675, ia01);
-                    hsvColor.b = lerp(hsvColor.b, hsvColor.b * 0.125, 1 - pow(1 - ia01, 2));
-                    
-                    resultColor = hsv_to_rgb(hsvColor);
-                    
-                    const float bitMask = resultAlpha > 0 ? 1 : 0;
-                    return half4(resultColor * bitMask, main.a);
+                    return half4(result_color * result_alpha, main.a);
                 }
 
-                return half4(resultColor * resultAlpha, main.a);
-
-                // Stuff for normal 2D lighting:
+                const half distortion_noise = noise * _ShadeDistortionStrength;
+                // darker = noisier. multiply by alpha_sum to limit noise to lit areas.
+                // sqrt to amplify noise in darker areas.
+                alpha_sum = lerp(alpha_sum, distortion_noise * sqrt(alpha_sum), 1 - alpha_sum);
                 
-                // SurfaceData2D surfaceData;
-                // InputData2D inputData;
-                //
-                // InitializeSurfaceData(main.rgb, main.a, mask, surfaceData);
-                // InitializeInputData(i.uv, i.lightingUV, inputData);
-                //
-                // return CombinedShapeLightShared(surfaceData, inputData);
+                // Stepped shading. Addition is to center the bands so that the surface
+                // is not thinner than the other bands.
+                // NOTE: After changing from a square blur to a cone blur, the addition seems to just smooth the bands.
+                const half cel_size = 1 / _StyleBands;
+                result_alpha = round(alpha_sum * _StyleBands + 1 / (2 * _StyleBands)) * cel_size;
+                // resultAlpha = round(saturate(alphaSum * noise * _TempNoiseOffset) * _StyleBands + 1 / (2 * _StyleBands)) * celSize;
+
+                #if !_IS_CAVE_BG_ON
+                    const half4 grass_check_sample = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv + half2(0, _MainTex_TexelSize.y * _GrassThickness));
+                    
+                    if (grass_check_sample.a == 0)
+                    {
+                        return half4(_GrassColor.rgb * result_alpha, main.a);
+                    }
+                #endif
+                
+                float3 hsv_color = rgb_to_hsv_no_clip(result_color);
+                const half ialpha = 1 - result_alpha;
+                const half ia01 = ialpha/0.75;
+
+                // Different easing functions for hue.
+                // const float t = 1 - cos(ialpha/0.75 * PI / 2.0);
+                const half t = pow(ia01, 3);
+                // const float t = ia01 < 0.5 ? 4 * pow(ia01, 3) : 1 - pow(-2 * ia01 + 2, 3) / 2;
+                // const float t = -(cos(PI * ia01) - 1) / 2;
+
+                // hue 240 = blue
+                hsv_color.r = angle_lerp(hsv_color.r * 360.0, 240.0, t) / 360.0;
+                hsv_color.g = lerp(hsv_color.g, hsv_color.g * 0.675, ia01);
+                hsv_color.b = lerp(hsv_color.b, hsv_color.b * 0.125, 1 - pow(1 - ia01, 2));
+                
+                result_color = hsv_to_rgb(hsv_color);
+                const half bit_mask = result_alpha > 0 ? 1 : 0;
+                
+                return half4(result_color * bit_mask, main.a);
             }
             ENDHLSL
         }

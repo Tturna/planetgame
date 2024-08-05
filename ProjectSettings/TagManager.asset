@@ -10,11 +10,13 @@ TagManager:
   - Enemy
   - Ore
   - Breakable
+  - InventorySlot
+  - CraftableSlot
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - IgnorePlayer
+  - Enemy
   - Water
   - UI
   - Terrain
@@ -24,9 +26,9 @@ TagManager:
   - Weapon
   - TerrainBits
   - Background
-  - 
-  - 
-  - 
+  - StarMap
+  - Building
+  - BuildingBounds
   - 
   - 
   - 

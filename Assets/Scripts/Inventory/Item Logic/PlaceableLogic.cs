@@ -1,12 +1,15 @@
-﻿using System.Reflection;
-using System.Linq;
-using Entities.Entities;
-using Inventory.Inventory.Item_Types;
+﻿using System.Linq;
+using System.Reflection;
+using Cameras;
+using Entities;
+using Inventory.Crafting;
+using Inventory.Item_SOs;
 using Planets;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using Utilities;
 
-namespace Inventory.Inventory.Item_Logic
+namespace Inventory.Item_Logic
 {
     public class PlaceableLogic : ItemLogicBase
     {
@@ -15,38 +18,61 @@ namespace Inventory.Inventory.Item_Logic
         public override bool UseOnce(UseParameters useParameters)
         {
             var usableItem = (UsableItemSo)useParameters.attackItem.itemSo;
-            var mousePoint = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
 
             if (Vector3.Distance(useParameters.playerObject.transform.position, mousePoint) > usableItem.useRange)
             {
-                Debug.Log("Can't place that far away!");
                 return false;
             }
 
-            // _pc ??= useParameters.playerObject.GetComponent<PlayerController>();
-            var relativeUp = useParameters.playerObject.transform.up;
+            var canPlace = PlaceableUtility.TryGetPlaceablePosition(mousePoint, usableItem,
+                out var placeablePosition, out var placeableNormal);
 
-            const float placementAssistRange = 1f;
-            var layerMask = 1 << LayerMask.NameToLayer("Terrain");
-            
-            var assistRayStart = mousePoint + relativeUp * (placementAssistRange * .5f);
-            var hit = Physics2D.Raycast(assistRayStart, -relativeUp, placementAssistRange, layerMask);
-
-            if (hit.collider == null)
+            if (!canPlace)
             {
-                Debug.Log("Can't place in the air!");
                 return false;
             }
+
+            var position = (Vector3)placeablePosition!;
+            var normal = (Vector3)placeableNormal!;
             
-            if (hit.point == (Vector2)mousePoint)
+            PlaceableSo placeable;
+            GameObject prefab;
+            var isCraftingStation = useParameters.attackItem.itemSo is CraftingStationSo;
+            var isRoomModule = useParameters.attackItem.itemSo is RoomModuleSo;
+            
+            if (isCraftingStation)
             {
-                Debug.Log("Can't place inside terrain!");
-                return false;
+                var craftingStationSo = (CraftingStationSo)useParameters.attackItem.itemSo;
+                placeable = craftingStationSo;
+                prefab = InventoryManager.instance.craftingStationPrefab;
+            }
+            else if (isRoomModule)
+            {
+                var roomSo = (RoomModuleSo)useParameters.attackItem.itemSo;
+                placeable = roomSo;
+                prefab = InventoryManager.instance.roomModulePrefabs[roomSo.prefabIndex];
+            }
+            else
+            {
+                var placeableSo = (PlaceableSo)useParameters.attackItem.itemSo;
+                placeable = placeableSo;
+                prefab = InventoryManager.instance.breakablePrefab;
             }
             
-            var placeable = (PlaceableSo)useParameters.attackItem.itemSo;
-            var placeableObject = Object.Instantiate(InventoryManager.instance.breakablePrefab, hit.point, Quaternion.identity);
+            var placeableObject = Object.Instantiate(prefab);
+
+            if (isCraftingStation)
+            {
+                placeableObject.GetComponent<CraftingStation>().SetRecipes(((CraftingStationSo)placeable).recipes);
+            }
+
+            if (isRoomModule)
+            {
+                placeableObject.transform.position = position + normal * (((RoomModuleSo)placeable).boundsSize.y * .5f);
+                return true;
+            }
             
             var sr = placeableObject.GetComponent<SpriteRenderer>();
             sr.sprite = placeable.sprite;
@@ -58,8 +84,10 @@ namespace Inventory.Inventory.Item_Logic
             breakableItemInstance.itemSo = placeable;
             breakableItemInstance.toughness = placeable.toughness;
             
-            placeableObject.transform.Translate(relativeUp * (col.size.y * .5f));
-            placeableObject.transform.rotation = useParameters.playerObject.transform.rotation;
+            placeableObject.transform.position = position + normal * (sr.bounds.size.y * .5f);
+            placeableObject.transform.up = normal;
+            // placeableObject.transform.Translate(relativeUp * (col.size.y * .5f));
+            // placeableObject.transform.rotation = useParameters.playerObject.transform.rotation;
 
             foreach (var light in placeable.lights)
             {
@@ -78,8 +106,8 @@ namespace Inventory.Inventory.Item_Logic
                 FieldInfo targetSortingLayersField = typeof(Light2D).GetField("m_ApplyToSortingLayers",
                     BindingFlags.NonPublic | BindingFlags.Instance);
                 var maskLayers = SortingLayer.layers.Where(sl => sl.name != "Background");
-                var mask = maskLayers.Select(ml => ml.id).ToArray();
-                targetSortingLayersField.SetValue(lightComponent, mask);
+                var masks = maskLayers.Select(ml => ml.id).ToArray();
+                targetSortingLayersField.SetValue(lightComponent, masks);
             }
             return true;
         }

@@ -3,7 +3,10 @@ guid: 6317a8f99a6bde0459df0493f87c3b75
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - damageNumberPrefab: {fileID: 8403594258557879552, guid: cae1f48687f4a994396b9ffab41a0daa, type: 3}
+  - flashMaterial: {fileID: 2100000, guid: 8bc53b51fc8d45c489bc38dc9576e80a, type: 2}
+  - normalMaterial: {fileID: 2100000, guid: 27a7f911ac07cfc4b978cef7f708bbdb, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

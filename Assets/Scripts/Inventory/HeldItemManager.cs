@@ -2,17 +2,19 @@
 
 using System;
 using System.Collections;
+using Cameras;
 using Entities;
-using Entities.Entities;
-using Inventory.Inventory.Item_Logic;
-using Inventory.Inventory.Item_Types;
+using Inventory.Item_Logic;
+using Inventory.Item_SOs;
+using JetBrains.Annotations;
 using UnityEngine;
 using Utilities;
 
-namespace Inventory.Inventory
+namespace Inventory
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(StatsManager))]
+    [RequireComponent(typeof(PlayerStatsManager))]
+    [RequireComponent(typeof(PlayerController))]
     public class HeldItemManager : MonoBehaviour
     {
         [SerializeField] private Transform equippedItemTransform;
@@ -20,16 +22,20 @@ namespace Inventory.Inventory
         [SerializeField] private Animator handsAnimator; // This component is also used by PlayerController
         [SerializeField] private Transform effectParent;
         [SerializeField] private Transform flippingEffectParent;
+        [SerializeField] private GameObject placeableHologram;
+        [SerializeField] private Sprite roomModuleHologramSprite;
         
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
         private SpriteRenderer _equippedSr;
+        private SpriteRenderer _placeableHologramSr;
+        private float _placeableRange;
         private Animator _recoilAnimator;
         private ItemAnimationManager _itemAnimationManager;
-        private Item _equippedItem;
-        private StatsManager _statsManager; // This component is also used by PlayerController
+        [CanBeNull] private Item _equippedItem;
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
-        
+        private PlayerController _playerController;
+
         public delegate void ItemUsedHandler(Item item);
         public static event ItemUsedHandler ItemUsed;
             
@@ -39,22 +45,33 @@ namespace Inventory.Inventory
             _recoilAnimator = recoilAnchor.GetComponent<Animator>();
             _itemAnimationManager = recoilAnchor.GetComponent<ItemAnimationManager>();
             _rigidbody = GetComponent<Rigidbody2D>();
-            _statsManager = GetComponent<StatsManager>();
+            _playerController = GetComponent<PlayerController>();
 
             _handsParent = handsAnimator.transform;
             _handLeft = _handsParent.GetChild(0).GetChild(0);
             _handRight = _handsParent.GetChild(1).GetChild(0);
 
             _equippedSr = equippedItemTransform.GetComponent<SpriteRenderer>();
+            _placeableHologramSr = placeableHologram.GetComponent<SpriteRenderer>();
 
             InventoryManager.ItemEquipped += ItemEquipped;
         }
 
+        private void OnDestroy()
+        {
+            InventoryManager.ItemEquipped -= ItemEquipped;
+        }
+
         private void Update()
         {
+            if (!_playerController.CanControl) return;
+            
             var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
-            var cursorAngle = GameUtilities.GetCursorAngle(mouseDirection, transform.right);
+            var cursorAngle = GameUtilities.GetCursorAngle();
             HandleItemAiming(mouseDirection, cursorAngle);
+            HandlePlaceableHologram();
+            
+            if (UIUtilities.IsMouseOverUI()) return;
             
             // Use Item
             // UseItem functions return a bool based on if the attack was called with "once" on or off.
@@ -99,7 +116,7 @@ namespace Inventory.Inventory
             flippingEffectParent.localScale = scale; // flip flipping effects
         
             // Manually set left hand position when holding an item
-            if (_equippedItem != null)
+            if (_equippedItem?.itemSo != null)
             {
                 handsAnimator.SetLayerWeight(1, 0f);
                 handsAnimator.SetLayerWeight(2, 0f);
@@ -132,6 +149,39 @@ namespace Inventory.Inventory
                 _handRight.localPosition = Vector3.zero;
             }
         }
+
+        private void HandlePlaceableHologram()
+        {
+            if (!placeableHologram.activeInHierarchy) return;
+            
+            var mousePoint = CameraController.instance.mainCam.ScreenToWorldPoint(Input.mousePosition);
+            mousePoint.z = 0f;
+            var dist = Vector2.Distance(_playerController.transform.position, mousePoint);
+            
+            placeableHologram.transform.position = mousePoint;
+            
+            if (dist > _placeableRange)
+            {
+                _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
+                return;
+            }
+
+            var canPlace = PlaceableUtility.TryGetPlaceablePosition(mousePoint, _equippedItem?.itemSo,
+                out var placeablePosition, out var placeableNormal);
+
+            if (!canPlace)
+            {
+                _placeableHologramSr.color = new Color(1f, 0f, 0f, 0.5f);
+                return;
+            }
+
+            var position = (Vector3)placeablePosition!;
+            var normal = (Vector3)placeableNormal!;
+
+            _placeableHologramSr.color = new Color(1f, 1f, 1f, 0.5f);
+            placeableHologram.transform.position = position + normal * (_placeableHologramSr.bounds.size.y * 0.5f);
+            placeableHologram.transform.up = normal;
+        }
         
         private bool UseItem(bool once, bool secondary)
         {
@@ -139,13 +189,12 @@ namespace Inventory.Inventory
             if (_equippedItem.logicScript == null) return false;
             if (usableItemSo.isOnCooldown) return false;
 
-            if (_statsManager.GetEnergy() < usableItemSo.energyCost)
+            if (PlayerStatsManager.Energy < usableItemSo.energyCost)
             {
                 NoEnergy();
                 return false;
             }
 
-            // Use Item
             Func<ItemLogicBase.UseParameters, bool> useitemFunction;
 
             if (once)
@@ -179,23 +228,18 @@ namespace Inventory.Inventory
             if (usableItemSo.energyCost > 0)
             {
                 StartCoroutine(HandleWeaponCooldown(usableItemSo));
+                PlayerStatsManager.ChangeEnergy(-usableItemSo.energyCost);
             }
-            
-            // Update energy
-            _statsManager.ChangeEnergy(usableItemSo.energyCost);
                 
-            // Recoil
             _recoilAnimator.SetLayerWeight(1, usableItemSo.recoilHorizontal);
             _recoilAnimator.SetLayerWeight(2, usableItemSo.recoilAngular);
             _recoilAnimator.SetFloat("recoil_shpeed_horizontal", usableItemSo.recoilSpeedHorizontal);
             _recoilAnimator.SetFloat("recoil_shpeed_angular", usableItemSo.recoilSpeedAngular);
             _recoilAnimator.SetTrigger("recoil");
             
-            // Player recoil
             var recoilDirection = -_itemAnchor.right;
             _rigidbody.AddForce(recoilDirection * usableItemSo.playerRecoilStrength, ForceMode2D.Impulse);
             
-            // Camera shake
             CameraController.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
 
             return true;
@@ -209,7 +253,7 @@ namespace Inventory.Inventory
         private IEnumerator HandleWeaponCooldown(UsableItemSo usableItem)
         {
             usableItem.isOnCooldown = true;
-            yield return new WaitForSeconds(usableItem.attackCooldown);
+            yield return new WaitForSeconds(usableItem.attackCooldown / PlayerStatsManager.AttackSpeed);
             usableItem.isOnCooldown = false;
         }
 
@@ -223,6 +267,28 @@ namespace Inventory.Inventory
             _equippedItem = item;
             var state = item != null && item.itemSo.altIdleAnimation;
             _recoilAnimator.SetBool("altIdle", state);
+            
+            if (_equippedItem?.itemSo is PlaceableSo placeableSo)
+            {
+                placeableHologram.SetActive(true);
+                var sr = placeableHologram.GetComponent<SpriteRenderer>();
+                _placeableRange = placeableSo.useRange;
+
+                if (placeableSo is RoomModuleSo roomModuleSo)
+                {
+                    sr.sprite = roomModuleHologramSprite;
+                    sr.size = roomModuleSo.boundsSize;
+                }
+                else
+                {
+                    sr.sprite = placeableSo.sprite;
+                    sr.size = placeableSo.sprite.bounds.size;
+                }
+            }
+            else
+            {
+                placeableHologram.SetActive(false);
+            }
         }
     }
 }

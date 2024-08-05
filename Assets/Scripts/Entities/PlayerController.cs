@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
+using Cameras;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utilities;
 
-namespace Entities.Entities
+namespace Entities
 {
-    [RequireComponent(typeof(StatsManager))]
+    [RequireComponent(typeof(PlayerStatsManager))]
+    [RequireComponent(typeof(PlayerDeathManager))]
     public class PlayerController : EntityController, IDamageable
     {
         #region Serialized Fields
@@ -12,18 +16,21 @@ namespace Entities.Entities
             [Header("Components")]
             [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
             [SerializeField] private Transform handsParent;
+            [SerializeField] private Transform extraSpritesParent;
+            [SerializeField] private SpriteRenderer jetpackSr;
+            [SerializeField] private Transform bodyTr;
+            [SerializeField] private ParticleSystem jetpackParticles1, jetpackParticles2;
             [SerializeField] private SpriteRenderer headSr;
-            [SerializeField] private SpriteRenderer bodySr;
-            [SerializeField] private Animator bodyAnimator;
+            [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
+            [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
+            [SerializeField] private GameObject itemAnchor;
+            [SerializeField] private Transform starmapCamera;
             
-            [Header("Other")]
-            [SerializeField] private Material flashMaterial;
+            // [Header("Other")]
+            // [SerializeField] private Material flashMaterial;
         
             [Header("Movement Settings")]
-            [SerializeField] private float accelerationSpeed;
-            [SerializeField] private float maxMoveSpeed;
             [SerializeField] private float maxSlopeMultiplier;
-            [SerializeField] private float jumpForce;
             [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
             
         #endregion
@@ -31,6 +38,7 @@ namespace Entities.Entities
         #region Unserialized Components
         
             private CapsuleCollider2D _collider;
+            private PlayerDeathManager _deathManager;
             
         #endregion
 
@@ -39,6 +47,8 @@ namespace Entities.Entities
             private Interactable _closestInteractable;
             private Interactable _newClosestInteractable;
             private readonly List<Interactable> _interactablesInRange = new();
+            private float _interactHoldTimer;
+            private bool _interacted;
             
         #endregion
 
@@ -51,14 +61,10 @@ namespace Entities.Entities
             
         #endregion
         
-        #region Other
-
-            private Material _defaultMaterial;
-        
-        #endregion
+        // private Material _defaultMaterial;
 
         public delegate void ItemPickedUpHandler(GameObject itemObject);
-        public ItemPickedUpHandler ItemPickedUp;
+        public ItemPickedUpHandler itemPickedUp;
         
         public delegate void JumpedHandler();
         public event JumpedHandler Jumped;
@@ -68,7 +74,7 @@ namespace Entities.Entities
 
         private void OnItemPickedUp(GameObject itemObject)
         {
-            ItemPickedUp?.Invoke(itemObject);
+            itemPickedUp?.Invoke(itemObject);
         }
         
         private void OnJumped()
@@ -87,41 +93,40 @@ namespace Entities.Entities
         
         private Vector2 _inputVector;
         private Vector2 _oldLocalVelocity; // Used to fix landing momentum
-        private Vector3 _mouseDirection;
-        private int _terrainLayerMask;
-        private StatsManager _statsManager;
+        private int _collisionLayerMask;
+        private Vector2 _spawnPosition;
 
         // Built-in methods
         
         private void Awake()
         {
             instance = this;
-            _terrainLayerMask = 1 << LayerMask.NameToLayer("Terrain");
+            _collisionLayerMask = GameUtilities.BasicMovementCollisionMask;
         }
 
         protected override void Start()
         {
             base.Start();
 
-            bodyAnimator = GetComponent<Animator>();
-            bodySr = GetComponent<SpriteRenderer>();
-            _statsManager = GetComponent<StatsManager>();
             _collider = GetComponent<CapsuleCollider2D>();
+            _deathManager = GetComponent<PlayerDeathManager>();
             
-            _defaultMaterial = bodySr.material;
+            // _defaultMaterial = torsoSr.material;
+            _spawnPosition = transform.position;
         }
 
         private void Update()
         {
             HandleInteraction();
             HandleGroundCheck();
+            
+            starmapCamera.rotation = Quaternion.identity;
 
             if (!CanControl) return;
             
             HandleControls();
 
-            _mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
-            var cursorAngle = GameUtilities.GetCursorAngle(_mouseDirection, transform.right);
+            var cursorAngle = GameUtilities.GetCursorAngle();
             
             // HandleItemAiming(_mouseDirection, cursorAngle);
             HandlePlayerFlipping(cursorAngle);
@@ -130,6 +135,7 @@ namespace Entities.Entities
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
+            
             var localVelocity = Rigidbody.GetVector(Rigidbody.velocity);
             _oldLocalVelocity = localVelocity;
 
@@ -143,25 +149,25 @@ namespace Entities.Entities
             }
             else
             {
-                pmat.friction = Mathf.Lerp(0.85f, 0.2f, localVelocity.magnitude / maxMoveSpeed);
+                pmat.friction = Mathf.Lerp(0.85f, 0.2f, localVelocity.magnitude / PlayerStatsManager.MaxMoveSpeed);
             }
             
             _collider.sharedMaterial = pmat; // quite the meme
 
             if (CanControl)
             {
-                var force = transform.right * (_inputVector.x * accelerationSpeed);
+                var force = transform.right * (_inputVector.x * PlayerStatsManager.AccelerationSpeed);
                 
                 // Figure out the slope angle of the terrain that the player is walking on
                 var rayStartPoint = transform.position - transform.up * 0.4f;
 
                 // Raycast "below". It's actually a bit to the side as well
                 var rayBelowDirection = new Vector2(.1f * _inputVector.x, -.4f).normalized;
-                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, .25f, _terrainLayerMask);
+                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, .25f, _collisionLayerMask);
                 
                 // Raycast a bit to the side, depending on movement direction
                 var raySideDirection = new Vector2(.1f * _inputVector.x, -.2f).normalized;
-                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _terrainLayerMask);
+                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _collisionLayerMask);
                 // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * 1.05f, Color.green);
                 // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * 1.1f, Color.red);
                 
@@ -177,20 +183,20 @@ namespace Entities.Entities
 
                     if (dot > 0)
                     {
-                        force = direction * (accelerationSpeed * Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier));
+                        force = direction * (PlayerStatsManager.AccelerationSpeed * Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier));
                     }
                 }
                 
                 // Checking for velocity.x or y doesn't work because the player can face any direction and still be moving "right" in relation to themselves
                 // That's why we use a local velocity
-                if ((_inputVector.x > 0 && localVelocity.x < maxMoveSpeed) ||
-                    (_inputVector.x < 0 && localVelocity.x > -maxMoveSpeed))
+                if ((_inputVector.x > 0 && localVelocity.x < PlayerStatsManager.MaxMoveSpeed) ||
+                    (_inputVector.x < 0 && localVelocity.x > -PlayerStatsManager.MaxMoveSpeed))
                 {
                     Rigidbody.AddForce(force);
                     // _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
-                bodyAnimator.SetBool("running", _inputVector.x != 0);
+                torsoAnimator.SetBool("running", _inputVector.x != 0);
                 handsAnimator.SetBool("running", _inputVector.x != 0);
                 
                 // Jumping
@@ -198,46 +204,18 @@ namespace Entities.Entities
                 {
                     // The jump force timer is here so it syncs with physics
                     _jumpForceTimer += Time.deltaTime;
-                    Rigidbody.AddForce(transform.up * (jumpForce * Time.deltaTime), ForceMode2D.Impulse);
+                    Rigidbody.AddForce(transform.up * (PlayerStatsManager.JumpForce * Time.deltaTime), ForceMode2D.Impulse);
                 }
             }
         }
 
-        protected override void OnTriggerEnter2D(Collider2D col)
+        protected void OnTriggerEnter2D(Collider2D col)
         {
-            base.OnTriggerEnter2D(col);
-        
-            if (col.transform.root.TryGetComponent<Interactable>(out var interactable))
-            {
-                _interactablesInRange.Add(interactable);
-            }
-            else if (col.gameObject.CompareTag("Item"))
+            if (col.gameObject.CompareTag("Item"))
             {
                 OnItemPickedUp(col.transform.parent.gameObject);
                 Destroy(col.transform.parent.gameObject);
             }
-        }
-
-        protected override void OnTriggerExit2D(Collider2D other)
-        {
-            base.OnTriggerEnter2D(other);
-        
-            if (other.transform.root.TryGetComponent<Interactable>(out var interactable))
-            {
-                interactable.DisablePrompt();
-
-                if (interactable == _closestInteractable) _closestInteractable = null;
-            
-                _interactablesInRange.Remove(interactable);
-            }
-        }
-
-        private void OnDrawGizmos()
-        {
-            var mousePos = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(mousePos, 0.5f);
         }
 
         // Private methods
@@ -256,7 +234,7 @@ namespace Entities.Entities
                 {
                     _jumpCooldownTimer = JumpSafetyCooldown;
                         
-                    bodyAnimator.SetBool("jumping", true);
+                    torsoAnimator.SetBool("jumping", true);
                     handsAnimator.SetBool("jumping", true);
                         
                     var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
@@ -288,7 +266,7 @@ namespace Entities.Entities
         
             // var hit = Physics2D.Raycast(_transform.position, -_transform.up, 0.6f, 1 << LayerMask.NameToLayer("World"));
 
-            var mask = 1 << LayerMask.NameToLayer("Terrain") | 1 << LayerMask.NameToLayer("TerrainBits");
+            var mask = GameUtilities.BasicMovementCollisionMask;
             var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, mask);
 
             if (!hit) return;
@@ -298,7 +276,7 @@ namespace Entities.Entities
 
             if (!_jumping) return;
             _jumping = false;
-            bodyAnimator.SetBool("jumping", false);
+            torsoAnimator.SetBool("jumping", false);
             handsAnimator.SetBool("jumping", false);
                 
             // Set velocity when landing to keep horizontal momentum
@@ -311,30 +289,46 @@ namespace Entities.Entities
 
         private void HandleInteraction()
         {
-            // Interaction
             if (_interactablesInRange.Count <= 0) return;
         
-            // Check for closest interactable when moving
-            if (_inputVector.magnitude > 0)
+            // This line causes a crash if the player places a placeable interactable item next to them while not moving.
+            // For example, placing a crafting station next to the player while standing still.
+            // if (_inputVector.magnitude > 0 || Rigidbody.velocity.magnitude > 0.05f)
             {
-                // Find closest interactable
                 _newClosestInteractable = GetClosestInteractable();
 
-                // Check if the closest interactable is the same as the previous closest one
                 if (_newClosestInteractable != _closestInteractable)
                 {
-                    // Disable the prompt on the old one if there is one
-                    if (_closestInteractable) _closestInteractable.DisablePrompt();
+                    if (_closestInteractable)
+                    {
+                        _closestInteractable.DisablePrompt();
+                        _closestInteractable.ResetInteracted();
+                    }
                     
                     _closestInteractable = _newClosestInteractable;
-                    _closestInteractable.PromptInteraction();
+                    _closestInteractable.EnablePrompt();
                 }
             }
-
-            if (!Input.GetKeyDown(KeyCode.F)) return;
             
-            _closestInteractable.Interact(gameObject);
-            _closestInteractable.DisablePrompt();
+            if (!_closestInteractable) return;
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                _closestInteractable.DisablePrompt();
+                _closestInteractable.InteractImmediate(gameObject);
+            }
+
+            if (!_closestInteractable.canHoldInteract) return;
+            
+            if (Input.GetKey(KeyCode.F))
+            {
+                _closestInteractable.InteractHolding(gameObject);
+            }
+            
+            if (Input.GetKeyUp(KeyCode.F))
+            {
+                _closestInteractable.ResetInteracted();
+            }
         }
 
         private void HandlePlayerFlipping(float cursorAngle)
@@ -342,28 +336,41 @@ namespace Entities.Entities
             // if (_inputVector.x == 0) return;
             // _sr.flipX = _inputVector.x > 0;
 
-            bodySr.flipX = cursorAngle > 90;
+            torsoSr.flipX = cursorAngle > 90;
             headSr.flipX = cursorAngle > 90;
             
             var scale = handsParent.localScale;
             // scale.x = _inputVector.x > 0 ? -1f : 1f;
             scale.x = cursorAngle < 90 ? -1f : 1f;
             handsParent.localScale = scale;
+            
+            scale = extraSpritesParent.localScale;
+            scale.x = cursorAngle > 90 ? -1f : 1f;
+            extraSpritesParent.localScale = scale;
         }
 
         private Interactable GetClosestInteractable()
         {
-            var closest = _interactablesInRange[0];
+            var closest = _interactablesInRange.FirstOrDefault(i => i != null);
+
+            if (!closest)
+            {
+                _interactablesInRange.Clear();
+                _closestInteractable = null;
+                return null;
+            }
+            
+            var closestDist = (closest.transform.position - transform.position).magnitude;
 
             foreach (var interactable in _interactablesInRange)
             {
-                var distToCurrent = (closest.transform.position - transform.position).magnitude;
+                if (!interactable) continue;
+                
                 var distToNew = (interactable.transform.position - transform.position).magnitude;
 
-                if (distToNew < distToCurrent)
-                {
-                    closest = interactable;
-                }
+                if (!(distToNew < closestDist)) continue;
+                closest = interactable;
+                closestDist = distToNew;
             }
 
             return closest;
@@ -371,35 +378,40 @@ namespace Entities.Entities
 
         public override void ToggleSpriteRenderer(bool state)
         {
-            bodySr.enabled = state;
+            torsoSr.enabled = state;
+            headSr.enabled = state;
             handsParent.gameObject.SetActive(state);
+            itemAnchor.SetActive(state);
         }
-
         
         // Public methods
         
         public void TakeDamage(float amount)
         {
-            var died = _statsManager.ChangeHealth(amount);
+            amount = Mathf.Clamp(amount - PlayerStatsManager.Defense, 0, amount);
+            var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
             //TODO: damage numbers
-
+            
+            // TODO: Figure out player hurt flash
+            // The old system below doesn't actually work because it requires saving the default material,
+            // which makes it an instance. This is a problem because lighting needs to change the brightness
+            // of the material, which is a global change and doesn't affect the instance.
+            
             // Make the player flash red unless the game is run in the editor.
             // For some reason the editor lags like a motherfucker because of this.
-            if (!Application.isEditor)
-            {
-                bodySr.material = flashMaterial;
-                headSr.material = flashMaterial;
-                GameUtilities.instance.DelayExecute(() =>
-                {
-                    bodySr.material = _defaultMaterial;
-                    headSr.material = _defaultMaterial;
-                }, 0.1f);
-            }
+            // if (!Application.isEditor)
+            // {
+            //     torsoSr.material = flashMaterial;
+            //     headSr.material = flashMaterial;
+            //     GameUtilities.instance.DelayExecute(() =>
+            //     {
+            //         torsoSr.material = _defaultMaterial;
+            //         headSr.material = _defaultMaterial;
+            //     }, 0.1f);
+            // }
             
             CameraController.CameraShake(0.1f, 0.1f);
-            
-            Debug.Log($"Took {amount} damage!");
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)
@@ -413,7 +425,32 @@ namespace Entities.Entities
 
         public void Death()
         {
-            Debug.Log("Death.");
+            IsAlive = false;
+            bodyTr.gameObject.SetActive(false);
+            _collider.enabled = false;
+            ToggleControl(false);
+            TogglePhysics(false);
+            
+            var skullObject = _deathManager.Explode();
+            CameraController.SetParent(skullObject.transform);
+            CameraController.SetDefaultPosition(Vector2.zero);
+            CameraController.CameraShake(0.5f, 0.5f);
+            
+            UIUtilities.ShowDeathOverlay();
+            
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                IsAlive = true;
+                bodyTr.gameObject.SetActive(true);
+                _collider.enabled = true;
+                ToggleControl(true);
+                TogglePhysics(true);
+                transform.position = _spawnPosition;
+                CameraController.SetParent(transform);
+                CameraController.ResetDefaultPosition();
+                UIUtilities.HideDeathOverlay();
+                CameraController.SetZoomMultiplierSmooth(1f, 0f);
+            }, PlayerDeathManager.DefaultRespawnDelay);
         }
 
         /// <summary>
@@ -442,12 +479,42 @@ namespace Entities.Entities
 
         public void AddForceTowardsCursor(float magnitude)
         {
-            Rigidbody.AddForce(_mouseDirection * magnitude);
+            var mouseDirection = GameUtilities.GetVectorToWorldCursor(transform.position).normalized;
+            Rigidbody.AddForce(mouseDirection * magnitude);
+        }
+
+        public void SetJetpackSprite(Sprite sprite)
+        {
+            jetpackSr.sprite = sprite;
+        }
+
+        public (ParticleSystem, ParticleSystem) GetJetpackParticles()
+        {
+            return (jetpackParticles1, jetpackParticles2);
         }
 
         public Transform GetBodyTransform()
         {
-            return bodySr.transform;
+            return bodyTr;
+        }
+        
+        public Vector2 GetInputVector()
+        {
+            return _inputVector;
+        }
+        
+        public void AddInteractableInRange(Interactable interactable)
+        {
+            _interactablesInRange.Add(interactable);
+        }
+
+        public void RemoveInteractableInRange(Interactable interactable)
+        {
+            _interactablesInRange.Remove(interactable);
+            if (interactable == _closestInteractable)
+            {
+                _closestInteractable = null;
+            }
         }
     }
 }

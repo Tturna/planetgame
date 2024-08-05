@@ -1,4 +1,5 @@
-using Entities.Entities;
+using System;
+using Entities;
 using Planets;
 using UnityEngine;
 using Utilities;
@@ -27,12 +28,18 @@ namespace VFX
             bg1.color = Color.black;
         }
 
+        private void OnDestroy()
+        {
+            _player.OnEnteredPlanet -= OnEnteredPlanet;
+            _player.OnExitPlanet -= OnExitedPlanet;
+        }
+
         private void Update()
         {
             if (!_currentPlanetGen) return;
             
             // Smooth transition between backgrounds according to player position.
-            var perc = _currentPlanetGen.GetDistancePercentage(_player.transform.position);
+            var perc = _currentPlanetGen.NormalizeDistanceFromPlanet(_player.DistanceToClosestPlanet);
             var limitedPerc = GameUtilities.InverseLerp(0f, 0.5f, perc);
         
             var c = bg2.color;
@@ -64,6 +71,15 @@ namespace VFX
             // c *= brightness;
             // c.a = a;
             c.a *= brightness;
+            instance.bg2.color = c;
+        }
+        
+        public static void SetBackgroundRedTint(float redTint)
+        {
+            var normalColor = instance.bg2Color;
+            var redColor = new Color(normalColor.r, normalColor.g * 0.3f, 0f, 1f);
+            var c = Color.Lerp(normalColor, redColor, redTint);
+            
             instance.bg2.color = c;
         }
     }

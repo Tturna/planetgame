@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using Utilities;
 
-namespace Entities.Entities.Enemies
+namespace Entities.Enemies
 {
     [Serializable]
     public class MovementPattern
@@ -23,12 +24,13 @@ namespace Entities.Entities.Enemies
             public EnemySo enemySo;
             public Rigidbody2D rb;
             public Animator anim;
-            public Transform playerTr;
-            public float distanceToPlayer;
-            public float dotToPlayer;
+            [CanBeNull] public Transform playerTr;
+            public float? distanceToPlayer;
+            public float? dotToPlayer;
             public Vector3 relativeMoveDirection;
         }
         
+        // Set in inspector
         public MovementTypes movementType;
         
         public Dictionary<MovementTypes, Action<MovementFunctionData>> MovementLookupTable => new()
@@ -41,10 +43,10 @@ namespace Entities.Entities.Enemies
             { MovementTypes.RangedFlyer, RangedFlyer }
         };
         
-        private int _terrainLayerMask = -1;
-        private int _terrainBitsLayerMask = -1;
+        private int _collisionLayerMask = -1;
         private bool _jumping;
         private float _jumpCooldown;
+        private float _stuckTimer;
 
         public Action<MovementFunctionData> GetMovement()
         {
@@ -55,32 +57,40 @@ namespace Entities.Entities.Enemies
         {
             _lastJumpTime = 0f;
             _jumpCooldown = 0f;
-            _terrainLayerMask = LayerMask.GetMask("Terrain");
-            _terrainBitsLayerMask = LayerMask.GetMask("TerrainBits");
+            _collisionLayerMask = GameUtilities.BasicMovementCollisionMask;
         }
 
-        private Vector3 GetWalkForceOnTerrain(Transform entityTr, Vector3 relativeMoveDirection, float accelerationSpeed, float maxSpeed, float maxSlopeMultiplier)
+        private Vector3 GetWalkForceOnTerrain(MovementFunctionData data)
         {
-            const float rayBelowLength = .35f;
-            const float raySideLength = .4f;
+            var entityTr = data.rb.transform;
+            var relativeMoveDirection = data.relativeMoveDirection;
+            var accelerationSpeed = data.enemySo.accelerationSpeed;
+            var maxSlopeMultiplier = data.enemySo.maxSlopeMultiplier;
+            var hbVertEdgeDist = data.enemySo.hitboxSize.y / 2f + data.enemySo.hitboxEdgeRadius;
+            var rayBelowLength = hbVertEdgeDist * 1.1f;
+            var raySideLength = hbVertEdgeDist * 1.25f;
             
             // Figure out the slope angle of the terrain
-            var rayStartPoint = entityTr.position - entityTr.up * 0.25f;
+            var rayStartPoint = entityTr.position - entityTr.up * hbVertEdgeDist / 2f;
 
             // Raycast "below". It's actually a bit to the side as well
             var rayBelowDirection = new Vector2(.1f * relativeMoveDirection.x, -.4f).normalized;
-            var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, rayBelowLength, _terrainLayerMask);
+            var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, rayBelowLength, _collisionLayerMask);
             
             // Raycast a bit to the side, depending on movement direction
-            var raySideDirection = new Vector2(.1f * relativeMoveDirection.x, -.2f).normalized;
-            var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, raySideLength, _terrainLayerMask);
+            var raySideDirection = new Vector2(.1f * relativeMoveDirection.x, -.15f).normalized;
+            var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, raySideLength, _collisionLayerMask);
+            
+            // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * rayBelowLength, Color.red);
+            // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * raySideLength, Color.blue);
             
             var force = relativeMoveDirection.x * entityTr.right * accelerationSpeed;
             
             if (hitBelow && hitSide)
             {
                 // Move direction is the vector from the bottom raycast to the side raycast
-                var direction = (hitSide.point - hitBelow.point).normalized;
+                var direction = (Vector3)(hitSide.point - hitBelow.point).normalized;
+                // Debug.DrawLine(entityTr.position, entityTr.position + direction * 3f, Color.green);
                 
                 // Check if the direction is upwards relative to the entity
                 var dot = Vector3.Dot(entityTr.up, direction);
@@ -96,16 +106,23 @@ namespace Entities.Entities.Enemies
 
         private void HandleGroundCheck(Transform entityTr, Animator anim)
         {
-            var mask = _terrainLayerMask | _terrainBitsLayerMask;
-            var hit = Physics2D.CircleCast(entityTr.position, 0.2f, -entityTr.up, 0.4f, mask);
+            var hit = Physics2D.CircleCast(entityTr.position, 0.2f, -entityTr.up, 0.4f, _collisionLayerMask);
 
             if (!hit || _jumpCooldown > 0) return;
             _jumping = false;
             anim.SetBool("jumping", false);
         }
 
-        private void HandleWalkerJump(Transform entityTr, Rigidbody2D rb, Animator entityAnim, Vector3 relativeMoveDirection, float jumpForce)
+        private void HandleWalkerJump(MovementFunctionData data)
         {
+            if (!data.enemySo.canJump) return;
+            
+            var rb = data.rb;
+            var entityTr = rb.transform;
+            var entityAnim = data.anim;
+            var relativeMoveDirection = data.relativeMoveDirection;
+            var jumpForce = data.enemySo.jumpForce;
+            
             if (_jumpCooldown > 0)
             {
                 _jumpCooldown -= Time.deltaTime;
@@ -113,8 +130,18 @@ namespace Entities.Entities.Enemies
             }
             
             if (_jumping) return;
-            var hit = Physics2D.Raycast(entityTr.position, relativeMoveDirection, .5f, _terrainLayerMask);
-            if (!hit) return;
+
+            if (relativeMoveDirection.magnitude > 0.1f && Mathf.Abs(rb.GetVector(rb.velocity).x) < 0.1f)
+            {
+                _stuckTimer -= Time.deltaTime;
+            }
+            else
+            {
+                _stuckTimer = 0.5f;
+            }
+            
+            var horizontalHit = Physics2D.Raycast(entityTr.position, relativeMoveDirection, 1f, _collisionLayerMask);
+            if (!horizontalHit && _stuckTimer > 0) return;
             
             rb.AddForce(entityTr.up * jumpForce, ForceMode2D.Impulse);
             _jumping = true;
@@ -126,9 +153,9 @@ namespace Entities.Entities.Enemies
         private void MeleeWalker(MovementFunctionData data)
         {
             HandleGroundCheck(data.rb.transform, data.anim);
-            HandleWalkerJump(data.rb.transform, data.rb, data.anim, data.relativeMoveDirection, data.enemySo.jumpForce);
+            HandleWalkerJump(data);
             
-            var force = GetWalkForceOnTerrain(data.rb.transform, data.relativeMoveDirection, data.enemySo.accelerationSpeed, data.enemySo.maxSpeed, data.enemySo.maxSlopeMultiplier);
+            var force = GetWalkForceOnTerrain(data);
             var localVelocity = data.rb.GetVector(data.rb.velocity);
             
             if ((data.relativeMoveDirection.x > 0 && localVelocity.x < data.enemySo.maxSpeed) ||
