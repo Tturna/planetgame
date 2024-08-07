@@ -71,6 +71,7 @@ namespace Inventory.Item_Logic
             if (isRoomModule)
             {
                 placeableObject.transform.position = position + normal * (((RoomModuleSo)placeable).boundsSize.y * .5f);
+                placeableObject.transform.up = normal;
                 return true;
             }
             
@@ -86,6 +87,7 @@ namespace Inventory.Item_Logic
             
             placeableObject.transform.position = position + normal * (sr.bounds.size.y * .5f);
             placeableObject.transform.up = normal;
+            
             // placeableObject.transform.Translate(relativeUp * (col.size.y * .5f));
             // placeableObject.transform.rotation = useParameters.playerObject.transform.rotation;
 

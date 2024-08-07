@@ -177,9 +177,10 @@ namespace Inventory
 
             var position = (Vector3)placeablePosition!;
             var normal = (Vector3)placeableNormal!;
+            var hologramPosition = position + normal * (_placeableHologramSr.size.y * 0.5f);
 
             _placeableHologramSr.color = new Color(1f, 1f, 1f, 0.5f);
-            placeableHologram.transform.position = position + normal * (_placeableHologramSr.bounds.size.y * 0.5f);
+            placeableHologram.transform.position = hologramPosition;
             placeableHologram.transform.up = normal;
         }
         

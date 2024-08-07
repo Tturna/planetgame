@@ -59,31 +59,58 @@ namespace Inventory
                     var closestNeighborUp = closestRoomTransform.up;
                     var closestNeighborRight = closestRoomTransform.right;
                     var neighborToMouse = mousePoint - closestNeighborPos;
-                    var relMouseDir = closestRoomTransform.InverseTransformDirection(neighborToMouse);
-                    var compareVertical = Mathf.Abs(relMouseDir.y) > Mathf.Abs(relMouseDir.x);
-                    var neighborExtents = closestNeighbor.bounds.extents;
+                    var relativeMouse = closestRoomTransform.InverseTransformDirection(neighborToMouse);
+                    var compareVertical = Mathf.Abs(relativeMouse.y) > Mathf.Abs(relativeMouse.x);
+                    var neighborSize = ((BoxCollider2D)closestNeighbor).size;
 
-                    var offset = relMouseDir switch
+                    var offsetDirection = relativeMouse switch
                     {
-                        _ when !compareVertical && relMouseDir.x > 0f => closestNeighborRight * roomModuleSo.boundsSize.x / 2,
-                        _ when !compareVertical && relMouseDir.x < 0f => -closestNeighborRight * roomModuleSo.boundsSize.x / 2,
-                        _ when relMouseDir.y > 0f => closestNeighborUp * roomModuleSo.boundsSize.y / 2,
-                        _ when relMouseDir.y < 0f => -closestNeighborUp * roomModuleSo.boundsSize.y / 2,
+                        _ when !compareVertical && relativeMouse.x > 0f => closestNeighborRight,
+                        _ when !compareVertical && relativeMouse.x < 0f => -closestNeighborRight,
+                        _ when relativeMouse.y > 0f => closestNeighborUp,
+                        _ when relativeMouse.y < 0f => -closestNeighborUp,
                         _ => throw new ArgumentOutOfRangeException()
                     };
                     
-                    var neighborBoundExtent = compareVertical ? neighborExtents.y : neighborExtents.x;
+                    var offset = compareVertical
+                        ? offsetDirection * roomModuleSo.boundsSize.y / 2f
+                        : offsetDirection * roomModuleSo.boundsSize.x / 2f;
+                    
+                    var neighborBoundExtent = (compareVertical ? neighborSize.y : neighborSize.x) / 2f;
                     normal = closestNeighborUp;
                     // move down by half the room size because HeldItemManager and PlaceableLogic where this data
                     // is used will move the object up by half the room size. They do this because they are made for
                     // generic placeable objects that need this behavior, as do rooms when they're not
                     // connected to neighbors.
-                    position = closestNeighborPos + offset + offset.normalized * neighborBoundExtent - normal * roomModuleSo.boundsSize.y / 2;
-                    return true;
+                    
+                    position = closestNeighborPos + offset + offsetDirection * neighborBoundExtent - normal * roomModuleSo.boundsSize.y / 2;
+
+                    if (compareVertical)
+                    {
+                        return true;
+                    }
+                    
+                    const int maxHorizontalStack = 2;
+                    const float offsetAddition = 0.2f;
+                    var checkpoint = (Vector3)position;
+                    var pointOffset = -offset.normalized * (roomModuleSo.boundsSize.x / 2f + offsetAddition);
+
+                    for (var i = 0; i <= maxHorizontalStack; i++)
+                    {
+                        var hit = Physics2D.OverlapPoint(checkpoint + pointOffset, buildingBoundsMask);
+
+                        if (hit)
+                        {
+                            checkpoint = hit.transform.position;
+                            pointOffset = -offset.normalized * (hit.bounds.size.x / 2f + offsetAddition);
+                        }
+                        else return true;
+                    }
+                    
+                    return false;
                 }
             }
             
-            // var circleHit = Physics2D.OverlapCircle(mousePoint, placementAssistRange, mask);
             var circleHitCount = Physics2D.OverlapCircleNonAlloc(mousePoint, placementAssistRange, _circleHits, mask);
 
             if (circleHitCount == 0)
