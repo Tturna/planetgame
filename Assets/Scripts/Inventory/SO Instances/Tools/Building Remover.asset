@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 141634844be79d049b52e6b888249506, type: 3}
+  m_Name: Building Remover
+  m_EditorClassIdentifier: 
+  id: b88c8b8a-cf89-4ad1-af24-ca22e4959b65
+  name: Building Remover
+  description: 
+  maxStack: 1
+  sprite: {fileID: 21300000, guid: 3bb1adf79a0245946810e0f3e7deaabe, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  useBothHands: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 0
+  logicCode: 7
+  attackCooldown: 0
+  energyCost: 0
+  recoilHorizontal: 0
+  recoilAngular: 0
+  recoilSpeedHorizontal: 0
+  recoilSpeedAngular: 0
+  cameraShakeTime: 0
+  cameraShakeStrength: 0
+  playerRecoilStrength: 0
+  useRange: 7
+  incrementStackOnUse: 0
+  projectile:
+    sprite: {fileID: 0}
+    sortingLayerName: 
+    sortingOrder: 0
+    minProjectileSpeed: 0
+    maxProjectileSpeed: 0
+    lifetime: 0
+    damage: 0
+    knockback: 0
+    critChance: 0
+    piercing: 0
+    useGravity: 0
+    gravityMultiplier: 0
+    faceDirectionOfTravel: 0
+    collideWithWorld: 0
+    canHurtPlayer: 0
+    canHurtEnemies: 0
+    collisionActivationDelay: 0
+    breakParticlePrefab: {fileID: 0}
+    breakParticleColor: {r: 0, g: 0, b: 0, a: 0}
+    trailColor:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    trailTime: 0
+    trailStartEndWidth: {x: 0, y: 0}
+    useLight: 0
+    lightColor: {r: 0, g: 0, b: 0, a: 0}
+    spawnAnimation: {fileID: 0}
+    updateAnimation: {fileID: 0}
+  muzzlePosition: {x: 0, y: 0}
+  muzzleFlashes: []
+  muzzleFlashColor: {r: 0, g: 0, b: 0, a: 0}
+  toolPower: 0
+  toolUseArea: 0
+  toolRange: 0
