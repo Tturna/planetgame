@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 
   maxStack: 1
   sprite: {fileID: 21300000, guid: 7fa9ad32462ad4a41940f3cff5e5572c, type: 3}
-  handPositionOffset: {x: -0.3, y: -0.15}
+  handPositionOffset: {x: -0.21875, y: -0.125}
   useBothHands: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
@@ -51,6 +51,7 @@ MonoBehaviour:
     canHurtPlayer: 0
     canHurtEnemies: 1
     collisionActivationDelay: 0
+    breakParticlePrefab: {fileID: 0}
     breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
     trailColor:
       serializedVersion: 2

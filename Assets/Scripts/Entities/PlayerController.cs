@@ -96,8 +96,6 @@ namespace Entities
         private int _collisionLayerMask;
         private Vector2 _spawnPosition;
 
-        // Built-in methods
-        
         private void Awake()
         {
             instance = this;
@@ -141,35 +139,28 @@ namespace Entities
 
             // Reduce friction when moving
             var pmat = _collider.sharedMaterial;
-            
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (Mathf.Abs(_inputVector.x) > 0.1f)
-            {
-                pmat.friction = 0.3f;
-            }
-            else
-            {
-                pmat.friction = Mathf.Lerp(0.85f, 0.2f, localVelocity.magnitude / PlayerStatsManager.MaxMoveSpeed);
-            }
-            
-            _collider.sharedMaterial = pmat; // quite the meme
+            pmat.friction = Mathf.Lerp(0.85f, 0.2f, Mathf.Abs(_inputVector.x));
+            _collider.sharedMaterial = pmat;
 
             if (CanControl)
             {
                 var force = transform.right * (_inputVector.x * PlayerStatsManager.AccelerationSpeed);
                 
                 // Figure out the slope angle of the terrain that the player is walking on
-                var rayStartPoint = transform.position - transform.up * 0.4f;
+                var rayStartPoint = transform.position - transform.up * 0.1f;
 
                 // Raycast "below". It's actually a bit to the side as well
                 var rayBelowDirection = new Vector2(.1f * _inputVector.x, -.4f).normalized;
-                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, .25f, _collisionLayerMask);
+                const float rayBelowDistance = 0.45f;
+                var hitBelow = Physics2D.Raycast(rayStartPoint, rayBelowDirection, rayBelowDistance, _collisionLayerMask);
                 
                 // Raycast a bit to the side, depending on movement direction
                 var raySideDirection = new Vector2(.1f * _inputVector.x, -.2f).normalized;
-                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, .3f, _collisionLayerMask);
-                // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * 1.05f, Color.green);
-                // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * 1.1f, Color.red);
+                const float raySideDistance = 0.55f;
+                var hitSide = Physics2D.Raycast(rayStartPoint, raySideDirection, raySideDistance, _collisionLayerMask);
+                
+                // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)rayBelowDirection * rayBelowDistance, Color.green);
+                // Debug.DrawLine(rayStartPoint, rayStartPoint + (Vector3)raySideDirection * raySideDistance, Color.red);
                 
                 if (hitBelow && hitSide)
                 {
@@ -179,13 +170,20 @@ namespace Entities
                     // Check if the direction is upwards relative to the player
                     var dot = Vector3.Dot(transform.up, direction);
                     // Debug.Log(dot);
-                    // Debug.DrawLine(transform.position, transform.position + (Vector3)direction, Color.magenta);
 
                     if (dot > 0)
                     {
-                        force = direction * (PlayerStatsManager.AccelerationSpeed * Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier));
+                        // Debug.DrawLine(transform.position, transform.position + (Vector3)direction, Color.magenta);
+                        var slopeMultiplier = Mathf.Clamp(1f + dot * 4f, 1f, maxSlopeMultiplier);
+                        var multiplier = PlayerStatsManager.AccelerationSpeed * slopeMultiplier;
+                        
+                        // Debug.Log($"Dot: {dot}, Slope Multiplier: {slopeMultiplier}, Multiplier: {multiplier}");
+                        
+                        force = direction * multiplier;
                     }
                 }
+                
+                // Debug.Log($"Force: {force.magnitude}");
                 
                 // Checking for velocity.x or y doesn't work because the player can face any direction and still be moving "right" in relation to themselves
                 // That's why we use a local velocity

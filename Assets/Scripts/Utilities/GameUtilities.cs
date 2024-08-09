@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using Planets;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +9,7 @@ namespace Utilities
     public class GameUtilities : MonoBehaviour
     {
         [SerializeField] private GameObject projectilePrefab;
+        [SerializeField] private GameObject placeBuildingPfxPrefab;
         [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
         [SerializeField] private Material spriteMaterial;
         [SerializeField] private Material caveBgRenderMaterial;
@@ -97,6 +97,16 @@ namespace Utilities
             }
             
             return projectilePrefab;
+        }
+        
+        public GameObject GetPlaceBuildingPfxPrefab()
+        {
+            if (placeBuildingPfxPrefab == null)
+            {
+                throw new Exception("Place Building Pfx prefab is null");
+            }
+            
+            return placeBuildingPfxPrefab;
         }
         
         public static Material GetTerrainMaterial()
