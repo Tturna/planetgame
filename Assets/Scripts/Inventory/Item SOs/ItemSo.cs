@@ -31,7 +31,9 @@ namespace Inventory.Item_SOs
         public int maxStack;
         public Sprite sprite;
         public Vector2 handPositionOffset;
+        public float orientationOffset;
         public bool useBothHands;
+        public bool flipSprite;
         public bool altIdleAnimation;
         public SuitableItemType suitableSlotItemType;
         

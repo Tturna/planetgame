@@ -14,7 +14,6 @@ namespace Inventory
     public class MeleeHitManager : MonoBehaviour
     {
         [SerializeField] private TrailRenderer trailRenderer;
-        private GameObject _equippedItemObject => gameObject;
         
         private MeleeSo _meleeSo;
         private EdgeCollider2D _edgeCollider;
@@ -23,7 +22,7 @@ namespace Inventory
         {
             _edgeCollider = GetComponent<EdgeCollider2D>();
             
-            var itemAnimationManager = transform.parent.GetComponent<ItemAnimationManager>();
+            var itemAnimationManager = transform.parent.parent.GetComponentInChildren<ItemAnimationManager>();
             itemAnimationManager.SwingStarted += (trailState) => ToggleSwing(true, trailState);
             itemAnimationManager.SwingCompleted += () => ToggleSwing(false, false);
 

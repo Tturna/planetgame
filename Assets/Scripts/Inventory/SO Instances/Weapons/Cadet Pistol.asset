@@ -16,9 +16,11 @@ MonoBehaviour:
   name: Cadet Pistol
   description: 
   maxStack: 1
-  sprite: {fileID: 21300000, guid: 96515105b3fc83140809f6fb705128fc, type: 3}
-  handPositionOffset: {x: -0.2, y: -0.1}
+  sprite: {fileID: 21300000, guid: 314312cd219663c4aa9f9abd647858d9, type: 3}
+  handPositionOffset: {x: -0.25, y: -0.03125}
+  orientationOffset: 0
   useBothHands: 0
+  flipSprite: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
   logicCode: 1
@@ -51,6 +53,7 @@ MonoBehaviour:
     canHurtPlayer: 0
     canHurtEnemies: 1
     collisionActivationDelay: 0
+    breakParticlePrefab: {fileID: 0}
     breakParticleColor: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
     trailColor:
       serializedVersion: 2

@@ -56,7 +56,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Equipped Item
+    path: Item Anchor
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -100,7 +100,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Equipped Item
+    path: Item Anchor
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -112,7 +112,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 4211769049
+      path: 2058899089
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -120,7 +120,7 @@ AnimationClip:
       isPPtrCurve: 0
       isIntCurve: 0
     - serializedVersion: 2
-      path: 4211769049
+      path: 2058899089
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -192,7 +192,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -238,7 +238,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -284,7 +284,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -330,7 +330,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -376,7 +376,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -422,7 +422,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -433,7 +433,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -443,7 +443,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -453,7 +453,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Equipped Item
+    path: Item Anchor
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

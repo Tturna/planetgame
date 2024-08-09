@@ -104,10 +104,6 @@ namespace Inventory
             var cross = Vector3.Cross(-trForward, directionToMouse);
             _itemAnchor.LookAt( transform.position - trForward, cross);
 
-            // Flip sprite when aiming right
-            // var angle = Vector3.Angle(transform.right, directionToMouse);
-            // _equippedSr.flipY = angle < 90;
-        
             // Flip the object when aiming right
             // We do this because otherwise the recoil animation is flipped
             var scale = recoilAnchor.localScale;
@@ -120,6 +116,12 @@ namespace Inventory
             {
                 handsAnimator.SetLayerWeight(1, 0f);
                 handsAnimator.SetLayerWeight(2, 0f);
+                
+                _equippedSr.flipX = _equippedItem.itemSo.flipSprite;
+
+                var localRotation = equippedItemTransform.localEulerAngles;
+                localRotation.z = _equippedItem.itemSo.orientationOffset;
+                equippedItemTransform.localEulerAngles = localRotation;
 
                 var relativeOffset = _equippedItem.itemSo.handPositionOffset;
                 var itemRight = equippedItemTransform.right;
@@ -145,6 +147,7 @@ namespace Inventory
             {
                 handsAnimator.SetLayerWeight(1, 1f);
                 handsAnimator.SetLayerWeight(2, 1f);
+                equippedItemTransform.localEulerAngles = Vector3.zero;
                 _handLeft.localPosition = Vector3.zero;
                 _handRight.localPosition = Vector3.zero;
             }
