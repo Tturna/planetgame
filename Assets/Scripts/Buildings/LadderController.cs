@@ -59,27 +59,36 @@ namespace Buildings
             var verticalDirection = Input.GetAxis("Vertical");
             var horizontalDirection = Input.GetAxis("Horizontal");
             
-            if (!isPlayerOnLadder)
+            // Commenting this if and the else block fixes a bug
+            // where a ladder room below this one would enable the player physics
+            // after this one disables it, causing the player to fall as they're climbing up.
+            // This calls the player's Toggle methods more than needed though.
+            
+            // if (!isPlayerOnLadder)
             {
                 if (verticalDirection != 0f)
                 {
                     TogglePlayerOnLadder(true);
                     isPlayerOnLadder = true;
                 }
-                else
-                {
-                    return;
-                }
+                // else
+                // {
+                //     return;
+                // }
             }
+            
+            // This is added to the above bug fix
+            // to prevent weird sliding.
+            if (!isPlayerOnLadder) return;
             
             if (horizontalDirection != 0f)
             {
-                playerTransform.Translate(Vector3.right * (horizontalDirection * climbSpeed * Time.deltaTime), Space.Self);
+                playerTransform.Translate(transform.right * (horizontalDirection * climbSpeed * Time.deltaTime), Space.World);
             }
 
             if (verticalDirection != 0f)
             {
-                playerTransform.Translate(Vector3.up * (verticalDirection * climbSpeed * Time.deltaTime), Space.Self);
+                playerTransform.Translate(transform.up * (verticalDirection * climbSpeed * Time.deltaTime), Space.World);
             }
 
             if (Input.GetKeyDown(KeyCode.Space))

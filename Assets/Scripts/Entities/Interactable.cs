@@ -35,7 +35,7 @@ namespace Entities
     
         private void Start()
         {
-            _player = FindObjectOfType<PlayerController>();
+            _player = PlayerController.instance;
             
             IndicatorParent = new GameObject("IndicatorParent").transform;
             IndicatorParent.SetParent(transform);

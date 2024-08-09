@@ -815,7 +815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03758b2ca7aeb994abdbe279653b5a11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  climbSpeed: 7
+  climbSpeed: 5
   hatchColliders:
   - {fileID: 3999077084814148228}
   - {fileID: 5855770882603336638}
@@ -949,6 +949,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1550499184608269274}
     m_Modifications:
+    - target: {fileID: 5071057802811965781, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
+      propertyPath: openDistance
+      value: 1.25
+      objectReference: {fileID: 0}
     - target: {fileID: 5071057802811965784, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
       propertyPath: m_Name
       value: Door Left
@@ -997,7 +1001,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5071057802811965787, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 0}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
 --- !u!4 &2945501975512606129 stripped

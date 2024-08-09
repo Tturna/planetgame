@@ -1,13 +1,15 @@
+using System;
 using Entities;
 using UnityEngine;
 
 namespace Buildings
 {
-    [RequireComponent(typeof(Interactable))]
     [RequireComponent(typeof(Animator))]
     public class RoomDoor : MonoBehaviour
     {
-        private Interactable interactable;
+        [SerializeField] private float openDistance;
+        
+        private Transform playerTransform;
         private Animator animator;
         private ParticleSystem openParticles;
         
@@ -16,13 +18,26 @@ namespace Buildings
 
         private void Start()
         {
-            interactable = GetComponent<Interactable>();
+            playerTransform = PlayerController.instance.transform;
             animator = GetComponent<Animator>();
             openParticles = GetComponentInChildren<ParticleSystem>();
-            interactable.OnInteractImmediate += _ => ToggleDoor();
         }
 
-        private void ToggleDoor()
+        private void Update()
+        {
+            var distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
+            
+            if (!isOpen && distanceToPlayer < openDistance)
+            {
+                ToggleDoor(true);
+            }
+            else if (isOpen && distanceToPlayer >= openDistance)
+            {
+                ToggleDoor(false);
+            }
+        }
+
+        private void ToggleDoor(bool state)
         {
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             
@@ -31,7 +46,7 @@ namespace Buildings
                 return;
             }
             
-            isOpen = !isOpen;
+            isOpen = state;
             animator.SetBool(AnimIsOpenBool, isOpen);
             
             if (isOpen && openParticles)
