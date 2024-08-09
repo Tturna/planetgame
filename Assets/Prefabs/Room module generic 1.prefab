@@ -586,7 +586,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5071057802811965784, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
       propertyPath: m_Name
-      value: Door
+      value: Door Left
       objectReference: {fileID: 0}
     - target: {fileID: 5071057802811965786, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
       propertyPath: m_RootOrder
@@ -631,6 +631,10 @@ PrefabInstance:
     - target: {fileID: 5071057802811965786, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5071057802811965787, guid: a87f326f2c3b71f41b560d05626cf92a, type: 3}
+      propertyPath: m_FlipX
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

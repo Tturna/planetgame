@@ -16,8 +16,8 @@ MonoBehaviour:
   name: Cadet Pistol
   description: 
   maxStack: 1
-  sprite: {fileID: 21300000, guid: 314312cd219663c4aa9f9abd647858d9, type: 3}
-  handPositionOffset: {x: -0.25, y: -0.03125}
+  sprite: {fileID: 21300000, guid: fe0efd8d80d0fbc43a35fce1b7f6ebf1, type: 3}
+  handPositionOffset: {x: -0.25, y: -0.09375}
   orientationOffset: 0
   useBothHands: 0
   flipSprite: 0

@@ -29599,18 +29599,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   realTreeOptions:
     spritePool:
-    - {fileID: 21300000, guid: 363ea9b7a7ef6b24aa732f6a38ab44f5, type: 3}
-    - {fileID: 21300000, guid: c7e883ee15cd5684082d1ec44de38ae8, type: 3}
+    - {fileID: 21300000, guid: bca630ca10d9b234896b28d1a1d40362, type: 3}
+    - {fileID: 21300000, guid: d162a7b596c15e9488e9aff20df8a32a, type: 3}
     animate: 0
     move: 0
     objectName: Tree
     layer: 0
-    count: 50
+    count: 100
+    minNormalDot: 0.65
     minSpawnHeight: 0
-    minAngleIncrement: 5
-    maxAngleIncrement: 20
-    minHeightOffset: -0.15
-    maxHeightOffset: 0
+    minAngleIncrement: 3
+    maxAngleIncrement: 12
+    minHeightOffset: -0.0625
+    maxHeightOffset: -0.1875
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
@@ -29626,6 +29627,7 @@ MonoBehaviour:
     objectName: fgTree
     layer: 1
     count: 90
+    minNormalDot: 0.65
     minSpawnHeight: 0
     minAngleIncrement: 6
     maxAngleIncrement: 16
@@ -29644,6 +29646,7 @@ MonoBehaviour:
     objectName: mgBush
     layer: 2
     count: 70
+    minNormalDot: 0.75
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 16
@@ -29662,6 +29665,7 @@ MonoBehaviour:
     objectName: mgBirds
     layer: 2
     count: 6
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 10
     maxAngleIncrement: 40
@@ -29682,6 +29686,7 @@ MonoBehaviour:
     objectName: bgMountain
     layer: 3
     count: 40
+    minNormalDot: 0
     minSpawnHeight: 55
     minAngleIncrement: 10
     maxAngleIncrement: 30
@@ -29699,6 +29704,7 @@ MonoBehaviour:
     objectName: bgIsland
     layer: 4
     count: 12
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 20
     maxAngleIncrement: 40
@@ -29710,14 +29716,15 @@ MonoBehaviour:
     tag: Untagged
   flowerOptions:
     spritePool:
-    - {fileID: 21300000, guid: 567b7c6bad004f74dac9833993d365eb, type: 3}
-    - {fileID: 21300000, guid: c9c744384c8e1d64f9dce194e4bf2f53, type: 3}
-    - {fileID: 21300000, guid: 8c38a0ce457577f4285a64db4621ce42, type: 3}
+    - {fileID: 21300000, guid: f08d6c07495a5a64ab144cf1531320b3, type: 3}
+    - {fileID: 21300000, guid: 8fb09824003b39e448744574d793d074, type: 3}
+    - {fileID: 21300000, guid: 212587b0303b73546b6e452d88c4e5bd, type: 3}
     animate: 0
     move: 0
     objectName: flower
     layer: 0
     count: 70
+    minNormalDot: 0.55
     minSpawnHeight: 0
     minAngleIncrement: 4
     maxAngleIncrement: 30
@@ -29729,55 +29736,59 @@ MonoBehaviour:
     tag: Untagged
   grassOptions:
     spritePool:
-    - {fileID: 21300000, guid: ac7ddcb8cd9356e43bd4c15e59758322, type: 3}
-    - {fileID: 21300000, guid: c9f9a647de9b2ae40a0bec89dc7cbcd1, type: 3}
-    - {fileID: 21300000, guid: 0344458aef6b85a49a9686c9bf032aa7, type: 3}
+    - {fileID: 21300000, guid: 0065f435103fe594498e96a516320f8f, type: 3}
+    - {fileID: 21300000, guid: e2a4e1f15070d2748ad24230d343354e, type: 3}
+    - {fileID: 21300000, guid: 78db7c6cfb4d223428f0d94eb4778830, type: 3}
     animate: 0
     move: 0
     objectName: grass
     layer: 0
-    count: 100
+    count: 210
+    minNormalDot: 0.65
     minSpawnHeight: 0
-    minAngleIncrement: 4
-    maxAngleIncrement: 30
-    minHeightOffset: -0.1
-    maxHeightOffset: 0
+    minAngleIncrement: 0.5
+    maxAngleIncrement: 3
+    minHeightOffset: -0.0625
+    maxHeightOffset: -0.125
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
     tag: Untagged
   rockOptions:
     spritePool:
-    - {fileID: 21300000, guid: f7c361ec571ed44469ee932d9931f4a9, type: 3}
-    - {fileID: 21300000, guid: 97ede13197f5f5b49be4f8f79c630176, type: 3}
+    - {fileID: 21300000, guid: 5e33fec12aab37f4783c659a6e083c6e, type: 3}
+    - {fileID: 21300000, guid: 3ba8b194f33ac484e96c22576a977173, type: 3}
+    - {fileID: 21300000, guid: 265b68b0ca681dd49ada894d9f8fc186, type: 3}
     animate: 0
     move: 0
     objectName: rock
     layer: 0
-    count: 20
+    count: 30
+    minNormalDot: 0.7
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 40
-    minHeightOffset: -0.1
-    maxHeightOffset: 0
+    minHeightOffset: -0.0625
+    maxHeightOffset: -0.1875
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
     tag: Untagged
   bushOptions:
     spritePool:
-    - {fileID: 21300000, guid: 61bfd6a3a28308f4daf0cf286dc2a1f8, type: 3}
-    - {fileID: 21300000, guid: bce01c881ddb3504db1a98d64a38eadb, type: 3}
+    - {fileID: 21300000, guid: a5736c4111db3184cac757acc6d15d48, type: 3}
+    - {fileID: 21300000, guid: 7f03c7ee228ee0c489b6017bad678591, type: 3}
     animate: 0
     move: 0
     objectName: bush
     layer: 0
     count: 30
+    minNormalDot: 0.6
     minSpawnHeight: 0
     minAngleIncrement: 5
     maxAngleIncrement: 50
-    minHeightOffset: 0
-    maxHeightOffset: 0
+    minHeightOffset: -0.0625
+    maxHeightOffset: -0.0625
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
@@ -64120,6 +64131,7 @@ MonoBehaviour:
     objectName: Tree
     layer: 0
     count: 50
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 5
     maxAngleIncrement: 20
@@ -64140,6 +64152,7 @@ MonoBehaviour:
     objectName: fgTree
     layer: 1
     count: 90
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 6
     maxAngleIncrement: 16
@@ -64158,6 +64171,7 @@ MonoBehaviour:
     objectName: mgBush
     layer: 2
     count: 70
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 16
@@ -64176,6 +64190,7 @@ MonoBehaviour:
     objectName: mgBirds
     layer: 2
     count: 6
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 10
     maxAngleIncrement: 40
@@ -64196,6 +64211,7 @@ MonoBehaviour:
     objectName: bgMountain
     layer: 3
     count: 40
+    minNormalDot: 0
     minSpawnHeight: 55
     minAngleIncrement: 10
     maxAngleIncrement: 30
@@ -64213,6 +64229,7 @@ MonoBehaviour:
     objectName: bgIsland
     layer: 4
     count: 12
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 20
     maxAngleIncrement: 40
@@ -64232,6 +64249,7 @@ MonoBehaviour:
     objectName: flower
     layer: 0
     count: 70
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 4
     maxAngleIncrement: 30
@@ -64251,6 +64269,7 @@ MonoBehaviour:
     objectName: grass
     layer: 0
     count: 100
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 4
     maxAngleIncrement: 30
@@ -64269,6 +64288,7 @@ MonoBehaviour:
     objectName: rock
     layer: 0
     count: 20
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 40
@@ -64287,6 +64307,7 @@ MonoBehaviour:
     objectName: bush
     layer: 0
     count: 30
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 5
     maxAngleIncrement: 50

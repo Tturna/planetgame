@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Planets
@@ -16,6 +17,9 @@ namespace Planets
             public string objectName;
             public BackgroundLayer layer;
             public int count;
+            [Range(0f, 1f), Tooltip("Minimum dot product between the surface normal and planet direction for the decor to spawn." +
+                                    "1 = normal has to point directly to the sky. 0 = normal can be in any orientation.")]
+            public float minNormalDot;
             public float minSpawnHeight;
             public float minAngleIncrement;
             public float maxAngleIncrement;
@@ -177,10 +181,13 @@ namespace Planets
         
         private void SpawnDecor(PlanetGenerator planetGen, DecorOptions options)
         {
-            // start at angle 0 and increment by random amounts
-            var angle = 0f;
+            var angle = Random.Range(0f, 360f);
+            
             for (var i = 0; i < options.count; i++)
             {
+                angle += Random.Range(options.minAngleIncrement, options.maxAngleIncrement);
+                angle %= 360;
+                
                 // Get surface height
                 var point = (Vector3)planetGen.GetRelativeSurfacePoint(angle);
                 point += transform.position;
@@ -188,11 +195,15 @@ namespace Planets
                 var dirToPlanet = (transform.position - point).normalized;
                 
                 // raycast below each decor object to find the surface point
-                var hit = Physics2D.Raycast(point, dirToPlanet);
+                var mask = GameUtilities.BasicMovementCollisionMask;
+                var hit = Physics2D.Raycast(point, dirToPlanet, 100, mask);
+                
+                var normalDot = Vector3.Dot(hit.normal, -dirToPlanet);
 
-                if (Vector3.Distance(planetGen.transform.position, hit.point) < options.minSpawnHeight) return;
+                if (normalDot < options.minNormalDot) continue;
 
-                // spawn decor objects
+                if (Vector3.Distance(planetGen.transform.position, hit.point) < options.minSpawnHeight) continue;
+
                 var decor = new GameObject(options.objectName);
                 decor.tag = tag;
                 decor.transform.SetParent(_backgroundLayerParents[(int)options.layer]);
@@ -208,10 +219,12 @@ namespace Planets
                     sr.sortingOrder = options.sortingOrder;
                 }
                 
+                var weightedUpDirection = ((Vector3)hit.normal - dirToPlanet * 2) * 0.5f;
+                
                 // This assumes that the sprites have their pivot set to bottom center.
-                // Normally this would set the center of the sprite to the surface level, burying ths sprite.
+                // Normally this would set the center of the sprite to the surface level, burying the sprite.
                 decor.transform.position = (Vector3)hit.point - dirToPlanet * Random.Range(options.minHeightOffset, options.maxHeightOffset);
-                decor.transform.LookAt(decor.transform.position + Vector3.forward, -dirToPlanet);
+                decor.transform.LookAt(decor.transform.position + Vector3.forward, weightedUpDirection);
 
                 var pos = decor.transform.localPosition;
                 pos.z = 0;
@@ -222,8 +235,6 @@ namespace Planets
                     var entry = new KeyValuePair<GameObject, DecorOptions>(decor, options);
                     _updatingDecorObjects.Add(entry);
                 }
-                
-                angle += Random.Range(options.minAngleIncrement, options.maxAngleIncrement);
             }
         }
         
