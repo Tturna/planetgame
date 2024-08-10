@@ -28,7 +28,7 @@ namespace Entities
             objectPoolCreated = true;
         }
 
-        public void CreateDamageNumber(float amount, float lifeTime = 1f, float startMoveStrength = 1f)
+        public void CreateDamageNumber(float amount, float lifeTime = 1f, float startMoveStrength = 2f)
         {
             InitializeDamageNumberObjectPool();
             
@@ -75,13 +75,13 @@ namespace Entities
                 var moveStrength = Mathf.Lerp(0f, startMoveStrength, nLifeTime);
                 tr.Translate(camTr.transform.up * (Time.deltaTime * moveStrength));
                 
-                var scaleX = Mathf.Lerp(1f, 1.7f, (nLifeTime - .75f) * 4f) + nLifeTime * .35f;
-                var scaleY = Mathf.Lerp(1f, .35f, nLifeTime) + nLifeTime * .35f;
+                var scaleX = Mathf.Lerp(1f, 2.5f, (nLifeTime - .8f) * 5f) + nLifeTime * nLifeTime * .5f;
+                var scaleY = Mathf.Lerp(1f, .5f, nLifeTime) + nLifeTime * nLifeTime * .5f;
                 tr.localScale = new Vector3(scaleX, scaleY, 1f);
                
                 tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, nLifeTime * 2f);
                 
-                if (nLifeTime < .9f)
+                if (nLifeTime < .875f)
                 {
                     tmp.fontSharedMaterial = normalMaterial;
                 }

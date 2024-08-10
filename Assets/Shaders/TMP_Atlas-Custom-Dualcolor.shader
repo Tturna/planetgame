@@ -137,6 +137,10 @@ SubShader{
 			// fixed4 color = tex2D(_MainTex, IN.texcoord0) * tex2D(_FaceTex, IN.texcoord1) * IN.color;
 			// fixed4 color = fixed4(IN.color.rgb, tex2D(_MainTex, IN.texcoord0).a);
 			// fixed4 color = IN.color;
+
+			// IN.color seems to be the color coming from TMP. It can be set in script using TextMeshPro.color or
+			// TMP_Text.color
+			
 			fixed4 baseFont = tex2D(_MainTex, IN.texcoord0);
 			fixed colorWeight = 1 - baseFont.r;
 			
@@ -145,7 +149,7 @@ SubShader{
 				colorWeight = _AAColorWeight;
 			}
 			
-			const fixed4 color = fixed4(rgb_lerp(_FaceColor.rgb, _AccentColor.rgb, colorWeight).rgb, baseFont.a);
+			const fixed4 color = fixed4(rgb_lerp(_FaceColor.rgb, _AccentColor.rgb, colorWeight).rgb, baseFont.a * IN.color.a);
 
 			// Alternative implementation to UnityGet2DClipping with support for softness.
 			// #if UNITY_UI_CLIP_RECT
