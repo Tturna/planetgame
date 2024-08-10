@@ -6,7 +6,13 @@ namespace Inventory.Item_Logic
     {
         public override bool UseOnce(UseParameters useParameters)
         {
-            useParameters.itemAnimationManager.AttackMelee("attackLongMelee", null, true, 2);
+            var parameters = new ItemAnimationManager.AttackMeleeParameters("attackLongMelee")
+            {
+                roundRobin = true,
+                maxAttacks = 2
+            };
+            
+            useParameters.itemAnimationManager.AttackMelee(parameters);
 
             return true;
         }
@@ -16,11 +22,15 @@ namespace Inventory.Item_Logic
         public override bool UseOnceSecondary(UseParameters useParameters)
         {
             PlayerController.instance.ResetVelocity(true, false, true);
-            
-            useParameters.itemAnimationManager.AttackMelee("attackMeleeLunge", () =>
+            var parameters = new ItemAnimationManager.AttackMeleeParameters("attackMeleeLunge")
             {
-                PlayerController.instance.AddForceTowardsCursor(1000f);
-            });
+                animationEventCallback = () =>
+                {
+                    PlayerController.instance.AddForceTowardsCursor(1000f);
+                }
+            };
+            
+            useParameters.itemAnimationManager.AttackMelee(parameters);
             
             return true;
         }

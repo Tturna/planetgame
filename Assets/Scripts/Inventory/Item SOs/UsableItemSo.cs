@@ -20,6 +20,9 @@ namespace Inventory.Item_SOs
         public float playerRecoilStrength;
         public float useRange;
         public bool incrementStackOnUse;
+        [Tooltip("Which PFX to spawn from ItemAnimationManager when used.")] public int useParticleIndex = -1;
+        public Vector2 useParticleOffset;
+        public Color useParticleColor;
 
         [System.NonSerialized] public bool isOnCooldown;
     }

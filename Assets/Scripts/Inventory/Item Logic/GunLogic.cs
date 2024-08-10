@@ -18,7 +18,7 @@ namespace Inventory.Item_Logic
             var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
             // object pooler will check if the pool exists so we don't have to.
-            ObjectPooler.CreatePool("Projectile Pool", GameUtilities.instance.GetProjectilePrefab(), 10, true);
+            ObjectPooler.CreatePoolIfDoesntExist("Projectile Pool", GameUtilities.instance.GetProjectilePrefab(), 10, true);
             var projectile = ObjectPooler.GetObject("Projectile Pool");
 
             if (projectile == null)

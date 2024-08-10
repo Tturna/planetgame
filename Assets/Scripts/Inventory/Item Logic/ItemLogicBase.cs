@@ -11,6 +11,9 @@ namespace Inventory.Item_Logic
             public bool flipY;
             public GameObject playerObject;
             public ItemAnimationManager itemAnimationManager;
+            public int particleIndex;
+            public Vector2 particleOffset;
+            public Color particleColor;
         }
         
         // One of these functions is called based on whether Use is called from GetKey or GetKeyDown.

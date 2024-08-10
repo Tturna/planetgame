@@ -220,7 +220,10 @@ namespace Inventory
                 attackItem = _equippedItem,
                 flipY = _equippedSr.flipY,
                 playerObject = gameObject,
-                itemAnimationManager = _itemAnimationManager
+                itemAnimationManager = _itemAnimationManager,
+                particleIndex = usableItemSo.useParticleIndex,
+                particleOffset = usableItemSo.useParticleOffset,
+                particleColor = usableItemSo.useParticleColor
             };
 
             var res = useitemFunction(useParameters);

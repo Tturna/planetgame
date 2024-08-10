@@ -267,7 +267,7 @@ namespace Entities.Enemies
             }
             
             var rot = enemy.transform.eulerAngles;
-            ObjectPooler.CreatePool("Projectile Pool", _projectilePrefab, 10, true);
+            ObjectPooler.CreatePoolIfDoesntExist("Projectile Pool", _projectilePrefab, 10, true);
             CameraController.CameraShake(cameraShakeTime, cameraShakeStrength);
             
             var attackCount = Random.Range(minProjectileAttacks, maxProjectileAttacks);

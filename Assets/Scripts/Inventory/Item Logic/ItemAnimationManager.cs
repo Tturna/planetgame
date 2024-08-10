@@ -1,12 +1,37 @@
+using System;
 using JetBrains.Annotations;
 using UnityEngine;
+using Utilities;
 
 namespace Inventory.Item_Logic
 {
     public class ItemAnimationManager : MonoBehaviour
     {
+        public struct AttackMeleeParameters
+        {
+            public string triggerName;
+            public LogicCallback animationEventCallback;
+            public bool roundRobin;
+            public int maxAttacks;
+            public int particleIndex;
+            public Vector2 particleOffset;
+            public Color particleColor;
+
+            public AttackMeleeParameters(string triggerName)
+            {
+                this.triggerName = triggerName;
+                animationEventCallback = null;
+                roundRobin = false;
+                maxAttacks = 3;
+                particleIndex = -1;
+                particleOffset = Vector2.zero;
+                particleColor = Color.white;
+            }
+        }
+        
         [SerializeField] private SpriteRenderer handLeftSr, handRightSr, equippedItemSr;
         [SerializeField] private TrailRenderer meleeTrailRenderer;
+        [SerializeField, Tooltip("Particles that can be spawned by items as they're used.")] private GameObject[] particlePrefabs;
         
         private bool _canQueueAttack;
         private bool _swingEnding; // This exists to prevent the player from attacking right after the combo time window is closed
@@ -14,6 +39,9 @@ namespace Inventory.Item_Logic
         private int _attackIndex;
         private int _altIdleIndex;
         private string _lastTriggerName;
+        private GameObject _particleObject;
+        private Vector2 _particleOffset;
+        private Color _particleColor;
         
         public delegate void LogicCallback();
         private LogicCallback _animationEventCallback;
@@ -23,13 +51,13 @@ namespace Inventory.Item_Logic
         public event SwingStartedHandler SwingStarted;
         public event SwingCompletedHandler SwingCompleted;
 
-        public void AttackMelee(string triggerName, LogicCallback animationEventCallback = null, bool roundRobin = false, int maxAttacks = 3)
+        public void AttackMelee(AttackMeleeParameters parameters)
         {
             // TODO: This might need improvement
             // There is probably still an issue if the player attacks with a round robin attack a couple times,
             // and then changes to a different weapon of the same type that also uses round robin. This would cause
             // the attack to start at the wrong index.
-            if (triggerName != _lastTriggerName || !roundRobin)
+            if (parameters.triggerName != _lastTriggerName || !parameters.roundRobin)
             {
                 _attackIndex = 0;
                 _altIdleIndex = 0;
@@ -48,26 +76,37 @@ namespace Inventory.Item_Logic
                 if (!_canQueueAttack || attackQueued) return;
                 _recoilAnimator.SetBool("attackQueued", true);
                 _recoilAnimator.SetInteger("attackIndex", _attackIndex);
-                IncrementAttackIndex(maxAttacks);
+                IncrementAttackIndex(parameters.maxAttacks);
                 return;
             }
             
             // Prevent triggering a swing if an attack is queued
             if (attackQueued) return;
 
-            if (roundRobin) _altIdleIndex = (_altIdleIndex + 1) % 2;
+            if (parameters.roundRobin) _altIdleIndex = (_altIdleIndex + 1) % 2;
             
             _recoilAnimator.SetInteger("attackIndex", _attackIndex);
             _recoilAnimator.SetInteger("altIdleIndex", _altIdleIndex);
             _recoilAnimator.SetBool("swinging", true);
             _recoilAnimator.SetBool("attackQueued", false);
-            _recoilAnimator.SetBool("roundRobin", roundRobin);
-            _recoilAnimator.SetTrigger(triggerName);
+            _recoilAnimator.SetBool("roundRobin", parameters.roundRobin);
+            _recoilAnimator.SetTrigger(parameters.triggerName);
             _canQueueAttack = false;
-            _animationEventCallback = animationEventCallback;
+            _animationEventCallback = parameters.animationEventCallback;
             
-            IncrementAttackIndex(maxAttacks);
-            _lastTriggerName = triggerName;
+            IncrementAttackIndex(parameters.maxAttacks);
+            _lastTriggerName = parameters.triggerName;
+
+            if (parameters.particleIndex >= 0)
+            {
+                _particleObject = particlePrefabs[parameters.particleIndex];
+                _particleOffset = parameters.particleOffset;
+                _particleColor = parameters.particleColor;
+            }
+            else
+            {
+                _particleObject = null;
+            }
         }
 
         private void IncrementAttackIndex(int maxAttacks = 3)
@@ -127,6 +166,39 @@ namespace Inventory.Item_Logic
         public void AnimationEventCallback()
         {
             _animationEventCallback?.Invoke();
+        }
+
+        // Designed to be called from an animation event
+        // when a particle effect should be played.
+        // E.g. when a pickaxe hits something.
+        [UsedImplicitly]
+        public void PlayParticleEffect()
+        {
+            if (!_particleObject) return;
+            
+            ObjectPooler.CreatePoolIfDoesntExist(_particleObject.name, _particleObject, 5, true);
+            var particle = ObjectPooler.GetObject(_particleObject.name);
+            
+            if (!particle) return;
+
+            var equippedTransform = equippedItemSr.transform;
+            var position = equippedTransform.position;
+            
+            particle.transform.position = position;
+            particle.transform.Translate(_particleOffset, Space.Self);
+            particle.transform.rotation = equippedTransform.rotation;
+            particle.SetActive(true);
+            
+            var pfx = particle.GetComponent<ParticleSystem>();
+            var main = pfx.main;
+            main.startColor = _particleColor;
+            pfx.Play();
+            
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                pfx.Stop();
+                particle.SetActive(false);
+            }, 5f);
         }
 
         // This is designed to be called from an animation event

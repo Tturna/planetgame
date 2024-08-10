@@ -17,7 +17,7 @@ namespace Utilities
         
         private static readonly Dictionary<string, PoolData> PoolsDict = new();
 
-        public static void CreatePool(string poolName, GameObject stencilObject, int initialPoolSize, bool dynamicSize = false)
+        public static void CreatePoolIfDoesntExist(string poolName, GameObject stencilObject, int initialPoolSize, bool dynamicSize = false)
         {
             if (string.IsNullOrEmpty(poolName))
             {

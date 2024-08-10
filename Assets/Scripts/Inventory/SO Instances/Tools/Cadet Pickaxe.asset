@@ -18,7 +18,9 @@ MonoBehaviour:
   maxStack: 1
   sprite: {fileID: 21300000, guid: 46ca81ac7ab4f2f479071a79538664b6, type: 3}
   handPositionOffset: {x: -0.15, y: -0.15}
+  orientationOffset: 0
   useBothHands: 0
+  flipSprite: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
   logicCode: 3
@@ -33,6 +35,9 @@ MonoBehaviour:
   playerRecoilStrength: 0
   useRange: 0
   incrementStackOnUse: 0
+  useParticleIndex: 0
+  useParticleOffset: {x: 0.5, y: -0.1}
+  useParticleColor: {r: 0.56078434, g: 0.3372549, b: 0.23137255, a: 0.7490196}
   projectile:
     sprite: {fileID: 0}
     sortingLayerName: 

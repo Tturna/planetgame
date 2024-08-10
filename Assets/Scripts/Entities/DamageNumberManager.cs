@@ -24,7 +24,7 @@ namespace Entities
         private void InitializeDamageNumberObjectPool()
         {
             if (objectPoolCreated) return;
-            ObjectPooler.CreatePool(DamageNumberPoolName, damageNumberPrefab, 20);
+            ObjectPooler.CreatePoolIfDoesntExist(DamageNumberPoolName, damageNumberPrefab, 20);
             objectPoolCreated = true;
         }
 

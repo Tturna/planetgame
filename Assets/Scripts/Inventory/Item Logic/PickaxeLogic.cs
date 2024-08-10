@@ -65,13 +65,18 @@ namespace Inventory.Item_Logic
             var mask = GameUtilities.BasicMovementCollisionMask;
             
             Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
-            Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
+            var useAreaHitCount = Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
             
-            // var canMineOre = false;
             if (_mineTimer == 0)
             {
-                // canMineOre = true;
-                useParameters.itemAnimationManager.AttackMelee("attackPickaxe");
+                var parameters = new ItemAnimationManager.AttackMeleeParameters("attackPickaxe")
+                {
+                    particleIndex = useAreaHitCount > 0 ? useParameters.particleIndex : -1,
+                    particleOffset = useParameters.particleOffset,
+                    particleColor = useParameters.particleColor
+                };
+                
+                useParameters.itemAnimationManager.AttackMelee(parameters);
                 _mineTimer = tool.attackCooldown;
                 GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
             }
