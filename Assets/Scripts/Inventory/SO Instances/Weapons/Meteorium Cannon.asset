@@ -18,7 +18,9 @@ MonoBehaviour:
   maxStack: 1
   sprite: {fileID: 21300000, guid: 7fa9ad32462ad4a41940f3cff5e5572c, type: 3}
   handPositionOffset: {x: -0.21875, y: -0.125}
+  orientationOffset: 0
   useBothHands: 0
+  flipSprite: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
   logicCode: 1
@@ -33,12 +35,15 @@ MonoBehaviour:
   playerRecoilStrength: 2
   useRange: 0
   incrementStackOnUse: 0
+  useParticleIndex: -1
+  useParticleOffset: {x: 0, y: 0}
+  useParticleColor: {r: 0, g: 0, b: 0, a: 0}
   projectile:
     sprite: {fileID: 21300000, guid: 505e23aa09edc1d42b41ad936a9397e9, type: 3}
     sortingLayerName: 
     sortingOrder: 0
-    minProjectileSpeed: 50
-    maxProjectileSpeed: 50
+    minProjectileSpeed: 70
+    maxProjectileSpeed: 70
     lifetime: 3
     damage: 15
     knockback: 200
@@ -82,7 +87,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    trailTime: 0.05
+    trailTime: 0.125
     trailStartEndWidth: {x: 0.1, y: 0}
     useLight: 1
     lightColor: {r: 0.84313726, g: 0.48235294, b: 0.7294118, a: 1}
