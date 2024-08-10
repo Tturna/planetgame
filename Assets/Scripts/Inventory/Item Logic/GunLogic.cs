@@ -9,6 +9,7 @@ namespace Inventory.Item_Logic
     {
         private GameObject _muzzleFlashObject;
         private SpriteRenderer _muzzleFlashSr;
+        private ParticleSystem _casingParticleSystem;
         
         public override bool UseOnce(UseParameters useParameters)
         {
@@ -54,6 +55,13 @@ namespace Inventory.Item_Logic
                 
                 GameUtilities.instance.DelayExecute(() => { _muzzleFlashObject.SetActive(false); }, 0.07f);
             }
+
+            if (!_casingParticleSystem)
+            {
+                _casingParticleSystem = useParameters.equippedItemObject.transform.GetChild(1).GetChild(0).GetComponent<ParticleSystem>();
+            }
+            
+            _casingParticleSystem.Play();
             
             return true;
         }

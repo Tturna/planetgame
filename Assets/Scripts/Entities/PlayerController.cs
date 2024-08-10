@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cameras;
@@ -238,6 +239,8 @@ namespace Entities
                     var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
                     tempVel.y = 0f;
                     Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
+
+                    StartCoroutine(JumpStretch());
                     
                     OnJumped();
                 }
@@ -249,6 +252,28 @@ namespace Entities
             {
                 // Prevent adding jump force in the air if the jump key is released while jumping
                 _jumpForceTimer = maxJumpForceTime;
+            }
+        }
+
+        private IEnumerator JumpStretch()
+        {
+            const float time = 0.125f;
+            var timer = time;
+
+            while (timer > 0)
+            {
+                var n = timer / time;
+                
+                var torsoScale = bodyTr.localScale;
+                var squish = Mathf.Lerp(1f, 0.95f, n);
+                var stretch = Mathf.Lerp(1f, 1.05f, n);
+                
+                torsoScale.x = squish;
+                torsoScale.y = stretch;
+                bodyTr.localScale = torsoScale;
+                
+                timer -= Time.deltaTime;
+                yield return null;
             }
         }
 
@@ -409,7 +434,7 @@ namespace Entities
             //     }, 0.1f);
             // }
             
-            CameraController.CameraShake(0.1f, 0.1f);
+            CameraController.CameraShake(0.12f, 0.12f);
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)

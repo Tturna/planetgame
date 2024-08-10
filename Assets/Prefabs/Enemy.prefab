@@ -4953,8 +4953,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1064534325
+  m_SortingLayer: 3
   m_SortingOrder: 4
   m_Sprite: {fileID: -381946584, guid: 23e2e3a7cb7d21545a09bd5ff546766a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5047,7 +5047,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityMultiplier: 25
-  mainCollider: {fileID: 9052693212076312620}
   flashShader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
   enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
   relativeMoveDirection: {x: 0, y: 0, z: 0}

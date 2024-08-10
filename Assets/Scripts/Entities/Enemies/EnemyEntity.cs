@@ -392,6 +392,9 @@ namespace Entities.Enemies
                 Death();
                 return;
             }
+            
+            CameraController.CameraShake(0.075f, 0.05f);
+            StartCoroutine(DamageStretch());
 
             _sr.sharedMaterial.shader = flashShader;
             GameUtilities.instance.DelayExecute(() =>
@@ -399,6 +402,28 @@ namespace Entities.Enemies
                 if (_sr == null) return;
                 _sr.sharedMaterial.shader = _defaultShader;
             }, 0.1f);
+        }
+        
+        private IEnumerator DamageStretch()
+        {
+            const float time = 0.2f;
+            var timer = time;
+
+            while (timer > 0)
+            {
+                var n = timer / time;
+                
+                var bodyScale = transform.localScale;
+                var squish = Mathf.Lerp(1f, 0.65f, n);
+                var stretch = Mathf.Lerp(1f, 1.35f, n);
+                
+                bodyScale.x = stretch;
+                bodyScale.y = squish;
+                transform.localScale = bodyScale;
+                
+                timer -= Time.deltaTime;
+                yield return null;
+            }
         }
 
         public void Knockback(Vector3 damageSourcePosition, float amount)

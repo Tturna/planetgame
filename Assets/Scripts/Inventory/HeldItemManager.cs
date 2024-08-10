@@ -24,6 +24,7 @@ namespace Inventory
         [SerializeField] private Transform flippingEffectParent;
         [SerializeField] private GameObject placeableHologram;
         [SerializeField] private Sprite roomModuleHologramSprite;
+        [SerializeField] private Transform bulletCasingPfxTransform;
         
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
@@ -110,6 +111,11 @@ namespace Inventory
             scale.y = cursorAngle < 90 ? -1f : 1f;
             _itemAnchor.localScale = scale;
             flippingEffectParent.localScale = scale; // flip flipping effects
+            
+            bulletCasingPfxTransform.rotation = transform.rotation;
+            var casingPfxScale = bulletCasingPfxTransform.localScale;
+            casingPfxScale.x = cursorAngle < 90 ? 1f : -1f;
+            bulletCasingPfxTransform.localScale = casingPfxScale;
         
             // Manually set left hand position when holding an item
             if (_equippedItem?.itemSo != null)
