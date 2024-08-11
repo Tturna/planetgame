@@ -21,6 +21,7 @@ namespace Entities
             [SerializeField] private SpriteRenderer jetpackSr;
             [SerializeField] private Transform bodyTr;
             [SerializeField] private ParticleSystem jetpackParticles1, jetpackParticles2;
+            [SerializeField] private ParticleSystem jumpLandParticles;
             [SerializeField] private SpriteRenderer headSr;
             [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
             [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
@@ -255,7 +256,7 @@ namespace Entities
             }
         }
 
-        private IEnumerator JumpStretch()
+        private IEnumerator JumpStretch(float squish = 0.95f, float stretch = 1.05f, bool landing = false)
         {
             const float time = 0.125f;
             var timer = time;
@@ -265,11 +266,20 @@ namespace Entities
                 var n = timer / time;
                 
                 var torsoScale = bodyTr.localScale;
-                var squish = Mathf.Lerp(1f, 0.95f, n);
-                var stretch = Mathf.Lerp(1f, 1.05f, n);
+                var squishLerp = Mathf.Lerp(1f, squish, n);
+                var stretchLerp = Mathf.Lerp(1f, stretch, n);
+
+                if (landing)
+                {
+                    torsoScale.x = stretchLerp;
+                    torsoScale.y = squishLerp;
+                }
+                else
+                {
+                    torsoScale.x = squishLerp;
+                    torsoScale.y = stretchLerp;
+                }
                 
-                torsoScale.x = squish;
-                torsoScale.y = stretch;
                 bodyTr.localScale = torsoScale;
                 
                 timer -= Time.deltaTime;
@@ -306,6 +316,9 @@ namespace Entities
             var tempVel = Rigidbody.GetVector(Rigidbody.velocity);
             tempVel.x = _oldLocalVelocity.x;
             Rigidbody.velocity = Rigidbody.GetRelativeVector(tempVel);
+            
+            StartCoroutine(JumpStretch(0.9f, 1.1f, true));
+            jumpLandParticles.Play();
             
             OnGrounded();
         }
