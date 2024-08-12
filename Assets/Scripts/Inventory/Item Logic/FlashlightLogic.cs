@@ -11,7 +11,7 @@ namespace Inventory.Item_Logic
             // use this instead of ??= because ??= bypasses the unity object lifetime check
             if (!_flashlightObject)
             {
-                _flashlightObject = useParameters.equippedItemObject.transform.GetChild(1).GetChild(0).gameObject;
+                _flashlightObject = useParameters.equippedItemObject.transform.GetChild(1).GetChild(1).gameObject;
                 _flashlightObject.SetActive(true);
                 
                 // _flashlightObject.transform.localPosition = Vector3.right * .13f; // Maybe should be a variable in the so

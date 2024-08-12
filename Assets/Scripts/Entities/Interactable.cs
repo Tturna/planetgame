@@ -1,7 +1,6 @@
 using System;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utilities;
 
 namespace Entities
