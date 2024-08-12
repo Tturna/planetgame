@@ -434,6 +434,8 @@ namespace Entities.Enemies
         
         private IEnumerator DamageStretch()
         {
+            if (enemySo.hitSquishStretchMultiplier == Vector2.zero) yield break;
+            
             const float time = 0.2f;
             var timer = time;
 
@@ -441,12 +443,36 @@ namespace Entities.Enemies
             {
                 var n = timer / time;
                 
-                var bodyScale = transform.localScale;
-                var squish = Mathf.Lerp(1f, 0.65f, n);
-                var stretch = Mathf.Lerp(1f, 1.35f, n);
+                var squishMult = enemySo.hitSquishStretchMultiplier.x;
+                var stretchMult = enemySo.hitSquishStretchMultiplier.y;
+
+                float squish, stretch;
+
+                if (squishMult < 1f)
+                {
+                    squish = Mathf.Lerp(0.65f, 1f, 1f - squishMult);
+                }
+                else
+                {
+                    squish = 0.65f * squishMult;
+                }
                 
-                bodyScale.x = stretch;
-                bodyScale.y = squish;
+                if (stretchMult < 1f)
+                {
+                    stretch = Mathf.Lerp(1.35f, 1f, 1f - stretchMult);
+                }
+                else
+                {
+                    stretch = 1.35f * stretchMult;
+                }
+                
+                var bodyScale = transform.localScale;
+                var squishLerp = Mathf.Lerp(1f, squish, n);
+                var stretchLerp = Mathf.Lerp(1f, stretch, n);
+                
+                bodyScale.x = stretchLerp;
+                bodyScale.y = squishLerp;
+
                 transform.localScale = bodyScale;
                 
                 timer -= Time.deltaTime;

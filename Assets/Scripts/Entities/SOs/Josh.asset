@@ -38,6 +38,7 @@ MonoBehaviour:
   healthbarDistance: 0.66
   overrideAnimator: {fileID: 22100000, guid: b234a0b527a18734f810e2ecf9b57a03, type: 2}
   hitPfxColor: {r: 1, g: 1, b: 1, a: 1}
+  hitSquishStretchMultiplier: {x: 1, y: 1}
   evasionTime: 7
   attackInterval: 2.5
   attackRecoveryTime: 1.5

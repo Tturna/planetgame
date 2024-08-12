@@ -33,6 +33,7 @@ namespace Entities.Enemies
         public float healthbarDistance;
         public RuntimeAnimatorController overrideAnimator;
         public Color hitPfxColor;
+        public Vector2 hitSquishStretchMultiplier;
         
         [Tooltip("How long the player has to be outside the aggro range for the enemy to deaggro")]
         public float evasionTime;
