@@ -18,6 +18,8 @@ namespace Entities.Enemies
     public sealed class EnemyEntity : EntityController, IDamageable
     {
         [SerializeField] private Shader flashShader;
+        [SerializeField] private ParticleSystem deathPfx;
+        [SerializeField] private ParticleSystem hitPfx;
         
         public EnemySo enemySo;
         [HideInInspector] public Vector3 relativeMoveDirection;
@@ -28,7 +30,6 @@ namespace Entities.Enemies
         private SpriteRenderer _sr;
         private HealthbarManager _healthbarManager;
         private DamageNumberManager _damageNumberManager;
-        private ParticleSystem _deathPs;
         
         private Shader _defaultShader;
         private MovementPattern _movementPattern;
@@ -326,7 +327,6 @@ namespace Entities.Enemies
             _sr = GetComponent<SpriteRenderer>();
             _healthbarManager = GetComponent<HealthbarManager>();
             _damageNumberManager = GetComponent<DamageNumberManager>();
-            _deathPs = GetComponentInChildren<ParticleSystem>();
             
             _animator.runtimeAnimatorController = enemySo.overrideAnimator;
             _animator.SetTrigger(AnimWakeup);
@@ -370,7 +370,7 @@ namespace Entities.Enemies
             _attackRecoveryTime = enemySo.attackRecoveryTime;
         }
 
-        public void TakeDamage(float amount)
+        public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
             if (_wakeupTimer < enemySo.wakeupDelay) return;
             if (_health <= 0) return;
@@ -386,6 +386,35 @@ namespace Entities.Enemies
             }
             
             _damageNumberManager.CreateDamageNumber(amount);
+            CameraController.CameraShake(0.075f, 0.05f);
+            
+            var directionToSource = (damageSourcePosition - transform.position).normalized;
+            var localHitPfxDirection = transform.InverseTransformDirection(-directionToSource);
+            var angle = Mathf.Atan2(localHitPfxDirection.y, localHitPfxDirection.x) * Mathf.Rad2Deg;
+            var shapeModule = hitPfx.shape;
+
+            // If the hit is coming from above the enemy, rotate the hit effect upwards so less
+            // particles hit the ground. The higher the hit, the less rotation offset.
+            var relativeUpDot = Vector3.Dot(directionToSource, transform.up);
+            
+            if (relativeUpDot > 0f)
+            {
+                var offset = shapeModule.arc * (1f - relativeUpDot);
+                
+                if (localHitPfxDirection.x < 0)
+                {
+                    offset *= -1;
+                }
+                
+                angle += offset;
+            }
+            
+            shapeModule.rotation = new Vector3(0, 0, angle - shapeModule.arc / 2f);
+            
+            var mainModule = hitPfx.main;
+            mainModule.startColor = enemySo.hitPfxColor;
+            
+            hitPfx.Play();
             
             if (_health <= 0)
             {
@@ -393,7 +422,6 @@ namespace Entities.Enemies
                 return;
             }
             
-            CameraController.CameraShake(0.075f, 0.05f);
             StartCoroutine(DamageStretch());
 
             _sr.sharedMaterial.shader = flashShader;
@@ -449,10 +477,10 @@ namespace Entities.Enemies
         {
             _deathAttackCancelAction?.Invoke();
             
-            _deathPs.transform.SetParent(null);
-            _deathPs.Play();
+            deathPfx.transform.SetParent(null);
+            deathPfx.Play();
             TriggerOnDeath();
-            GameUtilities.instance.DelayExecute(() => Destroy(_deathPs.gameObject), 1f);
+            GameUtilities.instance.DelayExecute(() => Destroy(deathPfx.gameObject), 1f);
 
             if (enemySo.isBoss)
             {
@@ -497,8 +525,9 @@ namespace Entities.Enemies
             // Damage player on contact
             if (col.TryGetComponent<PlayerController>(out var player))
             {
-                player.TakeDamage(enemySo.contactDamage);
-                player.Knockback(transform.position + (Vector3)enemySo.knockbackSourcePointOffset, currentKnockback);
+                var damageSourcePoint = transform.position + (Vector3)enemySo.knockbackSourcePointOffset;
+                player.TakeDamage(enemySo.contactDamage, damageSourcePoint);
+                player.Knockback(damageSourcePoint, currentKnockback);
             }
         }
         

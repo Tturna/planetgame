@@ -422,7 +422,7 @@ namespace Entities
         
         // Public methods
         
-        public void TakeDamage(float amount)
+        public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
             amount = Mathf.Clamp(amount - PlayerStatsManager.Defense, 0, amount);
             var died = PlayerStatsManager.ChangeHealth(-amount);

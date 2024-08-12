@@ -32,6 +32,7 @@ namespace Entities.Enemies
         public Vector2 knockbackSourcePointOffset;
         public float healthbarDistance;
         public RuntimeAnimatorController overrideAnimator;
+        public Color hitPfxColor;
         
         [Tooltip("How long the player has to be outside the aggro range for the enemy to deaggro")]
         public float evasionTime;

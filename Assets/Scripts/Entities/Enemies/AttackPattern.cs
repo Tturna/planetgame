@@ -190,8 +190,9 @@ namespace Entities.Enemies
                 CameraController.CameraShake(cameraShakeTime, cameraShakeStrength);
 
                 if (!hit || !hit.transform.root.TryGetComponent<PlayerController>(out var player)) return;
-                player.TakeDamage(damage);
-                player.Knockback(enemy.transform.position + (Vector3)enemy.enemySo.knockbackSourcePointOffset, knockback);
+                var damageSourcePoint = enemy.transform.position + (Vector3)enemy.enemySo.knockbackSourcePointOffset;
+                player.TakeDamage(damage, damageSourcePoint);
+                player.Knockback(damageSourcePoint, knockback);
             }
         }
         

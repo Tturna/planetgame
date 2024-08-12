@@ -76,9 +76,10 @@ namespace Inventory
                 // TODO: Implement entity defense and defense penetration
                 var damage = PlayerStatsManager.CalculateMeleeDamage(_meleeSo.damage, _meleeSo.critChance);
                 var knockback = _meleeSo.knockback * PlayerStatsManager.KnockbackMultiplier;
+                var damageSourcePoint = transform.position;
                 
-                enemy.TakeDamage(damage);
-                enemy.Knockback(transform.position, knockback);
+                enemy.TakeDamage(damage, damageSourcePoint);
+                enemy.Knockback(damageSourcePoint, knockback);
             }
         }
     }

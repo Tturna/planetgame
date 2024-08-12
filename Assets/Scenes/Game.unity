@@ -89690,7 +89690,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_Name
-      value: (Enemy) Swamp Thing (2)
+      value: (Enemy) Swamp Thing
       objectReference: {fileID: 0}
     - target: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
       propertyPath: m_IsActive
@@ -116333,7 +116333,7 @@ GameObject:
   m_Icon: {fileID: 2800000, guid: 43cd5acb6378e7243bb7c91dead40533, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &6899459541835332861
 MonoBehaviour:
   m_ObjectHideFlags: 0

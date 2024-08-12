@@ -303,7 +303,7 @@ namespace Entities
             var damage = PlayerStatsManager.CalculateRangedDamage(_data.damage, _data.critChance);
             var trueKnockback = _data.knockback * PlayerStatsManager.KnockbackMultiplier;
             
-            damageable.TakeDamage(damage);
+            damageable.TakeDamage(damage, _lastPos);
             // Here we use last position because the projectile might have moved past the collider
             damageable.Knockback(_lastPos, trueKnockback);
 
