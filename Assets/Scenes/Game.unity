@@ -82784,6 +82784,7 @@ MonoBehaviour:
   holdIndicatorPrefab: {fileID: 4185121403196190369, guid: e2f40d50adbb25e49b86fb609718a959, type: 3}
   promptOffset: {x: 0, y: 1}
   holdIndicatorOffset: {x: 0, y: -1}
+  outlineMaterial: {fileID: 2100000, guid: f4ab069e67c979343a7921f4e136e955, type: 2}
   canHoldInteract: 1
 --- !u!95 &1429146341
 Animator:

@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
@@ -12,6 +13,7 @@ namespace Entities
         [SerializeField] private GameObject holdIndicatorPrefab;
         [SerializeField] private Vector2 promptOffset;
         [SerializeField] private Vector2 holdIndicatorOffset;
+        [SerializeField] private Material outlineMaterial;
 
         public bool canHoldInteract;
         // ReSharper disable once InconsistentNaming
@@ -19,7 +21,9 @@ namespace Entities
 
         private GameObject _promptObject;
         private GameObject _holdIndicatorObject;
+        private GameObject _outlineParent;
         private PlayerController _player;
+        [CanBeNull] private SpriteRenderer spriteRenderer;
         private float _distanceToPlayer;
         private bool _inRange;
         private float _interactHoldTimer;
@@ -51,6 +55,11 @@ namespace Entities
                 _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
                 _holdIndicatorObject.SetActive(false);
             }
+
+            if (TryGetComponent<SpriteRenderer>(out var sr))
+            {
+                spriteRenderer = sr;
+            }
         }
 
         // This system is not using trigger collider events because they seem to be VERY unreliable.
@@ -79,6 +88,46 @@ namespace Entities
         public virtual void EnablePrompt()
         {
             _promptObject.SetActive(true);
+
+            if (!spriteRenderer) return;
+
+            // TODO: Optimize so objects are not created and destroyed all the time
+            // This could probably do with a better system altogether.
+            // Consider a shader that increases the sprite size by moving vertices and
+            // then downsizing the sprite to procedurally add padding to sprites so that they
+            // can fit an outline. Also consider a second shader pass or multiple materials.
+            
+            _outlineParent = new GameObject("Outline Parent");
+            _outlineParent.transform.SetParent(transform);
+            _outlineParent.transform.localPosition = Vector3.zero;
+            _outlineParent.transform.rotation = transform.rotation;
+
+            for (var i = 0; i < 4; i++)
+            {
+                int x, y;
+
+                if (i < 2)
+                {
+                    x = 0;
+                    y = i * 2 - 1;
+                }
+                else
+                {
+                    x = (i - 2) * 2 - 1;
+                    y = 0;
+                }
+                
+                var outline = new GameObject("Outline");
+                outline.transform.SetParent(_outlineParent.transform);
+                outline.transform.localPosition = new Vector2(x / 16f, y / 16f);
+                outline.transform.rotation = transform.rotation;
+                
+                var sr = outline.AddComponent<SpriteRenderer>();
+                sr.sprite = spriteRenderer.sprite;
+                sr.sortingLayerName = spriteRenderer.sortingLayerName;
+                sr.sortingOrder = spriteRenderer.sortingOrder - 1;
+                sr.material = outlineMaterial;
+            }
         }
 
         public virtual void DisablePrompt()
@@ -86,6 +135,11 @@ namespace Entities
             if (_promptObject)
             {
                 _promptObject.SetActive(false);
+            }
+
+            if (_outlineParent)
+            {
+                Destroy(_outlineParent);
             }
         }
 

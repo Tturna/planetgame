@@ -3,7 +3,11 @@ guid: 6f21fefe37d593c45acafc0cf51b0fc2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - promptPrefab: {instanceID: 0}
+  - holdIndicatorPrefab: {instanceID: 0}
+  - outlineMaterial: {fileID: 2100000, guid: f4ab069e67c979343a7921f4e136e955, type: 2}
+  - IndicatorParent: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
