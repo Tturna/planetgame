@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Inventory.Item_SOs;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -12,6 +13,10 @@ namespace Planets
         public struct DecorOptions
         {
             public Sprite[] spritePool;
+            public bool breakable;
+            public int breakableToughness;
+            public ItemSo breakableDrop;
+            public Vector2 breakableColliderSize;
             public bool animate;
             public bool move;
             public string objectName;
@@ -28,7 +33,6 @@ namespace Planets
             public Color spriteColor;
             public string sortingLayer;
             public int sortingOrder;
-            public string tag;
         }
         
         public struct DecorData
@@ -48,6 +52,7 @@ namespace Planets
         [SerializeField] private DecorOptions flowerOptions, grassOptions, rockOptions, bushOptions;
         [SerializeField] private Material bgTerrainMaterialFg, bgTerrainMaterialMg;
         [SerializeField] private Material styledSpriteMaterial;
+        [SerializeField] private GameObject breakablePrefab;
 
         private Transform[] _backgroundLayerParents;
         private readonly List<KeyValuePair<GameObject, DecorOptions>> _updatingDecorObjects = new();
@@ -204,11 +209,37 @@ namespace Planets
 
                 if (Vector3.Distance(planetGen.transform.position, hit.point) < options.minSpawnHeight) continue;
 
-                var decor = new GameObject(options.objectName);
-                decor.tag = tag;
+                GameObject decor;
+                SpriteRenderer sr;
+                
+                if (options.breakable)
+                {
+                    decor = Instantiate(breakablePrefab);
+                    sr = decor.GetComponent<SpriteRenderer>();
+                    
+                    var boxCollider = decor.GetComponent<BoxCollider2D>();
+                    boxCollider.size = options.breakableColliderSize;
+                    boxCollider.offset = Vector2.up * boxCollider.size.y / 2f;
+                    
+                    var breakable = decor.GetComponent<BreakableItemInstance>();
+                    breakable.toughness = options.breakableToughness;
+                    decor.tag = "Breakable";
+
+                    if (options.breakableDrop)
+                    {
+                        breakable.itemSo = options.breakableDrop;
+                    }
+                }
+                else
+                {
+                    decor = new GameObject();
+                    sr = decor.AddComponent<SpriteRenderer>();
+                    decor.tag = tag;
+                }
+                
+                decor.name = options.objectName;
                 decor.transform.SetParent(_backgroundLayerParents[(int)options.layer]);
                 
-                var sr = decor.AddComponent<SpriteRenderer>();
                 sr.sprite = options.spritePool[Random.Range(0, options.spritePool.Length)];
                 sr.color = options.spriteColor;
                 sr.material = styledSpriteMaterial;

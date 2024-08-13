@@ -34407,6 +34407,10 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: bca630ca10d9b234896b28d1a1d40362, type: 3}
     - {fileID: 21300000, guid: d162a7b596c15e9488e9aff20df8a32a, type: 3}
+    breakable: 1
+    breakableToughness: 5
+    breakableDrop: {fileID: 11400000, guid: bb877d6eb14893c43bfc8ee7f9fec7ae, type: 2}
+    breakableColliderSize: {x: 0.75, y: 1.5}
     animate: 0
     move: 0
     objectName: Tree
@@ -34419,15 +34423,18 @@ MonoBehaviour:
     minHeightOffset: -0.0625
     maxHeightOffset: -0.1875
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
-    sortingLayer: 
+    sortingLayer: Default
     sortingOrder: 0
-    tag: Breakable
   fgTreeOptions:
     spritePool:
     - {fileID: 21300000, guid: ddc7d64c46d4c304db721b0fde02424a, type: 3}
     - {fileID: 21300000, guid: 50540fb71d7bd0a4d912cc0cd2292923, type: 3}
     - {fileID: 21300000, guid: 924a243695e130d4e8d443c0cf177735, type: 3}
     - {fileID: 21300000, guid: 3f75811d433c35747a06404454d7be81, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: fgTree
@@ -34442,11 +34449,14 @@ MonoBehaviour:
     spriteColor: {r: 0.31764707, g: 0.5372549, b: 0.45490196, a: 1}
     sortingLayer: Background
     sortingOrder: 4
-    tag: Untagged
   mgBushOptions:
     spritePool:
     - {fileID: 21300000, guid: 3d53e7fec8383bb43b4f194830a7fef0, type: 3}
     - {fileID: 21300000, guid: bb1710130b5994a4bb54ef87216859c4, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: mgBush
@@ -34461,11 +34471,14 @@ MonoBehaviour:
     spriteColor: {r: 0.41960785, g: 0.6666667, b: 0.654902, a: 1}
     sortingLayer: Background
     sortingOrder: 3
-    tag: Untagged
   mgBirdOptions:
     spritePool:
     - {fileID: -1203373473, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
     - {fileID: 1979152692, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 1
     move: 1
     objectName: mgBirds
@@ -34480,13 +34493,16 @@ MonoBehaviour:
     spriteColor: {r: 0.41960785, g: 0.6666667, b: 0.654902, a: 1}
     sortingLayer: Background
     sortingOrder: 3
-    tag: Untagged
   bgMountainOptions:
     spritePool:
     - {fileID: 21300000, guid: da6ea040ef0c49c4b89bfc3f1c737cda, type: 3}
     - {fileID: 21300000, guid: 48b1d4551bbea7c42ba8c7b26fd0e38b, type: 3}
     - {fileID: 21300000, guid: a4e4d99aafaec0541936f4d90c2b80c6, type: 3}
     - {fileID: 21300000, guid: 17804d314e359504086cd02a077f35d0, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: bgMountain
@@ -34501,10 +34517,13 @@ MonoBehaviour:
     spriteColor: {r: 0.5372549, g: 0.7019608, b: 0.78431374, a: 1}
     sortingLayer: Background
     sortingOrder: 2
-    tag: Untagged
   bgIslandOptions:
     spritePool:
     - {fileID: 21300000, guid: 838c88261ea95334bb61bd9f12857ffe, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: bgIsland
@@ -34519,12 +34538,15 @@ MonoBehaviour:
     spriteColor: {r: 0.5372549, g: 0.7019608, b: 0.78431374, a: 1}
     sortingLayer: Background
     sortingOrder: 2
-    tag: Untagged
   flowerOptions:
     spritePool:
     - {fileID: 21300000, guid: f08d6c07495a5a64ab144cf1531320b3, type: 3}
     - {fileID: 21300000, guid: 8fb09824003b39e448744574d793d074, type: 3}
     - {fileID: 21300000, guid: 212587b0303b73546b6e452d88c4e5bd, type: 3}
+    breakable: 1
+    breakableToughness: 1
+    breakableDrop: {fileID: 11400000, guid: 081443d23b676c04eb0ec34008a76a98, type: 2}
+    breakableColliderSize: {x: 0.5, y: 0.5}
     animate: 0
     move: 0
     objectName: flower
@@ -34537,14 +34559,17 @@ MonoBehaviour:
     minHeightOffset: -0.1
     maxHeightOffset: 0
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
-    sortingLayer: 
+    sortingLayer: Default
     sortingOrder: 0
-    tag: Untagged
   grassOptions:
     spritePool:
     - {fileID: 21300000, guid: 0065f435103fe594498e96a516320f8f, type: 3}
     - {fileID: 21300000, guid: e2a4e1f15070d2748ad24230d343354e, type: 3}
     - {fileID: 21300000, guid: 78db7c6cfb4d223428f0d94eb4778830, type: 3}
+    breakable: 1
+    breakableToughness: 1
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0.5, y: 0.25}
     animate: 0
     move: 0
     objectName: grass
@@ -34557,14 +34582,17 @@ MonoBehaviour:
     minHeightOffset: -0.0625
     maxHeightOffset: -0.125
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
-    sortingLayer: 
+    sortingLayer: Default
     sortingOrder: 0
-    tag: Untagged
   rockOptions:
     spritePool:
     - {fileID: 21300000, guid: 5e33fec12aab37f4783c659a6e083c6e, type: 3}
     - {fileID: 21300000, guid: 3ba8b194f33ac484e96c22576a977173, type: 3}
     - {fileID: 21300000, guid: 265b68b0ca681dd49ada894d9f8fc186, type: 3}
+    breakable: 1
+    breakableToughness: 1
+    breakableDrop: {fileID: 11400000, guid: b42b5c158a3b7d94e89243d97c82ccd8, type: 2}
+    breakableColliderSize: {x: 0.5, y: 0.5}
     animate: 0
     move: 0
     objectName: rock
@@ -34577,13 +34605,16 @@ MonoBehaviour:
     minHeightOffset: -0.0625
     maxHeightOffset: -0.1875
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
-    sortingLayer: 
+    sortingLayer: Default
     sortingOrder: 0
-    tag: Untagged
   bushOptions:
     spritePool:
     - {fileID: 21300000, guid: a5736c4111db3184cac757acc6d15d48, type: 3}
     - {fileID: 21300000, guid: 7f03c7ee228ee0c489b6017bad678591, type: 3}
+    breakable: 1
+    breakableToughness: 1
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0.75, y: 0.5}
     animate: 0
     move: 0
     objectName: bush
@@ -34596,12 +34627,12 @@ MonoBehaviour:
     minHeightOffset: -0.0625
     maxHeightOffset: -0.0625
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
-    sortingLayer: 
+    sortingLayer: Default
     sortingOrder: 0
-    tag: Untagged
   bgTerrainMaterialFg: {fileID: 2100000, guid: 97b9fe0f2d6f57749ab98b15b0d013a1, type: 2}
   bgTerrainMaterialMg: {fileID: 2100000, guid: f5ed4b77062dae64faf8732eb7fafeb7, type: 2}
   styledSpriteMaterial: {fileID: 2100000, guid: 9a35ebc22acfb3d40863c9a0bcb5e67d, type: 2}
+  breakablePrefab: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
 --- !u!114 &273182494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73809,6 +73840,10 @@ MonoBehaviour:
     spritePool:
     - {fileID: 21300000, guid: 363ea9b7a7ef6b24aa732f6a38ab44f5, type: 3}
     - {fileID: 21300000, guid: c7e883ee15cd5684082d1ec44de38ae8, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: Tree
@@ -73823,13 +73858,16 @@ MonoBehaviour:
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
-    tag: Breakable
   fgTreeOptions:
     spritePool:
     - {fileID: 21300000, guid: ddc7d64c46d4c304db721b0fde02424a, type: 3}
     - {fileID: 21300000, guid: 50540fb71d7bd0a4d912cc0cd2292923, type: 3}
     - {fileID: 21300000, guid: 924a243695e130d4e8d443c0cf177735, type: 3}
     - {fileID: 21300000, guid: 3f75811d433c35747a06404454d7be81, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: fgTree
@@ -73844,11 +73882,14 @@ MonoBehaviour:
     spriteColor: {r: 0.31764707, g: 0.5372549, b: 0.45490196, a: 1}
     sortingLayer: Background
     sortingOrder: 4
-    tag: Untagged
   mgBushOptions:
     spritePool:
     - {fileID: 21300000, guid: 3d53e7fec8383bb43b4f194830a7fef0, type: 3}
     - {fileID: 21300000, guid: bb1710130b5994a4bb54ef87216859c4, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: mgBush
@@ -73863,11 +73904,14 @@ MonoBehaviour:
     spriteColor: {r: 0.41960785, g: 0.6666667, b: 0.654902, a: 1}
     sortingLayer: Background
     sortingOrder: 3
-    tag: Untagged
   mgBirdOptions:
     spritePool:
     - {fileID: -1203373473, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
     - {fileID: 1979152692, guid: 646435884bb7bca46842ac3343d6abe9, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 1
     move: 1
     objectName: mgBirds
@@ -73882,13 +73926,16 @@ MonoBehaviour:
     spriteColor: {r: 0.41960785, g: 0.6666667, b: 0.654902, a: 1}
     sortingLayer: Background
     sortingOrder: 3
-    tag: Untagged
   bgMountainOptions:
     spritePool:
     - {fileID: 21300000, guid: da6ea040ef0c49c4b89bfc3f1c737cda, type: 3}
     - {fileID: 21300000, guid: 48b1d4551bbea7c42ba8c7b26fd0e38b, type: 3}
     - {fileID: 21300000, guid: a4e4d99aafaec0541936f4d90c2b80c6, type: 3}
     - {fileID: 21300000, guid: 17804d314e359504086cd02a077f35d0, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: bgMountain
@@ -73903,10 +73950,13 @@ MonoBehaviour:
     spriteColor: {r: 0.5372549, g: 0.7019608, b: 0.78431374, a: 1}
     sortingLayer: Background
     sortingOrder: 2
-    tag: Untagged
   bgIslandOptions:
     spritePool:
     - {fileID: 21300000, guid: 838c88261ea95334bb61bd9f12857ffe, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: bgIsland
@@ -73921,12 +73971,15 @@ MonoBehaviour:
     spriteColor: {r: 0.5372549, g: 0.7019608, b: 0.78431374, a: 1}
     sortingLayer: Background
     sortingOrder: 2
-    tag: Untagged
   flowerOptions:
     spritePool:
     - {fileID: 21300000, guid: 567b7c6bad004f74dac9833993d365eb, type: 3}
     - {fileID: 21300000, guid: c9c744384c8e1d64f9dce194e4bf2f53, type: 3}
     - {fileID: 21300000, guid: 8c38a0ce457577f4285a64db4621ce42, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: flower
@@ -73941,12 +73994,15 @@ MonoBehaviour:
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
-    tag: Untagged
   grassOptions:
     spritePool:
     - {fileID: 21300000, guid: ac7ddcb8cd9356e43bd4c15e59758322, type: 3}
     - {fileID: 21300000, guid: c9f9a647de9b2ae40a0bec89dc7cbcd1, type: 3}
     - {fileID: 21300000, guid: 0344458aef6b85a49a9686c9bf032aa7, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: grass
@@ -73961,11 +74017,14 @@ MonoBehaviour:
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
-    tag: Untagged
   rockOptions:
     spritePool:
     - {fileID: 21300000, guid: f7c361ec571ed44469ee932d9931f4a9, type: 3}
     - {fileID: 21300000, guid: 97ede13197f5f5b49be4f8f79c630176, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: rock
@@ -73980,11 +74039,14 @@ MonoBehaviour:
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
-    tag: Untagged
   bushOptions:
     spritePool:
     - {fileID: 21300000, guid: 61bfd6a3a28308f4daf0cf286dc2a1f8, type: 3}
     - {fileID: 21300000, guid: bce01c881ddb3504db1a98d64a38eadb, type: 3}
+    breakable: 0
+    breakableToughness: 0
+    breakableDrop: {fileID: 0}
+    breakableColliderSize: {x: 0, y: 0}
     animate: 0
     move: 0
     objectName: bush
@@ -73999,10 +74061,10 @@ MonoBehaviour:
     spriteColor: {r: 1, g: 1, b: 1, a: 1}
     sortingLayer: 
     sortingOrder: 0
-    tag: Untagged
   bgTerrainMaterialFg: {fileID: 2100000, guid: 97b9fe0f2d6f57749ab98b15b0d013a1, type: 2}
   bgTerrainMaterialMg: {fileID: 2100000, guid: f5ed4b77062dae64faf8732eb7fafeb7, type: 2}
   styledSpriteMaterial: {fileID: 2100000, guid: 9a35ebc22acfb3d40863c9a0bcb5e67d, type: 2}
+  breakablePrefab: {fileID: 0}
 --- !u!114 &1051133948
 MonoBehaviour:
   m_ObjectHideFlags: 0

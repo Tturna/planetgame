@@ -66,20 +66,6 @@ namespace Inventory.Item_Logic
             
             Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
             var useAreaHitCount = Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
-            
-            if (_mineTimer == 0)
-            {
-                var parameters = new ItemAnimationManager.AttackMeleeParameters("attackPickaxe")
-                {
-                    particleIndex = useAreaHitCount > 0 ? useParameters.particleIndex : -1,
-                    particleOffset = useParameters.particleOffset,
-                    particleColor = useParameters.particleColor
-                };
-                
-                useParameters.itemAnimationManager.AttackMelee(parameters);
-                _mineTimer = tool.attackCooldown;
-                GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
-            }
 
             // if (canMineOre)
             // {
@@ -97,16 +83,28 @@ namespace Inventory.Item_Logic
                 if (!hit) continue;
                 var hitObject = hit.gameObject;
                 
+                if (_mineTimer > 0) continue;
                 if (!hitObject.CompareTag("Breakable")) continue;
                 
                 var breakableInstance = hitObject.GetComponent<BreakableItemInstance>();
-                var itemSo = (ItemSo)breakableInstance.itemSo;
 
-                var item = new Item();
-                item.itemSo = itemSo;
-                InventoryManager.SpawnItem(item, hitObject.transform.position);
+                if (breakableInstance.itemSo)
+                {
+                    breakableInstance.toughness -= Mathf.Clamp(Mathf.FloorToInt(power), 1, 100);
+
+                    if (breakableInstance.toughness <= 0)
+                    {
+                        var itemSo = (ItemSo)breakableInstance.itemSo;
+                        var item = new Item();
+                        item.itemSo = itemSo;
+                        InventoryManager.SpawnItem(item, hitObject.transform.position);
+                        Object.Destroy(hitObject);
+                    }
+                    
+                    continue;
+                }
+                
                 Object.Destroy(hitObject);
-                return true;
             }
 
             var terrainDug = false;
@@ -129,13 +127,31 @@ namespace Inventory.Item_Logic
 
                     if (hitCount != 0) continue;
                     var oreInstance = hitObject.GetComponent<BreakableItemInstance>();
-                    var oreSo = (ItemSo)oreInstance.itemSo;
 
-                    var item = new Item();
-                    item.itemSo = oreSo;
-                    InventoryManager.SpawnItem(item, hitObject.transform.position);
+                    if (oreInstance.itemSo)
+                    {
+                        var oreSo = (ItemSo)oreInstance.itemSo;
+                        var item = new Item();
+                        item.itemSo = oreSo;
+                        InventoryManager.SpawnItem(item, hitObject.transform.position);
+                    }
+                    
                     Object.Destroy(hitObject);
                 }
+            }
+            
+            if (_mineTimer == 0)
+            {
+                var parameters = new ItemAnimationManager.AttackMeleeParameters("attackPickaxe")
+                {
+                    particleIndex = useAreaHitCount > 0 ? useParameters.particleIndex : -1,
+                    particleOffset = useParameters.particleOffset,
+                    particleColor = useParameters.particleColor
+                };
+                
+                useParameters.itemAnimationManager.AttackMelee(parameters);
+                _mineTimer = tool.attackCooldown;
+                GameUtilities.instance.DelayExecute(() => _mineTimer = 0, _mineTimer);
             }
             
             return true;
