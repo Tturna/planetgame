@@ -105,7 +105,7 @@ namespace Inventory.Item_Logic
                         if (pointDistance < useArea)
                         {
                             var strength = 1f - normalDistance;
-                            point.value = Mathf.Clamp(point.value -= strength * Time.deltaTime, 0f, 1f);
+                            point.value = Mathf.Clamp(point.value -= strength * 0.3f * Time.deltaTime, point.isoLevel - 0.1f, 1f);
                         }
 
                         point.isSet = true;
