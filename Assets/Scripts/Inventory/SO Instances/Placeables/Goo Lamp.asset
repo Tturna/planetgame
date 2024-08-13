@@ -16,8 +16,13 @@ MonoBehaviour:
   name: Goo Lamp
   description: Improvised light source made from bioluminescent materials
   maxStack: 100
-  sprite: {fileID: 21300000, guid: fcb80be972a70464aa77807f7667e45f, type: 3}
+  sprite: {fileID: 21300000, guid: 60bc0c2483e329d42b113cd57d344fd8, type: 3}
   handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
+  useBothHands: 0
+  flipSprite: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 0
   logicCode: 5
   attackCooldown: 0
   energyCost: 0
@@ -30,6 +35,9 @@ MonoBehaviour:
   playerRecoilStrength: 0
   useRange: 2.5
   incrementStackOnUse: 1
+  useParticleIndex: -1
+  useParticleOffset: {x: 0, y: 0}
+  useParticleColor: {r: 0, g: 0, b: 0, a: 0}
   toughness: 1
   lights:
   - range: 4

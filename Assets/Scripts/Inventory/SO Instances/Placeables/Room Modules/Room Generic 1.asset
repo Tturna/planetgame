@@ -16,9 +16,11 @@ MonoBehaviour:
   name: Generic Room 1
   description: 
   maxStack: 1
-  sprite: {fileID: 21300000, guid: 812b42c913ce7fe438adc32820013b97, type: 3}
+  sprite: {fileID: 21300000, guid: 0c29033e19ed5ab48a0fb2e7717a6fa1, type: 3}
   handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
   useBothHands: 1
+  flipSprite: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
   logicCode: 5
@@ -33,6 +35,9 @@ MonoBehaviour:
   playerRecoilStrength: 0
   useRange: 10
   incrementStackOnUse: 1
+  useParticleIndex: -1
+  useParticleOffset: {x: 0, y: 0}
+  useParticleColor: {r: 0, g: 0, b: 0, a: 0}
   toughness: 1
   lights: []
   prefabIndex: 0

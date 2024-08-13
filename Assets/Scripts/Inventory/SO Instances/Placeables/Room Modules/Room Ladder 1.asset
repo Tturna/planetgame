@@ -16,9 +16,11 @@ MonoBehaviour:
   name: Ladder Room 1
   description: 
   maxStack: 1
-  sprite: {fileID: 21300000, guid: 3f9c2c8703fb6854d848b5af20aea136, type: 3}
+  sprite: {fileID: 21300000, guid: 9dfef79b25967b04e9b2c8bd7c64cce4, type: 3}
   handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
   useBothHands: 1
+  flipSprite: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
   logicCode: 5
@@ -33,6 +35,9 @@ MonoBehaviour:
   playerRecoilStrength: 0
   useRange: 10
   incrementStackOnUse: 1
+  useParticleIndex: -1
+  useParticleOffset: {x: 0, y: 0}
+  useParticleColor: {r: 0, g: 0, b: 0, a: 0}
   toughness: 1
   lights: []
   prefabIndex: 1
