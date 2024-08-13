@@ -11,6 +11,8 @@ namespace Inventory.Item_Logic
     {
         private Camera _camera;
         private PlayerController _player;
+        private GameObject _currentPlayerPlanet;
+        private PlanetGenerator _usePlanet;
         
         public override bool UseOnce(UseParameters useParameters) => false;
 
@@ -22,21 +24,31 @@ namespace Inventory.Item_Logic
                 _player = PlayerController.instance;
             }
             
-            var usePlanet = _player.CurrentPlanetObject.GetComponent<PlanetGenerator>();
-            if (!usePlanet) return false;
+            if (!_player.CurrentPlanetObject)
+            {
+                return true;
+            }
+
+            if (_player.CurrentPlanetObject != _currentPlayerPlanet)
+            {
+                _usePlanet = _player.CurrentPlanetObject.GetComponent<PlanetGenerator>();
+            }
+            
+            _currentPlayerPlanet = _player.CurrentPlanetObject;
+            
+            if (!_usePlanet) return false;
 
             if (!_camera) _camera = CameraController.instance.mainCam;
             
             // TODO: Set this up as a player "statistic parameter/attribute"
-            const float useArea = 0.5f;
+            const float useArea = 0.75f;
             
             var mousePoint = _camera.ScreenToWorldPoint(Input.mousePosition);
             mousePoint.z = 0f;
 
-            var sizeResRatio = usePlanet.diameter / usePlanet.resolution;
-            var planetRadius = usePlanet.diameter / 2;
+            var sizeResRatio = _usePlanet.diameter / _usePlanet.resolution;
             
-            var relativeMousePoint = mousePoint - usePlanet.transform.position;
+            var relativeMousePoint = mousePoint - _usePlanet.transform.position;
             
             // Wacky explanation:
             // There is a circle around the cursor with radius useArea.
@@ -51,7 +63,7 @@ namespace Inventory.Item_Logic
             
             // Debug.Log($"Mouse global: {mousePoint}, local: {hoveringPointPos}");
 
-            var cellCoords = usePlanet.WorldToCellPoint(nearestPointPos);
+            var cellCoords = _usePlanet.WorldToCellPoint(nearestPointPos);
             
             // var pointXIter = (int)((nearestPointPos.x + planetRadius) / sizeResRatio);
             // var pointYIter = (int)((nearestPointPos.y + planetRadius) / sizeResRatio);
@@ -65,19 +77,20 @@ namespace Inventory.Item_Logic
             // How many cells fit inside the diameter of the addition circle around the mouse.
             var loopRange = Mathf.FloorToInt(useArea * 2 / sizeResRatio);
 
-            for (var y = 0; y < loopRange; y ++)
+            // increment by 2 to prevent terraforming the same points multiple times
+            for (var y = 0; y < loopRange; y++)
             {
-                for (var x = 0; x < loopRange; x ++)
+                for (var x = 0; x < loopRange; x++)
                 {
                     var xIter = cellCoords.x + x;
                     var yIter = cellCoords.y + y;
 
-                    var index = (usePlanet.resolution - 1) * yIter + xIter;
+                    var index = (_usePlanet.resolution - 1) * yIter + xIter;
                     
                     // Check if cell is out of bounds (255*255 cell grid when resolution is 256)
                     if (index >= 65025) continue;
 
-                    var cornerPoints = usePlanet.GetCellCornerPoints(index);
+                    var cornerPoints = _usePlanet.GetCellCornerPoints(index);
 
                     // TODO: Figure out a system so cells aren't updated for no reason...
                     // e.g. if the player is holding down the button without moving the mouse
@@ -86,26 +99,13 @@ namespace Inventory.Item_Logic
                     {
                         var point = cornerPoints[i];
                         
-                        /* TODO: Fix addition snappiness
-                         * Addition is snappy probably because the build area has to be over a point before it starts
-                         * editing its value. The editing has to happen instantly because otherwise when the player
-                         * edits in the air, it takes soil before anything appears because the value of the points
-                         * is usually 1 and way lower than their isolevel. Keep in mind that with the current system
-                         * (as of 17.3.2023), the outer most points in a planet are generated but set to air. This
-                         * means that when adding terrain next to existing terrain, the new terrain "snaps" and
-                         * instantly connects to the adjacent terrain, which looks rough.
-                         *
-                         * Theoretical fix:
-                         * Instead of only editing the value of a corner point when the build area is over it,
-                         * edit it when a neighboring point is being edited. Like if you have corners bl, br, tr and tl,
-                         * adding terrain to bl would "bulge" the terrain towards the other points until the edge
-                         * reaches the build area edge. This would make addition smooth. This might be a bit hard though,
-                         * as you'd need to check adjacent cells maybe? idk try it out.
-                        */
+                        var pointDistance = Vector3.Distance(point.position, mousePoint);
+                        var normalDistance = pointDistance / useArea;
 
-                        if (Vector3.Distance(point.position, mousePoint) < useArea)
+                        if (pointDistance < useArea)
                         {
-                            point.value = Mathf.Clamp(point.value -= Time.deltaTime, 0f, point.isoLevel);
+                            var strength = 1f - normalDistance;
+                            point.value = Mathf.Clamp(point.value -= strength * Time.deltaTime, 0f, 1f);
                         }
 
                         point.isSet = true;
@@ -114,12 +114,14 @@ namespace Inventory.Item_Logic
 
                     // Update cell
                     // var cellObject = GameObject.Find($"{usePlanet.name}/Cells/Cell {index}");
-                    var cellObject = usePlanet.GetCellFromIndex(index);
-                    var cellData = usePlanet.CalculateCell(yIter, xIter, index, cornerPoints);
+                    var cellObject = _usePlanet.GetCellFromIndex(index);
+                    var cellData = _usePlanet.CalculateCell(yIter, xIter, index, cornerPoints);
+                    
+                    if (cellData.idx == -1) continue;
                     
                     if (!cellObject)
                     {
-                        usePlanet.GenerateCell(index, cellData.vertices, cellData.triangles);
+                        _usePlanet.GenerateCell(index, cellData.vertices, cellData.triangles);
                     }
                     else
                     {
