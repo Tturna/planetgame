@@ -25,6 +25,7 @@ namespace Inventory
         [SerializeField] private GameObject placeableHologram;
         [SerializeField] private Sprite roomModuleHologramSprite;
         [SerializeField] private Transform bulletCasingPfxTransform;
+        [SerializeField] private AudioSource itemUseAudioSource;
         
         private Transform _itemAnchor;
         private Transform _handsParent, _handLeft, _handRight;
@@ -254,6 +255,11 @@ namespace Inventory
             _rigidbody.AddForce(recoilDirection * usableItemSo.playerRecoilStrength, ForceMode2D.Impulse);
             
             CameraController.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
+
+            if (usableItemSo.useSound)
+            {
+                itemUseAudioSource.PlayOneShot(usableItemSo.useSound);
+            }
 
             return true;
         }

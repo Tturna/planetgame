@@ -23,6 +23,7 @@ namespace Inventory.Item_SOs
         [Tooltip("Which PFX to spawn from ItemAnimationManager when used.")] public int useParticleIndex = -1;
         public Vector2 useParticleOffset;
         public Color useParticleColor;
+        public AudioClip useSound;
 
         [System.NonSerialized] public bool isOnCooldown;
     }

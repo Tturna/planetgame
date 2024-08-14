@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e9f5b3d522a61148a2aedfba835d7fd, type: 3}
   m_Name: Bronze Boots
   m_EditorClassIdentifier: 
-  id: 
+  id: b5b53917-fba1-4229-9d2f-21d5ccf0a568
   name: Bronze Boots
   description: 
   maxStack: 1

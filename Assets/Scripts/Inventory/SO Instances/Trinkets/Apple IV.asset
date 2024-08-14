@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e9f5b3d522a61148a2aedfba835d7fd, type: 3}
   m_Name: Apple IV
   m_EditorClassIdentifier: 
-  id: 
+  id: db4a40db-08c1-4f12-9dcf-a2826f97456a
   name: Apple IV
   description: 
   maxStack: 1
