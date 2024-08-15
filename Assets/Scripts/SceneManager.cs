@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using unitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
@@ -45,7 +46,20 @@ public class SceneManager : MonoBehaviour
 
     private static void LoadScene(int sceneIndex)
     {
-        unitySceneManager.LoadScene(sceneIndex);
+        // unitySceneManager.LoadScene(sceneIndex);
+        _instance.StartCoroutine(LoadSceneAsync(sceneIndex));
+    }
+
+    private static IEnumerator LoadSceneAsync(int sceneIndex)
+    {
+        var asyncLoad = unitySceneManager.LoadSceneAsync(sceneIndex);
+
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        
+        asyncLoad.allowSceneActivation = true;
     }
     
     public static void EnterGame()
