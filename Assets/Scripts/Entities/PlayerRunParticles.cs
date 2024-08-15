@@ -6,6 +6,8 @@ namespace Entities
     {
         [SerializeField] private float maxEmissionRate;
         [SerializeField] private float positionOffset;
+        [SerializeField] private AudioSource footstepsAudioSource;
+        [SerializeField] private AudioClip[] footstepsClips;
         
         private PlayerController _player;
         private Rigidbody2D _playerRb;
@@ -14,6 +16,8 @@ namespace Entities
         private Transform _runPfxTransform;
 
         private bool _canEmit;
+        private float _footstepTimer;
+        private float _footstepInterval;
         
         private void Start()
         {
@@ -50,6 +54,16 @@ namespace Entities
             var position = _runPfxTransform.localPosition;
             position.x = runDirection * positionOffset;
             _runPfxTransform.localPosition = position;
+
+            if (footstepsClips.Length == 0) return;
+            if (velocity < 0.1f) return;
+            
+            _footstepTimer += Time.deltaTime;
+            if (_footstepTimer < _footstepInterval) return;
+            _footstepTimer = 0f;
+            _footstepInterval = Mathf.Lerp(0.5f, 0.1f, velocity / (MaxVelocity * 2));
+            footstepsAudioSource.Stop();
+            footstepsAudioSource.PlayOneShot(footstepsClips[Random.Range(0, footstepsClips.Length)]);
         }
         
         private void OnJump()
