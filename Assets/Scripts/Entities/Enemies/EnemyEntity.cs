@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Entities.Enemies
 {
+    [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(HealthbarManager))]
     [RequireComponent(typeof(DamageNumberManager))]
     [RequireComponent(typeof(SpriteRenderer))]
@@ -30,6 +31,7 @@ namespace Entities.Enemies
         private SpriteRenderer _sr;
         private HealthbarManager _healthbarManager;
         private DamageNumberManager _damageNumberManager;
+        private AudioSource _audioSource;
         
         private Shader _defaultShader;
         private MovementPattern _movementPattern;
@@ -327,6 +329,7 @@ namespace Entities.Enemies
             _sr = GetComponent<SpriteRenderer>();
             _healthbarManager = GetComponent<HealthbarManager>();
             _damageNumberManager = GetComponent<DamageNumberManager>();
+            _audioSource = GetComponent<AudioSource>();
             
             _animator.runtimeAnimatorController = enemySo.overrideAnimator;
             _animator.SetTrigger(AnimWakeup);
@@ -387,6 +390,7 @@ namespace Entities.Enemies
             
             _damageNumberManager.CreateDamageNumber(amount);
             CameraController.CameraShake(0.075f, 0.05f);
+            _audioSource.PlayOneShot(enemySo.hitSound);
             
             var directionToSource = (damageSourcePosition - transform.position).normalized;
             var localHitPfxDirection = transform.InverseTransformDirection(-directionToSource);

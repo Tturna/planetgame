@@ -39,6 +39,7 @@ MonoBehaviour:
   overrideAnimator: {fileID: 22100000, guid: e7e7777931ce10d489565a67e3591277, type: 2}
   hitPfxColor: {r: 0.9843137, g: 0.9490196, b: 0.21176471, a: 1}
   hitSquishStretchMultiplier: {x: 1, y: 1}
+  hitSound: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
   evasionTime: 7
   attackInterval: 2
   attackRecoveryTime: 0.5
