@@ -8,6 +8,7 @@ using Utilities;
 
 namespace Entities
 {
+    [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PlayerStatsManager))]
     [RequireComponent(typeof(PlayerDeathManager))]
     public class PlayerController : EntityController, IDamageable
@@ -27,6 +28,7 @@ namespace Entities
             [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
             [SerializeField] private GameObject itemAnchor;
             [SerializeField] private Transform starmapCamera;
+            [FormerlySerializedAs("deathSound")] [SerializeField] private AudioClip hitSound;
             
             // [Header("Other")]
             // [SerializeField] private Material flashMaterial;
@@ -41,6 +43,7 @@ namespace Entities
         
             private CapsuleCollider2D _collider;
             private PlayerDeathManager _deathManager;
+            private AudioSource _audioSource;
             
         #endregion
 
@@ -110,6 +113,7 @@ namespace Entities
 
             _collider = GetComponent<CapsuleCollider2D>();
             _deathManager = GetComponent<PlayerDeathManager>();
+            _audioSource = GetComponent<AudioSource>();
             
             // _defaultMaterial = torsoSr.material;
             _spawnPosition = transform.position;
@@ -425,6 +429,8 @@ namespace Entities
         public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
             amount = Mathf.Clamp(amount - PlayerStatsManager.Defense, 0, amount);
+            _audioSource.PlayOneShot(hitSound);
+            
             var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
             //TODO: damage numbers

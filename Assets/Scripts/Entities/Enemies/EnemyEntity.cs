@@ -375,20 +375,9 @@ namespace Entities.Enemies
 
         public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
-            if (_wakeupTimer < enemySo.wakeupDelay) return;
             if (_health <= 0) return;
-
-            amount = Mathf.Round(Random.Range(amount * 0.8f, amount * 1.2f));
-
-            _health = Mathf.Clamp(_health - amount, 0, _maxHealth);
-            _healthbarManager.UpdateHealthbar(_health, _maxHealth);
+            if (_wakeupTimer < enemySo.wakeupDelay) return;
             
-            if (enemySo.isBoss)
-            {
-                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo);
-            }
-            
-            _damageNumberManager.CreateDamageNumber(amount);
             CameraController.CameraShake(0.075f, 0.05f);
             _audioSource.PlayOneShot(enemySo.hitSound);
             
@@ -420,11 +409,22 @@ namespace Entities.Enemies
             
             hitPfx.Play();
             
+            amount = Mathf.Round(Random.Range(amount * 0.8f, amount * 1.2f));
+            _health = Mathf.Clamp(_health - amount, 0, _maxHealth);
+            _damageNumberManager.CreateDamageNumber(amount);
+            
+            if (enemySo.isBoss)
+            {
+                _healthbarManager.UpdateBossUIHealth(_health, _maxHealth, enemySo);
+            }
+            
             if (_health <= 0)
             {
                 Death();
                 return;
             }
+            
+            _healthbarManager.UpdateHealthbar(_health, _maxHealth);
             
             StartCoroutine(DamageStretch());
 
