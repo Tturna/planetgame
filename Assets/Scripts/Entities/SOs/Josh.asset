@@ -39,6 +39,7 @@ MonoBehaviour:
   overrideAnimator: {fileID: 22100000, guid: b234a0b527a18734f810e2ecf9b57a03, type: 2}
   hitPfxColor: {r: 1, g: 1, b: 1, a: 1}
   hitSquishStretchMultiplier: {x: 1, y: 1}
+  hitSound: {fileID: 0}
   evasionTime: 7
   attackInterval: 2.5
   attackRecoveryTime: 1.5
@@ -78,6 +79,7 @@ MonoBehaviour:
         collisionActivationDelay: 0
         breakParticlePrefab: {fileID: 0}
         breakParticleColor: {r: 0.49296537, g: 0.9528302, b: 0.4269758, a: 1}
+        breakSound: {fileID: 8300000, guid: 863dba8e51121c64c893e63d6d5f700f, type: 3}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.40700006, g: 0.764151, b: 0.33521715, a: 1}

@@ -59,6 +59,7 @@ MonoBehaviour:
     collisionActivationDelay: 0
     breakParticlePrefab: {fileID: 0}
     breakParticleColor: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
+    breakSound: {fileID: 8300000, guid: 863dba8e51121c64c893e63d6d5f700f, type: 3}
     trailColor:
       serializedVersion: 2
       key0: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}

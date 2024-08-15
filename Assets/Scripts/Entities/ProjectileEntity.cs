@@ -13,6 +13,7 @@ namespace Entities
     {
         [FormerlySerializedAs("_light")] [SerializeField] private Light2D light2D; 
         [SerializeField] private RuntimeAnimatorController animatorController;
+        [SerializeField] private GameObject breakEffectsParent;
         private ParticleSystem _defaultBreakPfx;
         private ProjectileData _data;
         private Vector3 _lastPos;
@@ -23,6 +24,7 @@ namespace Entities
         private Animator _animator;
         private static readonly int AnimTransitionToUpdateBool = Animator.StringToHash("transitionToUpdate");
         private bool animatorCreated;
+        private AudioSource _breakAudioSource;
 
         protected override void Start()
         {
@@ -204,6 +206,12 @@ namespace Entities
                     _animator.Play("Base Layer.Spawn");
                 }
             }
+
+            if (_data.breakSound)
+            {
+                _breakAudioSource = breakEffectsParent.GetComponent<AudioSource>();
+                _breakAudioSource.clip = _data.breakSound;
+            }
         }
 
         private void DisableProjectile(Vector3 hitObjectPos)
@@ -219,6 +227,7 @@ namespace Entities
             {
                 // TODO: object pooling
                 clone = Instantiate(_data.breakParticlePrefab, transform.position, Quaternion.identity, transform);
+                clone.transform.SetParent(breakEffectsParent.transform);
                 breakPfx = clone.GetComponent<ParticleSystem>();
             }
             else
@@ -226,9 +235,9 @@ namespace Entities
                 breakPfx = _defaultBreakPfx;
             }
             
+            breakEffectsParent.transform.SetParent(null);
+            breakEffectsParent.transform.localScale = Vector3.one;
             var pfxTr = breakPfx.transform;
-            pfxTr.SetParent(null);
-            pfxTr.localScale = Vector3.one;
 
             if (hit)
             {
@@ -245,8 +254,17 @@ namespace Entities
             breakPfx.gameObject.SetActive(true);
             breakPfx.Play();
             
+            if (_breakAudioSource.clip)
+            {
+                var distToPlayer = Vector3.Distance(PlayerController.instance.transform.position, transform.position);
+                _breakAudioSource.volume = Mathf.Clamp01(1f - distToPlayer / 15f);
+                _breakAudioSource.Play();
+            }
+            
             GameUtilities.instance.DelayExecute(() =>
             {
+                breakEffectsParent.transform.SetParent(transform);
+                
                 if (_data.breakParticlePrefab)
                 {
                     if (clone != null)
@@ -257,7 +275,6 @@ namespace Entities
                 else
                 {
                     breakPfx.Stop();
-                    pfxTr.SetParent(transform);
                     
                     // I guess Unity disables a gameobject added to a disabled gameobject
                     breakPfx.gameObject.SetActive(true);

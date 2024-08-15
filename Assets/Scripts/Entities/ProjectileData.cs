@@ -27,6 +27,7 @@ namespace Entities
         [Tooltip("Particles to spawn when the projectile breaks. Leave empty for default pfx.")]
         public GameObject breakParticlePrefab;
         public Color breakParticleColor;
+        public AudioClip breakSound;
         public Gradient trailColor;
         public float trailTime;
         public Vector2 trailStartEndWidth;

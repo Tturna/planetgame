@@ -39,6 +39,7 @@ MonoBehaviour:
   overrideAnimator: {fileID: 22100000, guid: b47eda05c83a6ed41b6bfdfc88047489, type: 2}
   hitPfxColor: {r: 0.27058825, g: 0.15686275, b: 0.23529412, a: 1}
   hitSquishStretchMultiplier: {x: 0.33, y: 0.33}
+  hitSound: {fileID: 0}
   evasionTime: 3000
   attackInterval: 3.5
   attackRecoveryTime: 0.4
@@ -78,6 +79,7 @@ MonoBehaviour:
         collisionActivationDelay: 0.2
         breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
         breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
+        breakSound: {fileID: 8300000, guid: c2249b1e7cb4aef42a5d67bde63f0ce4, type: 3}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -141,6 +143,7 @@ MonoBehaviour:
         collisionActivationDelay: 0.2
         breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
         breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
+        breakSound: {fileID: 8300000, guid: 17badf64d172e5b4eb8f94226f248586, type: 3}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -204,6 +207,7 @@ MonoBehaviour:
         collisionActivationDelay: 0.2
         breakParticlePrefab: {fileID: 4481794776419611209, guid: 431202305a8ee2847b7b146c16f512b2, type: 3}
         breakParticleColor: {r: 1, g: 1, b: 1, a: 1}
+        breakSound: {fileID: 8300000, guid: 863dba8e51121c64c893e63d6d5f700f, type: 3}
         trailColor:
           serializedVersion: 2
           key0: {r: 0.4, g: 0.22352941, b: 0.19215687, a: 1}
@@ -339,6 +343,7 @@ MonoBehaviour:
         collisionActivationDelay: 0
         breakParticlePrefab: {fileID: 0}
         breakParticleColor: {r: 0, g: 0, b: 0, a: 0}
+        breakSound: {fileID: 0}
         trailColor:
           serializedVersion: 2
           key0: {r: 0, g: 0, b: 0, a: 0}
