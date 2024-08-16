@@ -97,6 +97,10 @@ namespace Inventory
         public GameObject craftingStationPrefab;
         public GameObject[] roomModulePrefabs;
         
+        [Header("Effects")]
+        [SerializeField] private AudioSource effectAudioSource;
+        [SerializeField] private AudioClip slotClickSound;
+        
         public static InventoryManager instance;
 
         // Consider using a dictionary instead of arrays if the inventory is slow.
@@ -507,6 +511,7 @@ namespace Inventory
                     if (slot.suitableItemType != _mouseSlot.item.itemSo.suitableSlotItemType) return;
                 }
             }
+            else if (slot.stack == 0) return;
 
             // (_mouseSlot, slot) = (slot, _mouseSlot);
             // (_mouseSlot.index, slot.index) = (slot.index, _mouseSlot.index);
@@ -537,6 +542,8 @@ namespace Inventory
                 UnequipAccessory(accessorySo);
                 accessorySo.ResetBehavior();
             }
+            
+            effectAudioSource.PlayOneShot(slotClickSound);
         }
 
         private static bool HasSpaceForItem(Item item, out int availableIndex, out InventorySegmentType availableInventorySegmentType)
