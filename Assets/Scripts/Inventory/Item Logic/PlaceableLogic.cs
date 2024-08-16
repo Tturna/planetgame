@@ -62,6 +62,7 @@ namespace Inventory.Item_Logic
             }
             
             var placeableObject = Object.Instantiate(prefab);
+            AudioUtilities.PlayClip(0, 1f);
 
             if (isCraftingStation)
             {
