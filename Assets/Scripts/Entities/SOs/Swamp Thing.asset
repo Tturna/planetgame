@@ -40,6 +40,7 @@ MonoBehaviour:
   hitPfxColor: {r: 0.9843137, g: 0.9490196, b: 0.21176471, a: 1}
   hitSquishStretchMultiplier: {x: 1, y: 1}
   hitSound: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
+  deathSound: {fileID: 8300000, guid: 0fca329fb60d95540b394b6c7fe917b0, type: 3}
   evasionTime: 7
   attackInterval: 2
   attackRecoveryTime: 0.5

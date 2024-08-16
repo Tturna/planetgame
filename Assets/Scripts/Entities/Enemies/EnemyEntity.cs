@@ -8,7 +8,6 @@ using Random = UnityEngine.Random;
 
 namespace Entities.Enemies
 {
-    [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(HealthbarManager))]
     [RequireComponent(typeof(DamageNumberManager))]
     [RequireComponent(typeof(SpriteRenderer))]
@@ -19,7 +18,10 @@ namespace Entities.Enemies
     public sealed class EnemyEntity : EntityController, IDamageable
     {
         [SerializeField] private Shader flashShader;
+        [SerializeField] private GameObject deathEffectsParent;
         [SerializeField] private ParticleSystem deathPfx;
+        [SerializeField] private AudioSource deathAudioSource;
+        [SerializeField] private AudioSource hitAudioSource;
         [SerializeField] private ParticleSystem hitPfx;
         
         public EnemySo enemySo;
@@ -31,7 +33,6 @@ namespace Entities.Enemies
         private SpriteRenderer _sr;
         private HealthbarManager _healthbarManager;
         private DamageNumberManager _damageNumberManager;
-        private AudioSource _audioSource;
         
         private Shader _defaultShader;
         private MovementPattern _movementPattern;
@@ -329,7 +330,6 @@ namespace Entities.Enemies
             _sr = GetComponent<SpriteRenderer>();
             _healthbarManager = GetComponent<HealthbarManager>();
             _damageNumberManager = GetComponent<DamageNumberManager>();
-            _audioSource = GetComponent<AudioSource>();
             
             _animator.runtimeAnimatorController = enemySo.overrideAnimator;
             _animator.SetTrigger(AnimWakeup);
@@ -379,7 +379,7 @@ namespace Entities.Enemies
             if (_wakeupTimer < enemySo.wakeupDelay) return;
             
             CameraController.CameraShake(0.075f, 0.05f);
-            _audioSource.PlayOneShot(enemySo.hitSound);
+            hitAudioSource.PlayOneShot(enemySo.hitSound);
             
             var directionToSource = (damageSourcePosition - transform.position).normalized;
             var localHitPfxDirection = transform.InverseTransformDirection(-directionToSource);
@@ -507,10 +507,18 @@ namespace Entities.Enemies
         {
             _deathAttackCancelAction?.Invoke();
             
-            deathPfx.transform.SetParent(null);
+            deathEffectsParent.transform.SetParent(null);
             deathPfx.Play();
+
+            if (enemySo.deathSound)
+            {
+                var rngPitch = Random.Range(-3, 1);
+                deathAudioSource.pitch = Mathf.Pow(2f, rngPitch / 12f);
+                deathAudioSource.PlayOneShot(enemySo.deathSound);
+            }
+            
             TriggerOnDeath();
-            GameUtilities.instance.DelayExecute(() => Destroy(deathPfx.gameObject), 1f);
+            GameUtilities.instance.DelayExecute(() => Destroy(deathEffectsParent), 1f);
 
             if (enemySo.isBoss)
             {
