@@ -100,6 +100,7 @@ namespace Inventory
         [Header("Effects")]
         [SerializeField] private AudioSource effectAudioSource;
         [SerializeField] private AudioClip slotClickSound;
+        [SerializeField] private AudioClip craftSound;
         
         public static InventoryManager instance;
 
@@ -1016,7 +1017,7 @@ namespace Inventory
             return TryGetSlotsWithIngredients(recipe, out _, out _);
         }
 
-        public static void Craft(RecipeSo recipe)
+        public void Craft(RecipeSo recipe)
         {
             if (!TryGetSlotsWithIngredients(
                 recipe,
@@ -1055,6 +1056,8 @@ namespace Inventory
                     decrementAmount = excess;
                     if (decrementAmount == 0) break;
                 }
+                
+                effectAudioSource.PlayOneShot(craftSound);
             }
 
             // TODO: Make sure the ingredients aren't decremented if there is no space for the result

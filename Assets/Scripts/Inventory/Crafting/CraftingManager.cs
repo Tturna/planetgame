@@ -82,7 +82,7 @@ namespace Inventory.Crafting
                     }
 
                     Debug.Log($"Crafting recipe: {_selectedCraftableRecipe.recipe.name}");
-                    InventoryManager.Craft(_selectedCraftableRecipe.recipe);
+                    InventoryManager.instance.Craft(_selectedCraftableRecipe.recipe);
                     ValidateCraftables();
                 }
                 else

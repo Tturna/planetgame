@@ -108988,6 +108988,7 @@ MonoBehaviour:
   - {fileID: 1550499184608269273, guid: 06275d305499c224996e8741f68e40ca, type: 3}
   effectAudioSource: {fileID: 1968306442}
   slotClickSound: {fileID: 8300000, guid: dcc29066e04b5964cbcbcf9e7078bab6, type: 3}
+  craftSound: {fileID: 8300000, guid: 4dd1f45dad9c3c14da94473c2c0d7fcd, type: 3}
 --- !u!4 &1968306434
 Transform:
   m_ObjectHideFlags: 0
