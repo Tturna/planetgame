@@ -53498,8 +53498,15 @@ MonoBehaviour:
   starmapCamera: {fileID: 64431321}
   generalAudioSource: {fileID: 733822068}
   jetpackAudioSource: {fileID: 0}
-  hitSound: {fileID: 8300000, guid: 4b79c71d21ba29149be014e45c2f804c, type: 3}
-  itemPickupSound: {fileID: 8300000, guid: 473c9ce0e5ed4d54f9d5e4e7926541f3, type: 3}
+  hitSound:
+    audioClip: {fileID: 8300000, guid: 4b79c71d21ba29149be014e45c2f804c, type: 3}
+    volume: 1
+  itemPickupSound:
+    audioClip: {fileID: 8300000, guid: 473c9ce0e5ed4d54f9d5e4e7926541f3, type: 3}
+    volume: 1
+  landSound:
+    audioClip: {fileID: 8300000, guid: f579ab3782e629544bd1c20ceec328e1, type: 3}
+    volume: 0.75
   maxSlopeMultiplier: 1
   maxJumpForceTime: 0.1
 --- !u!61 &733822062

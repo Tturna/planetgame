@@ -29,8 +29,9 @@ namespace Entities
             [SerializeField] private Transform starmapCamera;
             [SerializeField] private AudioSource generalAudioSource;
             [SerializeField] private AudioSource jetpackAudioSource;
-            [FormerlySerializedAs("deathSound")] [SerializeField] private AudioClip hitSound;
-            [SerializeField] private AudioClip itemPickupSound;
+            [FormerlySerializedAs("deathSound")] [SerializeField] private AudioUtilities.Clip hitSound;
+            [SerializeField] private AudioUtilities.Clip itemPickupSound;
+            [SerializeField] private AudioUtilities.Clip landSound;
             
             // [Header("Other")]
             // [SerializeField] private Material flashMaterial;
@@ -80,7 +81,7 @@ namespace Entities
 
         private void OnItemPickedUp(GameObject itemObject)
         {
-            generalAudioSource.PlayOneShot(itemPickupSound);
+            generalAudioSource.PlayOneShot(itemPickupSound.audioClip, itemPickupSound.volume);
             itemPickedUp?.Invoke(itemObject);
         }
         
@@ -324,6 +325,7 @@ namespace Entities
             
             StartCoroutine(JumpStretch(0.9f, 1.1f, true));
             jumpLandParticles.Play();
+            generalAudioSource.PlayOneShot(landSound.audioClip, landSound.volume);
             
             OnGrounded();
         }
@@ -430,7 +432,7 @@ namespace Entities
         public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
             amount = Mathf.Clamp(amount - PlayerStatsManager.Defense, 0, amount);
-            generalAudioSource.PlayOneShot(hitSound);
+            generalAudioSource.PlayOneShot(hitSound.audioClip, hitSound.volume);
             
             var died = PlayerStatsManager.ChangeHealth(-amount);
             if (died) Death();
