@@ -43900,6 +43900,7 @@ MonoBehaviour:
   meleeTrailRenderer: {fileID: 966513553}
   particlePrefabs:
   - {fileID: 3348491370364239398, guid: 2d470e2178646564a8c44d9b9f33450d, type: 3}
+  itemAudioSource: {fileID: 1422684849}
 --- !u!1 &472435777
 GameObject:
   m_ObjectHideFlags: 0

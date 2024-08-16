@@ -16,6 +16,7 @@ namespace Inventory.Item_Logic
             public int particleIndex;
             public Vector2 particleOffset;
             public Color particleColor;
+            public AudioClip[] attackSounds;
 
             public AttackMeleeParameters(string triggerName)
             {
@@ -26,12 +27,14 @@ namespace Inventory.Item_Logic
                 particleIndex = -1;
                 particleOffset = Vector2.zero;
                 particleColor = Color.white;
+                attackSounds = null;
             }
         }
         
         [SerializeField] private SpriteRenderer handLeftSr, handRightSr, equippedItemSr;
         [SerializeField] private TrailRenderer meleeTrailRenderer;
         [SerializeField, Tooltip("Particles that can be spawned by items as they're used.")] private GameObject[] particlePrefabs;
+        [SerializeField] private AudioSource itemAudioSource;
         
         private bool _canQueueAttack;
         private bool _swingEnding; // This exists to prevent the player from attacking right after the combo time window is closed
@@ -39,9 +42,11 @@ namespace Inventory.Item_Logic
         private int _attackIndex;
         private int _altIdleIndex;
         private string _lastTriggerName;
+        private GameObject _effectObject;
         private GameObject _particleObject;
         private Vector2 _particleOffset;
         private Color _particleColor;
+        private AudioClip[] _attackSounds;
         
         public delegate void LogicCallback();
         private LogicCallback _animationEventCallback;
@@ -99,6 +104,12 @@ namespace Inventory.Item_Logic
 
             if (parameters.particleIndex >= 0)
             {
+                if (!_effectObject)
+                {
+                    _effectObject = new GameObject("EffectObject");
+                    _effectObject.transform.SetParent(transform);
+                }
+                
                 _particleObject = particlePrefabs[parameters.particleIndex];
                 _particleOffset = parameters.particleOffset;
                 _particleColor = parameters.particleColor;
@@ -106,6 +117,11 @@ namespace Inventory.Item_Logic
             else
             {
                 _particleObject = null;
+            }
+
+            if (parameters.attackSounds?.Length > 0)
+            {
+                _attackSounds = parameters.attackSounds;
             }
         }
 
@@ -169,11 +185,18 @@ namespace Inventory.Item_Logic
         }
 
         // Designed to be called from an animation event
-        // when a particle effect should be played.
+        // when a effects like particles or sound should be played.
         // E.g. when a pickaxe hits something.
         [UsedImplicitly]
-        public void PlayParticleEffect()
+        public void PlayEffects()
         {
+            if (_attackSounds?.Length > 0)
+            {
+                var sound = _attackSounds[UnityEngine.Random.Range(0, _attackSounds.Length)];
+                itemAudioSource.PlayOneShot(sound);
+                _attackSounds = null;
+            }
+            
             if (!_particleObject) return;
             
             ObjectPooler.CreatePoolIfDoesntExist(_particleObject.name, _particleObject, 5, true);

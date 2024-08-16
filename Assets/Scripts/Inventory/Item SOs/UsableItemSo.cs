@@ -24,6 +24,7 @@ namespace Inventory.Item_SOs
         public Vector2 useParticleOffset;
         public Color useParticleColor;
         public AudioClip useSound;
+        public AudioClip[] effectSounds;
 
         [System.NonSerialized] public bool isOnCooldown;
     }

@@ -38,6 +38,12 @@ MonoBehaviour:
   useParticleIndex: 0
   useParticleOffset: {x: 0.5, y: -0.1}
   useParticleColor: {r: 0.56078434, g: 0.3372549, b: 0.23137255, a: 0.7490196}
+  useSound: {fileID: 0}
+  effectSounds:
+  - {fileID: 8300000, guid: c2249b1e7cb4aef42a5d67bde63f0ce4, type: 3}
+  - {fileID: 8300000, guid: 17badf64d172e5b4eb8f94226f248586, type: 3}
+  - {fileID: 8300000, guid: 863dba8e51121c64c893e63d6d5f700f, type: 3}
+  - {fileID: 8300000, guid: 83696f6236ef3884cb2f4dcc1bd150d2, type: 3}
   projectile:
     sprite: {fileID: 0}
     sortingLayerName: 
@@ -58,6 +64,7 @@ MonoBehaviour:
     collisionActivationDelay: 0
     breakParticlePrefab: {fileID: 0}
     breakParticleColor: {r: 0, g: 0, b: 0, a: 0}
+    breakSound: {fileID: 0}
     trailColor:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}

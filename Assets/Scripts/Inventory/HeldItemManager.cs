@@ -230,7 +230,8 @@ namespace Inventory
                 itemAnimationManager = _itemAnimationManager,
                 particleIndex = usableItemSo.useParticleIndex,
                 particleOffset = usableItemSo.useParticleOffset,
-                particleColor = usableItemSo.useParticleColor
+                particleColor = usableItemSo.useParticleColor,
+                effectSounds = usableItemSo.effectSounds
             };
 
             var res = useitemFunction(useParameters);

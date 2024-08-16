@@ -146,7 +146,8 @@ namespace Inventory.Item_Logic
                 {
                     particleIndex = useAreaHitCount > 0 ? useParameters.particleIndex : -1,
                     particleOffset = useParameters.particleOffset,
-                    particleColor = useParameters.particleColor
+                    particleColor = useParameters.particleColor,
+                    attackSounds = useParameters.effectSounds
                 };
                 
                 useParameters.itemAnimationManager.AttackMelee(parameters);
