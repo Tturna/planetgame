@@ -24,7 +24,7 @@ MonoBehaviour:
   altIdleAnimation: 1
   suitableSlotItemType: 0
   logicCode: 2
-  attackCooldown: 0.5
+  attackCooldown: 0.35
   energyCost: 0
   recoilHorizontal: 0
   recoilAngular: 0

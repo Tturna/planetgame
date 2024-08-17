@@ -26,7 +26,5 @@ namespace Inventory.Item_SOs
         public Color useParticleColor;
         public AudioUtilities.Clip[] useSounds;
         public AudioUtilities.Clip[] effectSounds;
-
-        [System.NonSerialized] public bool isOnCooldown;
     }
 }

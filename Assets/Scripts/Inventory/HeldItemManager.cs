@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Cameras;
 using Entities;
 using Inventory.Item_Logic;
@@ -37,6 +38,7 @@ namespace Inventory
         [CanBeNull] private Item _equippedItem;
         private Rigidbody2D _rigidbody; // This component is also used by PlayerController
         private PlayerController _playerController;
+        private readonly Dictionary<string, bool> _itemCooldowns = new();
 
         public delegate void ItemUsedHandler(Item item);
         public static event ItemUsedHandler ItemUsed;
@@ -198,7 +200,15 @@ namespace Inventory
         {
             if (_equippedItem?.itemSo is not UsableItemSo usableItemSo) return false;
             if (_equippedItem.logicScript == null) return false;
-            if (usableItemSo.isOnCooldown) return false;
+            
+            if (_itemCooldowns.TryGetValue(usableItemSo.id, out var isOnCooldown))
+            {
+                if (isOnCooldown) return false;
+            }
+            else
+            {
+                _itemCooldowns.Add(usableItemSo.id, false);
+            }
             
             if (PlayerStatsManager.Energy < usableItemSo.energyCost)
             {
@@ -239,10 +249,10 @@ namespace Inventory
             if (!res) return false;
             
             OnItemUsed(_equippedItem);
+            StartCoroutine(HandleWeaponCooldown(usableItemSo));
 
             if (usableItemSo.energyCost > 0)
             {
-                StartCoroutine(HandleWeaponCooldown(usableItemSo));
                 PlayerStatsManager.ChangeEnergy(-usableItemSo.energyCost);
             }
                 
@@ -273,9 +283,9 @@ namespace Inventory
         
         private IEnumerator HandleWeaponCooldown(UsableItemSo usableItem)
         {
-            usableItem.isOnCooldown = true;
+            _itemCooldowns[usableItem.id] = true;
             yield return new WaitForSeconds(usableItem.attackCooldown / PlayerStatsManager.AttackSpeed);
-            usableItem.isOnCooldown = false;
+            _itemCooldowns[usableItem.id] = false;
         }
 
         private void OnItemUsed(Item item)
