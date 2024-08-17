@@ -5,13 +5,16 @@ using UnityEngine;
 namespace Buildings
 {
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(AudioSource))]
     public class RoomDoor : MonoBehaviour
     {
         [SerializeField] private float openDistance;
+        [SerializeField] private AudioClip openSound;
         
         private Transform playerTransform;
         private Animator animator;
         private ParticleSystem openParticles;
+        private AudioSource audioSource;
         
         private static readonly int AnimIsOpenBool = Animator.StringToHash("isOpen");
         private bool isOpen;
@@ -21,6 +24,7 @@ namespace Buildings
             playerTransform = PlayerController.instance.transform;
             animator = GetComponent<Animator>();
             openParticles = GetComponentInChildren<ParticleSystem>();
+            audioSource = GetComponent<AudioSource>();
         }
 
         private void Update()
@@ -48,6 +52,7 @@ namespace Buildings
             
             isOpen = state;
             animator.SetBool(AnimIsOpenBool, isOpen);
+            audioSource.PlayOneShot(openSound);
             
             if (isOpen && openParticles)
             {
