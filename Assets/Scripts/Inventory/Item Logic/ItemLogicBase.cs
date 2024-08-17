@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Utilities;
 
 namespace Inventory.Item_Logic
 {
@@ -14,7 +15,7 @@ namespace Inventory.Item_Logic
             public int particleIndex;
             public Vector2 particleOffset;
             public Color particleColor;
-            public AudioClip[] effectSounds;
+            public AudioUtilities.Clip[] effectSounds;
         }
         
         // One of these functions is called based on whether Use is called from GetKey or GetKeyDown.

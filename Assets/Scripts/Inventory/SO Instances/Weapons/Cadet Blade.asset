@@ -24,7 +24,7 @@ MonoBehaviour:
   altIdleAnimation: 1
   suitableSlotItemType: 0
   logicCode: 2
-  attackCooldown: 0.25
+  attackCooldown: 0.5
   energyCost: 0
   recoilHorizontal: 0
   recoilAngular: 0
@@ -35,6 +35,17 @@ MonoBehaviour:
   playerRecoilStrength: 0
   useRange: 0
   incrementStackOnUse: 0
+  useParticleIndex: -1
+  useParticleOffset: {x: 0, y: 0}
+  useParticleColor: {r: 0, g: 0, b: 0, a: 0}
+  useSounds:
+  - audioClip: {fileID: 8300000, guid: 4155ec997cdb78a4b946e5182417abee, type: 3}
+    volume: 0.5
+  - audioClip: {fileID: 8300000, guid: fd47689dea18b4941b96af3fa469e50e, type: 3}
+    volume: 0.5
+  - audioClip: {fileID: 8300000, guid: da6a3f16cf9a0e1499cb0589b49008d1, type: 3}
+    volume: 0.5
+  effectSounds: []
   projectile:
     sprite: {fileID: 0}
     sortingLayerName: 
@@ -55,6 +66,7 @@ MonoBehaviour:
     collisionActivationDelay: 0
     breakParticlePrefab: {fileID: 0}
     breakParticleColor: {r: 0, g: 0, b: 0, a: 0}
+    breakSound: {fileID: 0}
     trailColor:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}

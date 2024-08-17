@@ -16,8 +16,9 @@ namespace Inventory.Item_Logic
             public int particleIndex;
             public Vector2 particleOffset;
             public Color particleColor;
-            public AudioClip[] attackSounds;
-
+            public AudioUtilities.Clip[] effectSounds;
+            public bool playSoundWithParticles;
+            
             public AttackMeleeParameters(string triggerName)
             {
                 this.triggerName = triggerName;
@@ -27,7 +28,8 @@ namespace Inventory.Item_Logic
                 particleIndex = -1;
                 particleOffset = Vector2.zero;
                 particleColor = Color.white;
-                attackSounds = null;
+                effectSounds = null;
+                playSoundWithParticles = false;
             }
         }
         
@@ -46,7 +48,7 @@ namespace Inventory.Item_Logic
         private GameObject _particleObject;
         private Vector2 _particleOffset;
         private Color _particleColor;
-        private AudioClip[] _attackSounds;
+        private AudioUtilities.Clip[] _effectSounds;
         
         public delegate void LogicCallback();
         private LogicCallback _animationEventCallback;
@@ -119,9 +121,12 @@ namespace Inventory.Item_Logic
                 _particleObject = null;
             }
 
-            if (parameters.attackSounds?.Length > 0)
+            if (parameters.effectSounds?.Length > 0)
             {
-                _attackSounds = parameters.attackSounds;
+                if (parameters.playSoundWithParticles && _particleObject)
+                {
+                    _effectSounds = parameters.effectSounds;
+                }
             }
         }
 
@@ -190,11 +195,11 @@ namespace Inventory.Item_Logic
         [UsedImplicitly]
         public void PlayEffects()
         {
-            if (_attackSounds?.Length > 0)
+            if (_effectSounds?.Length > 0)
             {
-                var sound = _attackSounds[UnityEngine.Random.Range(0, _attackSounds.Length)];
-                itemAudioSource.PlayOneShot(sound);
-                _attackSounds = null;
+                var sound = _effectSounds[UnityEngine.Random.Range(0, _effectSounds.Length)];
+                itemAudioSource.PlayOneShot(sound.audioClip, sound.volume);
+                _effectSounds = null;
             }
             
             if (!_particleObject) return;

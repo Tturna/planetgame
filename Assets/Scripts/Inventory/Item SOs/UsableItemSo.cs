@@ -2,6 +2,7 @@ using Inventory.Item_Logic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 
 namespace Inventory.Item_SOs
 {
@@ -23,8 +24,8 @@ namespace Inventory.Item_SOs
         [Tooltip("Which PFX to spawn from ItemAnimationManager when used.")] public int useParticleIndex = -1;
         public Vector2 useParticleOffset;
         public Color useParticleColor;
-        public AudioClip useSound;
-        public AudioClip[] effectSounds;
+        public AudioUtilities.Clip[] useSounds;
+        public AudioUtilities.Clip[] effectSounds;
 
         [System.NonSerialized] public bool isOnCooldown;
     }

@@ -199,7 +199,7 @@ namespace Inventory
             if (_equippedItem?.itemSo is not UsableItemSo usableItemSo) return false;
             if (_equippedItem.logicScript == null) return false;
             if (usableItemSo.isOnCooldown) return false;
-
+            
             if (PlayerStatsManager.Energy < usableItemSo.energyCost)
             {
                 NoEnergy();
@@ -257,9 +257,10 @@ namespace Inventory
             
             CameraController.CameraShake(usableItemSo.cameraShakeTime, usableItemSo.cameraShakeStrength);
 
-            if (usableItemSo.useSound)
+            if (usableItemSo.useSounds.Length > 0)
             {
-                itemUseAudioSource.PlayOneShot(usableItemSo.useSound);
+                var sound = usableItemSo.useSounds[UnityEngine.Random.Range(0, usableItemSo.useSounds.Length)];
+                itemUseAudioSource.PlayOneShot(sound.audioClip, sound.volume);
             }
 
             return true;
