@@ -64,7 +64,7 @@ namespace Inventory.Item_Logic
             var midHits = new Collider2D[10];
             var mask = GameUtilities.BasicMovementCollisionMask;
             
-            Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
+            var midHitCount = Physics2D.OverlapPointNonAlloc(mousePoint, midHits);
             var useAreaHitCount = Physics2D.OverlapCircleNonAlloc(mousePoint, useArea, useAreaHits, mask);
 
             // if (canMineOre)
@@ -142,9 +142,11 @@ namespace Inventory.Item_Logic
             
             if (_mineTimer == 0)
             {
+                var playEffects = useAreaHitCount > 0 || midHitCount > 0;
+                
                 var parameters = new ItemAnimationManager.AttackMeleeParameters("attackPickaxe")
                 {
-                    particleIndex = useAreaHitCount > 0 ? useParameters.particleIndex : -1,
+                    particleIndex = playEffects ? useParameters.particleIndex : -1,
                     particleOffset = useParameters.particleOffset,
                     particleColor = useParameters.particleColor,
                     effectSounds = useParameters.effectSounds,
