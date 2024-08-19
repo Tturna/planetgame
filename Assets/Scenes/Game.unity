@@ -574,6 +574,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Generic Room 2 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -6848,6 +6852,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Generic Room 1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -16802,6 +16810,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Bronze Lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -28723,7 +28735,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -29032,6 +29044,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Strawberry IV
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -42667,6 +42683,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Generic Room 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -44820,6 +44840,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Bronze Lamp (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -45518,6 +45542,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Cadet Blade
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -50689,6 +50717,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Remote (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -50882,6 +50914,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Steel Lamp (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -52016,6 +52052,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Generic Room 2 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -54260,7 +54300,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -60602,6 +60642,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Building Remover
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -61522,6 +61566,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Apple IV
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -69322,6 +69370,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Bronze Jetpack
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -80683,6 +80735,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Cadet Pistol
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -81423,6 +81479,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Steel Lamp (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -82958,6 +83018,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Infernal Battery
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -84926,6 +84990,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Bronze Lamp (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -85143,6 +85211,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Green LED
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -90343,6 +90415,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Meteorium Cannon
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -91198,6 +91274,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Generic Room 1 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -102240,7 +102320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -102880,6 +102960,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Workbench
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -103127,6 +103211,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Generic Room 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -104314,6 +104402,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Bronze Boots
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -105469,6 +105561,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Iron Battery
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -106507,6 +106603,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Cobalt Jetpack
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -106601,6 +106701,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Remote
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -109118,6 +109222,9 @@ MonoBehaviour:
   effectAudioSource: {fileID: 1968306442}
   slotClickSound: {fileID: 8300000, guid: dcc29066e04b5964cbcbcf9e7078bab6, type: 3}
   craftSound: {fileID: 8300000, guid: 4dd1f45dad9c3c14da94473c2c0d7fcd, type: 3}
+  startingItems:
+  - {fileID: 11400000, guid: 2f8be4cead71a0841a0369cbc13aa897, type: 2}
+  - {fileID: 11400000, guid: a6db3c4fb443b8b43b6389e0345ec0f9, type: 2}
 --- !u!4 &1968306434
 Transform:
   m_ObjectHideFlags: 0
@@ -114848,6 +114955,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Grape IV
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -114942,6 +115053,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Steel Lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -116129,6 +116244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: (item) Remote (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
       value: 
@@ -116382,6 +116501,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Bronze Lamp (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo
@@ -116800,6 +116923,10 @@ PrefabInstance:
     - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: m_Name
       value: (item) Steel Lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3328653802289816816, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
       propertyPath: item.itemSo

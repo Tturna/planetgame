@@ -102,6 +102,9 @@ namespace Inventory
         [SerializeField] private AudioClip slotClickSound;
         [SerializeField] private AudioClip craftSound;
         
+        [Header("Other")]
+        [SerializeField] private ItemSo[] startingItems;
+        
         public static InventoryManager instance;
 
         // Consider using a dictionary instead of arrays if the inventory is slow.
@@ -205,6 +208,11 @@ namespace Inventory
             PlayerController.instance.itemPickedUp += io => AddItem(io.GetComponent<ItemEntity>().item);
             UIUtilities.OnMouseRaycast += UpdateItemTooltip;
             HeldItemManager.ItemUsed += TryDecrementSelectedStack;
+            
+            foreach (var item in startingItems)
+            {
+                AddItem(new Item(item));
+            }
         }
 
         private void OnDestroy()
