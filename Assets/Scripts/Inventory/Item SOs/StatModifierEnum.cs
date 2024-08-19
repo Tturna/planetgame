@@ -1,4 +1,4 @@
-namespace Inventory.Item_SOs.Accessories
+namespace Inventory.Item_SOs
 {
     public enum StatModifierEnum
     {

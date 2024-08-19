@@ -1,6 +1,5 @@
-using System;
 using System.Collections.Generic;
-using Inventory.Item_SOs.Accessories;
+using Inventory.Item_SOs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,6 +7,8 @@ namespace Entities
 {
     public class PlayerStatsManager : MonoBehaviour
     {
+        // TODO: Try to figure out a better system of defining stats. Maybe there is one, maybe there isn't.
+        
         /*
          * Some stats that modify item stats like damage, knockback, crit chance, etc. can have a flat increase and a multiplier.
          * The flat increase is added to the base value of the item, and the sum is then multiplied by the multiplier.
@@ -77,8 +78,8 @@ namespace Entities
         public static float BuffDurationMultiplier { get; private set; }
         public static float DebuffDurationMultiplier { get; private set; }
         
-        // Each accessory has an id and a list of stat modifiers
-        private static readonly Dictionary<string, List<StatModifier>> AccessoryModifierLists = new();
+        // Each trinket/gadget/item has an id and a list of stat modifiers
+        private static readonly Dictionary<string, List<StatModifier>> StatModifierLists = new();
 
         private float _energyRegenTimer, _healthRegenTimer, _jetpackRechargeTimer;
         
@@ -170,10 +171,10 @@ namespace Entities
             JumpForce = BaseJumpHeight;
             AttackSpeed = BaseAttackSpeed;
             
-            foreach (var accessoryModifiers in AccessoryModifierLists)
+            foreach (var statModifiers in StatModifierLists)
             {
                 // Apply fixed increases
-                foreach (var modifier in accessoryModifiers.Value)
+                foreach (var modifier in statModifiers.Value)
                 {
                     switch (modifier.statModifierType)
                     {
@@ -206,7 +207,7 @@ namespace Entities
                 }
                 
                 // Apply multipliers
-                foreach (var modifier in accessoryModifiers.Value)
+                foreach (var modifier in statModifiers.Value)
                 {
                     switch (modifier.statModifierType)
                     {
@@ -311,15 +312,15 @@ namespace Entities
             return CalculateCritDamage(realDamage, itemBaseCritChance);
         }
 
-        public static void AddAccessoryModifiers(List<StatModifier> modifiers, string id)
+        public static void AddStatModifiers(List<StatModifier> modifiers, string id)
         {
-            AccessoryModifierLists.Add(id, modifiers);
+            StatModifierLists.Add(id, modifiers);
             RecalculateStats();
         }
 
-        public static void RemoveAccessoryModifiers(string id)
+        public static void RemoveStatModifiers(string id)
         {
-            AccessoryModifierLists.Remove(id);
+            StatModifierLists.Remove(id);
             RecalculateStats();
         }
     }

@@ -1,7 +1,6 @@
 using System.Collections;
 using Entities;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utilities;
 using VFX;
 using Random = UnityEngine.Random;

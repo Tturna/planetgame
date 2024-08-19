@@ -2,7 +2,6 @@
 // and then deal damage to the enemy. This should get weapon statistics from the player controller
 // when the player equips one.
 
-using System;
 using Entities;
 using Entities.Enemies;
 using Inventory.Item_Logic;

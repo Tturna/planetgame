@@ -465,7 +465,7 @@ namespace Inventory
 
         private static void EquipAccessory(BasicAccessorySo accessorySo)
         {
-            PlayerStatsManager.AddAccessoryModifiers(accessorySo.statModifiers, accessorySo.id);
+            PlayerStatsManager.AddStatModifiers(accessorySo.statModifiers, accessorySo.id);
             
             if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
             {
@@ -475,7 +475,7 @@ namespace Inventory
         
         private static void UnequipAccessory(BasicAccessorySo accessorySo)
         {
-            PlayerStatsManager.RemoveAccessoryModifiers(accessorySo.id);
+            PlayerStatsManager.RemoveStatModifiers(accessorySo.id);
             
             if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
             {

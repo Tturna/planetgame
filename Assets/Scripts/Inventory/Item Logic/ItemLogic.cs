@@ -18,7 +18,8 @@ namespace Inventory.Item_Logic
             Material = 4,
             Placeable = 5,
             Flashlight = 6,
-            BuildingRemover = 7
+            BuildingRemover = 7,
+            Consumable = 8
         }
 
         private static readonly ItemLogicBase[] Scripts = {
@@ -29,7 +30,8 @@ namespace Inventory.Item_Logic
             new MaterialLogic(),
             new PlaceableLogic(),
             new FlashlightLogic(),
-            new BuildingRemoverLogic()
+            new BuildingRemoverLogic(),
+            new ConsumableLogic()
         };
 
         public static ItemLogicBase GetScript(LogicCode key)

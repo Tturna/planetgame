@@ -34033,7 +34033,7 @@ MonoBehaviour:
     objectName: Tree
     layer: 0
     count: 100
-    minNormalDot: 0.65
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 3
     maxAngleIncrement: 12
@@ -34057,7 +34057,7 @@ MonoBehaviour:
     objectName: fgTree
     layer: 1
     count: 90
-    minNormalDot: 0.65
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 6
     maxAngleIncrement: 16
@@ -34079,7 +34079,7 @@ MonoBehaviour:
     objectName: mgBush
     layer: 2
     count: 70
-    minNormalDot: 0.75
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 16
@@ -34169,7 +34169,7 @@ MonoBehaviour:
     objectName: flower
     layer: 0
     count: 70
-    minNormalDot: 0.55
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 4
     maxAngleIncrement: 30
@@ -34192,7 +34192,7 @@ MonoBehaviour:
     objectName: grass
     layer: 0
     count: 210
-    minNormalDot: 0.65
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 0.5
     maxAngleIncrement: 3
@@ -34209,13 +34209,13 @@ MonoBehaviour:
     breakable: 1
     breakableToughness: 1
     breakableDrop: {fileID: 11400000, guid: b42b5c158a3b7d94e89243d97c82ccd8, type: 2}
-    breakableColliderSize: {x: 0.5, y: 0.5}
+    breakableColliderSize: {x: 0.75, y: 0.5}
     animate: 0
     move: 0
     objectName: rock
     layer: 0
     count: 30
-    minNormalDot: 0.7
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 7
     maxAngleIncrement: 40
@@ -34231,13 +34231,13 @@ MonoBehaviour:
     breakable: 1
     breakableToughness: 1
     breakableDrop: {fileID: 0}
-    breakableColliderSize: {x: 0.75, y: 0.5}
+    breakableColliderSize: {x: 1, y: 0.75}
     animate: 0
     move: 0
     objectName: bush
     layer: 0
     count: 30
-    minNormalDot: 0.6
+    minNormalDot: 0
     minSpawnHeight: 0
     minAngleIncrement: 5
     maxAngleIncrement: 50
@@ -41747,85 +41747,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 409298869}
   m_CullTransparentMesh: 1
---- !u!1001 &410602402
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 2
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 631727617283723263, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_Size.x
-      value: 0.8125
-      objectReference: {fileID: 0}
-    - target: {fileID: 631727617283723263, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.8125
-      objectReference: {fileID: 0}
-    - target: {fileID: 3864587731191731368, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: itemSo
-      value: 
-      objectReference: {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
-    - target: {fileID: 7706733418576469650, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -287485958, guid: 414d56ec4c9b6f4428d75fdd8bd48776, type: 3}
-    - target: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_Name
-      value: (breakable) Scrap
-      objectReference: {fileID: 0}
-    - target: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_RootOrder
-      value: 23
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -250.54
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 138.66
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8535958555870526905, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_AddedGameObjects: []
-  m_SourcePrefab: {fileID: 100100000, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
 --- !u!1 &413990149
 GameObject:
   m_ObjectHideFlags: 0
@@ -52438,7 +52359,7 @@ MonoBehaviour:
     volume: 1
   landSound:
     audioClip: {fileID: 8300000, guid: f579ab3782e629544bd1c20ceec328e1, type: 3}
-    volume: 0.75
+    volume: 1
   maxSlopeMultiplier: 1
   maxJumpForceTime: 0.1
 --- !u!61 &733822062
@@ -52536,7 +52457,7 @@ MonoBehaviour:
   placeableHologram: {fileID: 1978265636}
   roomModuleHologramSprite: {fileID: 21300000, guid: 02354eecd1351fd4bb92cf85c7b1e505, type: 3}
   bulletCasingPfxTransform: {fileID: 90508843}
-  itemUseAudioSource: {fileID: 1422684849}
+  itemUseAudioSource: {fileID: 733822069}
 --- !u!114 &733822067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81774,7 +81695,7 @@ MonoBehaviour:
   holdIndicatorPrefab: {fileID: 4185121403196190369, guid: e2f40d50adbb25e49b86fb609718a959, type: 3}
   promptOffset: {x: 0, y: 1}
   holdIndicatorOffset: {x: 0, y: -1}
-  outlineMaterial: {fileID: 2100000, guid: f4ab069e67c979343a7921f4e136e955, type: 2}
+  outlineMaterial: {fileID: 0}
   canHoldInteract: 1
 --- !u!95 &1429146341
 Animator:
@@ -99100,13 +99021,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxEmissionRate: 30
-  positionOffset: 0.2
-  footstepsAudioSource: {fileID: 1596580201}
-  footstepsClips:
-  - {fileID: 8300000, guid: 72d4de909d2cf2e49b9063b84331819c, type: 3}
-  - {fileID: 8300000, guid: ec5f484d8fdca0b42a5e0ca707e10149, type: 3}
-  - {fileID: 8300000, guid: c6c8b2847bdc1f4428938bd6ed4815a6, type: 3}
-  - {fileID: 8300000, guid: 9ce38c1da9ce8764aae3be3efa0f9bc7, type: 3}
+  positionOffset: 0
+  footstepsAudioSource: {fileID: 0}
+  footstepsClips: []
 --- !u!82 &1596580201
 AudioSource:
   m_ObjectHideFlags: 0
@@ -106202,11 +106119,34 @@ MonoBehaviour:
   - {fileID: 1550499184608269273, guid: 859eb60aece6d454b84b6b1d34dd91f5, type: 3}
   - {fileID: 1550499184608269273, guid: 06275d305499c224996e8741f68e40ca, type: 3}
   effectAudioSource: {fileID: 1968306442}
-  slotClickSound: {fileID: 8300000, guid: dcc29066e04b5964cbcbcf9e7078bab6, type: 3}
-  craftSound: {fileID: 8300000, guid: 4dd1f45dad9c3c14da94473c2c0d7fcd, type: 3}
+  slotClickSound: {fileID: 8300000, guid: 4dd1f45dad9c3c14da94473c2c0d7fcd, type: 3}
+  craftSound: {fileID: 8300000, guid: dcc29066e04b5964cbcbcf9e7078bab6, type: 3}
   startingItems:
   - {fileID: 11400000, guid: 2f8be4cead71a0841a0369cbc13aa897, type: 2}
   - {fileID: 11400000, guid: a6db3c4fb443b8b43b6389e0345ec0f9, type: 2}
+  - {fileID: 11400000, guid: b2318b5519d43e747943cdad81bf87d3, type: 2}
+  - {fileID: 11400000, guid: 82120197eb1d1e4449e13cb15d26e99a, type: 2}
+  - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
+  - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
+  - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
+  - {fileID: 11400000, guid: e5510d8384f5ab54893853a19891cc1a, type: 2}
+  - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+  - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+  - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+  - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+  - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
+  - {fileID: 11400000, guid: 8b7efbf9d17982d49abdd4775a5605e7, type: 2}
+  - {fileID: 11400000, guid: f1c180f1245a7204294b9af69c8fc1a8, type: 2}
+  - {fileID: 11400000, guid: f1c180f1245a7204294b9af69c8fc1a8, type: 2}
+  - {fileID: 11400000, guid: f1c180f1245a7204294b9af69c8fc1a8, type: 2}
+  - {fileID: 11400000, guid: 5b93495cb1666574580e4dea3033f68a, type: 2}
+  - {fileID: 11400000, guid: 5b93495cb1666574580e4dea3033f68a, type: 2}
+  - {fileID: 11400000, guid: a5a1b0b37624535489616244816cbc1a, type: 2}
+  - {fileID: 11400000, guid: a5a1b0b37624535489616244816cbc1a, type: 2}
+  - {fileID: 11400000, guid: a5a1b0b37624535489616244816cbc1a, type: 2}
+  - {fileID: 11400000, guid: 0ea4fe347d1cff648b767bba0738a3df, type: 2}
+  - {fileID: 11400000, guid: 0ea4fe347d1cff648b767bba0738a3df, type: 2}
+  - {fileID: 11400000, guid: 0ea4fe347d1cff648b767bba0738a3df, type: 2}
 --- !u!4 &1968306434
 Transform:
   m_ObjectHideFlags: 0
