@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Inventory.Item_SOs;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -16,7 +17,7 @@ namespace Planets
         [Serializable]
         private struct VeinType
         {
-            public ScriptableObject oreSo;
+            public ItemSo oreSo;
             [Range(0f, 1f)] public float oreSpawnHeight;
             public float veinDiameter;
             public int oreToughness;
