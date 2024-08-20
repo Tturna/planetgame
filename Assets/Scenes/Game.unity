@@ -102536,7 +102536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeTime: 0
+  freezeTime: 1
   planetTime: 30
   planetDaySeconds: 60
   windChangeIntervalGap: {x: 5, y: 10}
@@ -106108,6 +106108,7 @@ GameObject:
   - component: {fileID: 1968306436}
   - component: {fileID: 1968306439}
   - component: {fileID: 1968306441}
+  - component: {fileID: 1968306444}
   - component: {fileID: 1968306442}
   m_Layer: 0
   m_Name: GameController
@@ -106211,6 +106212,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0ea4fe347d1cff648b767bba0738a3df, type: 2}
   - {fileID: 11400000, guid: 0ea4fe347d1cff648b767bba0738a3df, type: 2}
   - {fileID: 11400000, guid: 0ea4fe347d1cff648b767bba0738a3df, type: 2}
+  startingRecipes:
+  - {fileID: 11400000, guid: 86e47eb6ac8b65d419de5d62ee3154e7, type: 2}
 --- !u!4 &1968306434
 Transform:
   m_ObjectHideFlags: 0
@@ -106433,6 +106436,19 @@ MonoBehaviour:
   staticAudioSource: {fileID: 1690246682}
   clips:
   - {fileID: 8300000, guid: c2249b1e7cb4aef42a5d67bde63f0ce4, type: 3}
+--- !u!114 &1968306444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968306432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f6cb07887df244db21460ac078303f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recipes: []
 --- !u!1 &1969426068
 GameObject:
   m_ObjectHideFlags: 0

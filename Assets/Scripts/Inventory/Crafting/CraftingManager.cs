@@ -199,7 +199,7 @@ namespace Inventory.Crafting
                 _instance.craftingMenu.SetActive((bool)state);
             }
 
-            if (!_instance.craftingMenu.activeSelf || _instance._currentStationRecipes.Length == 0)
+            if (!_instance.craftingMenu.activeSelf || _instance._currentStationRecipes?.Length == 0)
             {
                 _instance._currentStationRecipes = null;
                 _instance.selectedRecipeOverlayImage.gameObject.SetActive(false);

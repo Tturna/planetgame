@@ -104,6 +104,7 @@ namespace Inventory
         
         [Header("Other")]
         [SerializeField] private ItemSo[] startingItems;
+        [SerializeField] private RecipeSo[] startingRecipes;
         
         public static InventoryManager instance;
 
@@ -248,9 +249,19 @@ namespace Inventory
             // Check for inventory switch
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                stashParent.SetActive(!stashParent.activeInHierarchy);
-                accessoryParent.SetActive(!accessoryParent.activeInHierarchy);
-                pauseMenuButtonObject.SetActive(!pauseMenuButtonObject.activeInHierarchy);
+                var state = !stashParent.activeInHierarchy;
+                stashParent.SetActive(state);
+                accessoryParent.SetActive(state);
+                pauseMenuButtonObject.SetActive(state);
+
+                if (state)
+                {
+                    CraftingManager.ToggleCraftingMenu(startingRecipes);
+                }
+                else
+                {
+                    CraftingManager.ToggleCraftingMenu(false);
+                }
             }
             
             // Make mouse slot follow the cursor

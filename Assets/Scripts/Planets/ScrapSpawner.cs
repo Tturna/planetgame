@@ -49,6 +49,7 @@ namespace Planets
                     var scrap = Instantiate(breakablePrefab, planetTransform, true);
                     scrap.GetComponent<SpriteRenderer>().sprite = scrapSo.sprite;
                     scrap.GetComponent<BoxCollider2D>().size = scrapSo.sprite.bounds.size;
+                    scrap.GetComponent<BreakableItemInstance>().itemSo = scrapSo;
                     scrap.transform.up = hit.normal;
                     scrap.transform.position = hit.point + hit.normal * scrapSo.sprite.bounds.size.y / 2f;
                 }
