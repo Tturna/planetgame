@@ -256,7 +256,10 @@ namespace Inventory
 
                 if (state)
                 {
-                    CraftingManager.ToggleCraftingMenu(startingRecipes);
+                    if (!CraftingManager.IsCraftingMenuOpen())
+                    {
+                        CraftingManager.ToggleCraftingMenu(startingRecipes);
+                    }
                 }
                 else
                 {

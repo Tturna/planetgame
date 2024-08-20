@@ -38,6 +38,10 @@ MonoBehaviour:
   useParticleIndex: -1
   useParticleOffset: {x: 0, y: 0}
   useParticleColor: {r: 0, g: 0, b: 0, a: 0}
+  useSounds: []
+  effectSounds: []
+  prefab: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
+  placeableSprite: {fileID: 0}
   toughness: 1
   lights:
   - range: 5

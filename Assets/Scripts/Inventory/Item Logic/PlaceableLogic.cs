@@ -58,7 +58,7 @@ namespace Inventory.Item_Logic
             {
                 var placeableSo = (PlaceableSo)useParameters.attackItem.itemSo;
                 placeable = placeableSo;
-                prefab = InventoryManager.instance.breakablePrefab;
+                prefab = placeableSo.prefab;
             }
             
             var placeableObject = Object.Instantiate(prefab);
@@ -75,16 +75,35 @@ namespace Inventory.Item_Logic
                 placeableObject.transform.up = normal;
                 return true;
             }
-            
+
             var sr = placeableObject.GetComponent<SpriteRenderer>();
-            sr.sprite = placeable.sprite;
             
-            var col = placeableObject.GetComponent<BoxCollider2D>();
-            col.size = placeable.sprite.bounds.size;
-            
-            var breakableItemInstance = placeableObject.GetComponent<BreakableItemInstance>();
-            breakableItemInstance.itemSo = placeable;
-            breakableItemInstance.toughness = placeable.toughness;
+            if (placeable.placeableSprite)
+            {
+                sr.sprite = placeable.placeableSprite;
+            }
+
+            if (placeableObject.TryGetComponent<BreakableItemInstance>(out var breakableItemInstance))
+            {
+                breakableItemInstance.itemSo = placeable;
+                breakableItemInstance.toughness = placeable.toughness;
+                
+                var col = placeableObject.GetComponent<BoxCollider2D>();
+                col.size = placeable.sprite.bounds.size;
+            }
+
+            if (placeableObject.TryGetComponent<SpaceShipEntity>(out var spaceShipEntity))
+            {
+                var allShips = Object.FindObjectsOfType<SpaceShipEntity>();
+
+                foreach (var ship in allShips)
+                {
+                    if (ship != spaceShipEntity)
+                    {
+                        Object.Destroy(ship.gameObject);
+                    }
+                }
+            }
             
             placeableObject.transform.position = position + normal * (sr.bounds.size.y * .5f);
             placeableObject.transform.up = normal;

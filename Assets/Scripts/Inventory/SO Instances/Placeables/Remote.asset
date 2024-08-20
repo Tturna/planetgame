@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2321becc647e45b29b642315c48953bb, type: 3}
-  m_Name: Goo Lamp
+  m_Name: Remote
   m_EditorClassIdentifier: 
-  id: 9a1c3257-c0b8-4b14-a3d0-8f918c169606
-  name: Goo Lamp
-  description: Improvised light source made from bioluminescent materials
-  maxStack: 100
-  sprite: {fileID: 21300000, guid: 60bc0c2483e329d42b113cd57d344fd8, type: 3}
+  id: 185359ac-ce39-45b3-a643-b950c416d667
+  name: Spaceship Remote
+  description: Summons a spaceship
+  maxStack: 1
+  sprite: {fileID: 21300000, guid: a2e2a210d7bb6b347a48bfcb66f3ef3e, type: 3}
   handPositionOffset: {x: 0, y: 0}
   orientationOffset: 0
   useBothHands: 0
@@ -33,18 +33,15 @@ MonoBehaviour:
   cameraShakeTime: 0
   cameraShakeStrength: 0
   playerRecoilStrength: 0
-  useRange: 2.5
-  incrementStackOnUse: 1
+  useRange: 5
+  incrementStackOnUse: 0
   useParticleIndex: -1
   useParticleOffset: {x: 0, y: 0}
   useParticleColor: {r: 0, g: 0, b: 0, a: 0}
   useSounds: []
   effectSounds: []
-  prefab: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-  placeableSprite: {fileID: 0}
+  prefab: {fileID: 2740798365573099699, guid: d61fa645c89bb454681baadbf1accb81, type: 3}
+  placeableSprite: {fileID: 21300000, guid: 7b9fa39e3e321e34a8f0809b1de5bc1e, type: 3}
+  usePlaceableSpriteAsHologram: 1
   toughness: 1
-  lights:
-  - range: 4
-    falloffStrength: 0.7
-    intensity: 1
-    color: {r: 0.58431375, g: 1, b: 0.5529412, a: 1}
+  lights: []

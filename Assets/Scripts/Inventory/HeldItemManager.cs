@@ -312,8 +312,12 @@ namespace Inventory
                 }
                 else
                 {
-                    sr.sprite = placeableSo.sprite;
-                    sr.size = placeableSo.sprite.bounds.size;
+                    var sprite = placeableSo.usePlaceableSpriteAsHologram
+                        ? placeableSo.placeableSprite
+                        : placeableSo.sprite;
+
+                    sr.sprite = sprite;
+                    sr.size = sprite!.bounds.size;
                 }
             }
             else

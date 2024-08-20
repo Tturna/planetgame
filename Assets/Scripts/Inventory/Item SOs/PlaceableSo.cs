@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Inventory.Item_SOs
@@ -15,6 +16,10 @@ namespace Inventory.Item_SOs
             public Color color;
         }
 
+        public GameObject prefab;
+        [CanBeNull, Tooltip("Sprite to replace the one in the given prefab. Leave null to use the one in the prefab.")]
+        public Sprite placeableSprite;
+        public bool usePlaceableSpriteAsHologram;
         public int toughness;
         public LightData[] lights;
     }

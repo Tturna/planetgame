@@ -210,5 +210,10 @@ namespace Inventory.Crafting
 
             _instance.ValidateCraftables();
         }
+
+        public static bool IsCraftingMenuOpen()
+        {
+            return _instance.craftingMenu.activeSelf;
+        }
     }
 }

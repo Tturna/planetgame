@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42fe5bd72ff34d4293207f3af8aa0861, type: 3}
-  m_Name: CadetPistolRecipe
+  m_Name: RemoteRecipe
   m_EditorClassIdentifier: 
   ingredients:
-  - item: {fileID: 11400000, guid: ab7125f56991ffa459f7cda01ef6c640, type: 2}
+  - item: {fileID: 11400000, guid: afe6d751ae0c4b941ab5705d590d5cc6, type: 2}
     amount: 1
+  - item: {fileID: 11400000, guid: 5f0a6e6335ca16f41a6bc8a5ba2054cd, type: 2}
+    amount: 5
+  - item: {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
+    amount: 5
   results:
-  - item: {fileID: 11400000, guid: 528c13e3d1f6ff34db8e0622890de078, type: 2}
+  - item: {fileID: 11400000, guid: 5b93495cb1666574580e4dea3033f68a, type: 2}
     amount: 1
