@@ -98,7 +98,7 @@ Material:
     - _BlurOffset: 2
     - _BlurSize: 8
     - _BlurSkip: 3.7
-    - _Brightness: 0.8645224
+    - _Brightness: 1
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5
     - _GrassThickness: 3

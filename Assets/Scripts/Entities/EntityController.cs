@@ -13,7 +13,7 @@ namespace Entities
         [CanBeNull] public GameObject ClosestPlanetObject { get; private set; }
         [CanBeNull] public GameObject CurrentPlanetObject { get; private set; }
         [CanBeNull] public PlanetGenerator ClosestPlanetGen { get; private set; }
-        [CanBeNull] protected PlanetGenerator CurrentPlanetGen { get; private set; }
+        [CanBeNull] public PlanetGenerator CurrentPlanetGen { get; private set; }
         public bool IsAlive { get; protected set; } = true;
         public Vector2 DirectionToClosestPlanet { get; private set; }
         public float DistanceToClosestPlanet { get; private set; } = float.MaxValue;

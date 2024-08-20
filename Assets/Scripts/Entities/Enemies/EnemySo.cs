@@ -36,6 +36,7 @@ namespace Entities.Enemies
         public Vector2 hitSquishStretchMultiplier;
         public AudioClip hitSound;
         public AudioClip deathSound;
+        public bool spawnInAir;
         
         [Tooltip("How long the player has to be outside the aggro range for the enemy to deaggro")]
         public float evasionTime;
