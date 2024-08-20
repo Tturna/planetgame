@@ -102536,7 +102536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeTime: 1
+  freezeTime: 0
   planetTime: 30
   planetDaySeconds: 60
   windChangeIntervalGap: {x: 5, y: 10}

@@ -26,7 +26,7 @@ namespace Inventory.Item_Logic
             {
                 animationEventCallback = () =>
                 {
-                    PlayerController.instance.AddForceTowardsCursor(1000f);
+                    PlayerController.instance.AddForceTowardsCursor(10000f);
                 }
             };
             

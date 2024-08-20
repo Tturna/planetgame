@@ -13,6 +13,7 @@ namespace Entities.Enemies
         public float health;
         public float wakeupDelay;
         public float deathDelay;
+        public float despawnTime;
         public float contactDamage;
         public bool isImmuneToKnockback;
         public float knockback;

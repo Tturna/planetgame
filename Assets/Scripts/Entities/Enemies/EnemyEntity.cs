@@ -40,7 +40,7 @@ namespace Entities.Enemies
         private MovementPattern.MovementFunctionData _movementFunctionData;
         private Action _deathAttackCancelAction;
         
-        private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer, _wakeupTimer;
+        private float _calculationTimer, _evasionTimer, _attackTimer, _idleTimer, _idleActionTimer, _wakeupTimer, _despawnTimer;
         private Vector2 _directionToPlayer;
         private float _distanceToPlayer;
         private float _health, _maxHealth;
@@ -105,6 +105,7 @@ namespace Entities.Enemies
             }
 
             CheckAggro();
+            CheckDespawn();
         }
 
         protected override void FixedUpdate()
@@ -164,6 +165,28 @@ namespace Entities.Enemies
             else if (_distanceToPlayer < enemySo.aggroRange)
             {
                 Aggro();
+            }
+        }
+
+        private void CheckDespawn()
+        {
+            if (_health <= 0) return;
+            if (enemySo.despawnTime <= 0) return;
+            
+            // Enemy is considered visible if it's observed in the scene view in Unity.
+            if (!_sr.isVisible)
+            {
+                _despawnTimer += Time.deltaTime;
+
+                if (_health > 0f && _despawnTimer >= enemySo.despawnTime)
+                {
+                    _health = 0;
+                    Death(true);
+                }
+            }
+            else
+            {
+                _despawnTimer = 0f;
             }
         }
 
@@ -503,35 +526,53 @@ namespace Entities.Enemies
             GameUtilities.instance.DelayExecute(() => _canMove = true, 0.3f);
         }
 
-        public void Death()
+        public void Death(bool despawn = false)
         {
             _deathAttackCancelAction?.Invoke();
-            
-            deathEffectsParent.transform.SetParent(null);
-            deathPfx.Play();
 
-            if (enemySo.deathSound)
+            if (!despawn)
             {
-                var rngPitch = Random.Range(-3, 1);
-                deathAudioSource.pitch = Mathf.Pow(2f, rngPitch / 12f);
-                deathAudioSource.PlayOneShot(enemySo.deathSound);
+                deathEffectsParent.transform.SetParent(null);
+                deathPfx.Play();
+            }
+
+            if (!despawn)
+            {
+                if (enemySo.deathSound)
+                {
+                    var rngPitch = Random.Range(-3, 1);
+                    deathAudioSource.pitch = Mathf.Pow(2f, rngPitch / 12f);
+                    deathAudioSource.PlayOneShot(enemySo.deathSound);
+                }
             }
             
             TriggerOnDeath();
-            GameUtilities.instance.DelayExecute(() => Destroy(deathEffectsParent), 1f);
+
+            if (!despawn)
+            {
+                GameUtilities.instance.DelayExecute(() => Destroy(deathEffectsParent), 1f);
+            }
 
             if (enemySo.isBoss)
             {
                 _healthbarManager.SetBossEnraged(false);
                 _healthbarManager.ToggleBossUIHealth(false);
-                CameraController.CameraShake(1f, 0.1f);
+
+                if (!despawn)
+                {
+                    CameraController.CameraShake(1f, 0.1f);
+                }
             }
 
             transform.localScale = Vector3.one;
-            _sr.flipX = enemySo.flipSprite;
-            _animator.SetTrigger(AnimDeath);
 
-            if (enemySo.deathDelay > 0)
+            if (!despawn)
+            {
+                _sr.flipX = enemySo.flipSprite;
+                _animator.SetTrigger(AnimDeath);
+            }
+
+            if (!despawn && enemySo.deathDelay > 0)
             {
                 GameUtilities.instance.DelayExecute(() =>
                 {
@@ -541,6 +582,11 @@ namespace Entities.Enemies
             else
             {
                 Destroy(gameObject);
+            }
+
+            if (despawn)
+            {
+                Debug.Log("Enemy despawned.");
             }
         }
 
@@ -573,7 +619,7 @@ namespace Entities.Enemies
         {
             Gizmos.DrawWireSphere(transform.position, enemySo.aggroRange);
         }
-        
+
 #if UNITY_EDITOR
         [MenuItem("CONTEXT/EnemyEntity/InitializeForEditor")]
         static void InitializeForEditor(MenuCommand command)

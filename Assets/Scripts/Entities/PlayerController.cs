@@ -468,7 +468,7 @@ namespace Entities
             Rigidbody.AddForce(knockbackDirection * amount, ForceMode2D.Impulse);
         }
 
-        public void Death()
+        public void Death(bool despawn = false)
         {
             IsAlive = false;
             bodyTr.gameObject.SetActive(false);

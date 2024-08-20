@@ -17,6 +17,7 @@ MonoBehaviour:
   health: 25
   wakeupDelay: 0
   deathDelay: 0
+  despawnTime: 30
   contactDamage: 7
   isImmuneToKnockback: 0
   knockback: 5
@@ -40,6 +41,8 @@ MonoBehaviour:
   hitPfxColor: {r: 1, g: 1, b: 1, a: 1}
   hitSquishStretchMultiplier: {x: 1, y: 1}
   hitSound: {fileID: 0}
+  deathSound: {fileID: 0}
+  spawnInAir: 0
   evasionTime: 7
   attackInterval: 2.5
   attackRecoveryTime: 1.5
