@@ -71981,6 +71981,7 @@ MonoBehaviour:
   mouseSlotStackText: {fileID: 1947155430}
   pauseMenuButtonObject: {fileID: 413990149}
   equippedItemObject: {fileID: 1422684843}
+  shipHudParent: {fileID: 762509716}
   itemTooltipRect: {fileID: 50618057}
   tooltipStatIcons:
   - name: Ranged Damage

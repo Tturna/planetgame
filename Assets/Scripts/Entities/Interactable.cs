@@ -48,7 +48,7 @@ namespace Entities
             _promptObject.transform.localPosition = promptOffset;
             _promptObject.SetActive(false);
 
-            if (_holdIndicatorObject)
+            if (!_holdIndicatorObject)
             {
                 _holdIndicatorObject = Instantiate(holdIndicatorPrefab, IndicatorParent);
                 _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
@@ -150,7 +150,16 @@ namespace Entities
         
         public virtual void InteractHolding(GameObject sourceObject)
         {
-            if (!canHoldInteract) return;
+            if (!canHoldInteract)
+            {
+                if (_holdIndicatorObject.activeSelf)
+                {
+                    _holdIndicatorObject.SetActive(false);
+                }
+                
+                return;
+            }
+
             if (_interacted) return;
 
             if (_interactHoldTimer == 0)

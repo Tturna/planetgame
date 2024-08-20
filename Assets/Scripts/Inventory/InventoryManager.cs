@@ -75,6 +75,7 @@ namespace Inventory
         
         [Header("Other Objects")]
         [SerializeField] private GameObject equippedItemObject;
+        [SerializeField] private GameObject shipHudParent;
 
         [Header("Tooltip Objects")]
         [SerializeField] private RectTransform itemTooltipRect;
@@ -107,6 +108,7 @@ namespace Inventory
         [SerializeField] private RecipeSo[] startingRecipes;
         
         public static InventoryManager instance;
+        public static bool isWearingJetpack;
 
         // Consider using a dictionary instead of arrays if the inventory is slow.
         private static Transform[] _hotSlotObjects;
@@ -124,6 +126,7 @@ namespace Inventory
         private KeyValuePair<GameObject, Image>[] _ttStatIcons;
         private GameObject _itemTooltipObject;
         private Dictionary<string, Sprite> _tooltipStatIcons;
+        private bool shipHudTempClosed;
 
         public delegate void ItemEquippedHandler(Item item);
         public static event ItemEquippedHandler ItemEquipped;
@@ -253,6 +256,17 @@ namespace Inventory
                 stashParent.SetActive(state);
                 accessoryParent.SetActive(state);
                 pauseMenuButtonObject.SetActive(state);
+
+                if (shipHudParent.activeSelf)
+                {
+                    shipHudParent.SetActive(false);
+                    shipHudTempClosed = true;
+                }
+                else if (shipHudTempClosed)
+                {
+                    shipHudParent.SetActive(true);
+                    shipHudTempClosed = false;
+                }
 
                 if (state)
                 {
@@ -484,6 +498,7 @@ namespace Inventory
             if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
             {
                 PlayerController.instance.SetJetpackSprite(accessorySo.sprite);
+                isWearingJetpack = true;
             }
         }
         
@@ -494,6 +509,7 @@ namespace Inventory
             if (accessorySo.suitableSlotItemType == SuitableItemType.Jetpack)
             {
                 PlayerController.instance.SetJetpackSprite(null);
+                isWearingJetpack = false;
             }
         }
 

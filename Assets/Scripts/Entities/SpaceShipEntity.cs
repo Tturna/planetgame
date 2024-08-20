@@ -1,4 +1,5 @@
 using Cameras;
+using Inventory;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
@@ -93,6 +94,8 @@ namespace Entities
             if (_passenger is PlayerController)
             {
                 Controls();
+
+                _interactable.canHoldInteract = InventoryManager.isWearingJetpack;
             }
             else
             {
@@ -341,9 +344,14 @@ namespace Entities
         {
             if (_passenger && !_landingMode)
             {
-                _interactable.canHoldInteract = true;
+                if (InventoryManager.isWearingJetpack)
+                {
+                    _interactable.canHoldInteract = true;
+                }
+                
                 return;
             }
+            
             _interactable.canHoldInteract = false;
             TogglePassenger(sourceObject);
         }
@@ -453,7 +461,6 @@ namespace Entities
 
                 var passengerTransform = _passenger.transform;
                 _oldPassengerParent = passengerTransform.parent;
-                
                 passengerTransform.SetParent(transform);
                 
                 StatsUIManager.instance.ShowShipHUD(hullHealth, fuelLevel, maxHullHealth, maxFuelLevel);
