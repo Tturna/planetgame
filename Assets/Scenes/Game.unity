@@ -34026,7 +34026,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: bca630ca10d9b234896b28d1a1d40362, type: 3}
     - {fileID: 21300000, guid: d162a7b596c15e9488e9aff20df8a32a, type: 3}
     breakable: 1
-    breakableToughness: 5
+    breakableToughness: 25
     breakableDrop: {fileID: 11400000, guid: bb877d6eb14893c43bfc8ee7f9fec7ae, type: 2}
     breakableColliderSize: {x: 0.75, y: 1.5}
     animate: 0

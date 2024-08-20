@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40fe3dc444f14c11bd56f2ff9736089d, type: 3}
   m_Name: Tin Ore
   m_EditorClassIdentifier: 
-  id: 10a76443-d151-41fd-9a75-3c05a9f8bbb3
+  id: a4a8c03a-15b4-4390-94d9-d3f08f4a1d46
   name: Tin Ore
   description: self fucking explanatory
   maxStack: 100
   sprite: {fileID: -827789830, guid: 35ae8c23cb51a8f4f887ef526a8a4bdb, type: 3}
   handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
+  useBothHands: 0
+  flipSprite: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 0

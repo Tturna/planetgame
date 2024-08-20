@@ -18,7 +18,9 @@ MonoBehaviour:
   maxStack: 1
   sprite: {fileID: 21300000, guid: 36292b998db52474b9bed40d2e719dea, type: 3}
   handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
   useBothHands: 0
+  flipSprite: 0
   altIdleAnimation: 0
   suitableSlotItemType: 0
   logicCode: 5
@@ -33,8 +35,13 @@ MonoBehaviour:
   playerRecoilStrength: 0
   useRange: 2.5
   incrementStackOnUse: 1
+  useParticleIndex: -1
+  useParticleOffset: {x: 0, y: 0}
+  useParticleColor: {r: 0, g: 0, b: 0, a: 0}
+  useSounds: []
+  effectSounds: []
   toughness: 1
   lights: []
   recipes:
-  - {fileID: 11400000, guid: 1280b5ba971bf7145a92386c583bf647, type: 2}
-  - {fileID: 11400000, guid: 0b610d864fe2da642b88f6086a24b723, type: 2}
+  - {fileID: 11400000, guid: df55280ab8096114787c4e1acf6f5db3, type: 2}
+  - {fileID: 11400000, guid: 143472b153303984a8fa6f479a94f221, type: 2}

@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40fe3dc444f14c11bd56f2ff9736089d, type: 3}
   m_Name: Graphite
   m_EditorClassIdentifier: 
-  id: 10a76443-d151-41fd-9a75-3c05a9f8bbb3
+  id: d6bbdbff-ae5c-448f-8914-084bfd398905
   name: Graphite
   description: self fucking explanatory
   maxStack: 100
   sprite: {fileID: -2105113815, guid: d93b05d2287d4b24f9119637b34fad37, type: 3}
   handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
+  useBothHands: 0
+  flipSprite: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 0

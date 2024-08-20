@@ -107,6 +107,6 @@ MonoBehaviour:
   muzzlePosition: {x: 0, y: 0}
   muzzleFlashes: []
   muzzleFlashColor: {r: 0, g: 0, b: 0, a: 0}
-  toolPower: 3
+  toolPower: 20
   toolUseArea: 0.35
   toolRange: 2.5
