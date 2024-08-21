@@ -22,6 +22,7 @@ namespace Entities
         public bool CanControl { get; private set; } = true;
         protected bool FollowPlanetRotation { get; private set; } = true;
         protected bool CanCollide { get; private set; } = true;
+        public bool IsInSpace { get; private set; } = true;
 
         protected float closestPlanetCheckTimer;
         protected const float ClosestPlanetCheckInterval = 5f;
@@ -69,7 +70,7 @@ namespace Entities
         protected virtual void FixedUpdate()
         {
             if (!Rigidbody) return;
-            if (!CalculatePhysics && !FollowPlanetRotation) return;
+            // if (!CalculatePhysics && !FollowPlanetRotation) return;
 
             // This is here to prevent useless calculations when an entity is stationary.
             // This also breaks space flight as the player is stationary in relationship to the ship,
@@ -132,8 +133,14 @@ namespace Entities
             
             CurrentPlanetGen = planetGen;
             CurrentPlanetObject = planetObject;
-            ClosestPlanetGen = planetGen;
-            ClosestPlanetObject = planetObject;
+
+            if (planetGen)
+            {
+                ClosestPlanetGen = planetGen;
+                ClosestPlanetObject = planetObject;
+            }
+            
+            IsInSpace = planetGen == null;
         }
 
         protected Vector2 CalculatePlanetRelation()

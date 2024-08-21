@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cameras;
+using Inventory;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
@@ -12,61 +13,47 @@ namespace Entities
     [RequireComponent(typeof(PlayerDeathManager))]
     public class PlayerController : EntityController, IDamageable
     {
-        #region Serialized Fields
+        [Header("Components")]
+        [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
+        [SerializeField] private Transform handsParent;
+        [SerializeField] private Transform extraSpritesParent;
+        [SerializeField] private SpriteRenderer jetpackSr;
+        [SerializeField] private Transform bodyTr;
+        [SerializeField] private ParticleSystem jetpackParticles1, jetpackParticles2;
+        [SerializeField] private ParticleSystem jumpLandParticles;
+        [SerializeField] private SpriteRenderer headSr;
+        [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
+        [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
+        [SerializeField] private GameObject itemAnchor;
+        [SerializeField] private Transform starmapCamera;
+        [SerializeField] private AudioSource generalAudioSource;
+        [SerializeField] private AudioSource jetpackAudioSource;
+        [FormerlySerializedAs("deathSound")] [SerializeField] private AudioUtilities.Clip hitSound;
+        [SerializeField] private AudioUtilities.Clip itemPickupSound;
+        [SerializeField] private AudioUtilities.Clip landSound;
         
-            [Header("Components")]
-            [SerializeField] private Animator handsAnimator; // This component is also used by HeldItemManager
-            [SerializeField] private Transform handsParent;
-            [SerializeField] private Transform extraSpritesParent;
-            [SerializeField] private SpriteRenderer jetpackSr;
-            [SerializeField] private Transform bodyTr;
-            [SerializeField] private ParticleSystem jetpackParticles1, jetpackParticles2;
-            [SerializeField] private ParticleSystem jumpLandParticles;
-            [SerializeField] private SpriteRenderer headSr;
-            [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
-            [FormerlySerializedAs("bodyAnimator")] [SerializeField] private Animator torsoAnimator;
-            [SerializeField] private GameObject itemAnchor;
-            [SerializeField] private Transform starmapCamera;
-            [SerializeField] private AudioSource generalAudioSource;
-            [SerializeField] private AudioSource jetpackAudioSource;
-            [FormerlySerializedAs("deathSound")] [SerializeField] private AudioUtilities.Clip hitSound;
-            [SerializeField] private AudioUtilities.Clip itemPickupSound;
-            [SerializeField] private AudioUtilities.Clip landSound;
-            
-            // [Header("Other")]
-            // [SerializeField] private Material flashMaterial;
-        
-            [Header("Movement Settings")]
-            [SerializeField] private float maxSlopeMultiplier;
-            [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
-            
-        #endregion
+        // [Header("Other")]
+        // [SerializeField] private Material flashMaterial;
+    
+        [Header("Movement Settings")]
+        [SerializeField] private float maxSlopeMultiplier;
+        [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
 
-        #region Unserialized Components
-        
-            private CapsuleCollider2D _collider;
-            private PlayerDeathManager _deathManager;
-            
-        #endregion
+        private CapsuleCollider2D _collider;
+        private PlayerDeathManager _deathManager;
 
-        #region Interaction Variables
-        
-            private Interactable _closestInteractable;
-            private Interactable _newClosestInteractable;
-            private readonly List<Interactable> _interactablesInRange = new();
-            private float _interactHoldTimer;
-            private bool _interacted;
-            
-        #endregion
+        private Interactable _closestInteractable;
+        private Interactable _newClosestInteractable;
+        private readonly List<Interactable> _interactablesInRange = new();
+        private float _interactHoldTimer;
+        private bool _interacted;
 
-        #region Jumping Variables
-        
-            private bool _jumping;
-            private const float JumpSafetyCooldown = 0.2f; // Used to prevent another jump as the player is jumping up
-            private float _jumpCooldownTimer; // Same ^
-            private float _jumpForceTimer; // Used to calculate how long the jump key can be held down to jump higher
-            
-        #endregion
+        private bool _jumping;
+        private const float JumpSafetyCooldown = 0.2f; // Used to prevent another jump as the player is jumping up
+        private float _jumpCooldownTimer; // Same ^
+        private float _jumpForceTimer; // Used to calculate how long the jump key can be held down to jump higher
+
+        private float _torque;
         
         // private Material _defaultMaterial;
 
@@ -150,7 +137,7 @@ namespace Entities
             pmat.friction = Mathf.Lerp(0.85f, 0.2f, Mathf.Abs(_inputVector.x));
             _collider.sharedMaterial = pmat;
 
-            if (CanControl)
+            if (CanControl && !IsInSpace)
             {
                 var force = transform.right * (_inputVector.x * PlayerStatsManager.AccelerationSpeed);
                 
@@ -202,8 +189,18 @@ namespace Entities
                     // _oldLocalVelocity = Rigidbody.GetVector(Rigidbody.velocity);
                 }
 
-                torsoAnimator.SetBool("running", _inputVector.x != 0);
-                handsAnimator.SetBool("running", _inputVector.x != 0);
+                var running = _inputVector.x != 0;
+                
+                if (!running)
+                {
+                    torsoAnimator.SetBool("running", false);
+                    handsAnimator.SetBool("running", false);
+                }
+                else if (!_jumping)
+                {
+                    torsoAnimator.SetBool("running", true);
+                    handsAnimator.SetBool("running", true);
+                }
                 
                 // Jumping
                 if (_jumping && _jumpForceTimer < maxJumpForceTime)
@@ -229,9 +226,16 @@ namespace Entities
         private void HandleControls()
         {
             _inputVector.x = Input.GetAxis("Horizontal");
+            _inputVector.y = Input.GetAxis("Vertical");
+            
+            if (IsInSpace)
+            {
+                HandleSpaceControls();
+                return;
+            }
 
             // Jumping
-            if (Input.GetKey(KeyCode.Space))
+            if (!InventoryManager.isWearingJetpack && Input.GetKey(KeyCode.Space))
             {
                 // Check if the jump key can be held to increase jump force
                 if (_jumpForceTimer >= maxJumpForceTime) return;
@@ -260,6 +264,19 @@ namespace Entities
                 // Prevent adding jump force in the air if the jump key is released while jumping
                 _jumpForceTimer = maxJumpForceTime;
             }
+        }
+
+        private void HandleSpaceControls()
+        {
+            if (_inputVector.y < 0)
+            {
+                Rigidbody.velocity = Vector2.Lerp(Rigidbody.velocity, Vector2.zero, Time.deltaTime * 3f);
+            }
+            
+            _torque = Mathf.Lerp(_torque, _inputVector.x, Time.deltaTime * 2f);
+
+            if (_torque == 0) return;
+            transform.Rotate(Vector3.back, _torque);
         }
 
         private IEnumerator JumpStretch(float squish = 0.95f, float stretch = 1.05f, bool landing = false)
@@ -308,7 +325,18 @@ namespace Entities
             var mask = GameUtilities.BasicMovementCollisionMask;
             var hit = Physics2D.CircleCast(transform.position, 0.2f, -transform.up, 0.4f, mask);
 
-            if (!hit) return;
+            if (!hit)
+            {
+                if (!_jumping)
+                {
+                    _jumping = true;
+                    _jumpForceTimer = maxJumpForceTime;
+                    torsoAnimator.SetBool("jumping", true);
+                    handsAnimator.SetBool("jumping", true);
+                }
+                
+                return;
+            }
 
             // Allow another jump when landing
             _jumpForceTimer = 0;
@@ -423,6 +451,7 @@ namespace Entities
         {
             torsoSr.enabled = state;
             headSr.enabled = state;
+            jetpackSr.enabled = state;
             handsParent.gameObject.SetActive(state);
             itemAnchor.SetActive(state);
         }

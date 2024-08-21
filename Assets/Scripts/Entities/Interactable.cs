@@ -50,9 +50,16 @@ namespace Entities
 
             if (!_holdIndicatorObject)
             {
-                _holdIndicatorObject = Instantiate(holdIndicatorPrefab, IndicatorParent);
-                _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
-                _holdIndicatorObject.SetActive(false);
+                if (holdIndicatorPrefab)
+                {
+                    _holdIndicatorObject = Instantiate(holdIndicatorPrefab, IndicatorParent);
+                    _holdIndicatorObject.transform.localPosition = holdIndicatorOffset;
+                    _holdIndicatorObject.SetActive(false);
+                }
+                else
+                {
+                    Debug.LogWarning("Hold indicator prefab not set for interactable object.");
+                }
             }
 
             if (TryGetComponent<SpriteRenderer>(out var sr))

@@ -25,6 +25,7 @@ namespace Environment
         [SerializeField, Range(0, 1)] private float brightness;
         
         private Material _terrainRenderMaterial, _caveBgRenderMaterial, _spriteMaterial;
+        private PlayerController player;
         private static readonly int ShaderBrightness = Shader.PropertyToID("_Brightness");
         private static readonly int SunLightAngle = Shader.PropertyToID("_SunLightAngle");
         private static readonly int RedTint = Shader.PropertyToID("_RedTint");
@@ -39,6 +40,7 @@ namespace Environment
             _terrainRenderMaterial = GameUtilities.GetTerrainMaterial();
             _caveBgRenderMaterial = GameUtilities.GetCaveBackgroundMaterial();
             _spriteMaterial = GameUtilities.GetSpriteMaterial();
+            player = PlayerController.instance;
             // TriggerOnFogStarted();
 
             // StartCoroutine(ChangeWind());
@@ -61,6 +63,8 @@ namespace Environment
                     planetTime = 0;
                 }
             }
+            
+            if (player.IsInSpace) return;
             
             // sun light angle -> 0 to 360
             // 0 -> dawn (at planet angle 0*, rises from the right)
@@ -118,6 +122,17 @@ namespace Environment
             {
                 _spriteMaterial.SetFloat(RedTint, 0f);
                 BackgroundImageManager.SetBackgroundRedTint(0f);
+            }
+
+            // Increase brightness as the player gets closer to the edge of the atmosphere
+            if (player.ClosestPlanetGen)
+            {
+                var normalizedPlanetDistance = player.ClosestPlanetGen.NormalizeDistanceFromPlanet(player.DistanceToClosestPlanet);
+                // Planet distance threshold where the brightness starts to increase (0.5 = halfway through the atmosphere calculated from the core)
+                const float threshold = 0.8f;
+                var scaledDistance = (normalizedPlanetDistance - threshold) * (1f / threshold);
+                var clampedDistance = Mathf.Clamp01(scaledDistance);
+                brightness = Mathf.Lerp(brightness, 1f, clampedDistance);
             }
             
             _terrainRenderMaterial.SetFloat(SunLightAngle, sunLightAngle);

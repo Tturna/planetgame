@@ -167,7 +167,7 @@ namespace Inventory.Crafting
                 if (i < _currentStationRecipes.Length)
                 {
                     _currentStationRecipes[i].canCraft = InventoryManager.CanCraft(_currentStationRecipes[i].recipe);
-                    Debug.Log($"Can craft {_currentStationRecipes[i].recipe.name}: {_currentStationRecipes[i].canCraft}");
+                    // Debug.Log($"Can craft {_currentStationRecipes[i].recipe.name}: {_currentStationRecipes[i].canCraft}");
                     _recipeSlotImages[i].color = _currentStationRecipes[i].canCraft ? Color.white : new Color(1f, 1f, 1f, .5f);
                 }
                 else

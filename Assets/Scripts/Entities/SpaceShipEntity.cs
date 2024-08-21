@@ -318,7 +318,6 @@ namespace Entities
             var colorOverLifetimeModule = movementParticles.colorOverLifetime;
 
             emissionModule.rateOverTime = velocityMagnitude * 0.6f;
-            
             velocityOverlifetimeModule.y = velInOutCubic * 20f;
 
             var alpha = velInOutSine * 0.5f;
@@ -336,7 +335,7 @@ namespace Entities
             
             sizeOverLifetimeModule.y = new ParticleSystem.MinMaxCurve(1 + velInQuart * 20f, 1 + velInQuart * 120f);
             
-            movementParticleAnchor.transform.localPosition = velocity.normalized * 10f;
+            movementParticleAnchor.transform.position = transform.position + (Vector3)velocity.normalized * 10f;
             movementParticleAnchor.transform.rotation = Quaternion.Euler(0,0,velocityAngle - 90);
         }
 
