@@ -1101,5 +1101,10 @@ namespace Inventory
             // TODO: Make sure the ingredients aren't decremented if there is no space for the result
             instance.AddItem(new Item(recipe.results[0].item));
         }
+
+        public static void RefreshEquippedItem()
+        {
+            instance.EquipItem(_hotSlots[_selectedIndex].item);
+        }
     }
 }

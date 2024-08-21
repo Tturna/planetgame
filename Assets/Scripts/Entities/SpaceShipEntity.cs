@@ -481,9 +481,9 @@ namespace Entities
                 
                 _passenger.transform.SetParent(_oldPassengerParent);
                 _oldPassengerParent = null;
-                
                 _passenger = null;
                 
+                InventoryManager.RefreshEquippedItem();
                 StatsUIManager.instance.HideShipHUD();
             }
         }
