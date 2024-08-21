@@ -67722,7 +67722,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   breakablePrefab: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
+  itemPrefab: {fileID: 3328653802289816588, guid: 3b57630e871e0284193619da6fc1a394, type: 3}
+  secondShipwreckLoot:
+  - {fileID: 11400000, guid: 528c13e3d1f6ff34db8e0622890de078, type: 2}
+  - {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
+  - {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
+  - {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
+  - {fileID: 11400000, guid: c1e6112766dc1594ea74ce61acff2348, type: 2}
+  - {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
   scrapSo: {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
+  shipwreckOneSprite: {fileID: 21300000, guid: 7b9fa39e3e321e34a8f0809b1de5bc1e, type: 3}
+  shipwreckTwoSprite: {fileID: 21300000, guid: 7b9fa39e3e321e34a8f0809b1de5bc1e, type: 3}
 --- !u!1 &1769118933
 GameObject:
   m_ObjectHideFlags: 0
