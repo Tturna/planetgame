@@ -72094,6 +72094,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 5772806534296229048, guid: 6bf260eada9d3604ea407bfcd443e046, type: 3}
   placeBuildingPfxPrefab: {fileID: 0}
+  spaceMoveParticleAnchor: {fileID: 843344121}
   terrainRenderImage: {fileID: 1297968441}
   spriteMaterial: {fileID: 2100000, guid: 9a35ebc22acfb3d40863c9a0bcb5e67d, type: 2}
   caveBgRenderMaterial: {fileID: 2100000, guid: c3c21c1b70c54f04ca606c6fe16e8c9b, type: 2}

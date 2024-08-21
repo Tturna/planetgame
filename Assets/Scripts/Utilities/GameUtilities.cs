@@ -10,6 +10,7 @@ namespace Utilities
     {
         [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private GameObject placeBuildingPfxPrefab;
+        [SerializeField] private GameObject spaceMoveParticleAnchor;
         [SerializeField] private RawImage terrainRenderImage; // "Canvas - Camera" -> "TerrainRender"
         [SerializeField] private Material spriteMaterial;
         [SerializeField] private Material caveBgRenderMaterial;
@@ -107,6 +108,16 @@ namespace Utilities
             }
             
             return placeBuildingPfxPrefab;
+        }
+        
+        public GameObject GetSpaceMoveParticleAnchor()
+        {
+            if (spaceMoveParticleAnchor == null)
+            {
+                throw new Exception("Space Move Particle Anchor is null");
+            }
+            
+            return spaceMoveParticleAnchor;
         }
         
         public static Material GetTerrainMaterial()

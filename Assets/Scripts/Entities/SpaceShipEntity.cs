@@ -32,8 +32,6 @@ namespace Entities
         [SerializeField] private ParticleSystem boostParticles;
         [SerializeField] private ParticleSystem landingParticles;
         [SerializeField] private ParticleSystem lowHealthParticles;
-        [SerializeField] private ParticleSystem movementParticles;
-        [SerializeField] private GameObject movementParticleAnchor;
         [SerializeField] private ParticleSystem collisionParticles;
         [SerializeField] private Transform starMapMarker;
     
@@ -46,6 +44,8 @@ namespace Entities
         private Animator _shipAnimator;
         private SpriteRenderer _spriteRenderer;
         private Interactable _interactable;
+        private ParticleSystem movementParticles;
+        private GameObject movementParticleAnchor;
         private bool _flipped;
         private float _maxSpeed;
         private int _speedLevel = -1;
@@ -82,6 +82,9 @@ namespace Entities
             {
                 starMapMarker.localRotation = Quaternion.Euler(0,0,-90);
             }
+
+            movementParticleAnchor = GameUtilities.instance.GetSpaceMoveParticleAnchor();
+            movementParticles = movementParticleAnchor.GetComponentInChildren<ParticleSystem>();
         }
 
         private void Update()
