@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40fe3dc444f14c11bd56f2ff9736089d, type: 3}
+  m_Name: Cobalt Ore
+  m_EditorClassIdentifier: 
+  id: 33041d80-42e1-4ce6-b049-7a74816acd35
+  name: Cobalt Ore
+  description: Shiny metal
+  maxStack: 100
+  sprite: {fileID: -78742718, guid: 28bbbadcd5b8a3644b78829b18cea6a4, type: 3}
+  handPositionOffset: {x: 0, y: 0}
+  orientationOffset: 0
+  useBothHands: 0
+  flipSprite: 0
+  altIdleAnimation: 0
+  suitableSlotItemType: 0
