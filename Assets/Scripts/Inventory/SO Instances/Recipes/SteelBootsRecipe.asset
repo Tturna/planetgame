@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42fe5bd72ff34d4293207f3af8aa0861, type: 3}
-  m_Name: CobaltJetpackRecipe
+  m_Name: SteelBootsRecipe
   m_EditorClassIdentifier: 
   ingredients:
-  - item: {fileID: 11400000, guid: 1132a1de774da4f4e8a9e83d80ff0ae1, type: 2}
+  - item: {fileID: 11400000, guid: 02cc53ec79feab644aed3b6325043554, type: 2}
     amount: 1
-  - item: {fileID: 11400000, guid: e41b14f8927a2e248bdcd79a16bf70dd, type: 2}
-    amount: 10
+  - item: {fileID: 11400000, guid: b5b4bfc06f275fe438b225015eb8fb02, type: 2}
+    amount: 1
   results:
-  - item: {fileID: 11400000, guid: fec6b8091773d38419dbfad31a1611da, type: 2}
+  - item: {fileID: 11400000, guid: ee6f38d29d346cd46817089048b58579, type: 2}
     amount: 1

@@ -29,6 +29,7 @@ MonoBehaviour:
   jumpForce: 12
   movementPattern:
     movementType: 0
+  faceMovementDirection: 0
   isBoss: 0
   flipSprite: 1
   bossPortrait: {fileID: 0}
@@ -72,8 +73,8 @@ MonoBehaviour:
   dropMultiple: 1
   lootTable:
   - item:
-      itemSo: {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
-    dropChance: 75
+      itemSo: {fileID: 11400000, guid: b5b4bfc06f275fe438b225015eb8fb02, type: 2}
+    dropChance: 5
   - item:
-      itemSo: {fileID: 11400000, guid: aca811514951fa546a33ba3262f46cdf, type: 2}
-    dropChance: 25
+      itemSo: {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
+    dropChance: 20

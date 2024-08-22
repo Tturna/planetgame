@@ -25,6 +25,6 @@ MonoBehaviour:
   suitableSlotItemType: 1
   statModifiers:
   - statModifierType: 18
-    value: 1.5
+    value: 1.2
   - statModifierType: 19
-    value: 1.5
+    value: 1.2

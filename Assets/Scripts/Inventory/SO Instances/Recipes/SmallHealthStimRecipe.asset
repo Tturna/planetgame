@@ -10,13 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42fe5bd72ff34d4293207f3af8aa0861, type: 3}
-  m_Name: CobaltJetpackRecipe
+  m_Name: SmallHealthStimRecipe
   m_EditorClassIdentifier: 
   ingredients:
-  - item: {fileID: 11400000, guid: 1132a1de774da4f4e8a9e83d80ff0ae1, type: 2}
-    amount: 1
-  - item: {fileID: 11400000, guid: e41b14f8927a2e248bdcd79a16bf70dd, type: 2}
-    amount: 10
+  - item: {fileID: 11400000, guid: 081443d23b676c04eb0ec34008a76a98, type: 2}
+    amount: 3
   results:
-  - item: {fileID: 11400000, guid: fec6b8091773d38419dbfad31a1611da, type: 2}
+  - item: {fileID: 11400000, guid: b2318b5519d43e747943cdad81bf87d3, type: 2}
     amount: 1

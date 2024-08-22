@@ -10,5 +10,6 @@ namespace Inventory.Item_SOs
         public Vector2 muzzlePosition;
         public Sprite[] muzzleFlashes;
         public Color muzzleFlashColor;
+        public bool fullAuto;
     }
 }

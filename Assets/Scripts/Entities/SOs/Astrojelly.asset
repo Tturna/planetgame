@@ -21,7 +21,7 @@ MonoBehaviour:
   contactDamage: 10
   isImmuneToKnockback: 0
   knockback: 10
-  aggroRange: 15
+  aggroRange: 25
   accelerationSpeed: 5
   maxSpeed: 5
   maxSlopeMultiplier: 0
@@ -50,8 +50,11 @@ MonoBehaviour:
   alwaysAttack: 0
   useRandomAttack: 0
   attacks: []
-  dropMultiple: 0
+  dropMultiple: 1
   lootTable:
   - item:
       itemSo: {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
     dropChance: 50
+  - item:
+      itemSo: {fileID: 11400000, guid: bfa4aa735b338fd4f9804ed26e5b5253, type: 2}
+    dropChance: 5

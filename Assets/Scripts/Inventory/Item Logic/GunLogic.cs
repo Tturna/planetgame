@@ -10,11 +10,9 @@ namespace Inventory.Item_Logic
         private GameObject _muzzleFlashObject;
         private SpriteRenderer _muzzleFlashSr;
         private ParticleSystem _casingParticleSystem;
-        
-        public override bool UseOnce(UseParameters useParameters)
+
+        private void Shoot(UseParameters useParameters, WeaponSo weaponSo)
         {
-            var weaponSo = (WeaponSo)useParameters.attackItem.itemSo;
-            
             var pos = (Vector2)useParameters.equippedItemObject.transform.position;
             var rot = useParameters.equippedItemObject.transform.eulerAngles;
             
@@ -62,11 +60,30 @@ namespace Inventory.Item_Logic
             }
             
             _casingParticleSystem.Play();
+        }
+        
+        public override bool UseOnce(UseParameters useParameters)
+        {
+            var weaponSo = (WeaponSo)useParameters.attackItem.itemSo;
+
+            if (weaponSo.fullAuto) return false;
+            
+            Shoot(useParameters, weaponSo);
             
             return true;
         }
 
-        public override bool UseContinuous(UseParameters useParameters) => false;
+        public override bool UseContinuous(UseParameters useParameters)
+        {
+            var weaponSo = (WeaponSo)useParameters.attackItem.itemSo;
+            
+            if (!weaponSo.fullAuto) return false;
+            
+            Shoot(useParameters, weaponSo);
+            
+            return true;
+        }
+
         public override bool UseOnceSecondary(UseParameters useParameters) => false;
         public override bool UseContinuousSecondary(UseParameters useParameters) => false;
     }

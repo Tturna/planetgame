@@ -41,7 +41,8 @@ MonoBehaviour:
   useSounds: []
   effectSounds: []
   prefab: {fileID: 7762146902459202112, guid: 57ab2527d8dc823498cfaee97c32f91e, type: 3}
-  placeableSprite: {fileID: 0}
+  placeableSprite: {fileID: 21300000, guid: 2b78f2bbbb2327541b15a2aa32b8cd9a, type: 3}
+  usePlaceableSpriteAsHologram: 0
   toughness: 1
   lights:
   - range: 5
