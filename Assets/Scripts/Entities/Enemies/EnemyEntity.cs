@@ -127,12 +127,10 @@ namespace Entities.Enemies
 
         private bool CalculatePlayerRelation()
         {
-            // Timer
             // _calculationTimer -= Time.deltaTime;
             // if (!(_calculationTimer <= 0)) return false;
             // _calculationTimer = calculationInterval;
             
-            // Calculation    
             var diffToPlayer = _player.transform.position - transform.position;
             _directionToPlayer = diffToPlayer.normalized;
             _distanceToPlayer = diffToPlayer.magnitude;
@@ -289,7 +287,6 @@ namespace Entities.Enemies
             _movementFunctionData.distanceToPlayer = _distanceToPlayer;
             _movementFunctionData.dotToPlayer = dot;
             _movementFunctionData.relativeMoveDirection = relativeMoveDirection;
-            
             _movementFunction.Invoke(_movementFunctionData);
         }
 
@@ -355,7 +352,11 @@ namespace Entities.Enemies
             _damageNumberManager = GetComponent<DamageNumberManager>();
             
             _animator.runtimeAnimatorController = enemySo.overrideAnimator;
-            _animator.SetTrigger(AnimWakeup);
+
+            if (enemySo.wakeupDelay > 0)
+            {
+                _animator.SetTrigger(AnimWakeup);
+            }
 
             _evasionTimer = enemySo.evasionTime;
             _attackTimer = enemySo.attackInterval;
@@ -366,6 +367,7 @@ namespace Entities.Enemies
             _movementFunction = _movementPattern.GetMovement();
             _movementPattern.Init();
             _movementFunctionData = new MovementPattern.MovementFunctionData();
+            ToggleAutoRotation(!enemySo.faceMovementDirection);
 
             _healthbarManager.Initialize(_health, _maxHealth, enemySo);
 

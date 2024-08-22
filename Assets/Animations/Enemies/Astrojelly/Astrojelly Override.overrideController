@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Astrojelly Override
+  m_Controller: {fileID: 9100000, guid: 7fd4e2809fee0e444b7b69197a8edeb5, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 445cf808a514c3d49aac86331c70b96f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 924721c581e19bd469876b3d7bae11c1, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 232ffb3f5924c3d46a37bbc140378660, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 66106dd870c2cf44e9597682d151bc63, type: 2}

@@ -28156,7 +28156,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 18.55
+  orthographic size: 27.73
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -29398,7 +29398,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8
+  orthographic size: 12
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -42761,7 +42761,7 @@ Transform:
   m_GameObject: {fileID: 979125991}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 500, y: 300, z: 1}
+  m_LocalScale: {x: 690, y: 410, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1094374835}
@@ -47624,7 +47624,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 18.55
+  orthographic size: 27.73
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -49699,7 +49699,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -50255,7 +50255,7 @@ Transform:
   m_GameObject: {fileID: 1327642673}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 500, y: 300, z: 1}
+  m_LocalScale: {x: 690, y: 410, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1094374835}
@@ -67644,7 +67644,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1746054233
 Transform:
   m_ObjectHideFlags: 0
@@ -67673,7 +67673,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
-  spaceEnemies: []
+  spaceEnemies:
+  - {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
   enemySpawnRateMultiplier: 1
   enemySpawnCap: 10
   spawnIntervalMinMax: {x: 5, y: 10}
@@ -72047,6 +72048,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
   - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
   - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
+  - {fileID: 11400000, guid: 5b93495cb1666574580e4dea3033f68a, type: 2}
+  - {fileID: 11400000, guid: fec6b8091773d38419dbfad31a1611da, type: 2}
   - {fileID: 11400000, guid: e5510d8384f5ab54893853a19891cc1a, type: 2}
   - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
   - {fileID: 11400000, guid: 4934553a2e4fc9c48b31856cc8c4c097, type: 2}
@@ -75323,7 +75326,7 @@ GameObject:
   m_Icon: {fileID: 2800000, guid: 43cd5acb6378e7243bb7c91dead40533, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &6899459541835332861
 MonoBehaviour:
   m_ObjectHideFlags: 0

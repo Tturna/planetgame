@@ -1,9 +1,12 @@
-﻿using Entities.Enemies;
+﻿using System;
+using Cameras;
+using Entities.Enemies;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Entities
 {
@@ -21,11 +24,19 @@ namespace Entities
         private GameObject _focusedBossHealth;
         private Image _fWhiteBar, _fActualBar, _fPortrait;
         private TextMeshProUGUI _fName, _fHpPercent;
+        private GameObject _healthBar;
+        private Transform _camTransform;
         // private GameObject _child;
 
         private bool _isBoss;
         private bool _bossIsEnraged;
         private Vector2 _initialBossHealthBarPosition;
+        private float _healthBarOffset;
+
+        private void Start()
+        {
+            _camTransform = CameraController.instance.mainCam.transform;
+        }
 
         private void Update()
         {
@@ -36,6 +47,12 @@ namespace Entities
             var posv = _whiteBarObject.transform.localPosition;
             posv.x = Mathf.Lerp(posv.x, _redBarObject.transform.localPosition.x, whiteBarSmoothing);
             _whiteBarObject.transform.localPosition = posv;
+
+            if (_healthBar)
+            {
+                _healthBar.transform.position = transform.position - _camTransform.up * _healthBarOffset;
+                _healthBar.transform.rotation = _camTransform.rotation;
+            }
 
             if (!_isBoss || !_focusedBossHealth) return;
 
@@ -52,14 +69,15 @@ namespace Entities
         {
             _isBoss = enemySo.isBoss;
             
-            var healthbar = new GameObject("Health Bar");
-            healthbar.transform.SetParent(transform);
-            healthbar.transform.localPosition = Vector3.down * enemySo.healthbarDistance;
-            healthbar.transform.localRotation = Quaternion.identity;
+            _healthBar = new GameObject("Health Bar");
+            _healthBar.transform.SetParent(transform);
+            _healthBarOffset = enemySo.healthbarDistance;
+            _healthBar.transform.localPosition = Vector3.down * _healthBarOffset;
+            _healthBar.transform.localRotation = Quaternion.identity;
             
             // Create background
             _bgObject = new GameObject("Background");
-            _bgObject.transform.SetParent(healthbar.transform);
+            _bgObject.transform.SetParent(_healthBar.transform);
             _bgObject.transform.localPosition = Vector3.zero;
             _bgObject.transform.localRotation = Quaternion.identity;
             
@@ -70,7 +88,7 @@ namespace Entities
             
             // Create white bar
             _whiteBarObject = new GameObject("White Bar");
-            _whiteBarObject.transform.SetParent(healthbar.transform);
+            _whiteBarObject.transform.SetParent(_healthBar.transform);
             _whiteBarObject.transform.localPosition = Vector3.zero;
             _whiteBarObject.transform.localRotation = Quaternion.identity;
             
@@ -82,7 +100,7 @@ namespace Entities
 
             // Create actual bar
             _redBarObject = new GameObject("Red Bar");
-            _redBarObject.transform.SetParent(healthbar.transform);
+            _redBarObject.transform.SetParent(_healthBar.transform);
             _redBarObject.transform.localPosition = Vector3.zero;
             _redBarObject.transform.localRotation = Quaternion.identity;
 

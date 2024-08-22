@@ -466,6 +466,11 @@ namespace Entities
                 passengerTransform.SetParent(transform);
                 
                 StatsUIManager.instance.ShowShipHUD(hullHealth, fuelLevel, maxHullHealth, maxFuelLevel);
+
+                if (_passenger is PlayerController && !_landingMode)
+                {
+                    CameraController.SetZoomMultiplierSmooth(1.8f, 1f);
+                }
             }
             else
             {
@@ -481,8 +486,13 @@ namespace Entities
                 
                 _passenger.transform.SetParent(_oldPassengerParent);
                 _oldPassengerParent = null;
-                _passenger = null;
                 
+                if (_passenger is PlayerController)
+                {
+                    CameraController.SetZoomMultiplierSmooth(1f, 1f);
+                }
+                
+                _passenger = null;
                 InventoryManager.RefreshEquippedItem();
                 StatsUIManager.instance.HideShipHUD();
             }

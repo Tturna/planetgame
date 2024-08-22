@@ -524,6 +524,7 @@ namespace Entities
                 CameraController.ResetDefaultPosition();
                 UIUtilities.HideDeathOverlay();
                 CameraController.SetZoomMultiplierSmooth(1f, 0f);
+                InventoryManager.RefreshEquippedItem();
             }, PlayerDeathManager.DefaultRespawnDelay);
         }
 

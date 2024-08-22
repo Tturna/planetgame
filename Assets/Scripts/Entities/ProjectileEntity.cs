@@ -254,7 +254,7 @@ namespace Entities
             breakPfx.gameObject.SetActive(true);
             breakPfx.Play();
             
-            if (_breakAudioSource.clip)
+            if (_breakAudioSource && _breakAudioSource.clip)
             {
                 var distToPlayer = Vector3.Distance(PlayerController.instance.transform.position, transform.position);
                 _breakAudioSource.volume = Mathf.Clamp01(1f - distToPlayer / 15f);

@@ -198,7 +198,30 @@ namespace Entities.Enemies
         
         private void MeleeFlyer(MovementFunctionData data)
         {
-            throw new NotImplementedException();
+            var rb = data.rb;
+            var tr = rb.transform;
+            
+            if (data.enemySo.faceMovementDirection && rb.velocity.magnitude > 0.1f)
+            {
+                tr.up = rb.velocity.normalized;
+            }
+            
+            if (!data.playerTr) return;
+            
+            var playerDirection = data.playerTr.position - tr.position;
+            var direction = playerDirection.normalized;
+
+            if (rb.velocity.magnitude > 0.1f)
+            {
+                direction = Vector3.Lerp(-rb.velocity.normalized, direction, 0.75f);
+            }
+
+            rb.AddForce(direction * data.enemySo.accelerationSpeed);
+            
+            if (rb.velocity.magnitude > data.enemySo.maxSpeed)
+            {
+                rb.velocity = rb.velocity.normalized * data.enemySo.maxSpeed;
+            }
         }
         
         private void RangedFlyer(MovementFunctionData data)

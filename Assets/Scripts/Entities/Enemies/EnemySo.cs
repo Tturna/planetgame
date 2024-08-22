@@ -24,6 +24,7 @@ namespace Entities.Enemies
         public bool canJump;
         public float jumpForce;
         public MovementPattern movementPattern;
+        public bool faceMovementDirection;
         public bool isBoss;
         public bool flipSprite;
         public Sprite bossPortrait;

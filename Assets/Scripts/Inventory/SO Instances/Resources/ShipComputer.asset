@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: fe3b2b59-84eb-4591-b3f0-6ac3610e8536
   name: Ship Computer
-  description: A spaceship computer unit covered in mud
+  description: A lost spaceship computer unit
   maxStack: 1
   sprite: {fileID: 21300000, guid: 33ad79362f420f1499172e493e3adc0f, type: 3}
   handPositionOffset: {x: 0, y: 0}
