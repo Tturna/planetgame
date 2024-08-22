@@ -67644,7 +67644,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1746054233
 Transform:
   m_ObjectHideFlags: 0
@@ -72041,6 +72041,7 @@ MonoBehaviour:
   startingItems:
   - {fileID: 11400000, guid: 2f8be4cead71a0841a0369cbc13aa897, type: 2}
   - {fileID: 11400000, guid: a6db3c4fb443b8b43b6389e0345ec0f9, type: 2}
+  - {fileID: 11400000, guid: af6c9a9a8a1469349b548c43b4c7f1c8, type: 2}
   - {fileID: 11400000, guid: b2318b5519d43e747943cdad81bf87d3, type: 2}
   - {fileID: 11400000, guid: 82120197eb1d1e4449e13cb15d26e99a, type: 2}
   - {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
@@ -75245,7 +75246,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 5f342d3e2ffafc149b3b78dadf6d60b4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7061657fdcd725046a23f5e246898f9e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -75273,7 +75274,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.625, y: 0.625}
+    oldSize: {x: 1.25, y: 0.6875}
     newSize: {x: 0.1, y: 0.1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -75322,7 +75323,7 @@ GameObject:
   m_Icon: {fileID: 2800000, guid: 43cd5acb6378e7243bb7c91dead40533, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &6899459541835332861
 MonoBehaviour:
   m_ObjectHideFlags: 0

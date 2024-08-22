@@ -17,6 +17,7 @@ MonoBehaviour:
   health: 400
   wakeupDelay: 2
   deathDelay: 3.5
+  despawnTime: 0
   contactDamage: 20
   isImmuneToKnockback: 1
   knockback: 10
@@ -40,6 +41,8 @@ MonoBehaviour:
   hitPfxColor: {r: 0.27058825, g: 0.15686275, b: 0.23529412, a: 1}
   hitSquishStretchMultiplier: {x: 0.33, y: 0.33}
   hitSound: {fileID: 0}
+  deathSound: {fileID: 0}
+  spawnInAir: 0
   evasionTime: 3000
   attackInterval: 3.5
   attackRecoveryTime: 0.4
@@ -400,5 +403,5 @@ MonoBehaviour:
   dropMultiple: 0
   lootTable:
   - item:
-      itemSo: {fileID: 11400000, guid: af6c9a9a8a1469349b548c43b4c7f1c8, type: 2}
+      itemSo: {fileID: 11400000, guid: afe6d751ae0c4b941ab5705d590d5cc6, type: 2}
     dropChance: 100
