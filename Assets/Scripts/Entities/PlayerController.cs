@@ -273,7 +273,7 @@ namespace Entities
                 Rigidbody.velocity = Vector2.Lerp(Rigidbody.velocity, Vector2.zero, Time.deltaTime * 3f);
             }
             
-            _torque = Mathf.Lerp(_torque, _inputVector.x, Time.deltaTime * 2f);
+            _torque = Mathf.Lerp(_torque, _inputVector.x * 0.7f, Time.deltaTime * 2f);
 
             if (_torque == 0) return;
             transform.Rotate(Vector3.back, _torque);

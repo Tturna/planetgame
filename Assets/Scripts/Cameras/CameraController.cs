@@ -36,6 +36,7 @@ namespace Cameras
             _defaultTerrainCamZoom = _terrainCameraControllers[0].Camera.orthographicSize;
             
             PlayerController.instance.OnEnteredPlanet += SetTargetPlanet;
+            PlayerController.instance.OnExitPlanet += _ => _planetTransform = null;
         }
 
         private void OnDestroy()
@@ -45,7 +46,11 @@ namespace Cameras
 
         private void LateUpdate()
         {
-            if (!_planetTransform) return;
+            if (!_planetTransform)
+            {
+                transform.rotation = PlayerController.instance.transform.rotation;
+                return;
+            }
 
             var trPos = transform.position;
             var dirToPlanet = (_planetTransform.transform.position - trPos).normalized;
