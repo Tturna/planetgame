@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42fe5bd72ff34d4293207f3af8aa0861, type: 3}
+  m_Name: MeteoriumCannonRecipe
+  m_EditorClassIdentifier: 
+  ingredients:
+  - item: {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
+    amount: 5
+  results:
+  - item: {fileID: 11400000, guid: af6c9a9a8a1469349b548c43b4c7f1c8, type: 2}
+    amount: 1

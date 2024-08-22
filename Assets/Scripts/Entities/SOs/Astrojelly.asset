@@ -51,4 +51,7 @@ MonoBehaviour:
   useRandomAttack: 0
   attacks: []
   dropMultiple: 0
-  lootTable: []
+  lootTable:
+  - item:
+      itemSo: {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
+    dropChance: 50

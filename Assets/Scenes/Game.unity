@@ -67644,7 +67644,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1746054233
 Transform:
   m_ObjectHideFlags: 0
@@ -72077,6 +72077,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
   - {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
   - {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
+  - {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
+  - {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
+  - {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
+  - {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
+  - {fileID: 11400000, guid: 9d70528dac4073a438053f88dcc6e62a, type: 2}
   startingRecipes:
   - {fileID: 11400000, guid: 86e47eb6ac8b65d419de5d62ee3154e7, type: 2}
 --- !u!4 &1968306434

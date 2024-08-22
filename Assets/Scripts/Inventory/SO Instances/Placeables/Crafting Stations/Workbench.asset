@@ -42,6 +42,7 @@ MonoBehaviour:
   effectSounds: []
   prefab: {fileID: 0}
   placeableSprite: {fileID: 0}
+  usePlaceableSpriteAsHologram: 0
   toughness: 1
   lights: []
   recipes:
@@ -49,3 +50,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 143472b153303984a8fa6f479a94f221, type: 2}
   - {fileID: 11400000, guid: ff8ff3f3e35275f4ba83d93d4eb21ea6, type: 2}
   - {fileID: 11400000, guid: 0b610d864fe2da642b88f6086a24b723, type: 2}
+  - {fileID: 11400000, guid: 1940c092dbd63144892bea8e92fcc89b, type: 2}
+  - {fileID: 11400000, guid: 622afaaa6704c9f43b18d73c63bf45c5, type: 2}
