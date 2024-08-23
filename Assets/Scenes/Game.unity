@@ -67718,6 +67718,7 @@ MonoBehaviour:
   spaceEnemies:
   - enemySo: {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
     spawnChance: 1
+  nighttimeSpawnRateMultiplier: 2
   enemySpawnRateMultiplier: 1
   enemySpawnCap: 10
   spawnIntervalMinMax: {x: 5, y: 10}

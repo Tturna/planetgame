@@ -14,6 +14,8 @@ namespace Entities.Enemies
         public float wakeupDelay;
         public float deathDelay;
         public float despawnTime;
+        public bool spawnInAir;
+        [Tooltip("The radius of the valid area check circle for the enemy to spawn. Leave 0 to use half the hitbox height.")] public float minSpawnAreaRadius;
         public float contactDamage;
         public bool isImmuneToKnockback;
         public float knockback;
@@ -40,7 +42,6 @@ namespace Entities.Enemies
         public Vector2 hitSquishStretchMultiplier;
         public AudioClip hitSound;
         public AudioClip deathSound;
-        public bool spawnInAir;
         
         [Tooltip("How long the player has to be outside the aggro range for the enemy to deaggro")]
         public float evasionTime;

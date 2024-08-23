@@ -11,8 +11,9 @@ namespace Entities.Enemies
     {
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private PlanetFauna.FaunaSpawnData[] spaceEnemies;
-        public float enemySpawnRateMultiplier = 1f;
-        public int enemySpawnCap = 10;
+        [SerializeField] private float nighttimeSpawnRateMultiplier;
+        [SerializeField] private float enemySpawnRateMultiplier = 1f;
+        [SerializeField] private int enemySpawnCap = 10;
         public Vector2 spawnIntervalMinMax;
         
         private PlayerController player;
@@ -22,6 +23,8 @@ namespace Entities.Enemies
         private int terrainMask;
         private PlanetFauna.FaunaSpawnData[] enemiesToSpawn;
         private bool playerIsInSpace;
+        private float _spawnRateMultiplier;
+        private int _spawnCap;
         
         private GameObject currentPlayerPlanetObject;
         private PlanetFauna currentPlanetFauna;
@@ -33,6 +36,8 @@ namespace Entities.Enemies
             player = PlayerController.instance;
             playerRigidbody = player.GetComponent<Rigidbody2D>();
             terrainMask = LayerMask.GetMask("Terrain");
+            _spawnRateMultiplier = enemySpawnRateMultiplier;
+            _spawnCap = enemySpawnCap;
             
             player.OnEnteredPlanet += SetCurrentPlanet;
         }
@@ -55,7 +60,18 @@ namespace Entities.Enemies
                 var isDay = currentEnvironmentManager.IsDay;
                 
                 var alltimeFauna = currentPlanetFauna.alltimeFauna;
-                var extraFauna = isDay ? currentPlanetFauna.daytimeFauna : currentPlanetFauna.nighttimeFauna;
+                PlanetFauna.FaunaSpawnData[] extraFauna;
+
+                if (isDay)
+                {
+                    extraFauna = currentPlanetFauna.daytimeFauna;
+                    _spawnRateMultiplier = enemySpawnRateMultiplier;
+                }
+                else
+                {
+                    extraFauna = currentPlanetFauna.nighttimeFauna;
+                    _spawnRateMultiplier = enemySpawnRateMultiplier * nighttimeSpawnRateMultiplier;
+                }
 
                 if (alltimeFauna.Length == 0 && extraFauna.Length == 0)
                 {
@@ -70,7 +86,7 @@ namespace Entities.Enemies
 
             if (spawnTimer > 0f)
             {
-                spawnTimer -= Time.deltaTime * enemySpawnRateMultiplier;
+                spawnTimer -= Time.deltaTime * _spawnRateMultiplier;
                 return;
             }
 
@@ -119,9 +135,23 @@ namespace Entities.Enemies
                 var wiggle = Mathf.Sin(angle * 0.5f);
                 var relativeSpawnPoint = new Vector3(unitX, unitY) * (20f + wiggle * 3f);
                 var spawnPoint = player.transform.position + relativeSpawnPoint;
+                var halfHitboxHeight = randomFaunaData.enemySo.hitboxSize.y * 0.5f;
+                float validAreaCheckRadius;
+                
+                if (randomFaunaData.enemySo.minSpawnAreaRadius > 0)
+                {
+                    validAreaCheckRadius = randomFaunaData.enemySo.minSpawnAreaRadius;
+                }
+                else
+                {
+                    validAreaCheckRadius = halfHitboxHeight;
+                }
 
                 if (randomFaunaData.enemySo.spawnInAir)
                 {
+                    var validAreaCheck = Physics2D.OverlapCircle(spawnPoint, validAreaCheckRadius, terrainMask);
+                    
+                    if (validAreaCheck) continue;
                     var enemyObject = Instantiate(enemyPrefab);
                     var enemy = enemyObject.GetComponent<EnemyEntity>();
                     enemy.Init(randomFaunaData.enemySo);
@@ -137,9 +167,8 @@ namespace Entities.Enemies
                 
                 if (!hit) continue;
 
-                var halfHitboxHeight = randomFaunaData.enemySo.hitboxSize.y * 0.5f;
-                var spawnPointOnPlanet = (Vector3)hit.point - planetDirection * (halfHitboxHeight + 0.05f);
-                var openAreaCheckHit = Physics2D.OverlapCircle(spawnPointOnPlanet, halfHitboxHeight, terrainMask);
+                var spawnPointOnPlanet = (Vector3)hit.point - planetDirection * (validAreaCheckRadius + 0.05f);
+                var openAreaCheckHit = Physics2D.OverlapCircle(spawnPointOnPlanet, validAreaCheckRadius, terrainMask);
                 
                 if (openAreaCheckHit) continue;
 

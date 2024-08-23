@@ -18,6 +18,8 @@ MonoBehaviour:
   wakeupDelay: 0
   deathDelay: 0
   despawnTime: 30
+  spawnInAir: 1
+  minSpawnAreaRadius: 5
   contactDamage: 10
   isImmuneToKnockback: 0
   knockback: 10
@@ -45,7 +47,6 @@ MonoBehaviour:
   hitSquishStretchMultiplier: {x: 1, y: 1}
   hitSound: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
   deathSound: {fileID: 8300000, guid: 0fca329fb60d95540b394b6c7fe917b0, type: 3}
-  spawnInAir: 1
   evasionTime: 5
   attackInterval: 0
   attackRecoveryTime: 0
