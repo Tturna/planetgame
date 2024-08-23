@@ -27,8 +27,10 @@ MonoBehaviour:
   maxSlopeMultiplier: 0
   canJump: 0
   jumpForce: 0
+  ignoreGravity: 1
   movementPattern:
     movementType: 4
+  physicsMaterial: {fileID: 6200000, guid: 552718e596d0e408295d5ae742cc4097, type: 2}
   faceMovementDirection: 1
   isBoss: 0
   flipSprite: 0

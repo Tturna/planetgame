@@ -1,6 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using System.Linq;
+using Environment;
 using Planets;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,26 +10,36 @@ namespace Entities.Enemies
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private GameObject enemyPrefab;
-        [SerializeField] private EnemySo[] spaceEnemies;
+        [SerializeField] private PlanetFauna.FaunaSpawnData[] spaceEnemies;
         public float enemySpawnRateMultiplier = 1f;
         public int enemySpawnCap = 10;
         public Vector2 spawnIntervalMinMax;
         
         private PlayerController player;
         private Rigidbody2D playerRigidbody;
-        private GameObject currentPlayerPlanetObject;
-        [CanBeNull] private PlanetFauna currentPlanetFauna;
         private float spawnTimer;
         private readonly List<GameObject> spawnedEnemyObjects = new();
         private int terrainMask;
-        private EnemySo[] enemiesToSpawn;
+        private PlanetFauna.FaunaSpawnData[] enemiesToSpawn;
         private bool playerIsInSpace;
+        
+        private GameObject currentPlayerPlanetObject;
+        private PlanetFauna currentPlanetFauna;
+        private EnvironmentManager currentEnvironmentManager;
+        private EnvironmentManager.TimeOfDay? currentTimeOfDay;
 
         private void Start()
         {
             player = PlayerController.instance;
             playerRigidbody = player.GetComponent<Rigidbody2D>();
             terrainMask = LayerMask.GetMask("Terrain");
+            
+            player.OnEnteredPlanet += SetCurrentPlanet;
+        }
+
+        private void OnDestroy()
+        {
+            player.OnEnteredPlanet -= SetCurrentPlanet;
         }
 
         private void Update()
@@ -39,32 +49,24 @@ namespace Entities.Enemies
                 Debug.LogError("Enemy Spawner can't access player.");
             }
 
-            if (currentPlayerPlanetObject != player.CurrentPlanetObject)
+            if (currentTimeOfDay != currentEnvironmentManager.AccurateTimeOfDay)
             {
-                currentPlayerPlanetObject = player.CurrentPlanetObject;
+                currentTimeOfDay = currentEnvironmentManager.AccurateTimeOfDay;
+                var isDay = currentEnvironmentManager.IsDay;
+                
+                var alltimeFauna = currentPlanetFauna.alltimeFauna;
+                var extraFauna = isDay ? currentPlanetFauna.daytimeFauna : currentPlanetFauna.nighttimeFauna;
 
-                if (currentPlayerPlanetObject)
+                if (alltimeFauna.Length == 0 && extraFauna.Length == 0)
                 {
-                    currentPlanetFauna = currentPlayerPlanetObject.GetComponent<PlanetFauna>();
-                    playerIsInSpace = false;
-                }
-                else
-                {
-                    currentPlanetFauna = null;
-                    playerIsInSpace = true;
+                    enemiesToSpawn = null;
+                    return;
                 }
                 
-                if (!playerIsInSpace)
-                {
-                    enemiesToSpawn = currentPlanetFauna!.spawnableEnemies;
-                }
-                else
-                {
-                    enemiesToSpawn = spaceEnemies;
-                }
+                enemiesToSpawn = alltimeFauna.Concat(extraFauna).ToArray();
             }
 
-            if (enemiesToSpawn.Length == 0) return;
+            if (enemiesToSpawn == null || enemiesToSpawn.Length == 0) return;
 
             if (spawnTimer > 0f)
             {
@@ -73,8 +75,6 @@ namespace Entities.Enemies
             }
 
             spawnTimer = Random.Range(spawnIntervalMinMax.x, spawnIntervalMinMax.y);
-            
-            // Debug.Log("Spawning enemy...");
             
             for (var i = 0; i < spawnedEnemyObjects.Count; i++)
             {
@@ -86,11 +86,12 @@ namespace Entities.Enemies
                 }
             }
 
-            if (spawnedEnemyObjects.Count >= enemySpawnCap)
-            {
-                // Debug.Log("Enemy cap reached. Spawning skipped.");
-                return;
-            }
+            if (spawnedEnemyObjects.Count >= enemySpawnCap) return;
+            
+            var randomFaunaData = enemiesToSpawn[Random.Range(0, enemiesToSpawn.Length)];
+            var rng = Random.Range(0f, 1f);
+            
+            if (rng > randomFaunaData.spawnChance) return;
 
             var playerVelocity = playerRigidbody.velocity;
             var playerVelocityDirection = playerVelocity.normalized;
@@ -108,12 +109,8 @@ namespace Entities.Enemies
                 startAngle = Random.Range(0f, 360f);
                 endAngle = startAngle + 360f;
             }
-            
-            var randomEnemySo = enemiesToSpawn[Random.Range(0, enemiesToSpawn.Length)];
-            // Debug.Log($"Spawning {randomEnemySo.enemyName}...");
 
             // var previousPoint = Vector2.zero;
-            
             for (var a = startAngle; a < endAngle; a++)
             {
                 var angle = a % 360;
@@ -123,45 +120,32 @@ namespace Entities.Enemies
                 var relativeSpawnPoint = new Vector3(unitX, unitY) * (20f + wiggle * 3f);
                 var spawnPoint = player.transform.position + relativeSpawnPoint;
 
-                if (randomEnemySo.spawnInAir)
+                if (randomFaunaData.enemySo.spawnInAir)
                 {
-                    // Debug.Log("Spawning enemy in air...");
                     var enemyObject = Instantiate(enemyPrefab);
                     var enemy = enemyObject.GetComponent<EnemyEntity>();
-                    enemy.Init(randomEnemySo);
+                    enemy.Init(randomFaunaData.enemySo);
                     enemyObject.transform.position = spawnPoint;
                     spawnedEnemyObjects.Add(enemyObject);
                     break;
                 }
 
-                if (playerIsInSpace)
-                {
-                    // Debug.LogError("Player is in space but enemy is not set to spawn in air.");
-                    break;
-                }
+                if (playerIsInSpace) break;
 
                 var planetDirection = (player.CurrentPlanetObject!.transform.position - spawnPoint).normalized;
                 var hit = Physics2D.Raycast(spawnPoint, planetDirection, 5f, terrainMask);
                 
-                if (!hit)
-                {
-                    // Debug.Log("Ground check raycast failed.");
-                    continue;
-                }
+                if (!hit) continue;
 
-                var halfHitboxHeight = randomEnemySo.hitboxSize.y * 0.5f;
+                var halfHitboxHeight = randomFaunaData.enemySo.hitboxSize.y * 0.5f;
                 var spawnPointOnPlanet = (Vector3)hit.point - planetDirection * (halfHitboxHeight + 0.05f);
-                var openAreaCheckRadius = halfHitboxHeight;
-                var openAreaCheckHit = Physics2D.OverlapCircle(spawnPointOnPlanet, openAreaCheckRadius, terrainMask);
+                var openAreaCheckHit = Physics2D.OverlapCircle(spawnPointOnPlanet, halfHitboxHeight, terrainMask);
                 
-                if (openAreaCheckHit)
-                {
-                    continue;
-                }
+                if (openAreaCheckHit) continue;
 
                 var enemyObjectOnPlanet = Instantiate(enemyPrefab);
                 var enemyOnPlanet = enemyObjectOnPlanet.GetComponent<EnemyEntity>();
-                enemyOnPlanet.Init(randomEnemySo);
+                enemyOnPlanet.Init(randomFaunaData.enemySo);
                 enemyObjectOnPlanet.transform.position = spawnPointOnPlanet;
                 spawnedEnemyObjects.Add(enemyObjectOnPlanet);
                 break;
@@ -174,6 +158,38 @@ namespace Entities.Enemies
 
                 // previousPoint = spawnPoint;
             }
+        }
+
+        private void SetCurrentPlanet(GameObject currentPlanetObject)
+        {
+            if (!currentPlanetObject)
+            {
+                currentPlayerPlanetObject = null;
+                currentPlanetFauna = null;
+                currentEnvironmentManager = null;
+                enemiesToSpawn = spaceEnemies;
+                playerIsInSpace = true;
+                return;
+            }
+            
+            currentPlayerPlanetObject = currentPlanetObject;
+            currentPlanetFauna = currentPlayerPlanetObject.GetComponentInChildren<PlanetFauna>();
+            currentEnvironmentManager = currentPlayerPlanetObject.GetComponentInChildren<EnvironmentManager>();
+            playerIsInSpace = false;
+            
+            if (!currentPlanetFauna)
+            {
+                Debug.LogError("Current planet object doesn't have a PlanetFauna component.");
+                return;
+            }
+            
+            if (!currentEnvironmentManager)
+            {
+                Debug.LogError("Current planet object doesn't have an EnvironmentManager component.");
+                return;
+            }
+            
+            enemiesToSpawn = currentPlanetFauna.alltimeFauna;
         }
     }
 }

@@ -369,6 +369,11 @@ namespace Entities.Enemies
             _movementFunctionData = new MovementPattern.MovementFunctionData();
             ToggleAutoRotation(!enemySo.faceMovementDirection);
 
+            if (enemySo.ignoreGravity)
+            {
+                TogglePhysics(false);
+            }
+
             _healthbarManager.Initialize(_health, _maxHealth, enemySo);
 
             if (!MainCollider)
@@ -396,6 +401,11 @@ namespace Entities.Enemies
             
             currentKnockback = enemySo.knockback;
             _attackRecoveryTime = enemySo.attackRecoveryTime;
+
+            if (enemySo.physicsMaterial)
+            {
+                mainCol.sharedMaterial = enemySo.physicsMaterial;
+            }
         }
 
         public void TakeDamage(float amount, Vector3 damageSourcePosition)

@@ -1,6 +1,7 @@
 using System.Collections;
 using Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utilities;
 using VFX;
 using Random = UnityEngine.Random;
@@ -9,14 +10,24 @@ namespace Environment
 {
     public class EnvironmentManager : MonoBehaviour
     {
+        public enum TimeOfDay
+        {
+            Dawn,
+            Noon,
+            Dusk,
+            Midnight
+        }
+        
         public delegate void OnFogStartedHandler(int size, float radialPosition, float maxHeight, float fogGap);
         public event OnFogStartedHandler OnFogStarted;
 
         public float WindStrength { get; private set; }
         [SerializeField] private bool freezeTime;
-        public float planetTime;
-
-        public int planetDaySeconds;
+        [SerializeField] private int planetDaySeconds;
+        [SerializeField] private float planetTime;
+        public float PlanetNormalizedTime { get; private set; }
+        public TimeOfDay AccurateTimeOfDay { get; private set; }
+        public bool IsDay { get; private set; }
 
         [SerializeField, Tooltip("Minimum and maximum time in seconds before the wind strength is changed. Strength is chosen randomly.")]
         private Vector2 windChangeIntervalGap;
@@ -44,10 +55,27 @@ namespace Environment
             // TriggerOnFogStarted();
 
             // StartCoroutine(ChangeWind());
+            
+            PlanetNormalizedTime = planetTime / planetDaySeconds;
+            AccurateTimeOfDay = PlanetNormalizedTime switch
+            {
+                < 0.25f => TimeOfDay.Midnight,
+                < 0.5f => TimeOfDay.Dawn,
+                < 0.75f => TimeOfDay.Noon,
+                _ => TimeOfDay.Dusk
+            };
+
+            IsDay = PlanetNormalizedTime is > 0.25f and < 0.75f;
         }
 
         private void Update()
         {
+            if (planetDaySeconds == 0)
+            {
+                Debug.LogWarning("Planet day seconds set to 0!");
+                return;
+            }
+            
             // planet time -> 0 to 1 (normalized)
             // 0 -> midnight
             // 0.25 -> dawn
@@ -62,6 +90,17 @@ namespace Environment
                 {
                     planetTime = 0;
                 }
+                
+                PlanetNormalizedTime = planetTime / planetDaySeconds;
+                AccurateTimeOfDay = PlanetNormalizedTime switch
+                {
+                    < 0.25f => TimeOfDay.Midnight,
+                    < 0.5f => TimeOfDay.Dawn,
+                    < 0.75f => TimeOfDay.Noon,
+                    _ => TimeOfDay.Dusk
+                };
+
+                IsDay = PlanetNormalizedTime is > 0.25f and < 0.75f;
             }
             
             if (player.IsInSpace) return;

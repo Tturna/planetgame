@@ -23,7 +23,9 @@ namespace Entities.Enemies
         public float maxSlopeMultiplier;
         public bool canJump;
         public float jumpForce;
+        public bool ignoreGravity;
         public MovementPattern movementPattern;
+        public PhysicsMaterial2D physicsMaterial;
         public bool faceMovementDirection;
         public bool isBoss;
         public bool flipSprite;

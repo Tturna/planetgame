@@ -17674,8 +17674,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   freezeTime: 1
-  planetTime: 30
-  planetDaySeconds: 60
+  planetDaySeconds: 0
+  planetTime: 0
   windChangeIntervalGap: {x: 5, y: 10}
   maxWindStrength: 10
   brightness: 1
@@ -20143,8 +20143,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0289466573d4cffabe2b00229774bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnableEnemies:
-  - {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  alltimeFauna: []
+  daytimeFauna:
+  - enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+    spawnChance: 1
+  nighttimeFauna:
+  - enemySo: {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
+    spawnChance: 1
 --- !u!1 &277992682
 GameObject:
   m_ObjectHideFlags: 0
@@ -36738,7 +36743,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &667213953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36751,8 +36756,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0289466573d4cffabe2b00229774bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnableEnemies:
-  - {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
+  alltimeFauna: []
+  daytimeFauna:
+  - enemySo: {fileID: 0}
+    spawnChance: 0
+  nighttimeFauna: []
 --- !u!114 &667213954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67708,7 +67716,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 9052693212076312599, guid: 75eec16c3d04477408991bacf0469c0b, type: 3}
   spaceEnemies:
-  - {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
+  - enemySo: {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
+    spawnChance: 1
   enemySpawnRateMultiplier: 1
   enemySpawnCap: 10
   spawnIntervalMinMax: {x: 5, y: 10}
@@ -68490,9 +68499,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeTime: 1
-  planetTime: 30
+  freezeTime: 0
   planetDaySeconds: 60
+  planetTime: 30
   windChangeIntervalGap: {x: 5, y: 10}
   maxWindStrength: 10
   brightness: 1
@@ -75317,7 +75326,7 @@ GameObject:
   m_Icon: {fileID: 2800000, guid: 43cd5acb6378e7243bb7c91dead40533, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &6899459541835332861
 MonoBehaviour:
   m_ObjectHideFlags: 0
