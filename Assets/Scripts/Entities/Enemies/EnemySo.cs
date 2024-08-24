@@ -54,13 +54,6 @@ namespace Entities.Enemies
         public bool alwaysAttack;
         public bool useRandomAttack;
         public AttackPattern[] attacks;
-        
-        [Serializable]
-        public struct LootDrop
-        {
-            public Item item;
-            [Range(0f, 100f)] public float dropChance;
-        }
 
         [Header("Loot")]
         public bool dropMultiple;

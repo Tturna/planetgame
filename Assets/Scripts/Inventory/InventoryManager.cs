@@ -974,11 +974,12 @@ namespace Inventory
             }
         }
 
-        public static void SpawnItem(Item item, Vector3 position)
+        public static GameObject SpawnItem(Item item, Vector3 position)
         {
             var itemEntity = Instantiate(instance.itemPrefab);
             itemEntity.GetComponent<ItemEntity>().item = item;
             itemEntity.transform.position = position;
+            return itemEntity;
         }
 
         private static bool TryGetSlotsWithIngredients(RecipeSo recipe,

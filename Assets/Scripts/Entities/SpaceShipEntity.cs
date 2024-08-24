@@ -33,6 +33,7 @@ namespace Entities
         [SerializeField] private ParticleSystem landingParticles;
         [SerializeField] private ParticleSystem lowHealthParticles;
         [SerializeField] private ParticleSystem collisionParticles;
+        [SerializeField] private ParticleSystem explosionParticles;
         [SerializeField] private Transform starMapMarker;
     
         private bool _landingMode = true, _canFly;
@@ -564,8 +565,30 @@ namespace Entities
             if (hullHealth <= 0)
             {
                 TogglePassenger(_passenger.gameObject);
+
+                if (!CurrentPlanetObject)
+                {
+                    forceOverLifetimeModule = explosionParticles.forceOverLifetime;
+                    forceOverLifetimeModule.enabled = false;
+
+                    if (explosionParticles.subEmitters.subEmittersCount > 0)
+                    {
+                        forceOverLifetimeModule = explosionParticles.subEmitters.GetSubEmitterSystem(0).forceOverLifetime;
+                        forceOverLifetimeModule.enabled = false;
+                    }
+                }
+                
+                explosionParticles.transform.SetParent(null);
+                explosionParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
+                explosionParticles.Play();
                 CameraController.CameraShake(0.75f, 1f);
                 PlayerController.instance.Death();
+                
+                GameUtilities.instance.DelayExecute(() =>
+                {
+                    Destroy(explosionParticles.gameObject);
+                }, 2f);
+                
                 Destroy(gameObject);
             }
             else

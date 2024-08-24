@@ -97,7 +97,7 @@ Material:
     - _BlurOffset: 2
     - _BlurSize: 8
     - _BlurSkip: 3.7
-    - _Brightness: 0.07995354
+    - _Brightness: 0.48364338
     - _EnableExternalAlpha: 0
     - _Glossiness: 0.5
     - _GrassThickness: 3
@@ -115,7 +115,7 @@ Material:
     - _StyleBands: 4.25
     - _Stylize: 1
     - _SunLightAndle: 173
-    - _SunLightAngle: 20.66716
+    - _SunLightAngle: 90
     - _SunRayLength: 30
     - _SunRaySkip: 10
     - _SunlightAngle: 91.1

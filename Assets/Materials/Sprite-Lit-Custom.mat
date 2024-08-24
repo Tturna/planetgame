@@ -41,10 +41,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Brightness: 0.07995354
+    - _Brightness: 0.48364338
     - _EnableExternalAlpha: 0
     - _IGNORE_SUNLIGHT: 0
-    - _RedTint: 0.3118079
+    - _RedTint: 0
     - _StyleBands: 4
     - _Stylize: 0
     m_Colors:

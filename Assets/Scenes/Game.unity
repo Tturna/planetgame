@@ -5615,6 +5615,87 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &27316382
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 27316383}
+  - component: {fileID: 27316384}
+  m_Layer: 9
+  m_Name: Lootbox Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &27316383
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27316382}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 273182491}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &27316384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27316382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7227f49ecf0b6546bcf1a2077539d2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lootboxPrefab: {fileID: 6441140362010365425, guid: 79f1e8df3719ff8478f2b7f9294a994c, type: 3}
+  items:
+  - item:
+      itemSo: {fileID: 11400000, guid: 02cc53ec79feab644aed3b6325043554, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: aab15143d30558844a0cf2738edc9d0a, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 7b808357063dcb548a7d101aaf6f0f5a, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 620a3ec2052429146ba47876f847acc6, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 7f82a0423828ab146997c6c416310491, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 18b6d8d1d48fb5546aed8fb07b958f27, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 82120197eb1d1e4449e13cb15d26e99a, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 55559cc623c913c40972e34a1c520c89, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: 5f0a6e6335ca16f41a6bc8a5ba2054cd, type: 2}
+    dropChance: 100
+  - item:
+      itemSo: {fileID: 11400000, guid: a99974116f7390546bb9589947b3051d, type: 2}
+    dropChance: 100
+  lootCountPerBoxMinMax: {x: 1, y: 2}
+  maxLootboxes: 100
+  wiggleMult: 0.3
+  wiggleAmount: 24
+  baseDistance: 40
 --- !u!1 &29058178
 GameObject:
   m_ObjectHideFlags: 0
@@ -19832,6 +19913,7 @@ Transform:
   m_Children:
   - {fileID: 1812146543}
   - {fileID: 1755502648}
+  - {fileID: 27316383}
   - {fileID: 1322885055}
   - {fileID: 1162857216}
   - {fileID: 2070685727}
@@ -67686,7 +67768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1746054233
 Transform:
   m_ObjectHideFlags: 0
@@ -68500,7 +68582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeTime: 0
+  freezeTime: 1
   planetDaySeconds: 60
   planetTime: 30
   windChangeIntervalGap: {x: 5, y: 10}
