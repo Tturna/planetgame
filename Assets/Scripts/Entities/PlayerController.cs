@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cameras;
+using Entities.Enemies;
 using Inventory;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -525,6 +526,8 @@ namespace Entities
                 UIUtilities.HideDeathOverlay();
                 CameraController.SetZoomMultiplierSmooth(1f, 0f);
                 InventoryManager.RefreshEquippedItem();
+                // TODO: Rework. This is for the demo
+                SwampTitanSpawner.ResetSwampTitanSpawner();
             }, PlayerDeathManager.DefaultRespawnDelay);
         }
 
