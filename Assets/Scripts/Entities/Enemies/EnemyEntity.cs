@@ -414,7 +414,8 @@ namespace Entities.Enemies
             if (_wakeupTimer < enemySo.wakeupDelay) return;
             
             CameraController.CameraShake(0.075f, 0.05f);
-            hitAudioSource.PlayOneShot(enemySo.hitSound);
+            var clip = enemySo.hitSounds[Random.Range(0, enemySo.hitSounds.Length)];
+            hitAudioSource.PlayOneShot(clip.audioClip, clip.volume);
             
             var directionToSource = (damageSourcePosition - transform.position).normalized;
             var localHitPfxDirection = transform.InverseTransformDirection(-directionToSource);
@@ -550,15 +551,20 @@ namespace Entities.Enemies
 
             if (!despawn)
             {
-                if (enemySo.deathSound)
+                var clip = enemySo.deathSounds[Random.Range(0, enemySo.deathSounds.Length)];
+                
+                if (!clip.Equals(null) && clip.audioClip)
                 {
                     var rngPitch = Random.Range(-3, 1);
                     deathAudioSource.pitch = Mathf.Pow(2f, rngPitch / 12f);
-                    deathAudioSource.PlayOneShot(enemySo.deathSound);
+                    deathAudioSource.PlayOneShot(clip.audioClip, clip.volume);
                 }
             }
-            
-            TriggerOnDeath();
+
+            if (!despawn)
+            {
+                TriggerOnDeath();
+            }
 
             if (!despawn)
             {
@@ -594,11 +600,6 @@ namespace Entities.Enemies
             else
             {
                 Destroy(gameObject);
-            }
-
-            if (despawn)
-            {
-                Debug.Log("Enemy despawned.");
             }
         }
 

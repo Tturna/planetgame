@@ -20229,8 +20229,12 @@ MonoBehaviour:
   daytimeFauna:
   - enemySo: {fileID: 11400000, guid: acf5d546d23050d45ad2001abdb99ed7, type: 2}
     spawnChance: 1
+  - enemySo: {fileID: 11400000, guid: e64fd9c08265a484ebcc506954e71d58, type: 2}
+    spawnChance: 1
   nighttimeFauna:
   - enemySo: {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
+    spawnChance: 1
+  - enemySo: {fileID: 11400000, guid: 5be0c4ee796ef7f4bb0b38de2b1ddce3, type: 2}
     spawnChance: 1
 --- !u!1 &277992682
 GameObject:
@@ -67768,7 +67772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1746054233
 Transform:
   m_ObjectHideFlags: 0
@@ -67800,7 +67804,7 @@ MonoBehaviour:
   spaceEnemies:
   - enemySo: {fileID: 11400000, guid: 08c5b3d3a12974541b7da4a3052e8702, type: 2}
     spawnChance: 1
-  nighttimeSpawnRateMultiplier: 2
+  nighttimeSpawnRateMultiplier: 1
   enemySpawnRateMultiplier: 1
   enemySpawnCap: 10
   spawnIntervalMinMax: {x: 5, y: 10}

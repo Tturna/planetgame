@@ -1,6 +1,7 @@
 ﻿using System;
 using Inventory;
 using UnityEngine;
+using Utilities;
 
 namespace Entities.Enemies
 {
@@ -40,8 +41,8 @@ namespace Entities.Enemies
         public RuntimeAnimatorController overrideAnimator;
         public Color hitPfxColor;
         public Vector2 hitSquishStretchMultiplier;
-        public AudioClip hitSound;
-        public AudioClip deathSound;
+        public AudioUtilities.Clip[] hitSounds;
+        public AudioUtilities.Clip[] deathSounds;
         
         [Tooltip("How long the player has to be outside the aggro range for the enemy to deaggro")]
         public float evasionTime;

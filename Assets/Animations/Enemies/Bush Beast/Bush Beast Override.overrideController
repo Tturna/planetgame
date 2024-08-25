@@ -6,14 +6,14 @@ AnimatorOverrideController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Swamp Thing Override
+  m_Name: Bush Beast Override
   m_Controller: {fileID: 9100000, guid: 7fd4e2809fee0e444b7b69197a8edeb5, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: cfb6f2f2c7450b745a83dbfdee995c81, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: acf2d515f881e1149a7d51550ce650c7, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7ebfbad612738ba439c2bba13fb7cc2f, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 445cf808a514c3d49aac86331c70b96f, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: cff1e3bfbb23a4e40aaf47b609a9c88a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6f6c577db959bb74c9ec91c8431c75e0, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 232ffb3f5924c3d46a37bbc140378660, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: a8be04e43a3a5074fa9fafae9e5ae9cc, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 56f457a4055ccc4489ac64712cbe75da, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 0325b5af1da44774a83505a7f99b7a8b, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 6997dde3addfeae4593ed2584c89eb33, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: cae99866c94691f4087ef97b64b4d540, type: 2}

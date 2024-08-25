@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Gunk Bug Override
+  m_Controller: {fileID: 9100000, guid: 7fd4e2809fee0e444b7b69197a8edeb5, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 445cf808a514c3d49aac86331c70b96f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ec0557ac44dda144ea95d5542b682ccc, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 0325b5af1da44774a83505a7f99b7a8b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2fd15b0520f280f4b85ced978e2eae39, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: cfb6f2f2c7450b745a83dbfdee995c81, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 332d540c1cf72694bab6151865e39715, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 232ffb3f5924c3d46a37bbc140378660, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1b6478f2c67b0834d8d9150919f88450, type: 2}

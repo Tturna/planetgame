@@ -18,6 +18,8 @@ MonoBehaviour:
   wakeupDelay: 2
   deathDelay: 3.5
   despawnTime: 0
+  spawnInAir: 0
+  minSpawnAreaRadius: 0
   contactDamage: 20
   isImmuneToKnockback: 1
   knockback: 10
@@ -27,8 +29,10 @@ MonoBehaviour:
   maxSlopeMultiplier: 50
   canJump: 0
   jumpForce: 12
+  ignoreGravity: 0
   movementPattern:
     movementType: 0
+  physicsMaterial: {fileID: 0}
   faceMovementDirection: 0
   isBoss: 1
   flipSprite: 0
@@ -41,9 +45,12 @@ MonoBehaviour:
   overrideAnimator: {fileID: 22100000, guid: b47eda05c83a6ed41b6bfdfc88047489, type: 2}
   hitPfxColor: {r: 0.27058825, g: 0.15686275, b: 0.23529412, a: 1}
   hitSquishStretchMultiplier: {x: 0.33, y: 0.33}
-  hitSound: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
-  deathSound: {fileID: 0}
-  spawnInAir: 0
+  hitSounds:
+  - audioClip: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
+    volume: 1
+  - audioClip: {fileID: 8300000, guid: 602eb08d2f1641f45aa92fe882412189, type: 3}
+    volume: 1
+  deathSounds: []
   evasionTime: 3000
   attackInterval: 3.5
   attackRecoveryTime: 0.4

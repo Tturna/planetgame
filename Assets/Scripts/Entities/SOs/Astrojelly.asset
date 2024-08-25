@@ -45,8 +45,12 @@ MonoBehaviour:
   overrideAnimator: {fileID: 22100000, guid: df2d3c794479b1c448e53cea9af6ae74, type: 2}
   hitPfxColor: {r: 1, g: 1, b: 1, a: 1}
   hitSquishStretchMultiplier: {x: 1, y: 1}
-  hitSound: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
-  deathSound: {fileID: 8300000, guid: 0fca329fb60d95540b394b6c7fe917b0, type: 3}
+  hitSounds:
+  - audioClip: {fileID: 8300000, guid: 74d111c481d959b4fb649028c21374e1, type: 3}
+    volume: 1
+  deathSounds:
+  - audioClip: {fileID: 8300000, guid: 9e04671615b86434080ac76f90f2dc5d, type: 3}
+    volume: 1
   evasionTime: 5
   attackInterval: 0
   attackRecoveryTime: 0

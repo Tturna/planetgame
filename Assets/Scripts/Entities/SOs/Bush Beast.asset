@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84b1f98ea4654b84af66154f68a0f981, type: 3}
-  m_Name: Swamp Thing
+  m_Name: Bush Beast
   m_EditorClassIdentifier: 
-  enemyName: Swamp Thing
+  enemyName: Bush Beast
   maxHealth: 50
   health: 50
   wakeupDelay: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
   knockback: 5
   aggroRange: 7
   accelerationSpeed: 25
-  maxSpeed: 2
+  maxSpeed: 2.5
   maxSlopeMultiplier: 3
   canJump: 1
   jumpForce: 12
@@ -35,14 +35,14 @@ MonoBehaviour:
   physicsMaterial: {fileID: 0}
   faceMovementDirection: 0
   isBoss: 0
-  flipSprite: 1
+  flipSprite: 0
   bossPortrait: {fileID: 0}
   hitboxOffset: {x: 0, y: 0}
   hitboxSize: {x: 0.25, y: 0.5}
   hitboxEdgeRadius: 0.12
   knockbackSourcePointOffset: {x: 0, y: 0}
   healthbarDistance: 0.66
-  overrideAnimator: {fileID: 22100000, guid: e7e7777931ce10d489565a67e3591277, type: 2}
+  overrideAnimator: {fileID: 22100000, guid: c52c7eeafb58f3a47b3ec42d42cba3f4, type: 2}
   hitPfxColor: {r: 0.9843137, g: 0.9490196, b: 0.21176471, a: 1}
   hitSquishStretchMultiplier: {x: 1, y: 1}
   hitSounds:
@@ -59,12 +59,12 @@ MonoBehaviour:
   alwaysAttack: 0
   useRandomAttack: 0
   attacks:
-  - attackName: 
+  - attackName: Punch
     attackFunction: 0
     animationIndex: 1
     damage: 10
     knockback: 5
-    attackRange: 1.5
+    attackRange: 2
     attackMagnitude: 1
     attackTime: 0
     attackDelay: 0.4
