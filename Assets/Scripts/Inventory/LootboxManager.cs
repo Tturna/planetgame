@@ -1,6 +1,7 @@
 using Cameras;
 using Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utilities;
 using Random = UnityEngine.Random;
 
@@ -12,6 +13,9 @@ namespace Inventory
     {
         [SerializeField] private bool dropMultiple;
         [SerializeField] private LootDrop[] items;
+        [SerializeField] private GameObject effectParent;
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private ParticleSystem explosionPfx;
         public bool isTrap;
         private Animator _animator;
         
@@ -28,18 +32,18 @@ namespace Inventory
 
         private void OpenLootbox(GameObject sourceObject)
         {
-            if (isTrap)
+            // if (isTrap)
             {
                 _animator.SetTrigger("explode");
-                var pfx = GetComponentInChildren<ParticleSystem>();
-                var pfxObject = pfx.gameObject;
-                pfxObject.transform.SetParent(null);
+                effectParent.transform.SetParent(null);
                 
                 GameUtilities.instance.DelayExecute(() =>
                 {
-                    pfx.Play();
+                    audioSource.Play();
+                    explosionPfx.Play();
                     CameraController.CameraShake(0.33f, 0.2f);
                     var distanceToPlayer = Vector3.Distance(PlayerController.instance.transform.position, transform.position);
+                    Destroy(effectParent, 3f);
                     
                     if (distanceToPlayer < 4f)
                     {

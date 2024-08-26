@@ -67772,7 +67772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1746054233
 Transform:
   m_ObjectHideFlags: 0
@@ -68586,7 +68586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee25823577a4c6409c0e09c1e5c5562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freezeTime: 0
+  freezeTime: 1
   planetDaySeconds: 60
   planetTime: 30
   windChangeIntervalGap: {x: 5, y: 10}

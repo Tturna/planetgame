@@ -33,7 +33,9 @@ namespace Entities
         [SerializeField] private ParticleSystem landingParticles;
         [SerializeField] private ParticleSystem lowHealthParticles;
         [SerializeField] private ParticleSystem collisionParticles;
+        [SerializeField] private GameObject effectParent;
         [SerializeField] private ParticleSystem explosionParticles;
+        [SerializeField] private AudioSource audioSource;
         [SerializeField] private Transform starMapMarker;
     
         private bool _landingMode = true, _canFly;
@@ -578,9 +580,11 @@ namespace Entities
                     }
                 }
                 
-                explosionParticles.transform.SetParent(null);
+                effectParent.transform.SetParent(null);
                 explosionParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
                 explosionParticles.Play();
+                audioSource.Play();
+                Destroy(effectParent, 3f);
                 CameraController.CameraShake(0.75f, 1f);
                 PlayerController.instance.Death();
                 
