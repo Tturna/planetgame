@@ -1,7 +1,7 @@
 using Cameras;
 using Entities;
+using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utilities;
 using Random = UnityEngine.Random;
 
@@ -14,8 +14,11 @@ namespace Inventory
         [SerializeField] private bool dropMultiple;
         [SerializeField] private LootDrop[] items;
         [SerializeField] private GameObject effectParent;
-        [SerializeField] private AudioSource audioSource;
         [SerializeField] private ParticleSystem explosionPfx;
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioUtilities.Clip explosionSound;
+        [SerializeField] private AudioUtilities.Clip beepSound;
+        [SerializeField] private AudioUtilities.Clip openSound;
         public bool isTrap;
         private Animator _animator;
         
@@ -32,14 +35,14 @@ namespace Inventory
 
         private void OpenLootbox(GameObject sourceObject)
         {
-            // if (isTrap)
+            if (isTrap)
             {
                 _animator.SetTrigger("explode");
                 effectParent.transform.SetParent(null);
                 
                 GameUtilities.instance.DelayExecute(() =>
                 {
-                    audioSource.Play();
+                    audioSource.PlayOneShot(explosionSound.audioClip, explosionSound.volume);
                     explosionPfx.Play();
                     CameraController.CameraShake(0.33f, 0.2f);
                     var distanceToPlayer = Vector3.Distance(PlayerController.instance.transform.position, transform.position);
@@ -75,7 +78,16 @@ namespace Inventory
                 if (!dropMultiple) break;
             }
             
+            effectParent.transform.SetParent(null);
+            audioSource.PlayOneShot(openSound.audioClip, openSound.volume);
+            Destroy(effectParent, 3f);
             Destroy(gameObject);
+        }
+
+        [UsedImplicitly]
+        public void Beep()
+        {
+            audioSource.PlayOneShot(beepSound.audioClip, beepSound.volume);
         }
         
         public void Init(LootDrop[] initItems, bool initIsTrap)

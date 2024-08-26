@@ -134,10 +134,14 @@ namespace Entities.Enemies
         public static void ResetSwampTitanSpawner()
         {
             _instance._spawned = false;
-            _instance._titan.GetComponentInChildren<HealthbarManager>().ToggleBossUIHealth(false);
             _instance.transform.position = _instance._initialPosition;
             _instance.transform.rotation = _instance._initialRotation;
-            Destroy(_instance._titan);
+
+            if (_instance._titan)
+            {
+                _instance._titan.GetComponentInChildren<HealthbarManager>().ToggleBossUIHealth(false);
+                Destroy(_instance._titan);
+            }
         }
     }
 }

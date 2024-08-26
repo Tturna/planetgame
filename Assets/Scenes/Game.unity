@@ -64833,8 +64833,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxEmissionRate: 30
   positionOffset: 0
-  footstepsAudioSource: {fileID: 0}
-  footstepsClips: []
+  footstepsAudioSource: {fileID: 1596580201}
+  footstepsClips:
+  - {fileID: 8300000, guid: 2ce9a747398399c4fa572eebed82ed45, type: 3}
+  - {fileID: 8300000, guid: f1783b536bda3bd4bbe70ba345b4858a, type: 3}
+  - {fileID: 8300000, guid: 9203673623ee11b4c96e7d906d8649bf, type: 3}
+  - {fileID: 8300000, guid: c453752a07608864896eec9c7b640389, type: 3}
 --- !u!82 &1596580201
 AudioSource:
   m_ObjectHideFlags: 0

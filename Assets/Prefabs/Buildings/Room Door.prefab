@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openDistance: 1.25
-  openSound: {fileID: 8300000, guid: 32acef36cade76944bf4f9714ffd35d5, type: 3}
+  openSound: {fileID: 8300000, guid: 3cec4ae0497137b4eafc648d01218a90, type: 3}
 --- !u!82 &2555714673862712727
 AudioSource:
   m_ObjectHideFlags: 0

@@ -35,8 +35,18 @@ namespace Entities
         [SerializeField] private ParticleSystem collisionParticles;
         [SerializeField] private GameObject effectParent;
         [SerializeField] private ParticleSystem explosionParticles;
-        [SerializeField] private AudioSource audioSource;
         [SerializeField] private Transform starMapMarker;
+        [SerializeField] private AudioSource genericAudioSource;
+        [SerializeField] private AudioSource explosionAudioSource;
+        [SerializeField] private AudioSource thrusterAudioSourceOne;
+        [SerializeField] private AudioSource thrusterAudioSourceTwo;
+        [SerializeField] private AudioSource boostAudioSource;
+        [SerializeField] private AudioUtilities.Clip thrusterStartClip;
+        [SerializeField] private AudioUtilities.Clip thrusterLoopClip;
+        [SerializeField] private AudioUtilities.Clip explosionClip;
+        [SerializeField] private AudioUtilities.Clip startupClip;
+        [SerializeField] private AudioUtilities.Clip boostClip;
+        [SerializeField] private AudioUtilities.Clip collisionClip;
     
         private bool _landingMode = true, _canFly;
         private bool _grounded;
@@ -55,6 +65,8 @@ namespace Entities
         private float _initialLandingDistance;
         private int _collisionLayerMask;
         private float _invincibilityTimer;
+        private bool _thrusterFiring;
+        private bool _thrusterOnePlaying;
 
         private Vector2 _inputVector;
         private float _smoothRotationInput;
@@ -133,6 +145,8 @@ namespace Entities
                     StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
                 }
             }
+            
+            UpdateThrusterSound();
         }
 
         protected override void FixedUpdate()
@@ -257,11 +271,13 @@ namespace Entities
             {
                 thrusterParticles1.Play();
                 thrusterParticles2.Play();
+                ToggleThrusterSound(true);
             }
             else if (thrusterParticles1.isPlaying && _inputVector.y <= 0)
             {
                 thrusterParticles1.Stop();
                 thrusterParticles2.Stop();
+                ToggleThrusterSound(false);
             }
 
             if (Input.GetKeyDown(KeyCode.L))
@@ -294,6 +310,40 @@ namespace Entities
                 var dot = Vector3.Dot(camRight, shipRight);
                 _flipped = dot < 0;
                 _spriteRenderer.flipY = _flipped;
+            }
+        }
+
+        private void ToggleThrusterSound(bool isPlaying)
+        {
+            _thrusterFiring = isPlaying;
+
+            if (!_thrusterFiring) return;
+            
+            thrusterAudioSourceOne.clip = thrusterStartClip.audioClip;
+            thrusterAudioSourceOne.volume = thrusterStartClip.volume;
+            thrusterAudioSourceTwo.clip = thrusterLoopClip.audioClip;
+            thrusterAudioSourceTwo.volume = thrusterLoopClip.volume;
+            
+            thrusterAudioSourceOne.PlayScheduled(AudioSettings.dspTime + 0.1d);
+            var startDuration = (double)thrusterStartClip.audioClip.samples / thrusterStartClip.audioClip.frequency;
+            thrusterAudioSourceTwo.loop = true;
+            thrusterAudioSourceTwo.PlayScheduled(AudioSettings.dspTime + startDuration + 0.1d);
+        }
+
+        private void UpdateThrusterSound()
+        {
+            if (!_thrusterFiring)
+            {
+                var volume = Mathf.Max(thrusterAudioSourceOne.volume, thrusterAudioSourceTwo.volume);
+                volume = Mathf.Lerp(volume, 0, Time.deltaTime * 5f);
+                thrusterAudioSourceOne.volume = volume;
+                thrusterAudioSourceTwo.volume = volume;
+                
+                if (volume <= 0)
+                {
+                    thrusterAudioSourceOne.Stop();
+                    thrusterAudioSourceTwo.Stop();
+                }
             }
         }
 
@@ -384,6 +434,7 @@ namespace Entities
             boostParticles.Play();
             CameraController.CameraShake(0.2f, 0.6f + _speedLevel * 0.2f);
             UIUtilities.UIShake(0.2f, 2.25f + _speedLevel * 0.75f);
+            boostAudioSource.PlayOneShot(boostClip.audioClip, boostClip.volume);
             
             var zoomMultiplier = CameraController.zoomMultiplier;
             CameraController.SetZoomMultiplierSmooth(zoomMultiplier * (1.25f + _speedLevel * 0.25f), 0.075f);
@@ -412,8 +463,10 @@ namespace Entities
             }
             else
             {
+                // quiter boost for takeoff before aerial boost
                 var dir = _flipped ? Vector2.down : Vector2.up;
                 Rigidbody.AddRelativeForce(dir * 15, ForceMode2D.Impulse);
+                boostAudioSource.PlayOneShot(boostClip.audioClip, boostClip.volume * 0.75f);
                 CameraController.SetZoomMultiplierSmooth(1.8f, 1f);
 
                 if (_grounded)
@@ -469,6 +522,7 @@ namespace Entities
                 passengerTransform.SetParent(transform);
                 
                 StatsUIManager.instance.ShowShipHUD(hullHealth, fuelLevel, maxHullHealth, maxFuelLevel);
+                genericAudioSource.PlayOneShot(startupClip.audioClip, startupClip.volume);
 
                 if (_passenger is PlayerController && !_landingMode)
                 {
@@ -498,6 +552,7 @@ namespace Entities
                 _passenger = null;
                 InventoryManager.RefreshEquippedItem();
                 StatsUIManager.instance.HideShipHUD();
+                genericAudioSource.Stop();
             }
         }
 
@@ -546,6 +601,7 @@ namespace Entities
             hullHealth = Mathf.Clamp(hullHealth - damage, 0, maxHullHealth);
             StatsUIManager.instance.UpdateShipHullUI(hullHealth, maxHullHealth, true);
             UIUtilities.UIShake(0.2f, 4f);
+            genericAudioSource.PlayOneShot(collisionClip.audioClip, collisionClip.volume);
             collisionParticles.transform.position = contact.point;
             var collisionPfxAngle = Mathf.Atan2(-hitVelocityDir.y, -hitVelocityDir.x) * Mathf.Rad2Deg + 90;
             collisionParticles.transform.rotation = Quaternion.Euler(0,0,collisionPfxAngle);
@@ -583,7 +639,7 @@ namespace Entities
                 effectParent.transform.SetParent(null);
                 explosionParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
                 explosionParticles.Play();
-                audioSource.Play();
+                explosionAudioSource.PlayOneShot(explosionClip.audioClip, explosionClip.volume);
                 Destroy(effectParent, 3f);
                 CameraController.CameraShake(0.75f, 1f);
                 PlayerController.instance.Death();
