@@ -6,6 +6,7 @@ using Planets;
 using UnityEngine;
 using Utilities;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Inventory.Item_Logic
 {
@@ -89,6 +90,19 @@ namespace Inventory.Item_Logic
                 if (breakableInstance.itemSo)
                 {
                     breakableInstance.toughness -= Mathf.Clamp(Mathf.FloorToInt(power), 1, 100);
+                    var breakablePosition = breakableInstance.transform.position;
+                    
+                    GameUtilities.TimedUpdate(() =>
+                    {
+                        if (!breakableInstance) return;
+                        
+                        var posOffset = Random.insideUnitCircle * .05f;
+                        breakableInstance.transform.position = breakablePosition + new Vector3(posOffset.x, posOffset.y);
+                    }, 0.1f, () =>
+                    {
+                        if (!breakableInstance) return;
+                        breakableInstance.transform.position = breakablePosition;
+                    });
 
                     if (breakableInstance.toughness <= 0)
                     {

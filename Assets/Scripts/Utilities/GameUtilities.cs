@@ -50,6 +50,28 @@ namespace Utilities
             action.Invoke();
         }
 
+        public static void TimedUpdate(Action action, float time, Action finalAction = null)
+        {
+            instance.StartCoroutine(TimedUpdateExec(action, time, finalAction));
+        }
+
+        private static IEnumerator TimedUpdateExec(Action action, float time, Action finalAction = null)
+        {
+            var timer = 0f;
+
+            while (timer < time)
+            {
+                action.Invoke();
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            
+            if (finalAction != null)
+            {
+                finalAction.Invoke();
+            }
+        }
+
         public static GameObject Spawn(GameObject prefab, Vector3 position, Vector3 eulerAngles, Transform parent)
         {
             var thing = Instantiate(prefab, parent);
