@@ -276,10 +276,7 @@ namespace Inventory
             return true;
         }
         
-        private void NoEnergy()
-        {
-            throw new NotImplementedException();
-        }
+        private void NoEnergy() { }
         
         private IEnumerator HandleWeaponCooldown(UsableItemSo usableItem)
         {
@@ -297,6 +294,7 @@ namespace Inventory
         {
             _equippedItem = item;
             var state = item != null && item.itemSo.altIdleAnimation;
+            _recoilAnimator.Play("Base Layer.Idle");
             _recoilAnimator.SetBool("altIdle", state);
             
             if (_equippedItem?.itemSo is PlaceableSo placeableSo)

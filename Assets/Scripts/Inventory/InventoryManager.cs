@@ -956,6 +956,7 @@ namespace Inventory
             {
                 equippedItemObject.GetComponent<SpriteRenderer>().sprite = item.itemSo.sprite;
             }
+            
             OnItemEquipped(item);
         }
         
