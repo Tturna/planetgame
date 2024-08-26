@@ -21,6 +21,7 @@ namespace Entities
         [SerializeField] private SpriteRenderer jetpackSr;
         [SerializeField] private Transform bodyTr;
         [SerializeField] private ParticleSystem jetpackParticles1, jetpackParticles2;
+        [SerializeField] private GameObject jetpackLight;
         [SerializeField] private ParticleSystem jumpLandParticles;
         [SerializeField] private SpriteRenderer headSr;
         [FormerlySerializedAs("bodySr")] [SerializeField] private SpriteRenderer torsoSr;
@@ -61,8 +62,8 @@ namespace Entities
         public delegate void ItemPickedUpHandler(GameObject itemObject);
         public ItemPickedUpHandler itemPickedUp;
         
-        public delegate void JumpedHandler();
-        public event JumpedHandler Jumped;
+        public delegate void AerialHandler();
+        public event AerialHandler Aerial;
         
         public delegate void GroundedHandler();
         public event GroundedHandler Grounded;
@@ -73,9 +74,9 @@ namespace Entities
             itemPickedUp?.Invoke(itemObject);
         }
         
-        private void OnJumped()
+        private void OnAerial()
         {
-            Jumped?.Invoke();
+            Aerial?.Invoke();
         }
         
         private void OnGrounded()
@@ -254,7 +255,7 @@ namespace Entities
 
                     StartCoroutine(JumpStretch());
                     
-                    OnJumped();
+                    OnAerial();
                 }
                 _jumping = true;
                     
@@ -334,6 +335,7 @@ namespace Entities
                     _jumpForceTimer = maxJumpForceTime;
                     torsoAnimator.SetBool("jumping", true);
                     handsAnimator.SetBool("jumping", true);
+                    OnAerial();
                 }
                 
                 return;
@@ -569,6 +571,11 @@ namespace Entities
         public (ParticleSystem, ParticleSystem) GetJetpackParticles()
         {
             return (jetpackParticles1, jetpackParticles2);
+        }
+
+        public GameObject GetJetpackLight()
+        {
+            return jetpackLight;
         }
 
         public Transform GetBodyTransform()

@@ -24,14 +24,14 @@ namespace Utilities
                 throw new ArgumentException("Pool name cannot be null or empty!");
             }
             
-            if (stencilObject == null)
-            {
-                throw new ArgumentException("Stencil object cannot be null!");
-            }
-            
             if (PoolsDict.ContainsKey(poolName))
             {
                 return;
+            }
+            
+            if (stencilObject == null)
+            {
+                throw new ArgumentException("Stencil object cannot be null!");
             }
             
             if (initialPoolSize < 1)

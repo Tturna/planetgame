@@ -1,5 +1,6 @@
 ﻿using Entities;
 using UnityEngine;
+using Utilities;
 
 namespace Inventory.Item_SOs.Accessories
 {
@@ -10,7 +11,10 @@ namespace Inventory.Item_SOs.Accessories
         private Transform _playerBodyTransform;
         private Rigidbody2D _playerRigidbody;
         private ParticleSystem _jetpackParticles1, _jetpackParticles2;
+        private GameObject _jetpackLight;
         private bool _particlesPlaying;
+        private float _jetpackLightSpawnTimer;
+        private const float JetpackLightSpawnInterval = 0.1f;
 
         public override void ResetBehavior()
         {
@@ -18,6 +22,7 @@ namespace Inventory.Item_SOs.Accessories
             _playerBodyTransform = _playerController.GetBodyTransform();
             _playerRigidbody = _playerController.GetComponent<Rigidbody2D>();
             (_jetpackParticles1, _jetpackParticles2) = _playerController.GetJetpackParticles();
+            _jetpackLight = _playerController.GetJetpackLight();
         }
         
         public override void UpdateProcess()
@@ -63,6 +68,47 @@ namespace Inventory.Item_SOs.Accessories
             if (_playerRigidbody.velocity.magnitude < 30f)
             {
                 _playerController.AddRelativeForce(forceDir * (2500f * Time.deltaTime), ForceMode2D.Force);
+            }
+            
+            ObjectPooler.CreatePoolIfDoesntExist("JetpackLight", _jetpackLight, 21);
+            
+            if (_jetpackLightSpawnTimer < JetpackLightSpawnInterval)
+            {
+                _jetpackLightSpawnTimer += Time.deltaTime;
+            }
+            else
+            {
+                _jetpackLightSpawnTimer = 0f;
+                var lightClone = ObjectPooler.GetObject("JetpackLight");
+                var lightMoveDir = _playerController.transform.TransformDirection(-forceDir);
+
+                if (lightClone)
+                {
+                    lightClone.transform.position = _playerBodyTransform.position + lightMoveDir * 0.5f;
+                    
+                    GameUtilities.TimedUpdate(() =>
+                    {
+                        if (!lightClone || !lightClone.activeSelf) return false;
+
+                        var hit = Physics2D.Raycast(lightClone.transform.position, lightMoveDir, 0.15f,
+                            GameUtilities.BasicMovementCollisionMask);
+
+                        if (hit)
+                        {
+                            lightClone.SetActive(false);
+                            return false;
+                        }
+                        
+                        lightClone.transform.position += lightMoveDir * (Time.deltaTime * 7f);
+                        return true;
+                    }, 1f, () =>
+                    {
+                        if (lightClone && lightClone.activeSelf)
+                        {
+                            lightClone.SetActive(false);
+                        }
+                    });
+                }
             }
 
             if (_particlesPlaying) return;

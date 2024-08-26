@@ -1,3 +1,4 @@
+using Inventory;
 using UnityEngine;
 
 namespace Entities
@@ -27,7 +28,7 @@ namespace Entities
             _runPfxEmission = _runPfx.emission;
             _runPfxTransform = _runPfx.transform;
             
-            _player.Jumped += OnJump;
+            _player.Aerial += OnAerial;
             _player.Grounded += OnGrounded;
             
             _canEmit = true;
@@ -37,7 +38,7 @@ namespace Entities
         private void OnDestroy()
         {
             var player = PlayerController.instance;
-            player.Jumped -= OnJump;
+            player.Aerial -= OnAerial;
             player.Grounded -= OnGrounded;
         }
 
@@ -66,7 +67,7 @@ namespace Entities
             footstepsAudioSource.PlayOneShot(footstepsClips[Random.Range(0, footstepsClips.Length)]);
         }
         
-        private void OnJump()
+        private void OnAerial()
         {
             _canEmit = false;
             _runPfxEmission.rateOverTime = 0f;

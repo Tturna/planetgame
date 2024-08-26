@@ -94,10 +94,11 @@ namespace Inventory.Item_Logic
                     
                     GameUtilities.TimedUpdate(() =>
                     {
-                        if (!breakableInstance) return;
+                        if (!breakableInstance) return false;
                         
                         var posOffset = Random.insideUnitCircle * .05f;
                         breakableInstance.transform.position = breakablePosition + new Vector3(posOffset.x, posOffset.y);
+                        return true;
                     }, 0.1f, () =>
                     {
                         if (!breakableInstance) return;
