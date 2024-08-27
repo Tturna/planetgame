@@ -121,12 +121,16 @@ namespace Entities
             }
             
             var castDir = _flipped ? transform.up : -transform.up;
-            var hitCollider = Physics2D.OverlapCircle(transform.position + castDir * 0.5f, 0.7f, _collisionLayerMask);
+            var hitCollider = Physics2D.OverlapCircle(transform.position + castDir * 0.7f, 0.7f, _collisionLayerMask);
             _grounded = hitCollider;
             
             if (_canFly && _grounded && _landingMode)
             {
                 Touchdown();
+            }
+            else if (_landingMode)
+            {
+                Debug.Log($"Grounded: {_grounded}");
             }
             
             StatsUIManager.instance.UpdateShipLocationUI(transform.position);
@@ -161,7 +165,7 @@ namespace Entities
             
             if (_landingMode && !_grounded)
             {
-                var dirToPlanet = (ClosestPlanetObject!.transform.position - transform.position).normalized;
+                var dirToPlanet = (Vector3)DirectionToClosestPlanet;
                 var hit = Physics2D.Raycast(transform.position, dirToPlanet, 100f, _collisionLayerMask);
 
                 if (!hit)
@@ -426,12 +430,18 @@ namespace Entities
             StatsUIManager.instance.UpdateShipGearUI(_speedLevel);
             StatsUIManager.instance.UpdateShipBoostStatusUI(false);
             _boostReady = false;
+            _boostTimer = boostInterval;
             
             var dir = horizontalThruster ? transform.right : transform.up;
+            var localDir = horizontalThruster ? Vector2.right : Vector2.up;
             Rigidbody.velocity = Vector2.zero;
             Rigidbody.AddForce(dir * boostPower, ForceMode2D.Impulse);
-            _boostTimer = boostInterval;
+            
+            var boostTransform = boostParticles.transform;
+            boostTransform.localPosition = localDir * boostTransform.localPosition.magnitude;
+            boostTransform.right = dir;
             boostParticles.Play();
+            
             CameraController.CameraShake(0.2f, 0.6f + _speedLevel * 0.2f);
             UIUtilities.UIShake(0.2f, 2.25f + _speedLevel * 0.75f);
             boostAudioSource.PlayOneShot(boostClip.audioClip, boostClip.volume);

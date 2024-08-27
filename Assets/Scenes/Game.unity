@@ -29574,6 +29574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgImagesParent: {fileID: 1094374835}
+  camSmoothTime: 1
   mainCam: {fileID: 0}
 --- !u!114 &519420034
 MonoBehaviour:
@@ -68594,7 +68595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   freezeTime: 1
   planetDaySeconds: 60
-  planetTime: 0
+  planetTime: 30
   windChangeIntervalGap: {x: 5, y: 10}
   maxWindStrength: 10
   brightness: 1

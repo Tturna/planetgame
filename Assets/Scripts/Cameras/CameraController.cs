@@ -1,6 +1,7 @@
 using System.Collections;
 using Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Cameras
@@ -9,6 +10,7 @@ namespace Cameras
     public class CameraController : MonoBehaviour
     {
         [SerializeField] private Transform bgImagesParent;
+        [SerializeField, Range(0f, 5f)] private float camSmoothTime;
     
         public static CameraController instance;
         public static float zoomMultiplier = 1f;
@@ -20,6 +22,9 @@ namespace Cameras
         private float _defaultMainCamZoom;
         private float _defaultTerrainCamZoom;
         private Coroutine _currentZoomCoroutine;
+        private bool _followingPlanetOrientation;
+        private float _camSmoothTimer;
+        private Quaternion _smoothStartRotation;
 
         private void Awake()
         {
@@ -36,7 +41,11 @@ namespace Cameras
             _defaultTerrainCamZoom = _terrainCameraControllers[0].Camera.orthographicSize;
             
             PlayerController.instance.OnEnteredPlanet += SetTargetPlanet;
-            PlayerController.instance.OnExitPlanet += _ => _planetTransform = null;
+            PlayerController.instance.OnExitPlanet += _ =>
+            {
+                _planetTransform = null;
+                _followingPlanetOrientation = false;
+            };
         }
 
         private void OnDestroy()
@@ -48,13 +57,43 @@ namespace Cameras
         {
             if (!_planetTransform)
             {
-                transform.rotation = PlayerController.instance.transform.rotation;
+                // transform.rotation = PlayerController.instance.transform.rotation;
                 return;
             }
-
+            
             var trPos = transform.position;
-            var dirToPlanet = (_planetTransform.transform.position - trPos).normalized;
-            transform.LookAt(trPos + Vector3.forward, -dirToPlanet);
+            var planetDir = (_planetTransform.transform.position - trPos).normalized;
+            var lookAtPoint = -planetDir;
+            var targetRot = Quaternion.LookRotation(Vector3.forward, lookAtPoint);
+            var camRot = transform.rotation;
+
+            if (!_followingPlanetOrientation)
+            {
+                if (_camSmoothTimer == 0f)
+                {
+                    _smoothStartRotation = camRot;
+                }
+                
+                var v = _camSmoothTimer / camSmoothTime;
+                v = Mathf.Sqrt(1f - Mathf.Pow(v - 1f, 2f));
+                camRot = Quaternion.Slerp(_smoothStartRotation, targetRot, v);
+                
+                if (_camSmoothTimer < camSmoothTime)
+                {
+                    _camSmoothTimer += Time.deltaTime;
+                }
+                else
+                {
+                    _followingPlanetOrientation = true;
+                    _camSmoothTimer = 0f;
+                }
+            }
+            else
+            {
+                camRot = targetRot;
+            }
+
+            transform.rotation = camRot;
         }
 
         private void SetTargetPlanet(GameObject planet)
