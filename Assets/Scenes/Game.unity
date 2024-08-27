@@ -67868,8 +67868,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8b7efbf9d17982d49abdd4775a5605e7, type: 2}
   - {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
   scrapSo: {fileID: 11400000, guid: b80819f7d8c8f4741b1553d56abd6c10, type: 2}
-  shipwreckOneSprite: {fileID: 21300000, guid: 7b9fa39e3e321e34a8f0809b1de5bc1e, type: 3}
-  shipwreckTwoSprite: {fileID: 21300000, guid: 7b9fa39e3e321e34a8f0809b1de5bc1e, type: 3}
+  shipwreckOneSprite: {fileID: 21300000, guid: 405d72ab8be87c34e99a753cb9b98a48, type: 3}
+  shipwreckTwoSprite: {fileID: 21300000, guid: b26e7dc6bede54241aa320c4a6cefacc, type: 3}
 --- !u!1 &1769118933
 GameObject:
   m_ObjectHideFlags: 0
