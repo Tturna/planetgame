@@ -78,8 +78,6 @@ namespace Entities.Enemies
                 var rng = Random.Range(0f, 1f);
                 var spawnBoss = rng < 0.5f;
                 
-                Debug.Log($"spawn boss: {spawnBoss}");
-
                 if (spawnBoss)
                 {
                     var pair = _spawnPointNormalPairs[Random.Range(0, _spawnPointNormalPairs.Count)];

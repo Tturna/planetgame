@@ -136,10 +136,6 @@ namespace Entities
             {
                 Touchdown();
             }
-            else if (_landingMode)
-            {
-                Debug.Log($"Grounded: {_grounded}");
-            }
             
             StatsUIManager.instance.UpdateShipLocationUI(transform.position);
             StatsUIManager.instance.UpdateShipAngleUI(transform.eulerAngles.z);

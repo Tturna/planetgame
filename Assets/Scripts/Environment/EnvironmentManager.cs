@@ -111,11 +111,6 @@ namespace Environment
             // 180 -> dusk
             // 270 -> midnight
             
-            // *when the player is in the original spawn point (at the top center of the planet in relation to
-            // the unity coordinate system), their relative angle to the planet should be 0.
-            // Because the player always faces perpendicular to the planet, the player's global angle
-            // will always match the player's relative angle to the planet.
-            
             // use offset time to sync the sun to the planet time.
             // this is required because time = 0 is midnight, but sun angle = 0 is dawn.
             var offsetTime = (planetTime - planetDaySeconds / 4f) % planetDaySeconds;
@@ -123,9 +118,13 @@ namespace Environment
             // ReSharper disable once PossibleLossOfFraction
             var sunLightAngle = offsetTime / planetDaySeconds * 360f;
             
-            // we use +90 because player rotation = 0 is at the top of the planet but sun angle = 0 is
+            var planetDir = player.DirectionToClosestPlanet;
+            var referenceAngle = -Mathf.Atan2(-planetDir.y, -planetDir.x) * Mathf.Rad2Deg + 90;
+            
+            // we use +90 because reference rotation = 0 is at the top of the planet but sun angle = 0 is
             // when the sun points from the right.
-            var playerRotationReference = PlayerController.instance.transform.eulerAngles.z % 360 + 90;
+            // var playerRotationReference = PlayerController.instance.transform.eulerAngles.z % 360 + 90;
+            var playerRotationReference = referenceAngle % 360 + 90;
                 
             var absoluteDifference = Mathf.Abs(playerRotationReference - sunLightAngle);
             var normalizedDifference = absoluteDifference > 180 ? 360 - absoluteDifference : absoluteDifference;
@@ -138,6 +137,12 @@ namespace Environment
             brightness = x * x * x * x;
             
             brightness = Mathf.Clamp(brightness, 0.003f, 1f);
+            
+            // Increase brightness as the player gets closer to the edge of the atmosphere
+            var normalizedPlanetDistance = player.ClosestPlanetGen!.NormalizeDistanceFromPlanet(player.DistanceToClosestPlanet);
+            const float threshold = 0.4f;
+            var scaledInverseDistance = 1f - GameUtilities.InverseLerp(0f, threshold, normalizedPlanetDistance);
+            brightness = Mathf.Lerp(brightness, 1f, scaledInverseDistance);
             
             // red tint at dusk and dawn
             const float redMinThreshold = 0.5f;
@@ -153,6 +158,8 @@ namespace Environment
                 }
                 
                 var redTintValue = redX / 3f;
+                // Reduce red tint as the player gets closer to the edge of the atmosphere
+                redTintValue = Mathf.Lerp(redTintValue, 0f, scaledInverseDistance);
                 
                 _spriteMaterial.SetFloat(RedTint, redTintValue);
                 BackgroundImageManager.SetBackgroundRedTint(redTintValue);
@@ -163,17 +170,6 @@ namespace Environment
                 BackgroundImageManager.SetBackgroundRedTint(0f);
             }
 
-            // Increase brightness as the player gets closer to the edge of the atmosphere
-            if (player.ClosestPlanetGen)
-            {
-                var normalizedPlanetDistance = player.ClosestPlanetGen.NormalizeDistanceFromPlanet(player.DistanceToClosestPlanet);
-                // Planet distance threshold where the brightness starts to increase (0.5 = halfway through the atmosphere calculated from the core)
-                const float threshold = 0.8f;
-                var scaledDistance = (normalizedPlanetDistance - threshold) * (1f / threshold);
-                var clampedDistance = Mathf.Clamp01(scaledDistance);
-                brightness = Mathf.Lerp(brightness, 1f, clampedDistance);
-            }
-            
             _terrainRenderMaterial.SetFloat(SunLightAngle, sunLightAngle);
             _terrainRenderMaterial.SetFloat(ShaderBrightness, brightness);
             _caveBgRenderMaterial.SetFloat(SunLightAngle, sunLightAngle);
