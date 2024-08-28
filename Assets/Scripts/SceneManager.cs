@@ -1,11 +1,16 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using unitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 public class SceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuParent;
     [SerializeField] private bool pauseOnFocusLost = true;
+    
+    [Header("Menu Page Stuff")]
+    [FormerlySerializedAs("mainMenuPage"), SerializeField] private GameObject mainPage;
+    [FormerlySerializedAs("mainSettingsPage"), SerializeField] private GameObject settingsPage;
     
     private static SceneManager _instance;
     
@@ -88,5 +93,17 @@ public class SceneManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         _instance.pauseMenuParent.SetActive(false);
+    }
+
+    public static void ShowSettingsPage()
+    {
+        _instance.mainPage.SetActive(false);
+        _instance.settingsPage.SetActive(true);
+    }
+
+    public static void ShowMainPage()
+    {
+        _instance.mainPage.SetActive(true);
+        _instance.settingsPage.SetActive(false);
     }
 }
