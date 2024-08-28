@@ -236,7 +236,8 @@ namespace Entities
             }
 
             // Jumping
-            if (!InventoryManager.isWearingJetpack && Input.GetKey(KeyCode.Space))
+            // if (!InventoryManager.isWearingJetpack && Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space))
             {
                 // Check if the jump key can be held to increase jump force
                 if (_jumpForceTimer >= maxJumpForceTime) return;
