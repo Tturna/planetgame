@@ -41,7 +41,6 @@ namespace Entities
         [SerializeField] private float maxSlopeMultiplier;
         [SerializeField, Tooltip("How long can the jump key be held to increase jump force")] private float maxJumpForceTime;
 
-        private CapsuleCollider2D _collider;
         private PlayerDeathManager _deathManager;
 
         private Interactable _closestInteractable;
@@ -103,7 +102,7 @@ namespace Entities
         {
             base.Start();
 
-            _collider = GetComponent<CapsuleCollider2D>();
+            MainCollider = GetComponent<CapsuleCollider2D>();
             _deathManager = GetComponent<PlayerDeathManager>();
             
             // _defaultMaterial = torsoSr.material;
@@ -135,9 +134,9 @@ namespace Entities
             _oldLocalVelocity = localVelocity;
 
             // Reduce friction when moving
-            var pmat = _collider.sharedMaterial;
+            var pmat = MainCollider.sharedMaterial;
             pmat.friction = Mathf.Lerp(0.85f, 0.2f, Mathf.Abs(_inputVector.x));
-            _collider.sharedMaterial = pmat;
+            MainCollider.sharedMaterial = pmat;
 
             if (CanControl && !IsInSpace)
             {
@@ -460,7 +459,12 @@ namespace Entities
         }
         
         // Public methods
-        
+
+        public bool CanBeDamaged()
+        {
+            return IsAlive;
+        }
+
         public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
             amount = Mathf.Clamp(amount - PlayerStatsManager.Defense, 0, amount);
@@ -504,7 +508,7 @@ namespace Entities
         {
             IsAlive = false;
             bodyTr.gameObject.SetActive(false);
-            _collider.enabled = false;
+            ToggleCollision(false);
             ToggleControl(false);
             TogglePhysics(false);
             
@@ -519,7 +523,7 @@ namespace Entities
             {
                 IsAlive = true;
                 bodyTr.gameObject.SetActive(true);
-                _collider.enabled = true;
+                ToggleCollision(true);
                 ToggleControl(true);
                 TogglePhysics(true);
                 transform.position = _spawnPosition;

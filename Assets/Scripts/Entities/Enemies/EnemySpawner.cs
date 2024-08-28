@@ -40,11 +40,13 @@ namespace Entities.Enemies
             _spawnCap = enemySpawnCap;
             
             player.OnEnteredPlanet += SetCurrentPlanet;
+            player.OnExitPlanet += SetNonePlanet;
         }
 
         private void OnDestroy()
         {
             player.OnEnteredPlanet -= SetCurrentPlanet;
+            player.OnExitPlanet -= SetNonePlanet;
         }
 
         private void Update()
@@ -54,7 +56,7 @@ namespace Entities.Enemies
                 Debug.LogError("Enemy Spawner can't access player.");
             }
 
-            if (currentTimeOfDay != currentEnvironmentManager.AccurateTimeOfDay)
+            if (currentEnvironmentManager && currentTimeOfDay != currentEnvironmentManager.AccurateTimeOfDay)
             {
                 currentTimeOfDay = currentEnvironmentManager.AccurateTimeOfDay;
                 var isDay = currentEnvironmentManager.IsDay;
@@ -187,6 +189,11 @@ namespace Entities.Enemies
 
                 // previousPoint = spawnPoint;
             }
+        }
+
+        private void SetNonePlanet(GameObject previousPlanetObject)
+        {
+            SetCurrentPlanet(null);
         }
 
         private void SetCurrentPlanet(GameObject currentPlanetObject)

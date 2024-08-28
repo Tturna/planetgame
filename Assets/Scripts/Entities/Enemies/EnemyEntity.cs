@@ -408,6 +408,11 @@ namespace Entities.Enemies
             }
         }
 
+        public bool CanBeDamaged()
+        {
+            return _health > 0;
+        }
+
         public void TakeDamage(float amount, Vector3 damageSourcePosition)
         {
             if (_health <= 0) return;
@@ -619,12 +624,16 @@ namespace Entities.Enemies
         {
             // base.OnTriggerEnter2D(col);
 
-            // Damage player on contact
-            if (col.TryGetComponent<PlayerController>(out var player))
+            if (col.TryGetComponent<IDamageable>(out var damageable))
             {
-                var damageSourcePoint = transform.position + (Vector3)enemySo.knockbackSourcePointOffset;
-                player.TakeDamage(enemySo.contactDamage, damageSourcePoint);
-                player.Knockback(damageSourcePoint, currentKnockback);
+                if (damageable is EnemyEntity) return;
+                
+                if (damageable.CanBeDamaged())
+                {
+                    var damageSourcePoint = transform.position + (Vector3)enemySo.knockbackSourcePointOffset;
+                    damageable.TakeDamage(enemySo.contactDamage, damageSourcePoint);
+                    damageable.Knockback(damageSourcePoint, currentKnockback);
+                }
             }
         }
         

@@ -315,6 +315,7 @@ namespace Entities
             if (!col.transform.TryGetComponent<IDamageable>(out var damageable)) return;
             if (!_data.canHurtEnemies && damageable is EnemyEntity) return;
             if (!_data.canHurtPlayer && damageable is PlayerController) return;
+            if (!damageable.CanBeDamaged()) return;
             
             // TODO: Implement entity defense and defense penetration
             var damage = PlayerStatsManager.CalculateRangedDamage(_data.damage, _data.critChance);

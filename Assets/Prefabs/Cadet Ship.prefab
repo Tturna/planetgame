@@ -297,6 +297,7 @@ MonoBehaviour:
   maxHullHealth: 100
   fuelLevel: 300
   maxFuelLevel: 300
+  startupTime: 3
   thrusterParticles1: {fileID: 2740798367297143602}
   thrusterParticles2: {fileID: 2740798366595035629}
   takeOffParticles: {fileID: 2740798365747407789}

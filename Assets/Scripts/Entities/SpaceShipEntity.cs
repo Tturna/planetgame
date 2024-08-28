@@ -1,3 +1,4 @@
+using System;
 using Cameras;
 using Inventory;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace Entities
 {
     [RequireComponent(typeof(Interactable))]
     [RequireComponent(typeof(Animator))]
-    public class SpaceShipEntity : EntityController
+    public class SpaceShipEntity : EntityController, IDamageable
     {
         [Header("Settings")]
         [FormerlySerializedAs("normalSpeed")] [SerializeField] private float normalMaxSpeed;
@@ -24,6 +25,7 @@ namespace Entities
         [SerializeField] private float maxHullHealth;
         [SerializeField] private float fuelLevel;
         [SerializeField] private float maxFuelLevel;
+        [SerializeField] private float startupTime;
         
         [Header("References/Components")]
         [SerializeField] private ParticleSystem thrusterParticles1;
@@ -63,11 +65,12 @@ namespace Entities
         private float _maxSpeed;
         private int _speedLevel = -1;
         private float _initialLandingDistance;
+        private Quaternion _initialLandingRotation;
         private int _collisionLayerMask;
         private float _invincibilityTimer;
         private bool _thrusterFiring;
         private bool _thrusterOnePlaying;
-
+        private float _startupTimer;
         private Vector2 _inputVector;
         private float _smoothRotationInput;
 
@@ -109,7 +112,12 @@ namespace Entities
             
             if (!_passenger) return;
 
-            if (_passenger is PlayerController)
+            if (_startupTimer < startupTime)
+            {
+                _startupTimer += Time.deltaTime;
+            }
+
+            if (_startupTimer >= startupTime && _passenger is PlayerController)
             {
                 Controls();
 
@@ -176,19 +184,19 @@ namespace Entities
 
                 var leftHit = Physics2D.Raycast(transform.position, dirToPlanet - transform.right * 0.1f, 100f, _collisionLayerMask);
                 var rightHit = Physics2D.Raycast(transform.position, dirToPlanet + transform.right * 0.1f, 100f, _collisionLayerMask);
-                
-                var leftRightDiff = rightHit.point - leftHit.point;
-                var terrainAngle = Mathf.Atan2(leftRightDiff.y, leftRightDiff.x) * Mathf.Rad2Deg;
+                var averageNormal = (leftHit.normal + rightHit.normal) / 2;
                 var hitDiff = hit.point - (Vector2)transform.position;
                 var distToGround = hitDiff.magnitude;
                 
                 if (_initialLandingDistance == 0)
                 {
                     _initialLandingDistance = distToGround;
+                    _initialLandingRotation = transform.rotation;
                 }
                 
                 var normalDistToGround = 1f - distToGround / _initialLandingDistance;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0,0,terrainAngle), normalDistToGround * 0.25f);
+                var targetRotation = Quaternion.LookRotation(Vector3.forward, averageNormal.normalized);
+                transform.rotation = Quaternion.Slerp(_initialLandingRotation, targetRotation, normalDistToGround * 1.1f);
                 landingParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
                 _passenger.transform.rotation = passengerRotation;
 
@@ -458,8 +466,11 @@ namespace Entities
         {
             // Prevent landing when taking off
             if (!_landingMode && !_canFly) return;
-            
             if ((_landingMode || _grounded) && fuelLevel <= 0) return;
+            // Prevent cancelling a landing
+            if (_landingMode && !_grounded) return;
+            // Prevent landing in space
+            if (!CurrentPlanetObject) return;
             
             _landingMode = !_landingMode;
             // TogglePhysics(_landingMode);
@@ -469,6 +480,7 @@ namespace Entities
             {
                 _shipAnimator.SetBool("landing_gear", true);
                 movementParticles.Stop();
+                gameObject.layer = LayerMask.NameToLayer("Enemy");
                 CameraController.SetZoomMultiplierSmooth(1f, _grounded ? 1f : 3f);
             }
             else
@@ -491,6 +503,7 @@ namespace Entities
                     dir = horizontalThruster ? Vector2.right : Vector2.up;
                     movementParticles.Play();
                     _canFly = true;
+                    gameObject.layer = LayerMask.NameToLayer("Default");
                     Boost();
                     // Rigidbody.AddRelativeForce(dir * 20, ForceMode2D.Impulse);
                     // CameraController.CameraShake(0.125f, 0.35f);
@@ -524,15 +537,15 @@ namespace Entities
                 _passenger = sourceEntity;
                 _passenger.ToggleControl(false);
                 _passenger.TogglePhysics(false);
-                // _passenger.ToggleCollision(false);
+                _passenger.ToggleCollision(false);
                 _passenger.ToggleSpriteRenderer(false);
-
                 var passengerTransform = _passenger.transform;
                 _oldPassengerParent = passengerTransform.parent;
                 passengerTransform.SetParent(transform);
                 
                 StatsUIManager.instance.ShowShipHUD(hullHealth, fuelLevel, maxHullHealth, maxFuelLevel);
                 genericAudioSource.PlayOneShot(startupClip.audioClip, startupClip.volume);
+                _startupTimer = 0f;
 
                 if (_passenger is PlayerController && !_landingMode)
                 {
@@ -548,9 +561,8 @@ namespace Entities
                 
                 _passenger.ToggleControl(true);
                 _passenger.TogglePhysics(true);
-                // _passenger.ToggleCollision(true);
+                _passenger.ToggleCollision(true);
                 _passenger.ToggleSpriteRenderer(true);
-                
                 _passenger.transform.SetParent(_oldPassengerParent);
                 _oldPassengerParent = null;
                 
@@ -563,6 +575,7 @@ namespace Entities
                 InventoryManager.RefreshEquippedItem();
                 StatsUIManager.instance.HideShipHUD();
                 genericAudioSource.Stop();
+                _startupTimer = 0f;
             }
         }
 
@@ -591,6 +604,69 @@ namespace Entities
             StatsUIManager.instance.ShowDangerIcon();
             StatsUIManager.instance.UpdateDangerIcon(transform.position + (Vector3)castDir * 7f);
         }
+        
+        public bool CanBeDamaged()
+        {
+            return !_landingMode && hullHealth > 0;
+        }
+
+        public void TakeDamage(float amount, Vector3 damageSourcePosition)
+        {
+            hullHealth = Mathf.Clamp(hullHealth - amount, 0, maxHullHealth);
+            StatsUIManager.instance.UpdateShipHullUI(hullHealth, maxHullHealth, true);
+            UIUtilities.UIShake(0.2f, 4f);
+            genericAudioSource.PlayOneShot(collisionClip.audioClip, collisionClip.volume);
+            
+            if (hullHealth <= 0)
+            {
+                Death();
+            }
+            else
+            {
+                CameraController.CameraShake(0.2f, 0.7f);
+
+                if (!lowHealthParticles.isEmitting && hullHealth / maxHullHealth < 0.15f)
+                {
+                    lowHealthParticles.Play();
+                }
+            }
+        }
+
+        public void Knockback(Vector3 damageSourcePosition, float amount) { }
+
+        public void Death(bool despawn = false)
+        {
+            TogglePassenger(_passenger.gameObject);
+
+            if (!CurrentPlanetObject)
+            {
+                // ReSharper disable once RedundantAssignment
+                var forceOverLifetimeModule = collisionParticles.forceOverLifetime;
+                forceOverLifetimeModule = explosionParticles.forceOverLifetime;
+                forceOverLifetimeModule.enabled = false;
+
+                if (explosionParticles.subEmitters.subEmittersCount > 0)
+                {
+                    forceOverLifetimeModule = explosionParticles.subEmitters.GetSubEmitterSystem(0).forceOverLifetime;
+                    forceOverLifetimeModule.enabled = false;
+                }
+            }
+            
+            effectParent.transform.SetParent(null);
+            explosionParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
+            explosionParticles.Play();
+            explosionAudioSource.PlayOneShot(explosionClip.audioClip, explosionClip.volume);
+            Destroy(effectParent, 3f);
+            CameraController.CameraShake(0.75f, 1f);
+            PlayerController.instance.Death();
+            
+            GameUtilities.instance.DelayExecute(() =>
+            {
+                Destroy(explosionParticles.gameObject);
+            }, 2f);
+            
+            Destroy(gameObject);
+        }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
@@ -608,10 +684,8 @@ namespace Entities
             _invincibilityTimer = 0.2f;
 
             var damage = (correctedHitVelocity - 9f) * 3f;
-            hullHealth = Mathf.Clamp(hullHealth - damage, 0, maxHullHealth);
-            StatsUIManager.instance.UpdateShipHullUI(hullHealth, maxHullHealth, true);
-            UIUtilities.UIShake(0.2f, 4f);
-            genericAudioSource.PlayOneShot(collisionClip.audioClip, collisionClip.volume);
+            TakeDamage(damage, other.transform.position);
+            
             collisionParticles.transform.position = contact.point;
             var collisionPfxAngle = Mathf.Atan2(-hitVelocityDir.y, -hitVelocityDir.x) * Mathf.Rad2Deg + 90;
             collisionParticles.transform.rotation = Quaternion.Euler(0,0,collisionPfxAngle);
@@ -629,47 +703,36 @@ namespace Entities
             }
             
             collisionParticles.Play();
+        }
 
-            if (hullHealth <= 0)
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (Rigidbody.velocity.magnitude < 10f) return;
+            if (!other.transform.root.TryGetComponent<IDamageable>(out var damageable)) return;
+            if (!damageable.CanBeDamaged()) return;
+
+            float damageMultiplier;
+            if (!other.gameObject.TryGetComponent<Rigidbody2D>(out var otherRb))
             {
-                TogglePassenger(_passenger.gameObject);
-
-                if (!CurrentPlanetObject)
-                {
-                    forceOverLifetimeModule = explosionParticles.forceOverLifetime;
-                    forceOverLifetimeModule.enabled = false;
-
-                    if (explosionParticles.subEmitters.subEmittersCount > 0)
-                    {
-                        forceOverLifetimeModule = explosionParticles.subEmitters.GetSubEmitterSystem(0).forceOverLifetime;
-                        forceOverLifetimeModule.enabled = false;
-                    }
-                }
-                
-                effectParent.transform.SetParent(null);
-                explosionParticles.transform.rotation = CameraController.instance.mainCam.transform.rotation;
-                explosionParticles.Play();
-                explosionAudioSource.PlayOneShot(explosionClip.audioClip, explosionClip.volume);
-                Destroy(effectParent, 3f);
-                CameraController.CameraShake(0.75f, 1f);
-                PlayerController.instance.Death();
-                
-                GameUtilities.instance.DelayExecute(() =>
-                {
-                    Destroy(explosionParticles.gameObject);
-                }, 2f);
-                
-                Destroy(gameObject);
+                damageMultiplier = Rigidbody.velocity.magnitude * 0.1f;
+                damageable.TakeDamage(20f * damageMultiplier, transform.position);
+                damageable.Knockback(transform.position, 20f * damageMultiplier);
+                return;
             }
-            else
-            {
-                CameraController.CameraShake(0.2f, 0.7f);
-
-                if (!lowHealthParticles.isEmitting && hullHealth / maxHullHealth < 0.15f)
-                {
-                    lowHealthParticles.Play();
-                }
-            }
+            
+            // other moving away -> lower relative velocity
+            // other moving towards -> higher relative velocity
+            var otherVelocity = otherRb.velocity;
+            var shipVelocity = Rigidbody.velocity;
+            var dot = Vector2.Dot(otherVelocity.normalized, shipVelocity.normalized);
+            var otherDirectionalVelocity = otherVelocity.magnitude * dot;
+            var relativeHitVelocity = otherDirectionalVelocity - Rigidbody.velocity.magnitude;
+            
+            if (relativeHitVelocity < 10f) return;
+            
+            damageMultiplier = relativeHitVelocity * 0.1f;
+            damageable.TakeDamage(20f * damageMultiplier, transform.position);
+            damageable.Knockback(transform.position, 20f * damageMultiplier);
         }
     }
 }
